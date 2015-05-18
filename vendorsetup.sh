@@ -9,6 +9,7 @@
 
 #!/bin/bash
 
-CHIPHD_ANDROID_SCRIPT_PATH=device/softwinner/zzzzz-script
+#CHIPHD_ANDROID_SCRIPT_PATH=device/softwinner/zzzzz-script
+CHIPHD_ANDROID_SCRIPT_PATH=$ps/zzzzz-script
 
 source $CHIPHD_ANDROID_SCRIPT_PATH/chiphd_setup.sh
