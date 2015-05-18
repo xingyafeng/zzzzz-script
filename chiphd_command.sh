@@ -74,6 +74,11 @@ function box
 	ssh boxbuilder@192.168.1.23
 }
 
+function gittt
+{
+	ssh git@192.168.1.20
+}
+
 function droid05
 {
 	ssh droid05@192.168.1.23
