@@ -42,11 +42,12 @@ function make_android
 
 make-project()
 {
+	cpu_num=`cat /proc/cpuinfo  | egrep 'processor' | wc -l`
 	if make installclean;then
 		show_vip "--> installclean end."
 		if extract-bsp;then
 			show_vip "--> bsp end."
-			if make -j32;then
+			if make -j${cpu_num};then
 				show_vip "--> make project end."
 				if [ "$1" = "-p" ];then
 					show_vip "--------------------------"
