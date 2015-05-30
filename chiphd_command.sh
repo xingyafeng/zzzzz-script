@@ -5,6 +5,7 @@
 eagle44=eagle44-h8
 dolphin44=dolphin44-h3
 debug44=debug44-h8
+yunos=/mnt/diyomate/yunos2.1.2
 
 test44=test
 ### common use  a
@@ -66,6 +67,11 @@ function cproject
 function cdate
 {
 	cd $sdate
+}
+
+function cyunos
+{
+	cd $yunos
 }
 
 ### login ssh server 
