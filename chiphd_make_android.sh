@@ -72,7 +72,7 @@ make-project()
 show-make-project()
 {
 	show_vir "###################################################"
-	show_vir "#  make rebuilder project  ... for $thisPath  #"
+	show_vir "#  make rebuilder android  ... for $thisPath  #"
 	show_vir "###################################################"
 	echo 
 }
