@@ -95,6 +95,11 @@ function hbc
 	ssh hbc@192.168.1.20
 }
 
+function diyomate
+{
+	ssh diyomate@192.168.1.11
+}
+
 #### mount server
 mount_box()
 {
