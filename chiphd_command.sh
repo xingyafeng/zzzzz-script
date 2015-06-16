@@ -228,8 +228,8 @@ open-file()
 ### find and grep
 find-file()
 {
-	if [ $1 ];then
-		find . -name \\$1
+	if [ "$1" ];then
+		find . -type f -name "$1" -print
 	else
 		show_vip "====================================================="	
 		show_vip "=   please add only one arg,eg:find-file + string   ="
@@ -237,13 +237,11 @@ find-file()
 	fi
 }
 
-grep-file()
+grep-file() 
 {
-	if [ $1 ];then
-		grep $1 ./ -rni
+	if [ "$1" ]; then
+		find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f \( -name '*.c' -o -name '*.cc' -o -name '*.cpp' -o -name '*.h' -o -name '*.java' -o -name '*.xml' -o -name '*.sh' -o -name '*.mk' -o -name '*.rc' -o -name '*.cfg' \) -print0 | xargs -0 grep --color -n $@
 	else
-		show_vip "====================================================="	
-		show_vip "please add only one arg,eg:grep-file + string"
-		show_vip "====================================================="	
+		show_vit "what do you want to grep ?"
 	fi
 }
