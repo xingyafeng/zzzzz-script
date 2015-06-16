@@ -7,6 +7,7 @@ function make-android
 		show-make-project		
 		if lunch-chiphd;then 
 			make_android $1
+			echo
 		fi	
 	fi
 }
@@ -16,7 +17,7 @@ function is_make_project
 {
 	thisPath=$(pwd) && thisPath=${thisPath%/*} && thisPath=${thisPath##*/}
 	
-	if [ $thisPath = $eagle44 -o $thisPath = $dolphin44 -o $thisPath = $debug44 ];then
+	if [ $thisPath = $eagle44 -o $thisPath = $dolphin44 -o $thisPath = $debug44 -o $thisPath = $qin244 ];then
 		echo true
 	else
 		echo false
@@ -88,9 +89,21 @@ show-lunch()
 function lunch-chiphd
 {
 	thisPath=$(pwd) && thisPath=${thisPath%/*} && thisPath=${thisPath##*/}	
-
+#	local pro_name=
 	source build/envsetup.sh
-	
+
+	if [ $thisPath = $qin244 ];then
+		if [ -z $pro_name ];then
+			show_vir "请按照下面提示输入对应的编译平台: dolphin 和 eagle"
+			show_vir "-----------------------------------------------"
+			echo -n "Please follow the tips below input " && show_vig dolphin or eagle
+			read -p "Enter dolphin or eagle :" pro_name
+		fi
+	fi
+
+	show_viy "pro_name = $pro_name"
+	echo
+
 	case $thisPath in
 	
 	$debug44)
@@ -105,12 +118,23 @@ function lunch-chiphd
 		lunch dolphin_fvd_p1-eng
 	;;
 
+	$qin244)
+		if [ $pro_name = "dolphin" ];then
+			lunch dolphin_fvd_p1-eng
+		elif [ $pro_name = "eagle" ];then
+			lunch eagle_fvd_p1-eng
+		else
+			show_vir "--> you not choose eagle or dolphin, please choose again !"
+	#		exit	
+		fi		
+	;;
+
 	*)
 		show_vir "-------------do not choose lunch--------------"
 	;;
 	esac
 	
-	if [ $thisPath = $eagle44 -o $thisPath = $dolphin44 -o $thisPath = $debug44 ];then
+	if [ $thisPath = $eagle44 -o $thisPath = $dolphin44 -o $thisPath = $debug44 -o $thisPath = $qin244 ];then
 		show-lunch
 	else
 		show_vir "please your must go to the android root directory ..."

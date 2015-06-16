@@ -5,6 +5,7 @@
 eagle44=eagle44-h8
 dolphin44=dolphin44-h3
 debug44=debug44-h8
+qin244=qin244-h38
 yunos=/mnt/diyomate/yunos2.1.2
 
 test44=test
@@ -19,10 +20,14 @@ dolphin_path=$ps/dolphin44-h3
 ### common use  c
 sbox_path=$me/box
 sworkspace_path=$me/workspace
+qin2_path=$sbox_path/qin244-h38
 
 ### other important path
 sdate=$td
 
+
+### args
+pro_name=
 ################################################### function
 ### shortcut for cd
 
@@ -36,6 +41,12 @@ function ceagle
 function cdolphin
 {
 	cd $dolphin_path
+}
+
+#h38
+function cqin2
+{
+	cd $qin2_path
 }
 
 ######for commont path
