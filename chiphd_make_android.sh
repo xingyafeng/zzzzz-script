@@ -81,7 +81,7 @@ show-make-project()
 show-lunch()
 {
 	echo "---------------------------------"
-	show_vip "--> lunch $thisPath"
+	show_vip "--> lunch $pro_name"
 	echo
 }
 
