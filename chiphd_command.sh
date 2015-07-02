@@ -21,6 +21,7 @@ dolphin_path=$ps/dolphin44-h3
 sbox_path=$me/box
 sworkspace_path=$me/workspace
 qin2_path=$sbox_path/qin244-h38
+yunos_path=$sbox_path/yunos2.1.4
 
 ### other important path
 sdate=$td
@@ -82,7 +83,7 @@ function cdate
 
 function cyunos
 {
-	cd $yunos
+	cd $yunos_path
 }
 
 ### login ssh server 
