@@ -81,7 +81,16 @@ show-make-project()
 show-lunch()
 {
 	echo "---------------------------------"
-	show_vip "--> lunch $pro_name"
+
+	if [ $pro_name ];then
+		show_vip "--> lunch $pro_name"
+	else
+		if [ $thisPath = $eagle44 -o $thisPath = $debug44 ];then
+		show_vip "--> lunch eagle"
+		elif [ $thisPath = $dolphin44 ];then
+		show_vip "--> lunch dolphin"
+		fi
+	fi
 	echo
 }
 
@@ -103,7 +112,6 @@ function lunch-chiphd
 
 	show_viy "pro_name = $pro_name"
 	echo
-
 	case $thisPath in
 	
 	$debug44)
