@@ -22,6 +22,7 @@ sbox_path=$me/box
 sworkspace_path=$me/workspace
 qin2_path=$sbox_path/qin244-h38
 yunos_path=$sbox_path/yunos2.1.4
+yafeng_path=$td/../yafeng
 
 ### other important path
 sdate=$td
@@ -84,6 +85,11 @@ function cdate
 function cyunos
 {
 	cd $yunos_path
+}
+
+function cyafeng
+{
+	cd $yafeng_path
 }
 
 ### login ssh server 
