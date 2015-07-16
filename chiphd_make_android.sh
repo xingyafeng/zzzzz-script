@@ -111,6 +111,7 @@ function lunch-chiphd
 	fi
 
 	show_viy "pro_name = $pro_name"
+#	show_viy "thisPath = $thisPath"
 	echo
 	case $thisPath in
 	

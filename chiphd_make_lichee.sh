@@ -27,12 +27,24 @@ function make-lichee
 
 		fi
 		show_viy "pro_name = $pro_name"
+
 		echo
 		if [ $pro_name = "dolphin" ];then
 			thisPath=$dolphin44
 		elif [ $pro_name = "eagle" ];then
 			thisPath=$eagle44
 		fi
+	fi
+
+	if [ -e eagle -a -e dolphin ];then
+		cd linux-3.4
+		make clean
+		cd ..
+		rm out/ -rf
+		rm eagle
+		rm dolphin
+
+		show_vir "---------------------------clean"
 	fi
 
 	case $thisPath in
@@ -114,6 +126,12 @@ function make-uboot
 		show_vir "-----------------------------------------------"
 		echo -n "Please follow the tips below input " && show_vig dolphin or eagle
 		read -p "Enter dolphin or eagle :" pro_name
+
+		### 创建标志文件
+		if [ ! -e $pro_name ];then
+			touch $pro_name
+			show_vir "--------------------------------touch $pro_name"
+		fi
 
 		if [ $pro_name = "dolphin" ];then
 			thisPath=$dolphin44
