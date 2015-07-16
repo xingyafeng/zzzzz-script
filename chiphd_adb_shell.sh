@@ -14,11 +14,13 @@ devices_sun7i_kl=sun7i-ir.kl
 ###adb common
 function adb-connect
 {
+	adb-kill-server
 	if [ -z $1 ];then
 		adb connect 192.168.2.86
 	else
 		adb connect 192.168.2.$1
 	fi
+	adb-remount
 }
 
 function adb-devices
