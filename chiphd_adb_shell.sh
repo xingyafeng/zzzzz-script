@@ -20,6 +20,7 @@ function adb-connect
 	else
 		adb connect 192.168.2.$1
 	fi
+	sleep 1s
 	adb-remount
 }
 
