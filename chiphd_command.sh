@@ -17,9 +17,9 @@ script_path=$ps/zzzzz-script
 eagle_path=$ps/eagle44-h8
 dolphin_path=$ps/dolphin44-h3
 
-### common use  c
-sbox_path=$me/box
-sworkspace_path=$me/workspace
+### common use  a
+sbox_path=$mh/box
+sworkspace_path=$mh/workspace
 qin2_path=$sbox_path/qin244-h38
 yunos_path=$sbox_path/yunos2.1.4
 yafeng_path=$td/../yafeng
