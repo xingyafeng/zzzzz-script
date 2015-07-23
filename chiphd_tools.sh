@@ -21,3 +21,13 @@ function change_ssh
 		show_vir "please input args[0] ..."
 	fi
 }
+
+function switch_usb_mode
+{
+	if [ $1 = "d" ];then
+		adb shell cat sys/bus/platform/devices/sunxi_usb_udc/usb_device
+	elif [ $1 = "h" ];then
+		adb shell cat /sys/bus/platform/devices/sunxi_usb_udc/usb_host
+	fi
+
+}
