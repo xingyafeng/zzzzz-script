@@ -23,6 +23,7 @@ sworkspace_path=$mh/workspace
 qin2_path=$sbox_path/qin244-h38
 yunos_path=$sbox_path/yunos2.1.4
 yafeng_path=$td/../yafeng
+qn_path=/a/0ps/qn_sync_folder
 
 ### other important path
 sdate=$td
