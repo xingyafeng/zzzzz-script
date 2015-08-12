@@ -25,6 +25,9 @@ yunos_path=$sbox_path/yunos2.1.4
 yafeng_path=$td/../yafeng
 qn_path=/a/0ps/qn_sync_folder
 
+### common use c
+scode_path=/c/code/
+
 ### other important path
 sdate=$td
 
@@ -91,6 +94,11 @@ function cyunos
 function cyafeng
 {
 	cd $yafeng_path
+}
+
+function ccode
+{
+	cd $scode_path
 }
 
 ### login ssh server 
