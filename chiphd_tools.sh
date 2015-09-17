@@ -20,6 +20,8 @@ function change_ssh
 		ln -s /home/abc/ssh_aw/ /home/abc/.ssh
 	elif [ $1 = "yfk" ];then
 		ln -s /home/abc/ssh_inphic/ /home/abc/.ssh
+	elif [ $1 = "dymt" ];then
+		ln -s /home/abc/ssh_diyomate/ /home/abc/.ssh
 	else
 		show_vir "please input args[0] ..."
 	fi
@@ -35,6 +37,8 @@ function change_repo
 		ln -s /a/3pr/repo/repo_allwinner /a/3pr/repo/repo
 	elif [ $1 = "yfk" ];then
 		ln -s /a/3pr/repo/repo.aliyunos.yfk /a/3pr/repo/repo
+	elif [ $1 = "dymt" ];then
+		ln -s /a/3pr/repo/repo.aliyunos.diyomate /a/3pr/repo/repo
 	fi
 }
 
