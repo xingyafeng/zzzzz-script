@@ -6,18 +6,15 @@ eagle44=eagle44-h8
 dolphin44=dolphin44-h3
 debug44=debug44-h8
 qin244=qin244-h38
+yunos21=yunos2.1.2
 yunos=/mnt/diyomate/yunos2.1.2
 
 test44=test
+
 ### common use  a
 swork_path=$ps/swork
 script_path=$ps/zzzzz-script
 
-### project path for a
-eagle_path=$ps/eagle44-h8
-dolphin_path=$ps/dolphin44-h3
-
-### common use  a
 sbox_path=$mh/box
 sworkspace_path=$mh/workspace
 qin2_path=$sbox_path/qin244-h38
@@ -25,8 +22,14 @@ yunos_path=$sbox_path/yunos2.1.4
 yafeng_path=$td/../yafeng
 qn_path=/a/0ps/qn_sync_folder
 
+### project path for b
+eagle_path=$ps/eagle44-h8
+dolphin_path=$ps/dolphin44-h3
+
 ### common use c
 scode_path=/c/code/
+yunos2_1_2_path=$scode_path/yunos2.1.2
+yunos2_2_0_path=$scode_path/yunos2.2.0
 
 ### other important path
 sdate=$td
@@ -34,6 +37,7 @@ sdate=$td
 
 ### args
 pro_name=
+pro_type=
 ################################################### function
 ### shortcut for cd
 

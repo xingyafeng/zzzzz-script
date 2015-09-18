@@ -17,7 +17,7 @@ function is_make_project
 {
 	thisPath=$(pwd) && thisPath=${thisPath%/*} && thisPath=${thisPath##*/}
 	
-	if [ $thisPath = $eagle44 -o $thisPath = $dolphin44 -o $thisPath = $debug44 -o $thisPath = $qin244 ];then
+	if [ $thisPath = $eagle44 -o $thisPath = $dolphin44 -o $thisPath = $yunos21 -o $thisPath = $qin244 ];then
 		echo true
 	else
 		echo false
@@ -97,21 +97,30 @@ show-lunch()
 ### source && lunch 
 function lunch-chiphd
 {
-	thisPath=$(pwd) && thisPath=${thisPath%/*} && thisPath=${thisPath##*/}	
+	thisPath=$(pwd) && thisPath=${thisPath%/*} && thisPath=${thisPath##*/}
 #	local pro_name=
 	source build/envsetup.sh
 
-	if [ $thisPath = $qin244 ];then
+	if [ $thisPath = $qin244 -o $thisPath = "$yunos21" ];then
 		if [ -z $pro_name ];then
 			show_vir "请按照下面提示输入对应的编译平台: dolphin 和 eagle"
 			show_vir "-----------------------------------------------"
 			echo -n "Please follow the tips below input " && show_vig dolphin or eagle
 			read -p "Enter dolphin or eagle :" pro_name
 		fi
+
+		if [ -z $pro_type ];then
+			show_vir "请按照下面提示输入对应的编译类型: eng 和 user"
+			show_vir "-----------------------------------------------"
+
+			echo -n "Please follow the tips below input " && show_vig eng or user
+			read -p "Enter dolphin or eagle :" pro_type
+		fi
+
 	fi
 
 	show_viy "pro_name = $pro_name"
-#	show_viy "thisPath = $thisPath"
+	show_viy "thisPath = $thisPath"
 	echo
 	case $thisPath in
 	
@@ -138,12 +147,30 @@ function lunch-chiphd
 		fi		
 	;;
 
+	$yunos21)
+		if [ $pro_name = "dolphin" ];then
+			if [ $pro_type = "eng" ];then
+				lunch dolphin_aliyun_p1-eng
+			elif [ $pro_type = "user" ];then
+				lunch dolphin_aliyun_p1-user
+			fi
+		elif [ $pro_name = "eagle" ];then
+			if [ $pro_type = "eng" ];then
+				lunch eagle_aliyun_p1-eng
+			elif [ $pro_type = "user" ];then
+				lunch eagle_aliyun_p1-user
+			fi
+		else
+			show_vir "--> you not choose eagle or dolphin, please choose again !"
+	#		exit
+		fi
+	;;
 	*)
 		show_vir "-------------do not choose lunch--------------"
 	;;
 	esac
 	
-	if [ $thisPath = $eagle44 -o $thisPath = $dolphin44 -o $thisPath = $debug44 -o $thisPath = $qin244 ];then
+	if [ $thisPath = $eagle44 -o $thisPath = $dolphin44 -o $thisPath = $yunos21 -o $thisPath = $qin244 ];then
 		show-lunch
 	else
 		show_vir "please your must go to the android root directory ..."
