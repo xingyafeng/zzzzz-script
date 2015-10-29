@@ -17,7 +17,7 @@ function make-lichee
 	
 	show_ui $lichee_name $thisPath
 
-	if [ $thisPath = $qin244 ];then
+	if [ $thisPath = $qin244 -o $thisPath = $qin244_d ];then
 		### 判断pro_name 是否已经选择对应的平台	
 		if [ -z $pro_name ];then	
 			show_vir "请按照下面提示输入对应的编译平台: dolphin 和 eagle" 
@@ -121,7 +121,7 @@ function make-uboot
 
 	show_ui $uboot_name $thisPath
 
-	if [ $thisPath = $qin244 ];then
+	if [ $thisPath = $qin244 -o $thisPath = $qin244_d ];then
 		show_vir "请按照下面提示输入对应的编译平台: dolphin 和 eagle" 
 		show_vir "-----------------------------------------------"
 		echo -n "Please follow the tips below input " && show_vig dolphin or eagle
@@ -149,6 +149,9 @@ function make-uboot
 				show_vir "--> choose sun8iw6p1_config end ..."
 				if make -j32;then
 					show_vip "--> make h8 uboot end."
+					if make boot0;then
+						show_vip "--> make h8 boot0 end."
+					fi
 				fi
 			fi
 		fi

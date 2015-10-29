@@ -17,7 +17,7 @@ function is_make_project
 {
 	thisPath=$(pwd) && thisPath=${thisPath%/*} && thisPath=${thisPath##*/}
 	
-	if [ $thisPath = $eagle44 -o $thisPath = $dolphin44 -o $thisPath = $yunos21 -o $thisPath = $qin244 ];then
+	if [ $thisPath = $eagle44 -o $thisPath = $dolphin44 -o $thisPath = $yunos21 -o $thisPath = $qin244 -o $thisPath = $qin244_d ];then
 		echo true
 	else
 		echo false
@@ -101,7 +101,7 @@ function lunch-chiphd
 #	local pro_name=
 	source build/envsetup.sh
 
-	if [ $thisPath = $qin244 -o $thisPath = "$yunos21" ];then
+	if [ $thisPath = $qin244 -o $thisPath = "$yunos21" -o $thisPath = $qin244_d ];then
 		if [ -z $pro_name ];then
 			show_vir "请按照下面提示输入对应的编译平台: dolphin 和 eagle"
 			show_vir "-----------------------------------------------"
@@ -147,6 +147,17 @@ function lunch-chiphd
 		fi		
 	;;
 
+	$qin244_d)
+		if [ $pro_name = "dolphin" ];then
+			lunch dolphin_fvd_p1-eng
+		elif [ $pro_name = "eagle" ];then
+			lunch eagle_fvd_p1-eng
+		else
+			show_vir "--> you not choose eagle or dolphin, please choose again !"
+	#		exit	
+		fi		
+	;;
+
 	$yunos21)
 		if [ $pro_name = "dolphin" ];then
 			if [ $pro_type = "eng" ];then
@@ -170,7 +181,7 @@ function lunch-chiphd
 	;;
 	esac
 	
-	if [ $thisPath = $eagle44 -o $thisPath = $dolphin44 -o $thisPath = $yunos21 -o $thisPath = $qin244 ];then
+	if [ $thisPath = $eagle44 -o $thisPath = $dolphin44 -o $thisPath = $yunos21 -o $thisPath = $qin244 -o $thisPath = $qin244_d ];then
 		show-lunch
 	else
 		show_vir "please your must go to the android root directory ..."

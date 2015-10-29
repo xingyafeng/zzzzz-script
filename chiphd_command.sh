@@ -6,6 +6,7 @@ eagle44=eagle44-h8
 dolphin44=dolphin44-h3
 debug44=debug44-h8
 qin244=qin244-h38
+qin244_d=q2442g_v1.0_d
 yunos21=yunos2.1.2
 yunos=/mnt/diyomate/yunos2.1.2
 
