@@ -79,6 +79,34 @@ function setgitconfig
 	git config --global alias.lg "log --date=short --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %C(green)%s %C(reset)(%cd) %C(bold blue)<%an>%Creset' --abbrev-commit"
 }
 
+function get_modify_file
+{
+	local this_android_path=$(gettop)
+	local modify_file_path=
+
+	modify_file_path=`repo status | awk '$1=="project" && NF > 2 {prj=$2} $1 !~ "d" && NF==2 && $2 !~ "preApk/system/app-lib" {printf "android/%s%s\n",prj,$2 }'`
+
+	if [ "$modify_file_path" ];then
+
+		cd ..
+		tar zcf $td/modify.tar.gz $modify_file_path
+
+		if [ -f $td/modify.tar.gz ];then
+
+			if [ -d $td/android ];then
+				rm $td/android -rf
+			fi
+
+			tar zxf $td/modify.tar.gz -C $td
+
+			if [ $? -eq 0 ];then
+				rm $td/modify.tar.gz
+			fi
+		fi
+	fi
+	cd $this_android_path
+}
+
 function mount_diyomate
 {
 	mount_project diyomate 11 123
