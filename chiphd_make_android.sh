@@ -1,71 +1,14 @@
 #!/bin/bash
 
-### make all project
-function make-android
-{
-	if [ "`is_make_project`" = "true" ];then
-		show-make-project		
-		if lunch-chiphd;then 
-			make_android $1
-			echo
-		fi	
-	fi
-}
-
 ### 是否是需要编译的工程
 function is_make_project
 {
 	thisPath=$(pwd) && thisPath=${thisPath%/*} && thisPath=${thisPath##*/}
 	
-	if [ $thisPath = $eagle44 -o $thisPath = $dolphin44 -o $thisPath = $yunos21 -o $thisPath = $qin244 -o $thisPath = $qin244_d ];then
+	if [ $thisPath = $eagle44 -o $thisPath = $dolphin44 -o $thisPath = $qin244 -o $thisPath = $qin244_d ];then
 		echo true
 	else
 		echo false
-	fi
-}
-
-### make android
-function make_android
-{
-	local ret=$1
-	case $ret in
-	###不执行pack 动作
-	-p)
-		make-project $ret
-	;;
-
-	*)
-		thisPath=$(pwd) && thisPath=${thisPath%/*} && thisPath=${thisPath##*/}
-		make-project $1
-	;;
-	esac
-}
-
-make-project()
-{
-	cpu_num=`cat /proc/cpuinfo  | egrep 'processor' | wc -l`
-	if make installclean;then
-		show_vip "--> installclean end."
-		if extract-bsp;then
-			show_vip "--> bsp end."
-			if make -j${cpu_num};then
-				show_vip "--> make project end."
-				if [ "$1" = "-p" ];then
-					show_vip "--------------------------"
-					show_vip "-        make end        -"
-					show_vip "--------------------------"
-				else		
-					if pack;then
-						show_vip "--> pack finish."
-						if [ "$1" = "-t" ];then
-							make-target
-						elif [ "$1" = "-i" ];then
-							make-inc
-						fi
-					fi
-				fi	
-			fi
-		fi
 	fi
 }
 
@@ -101,14 +44,14 @@ function lunch-chiphd
 #	local pro_name=
 	source build/envsetup.sh
 
-	if [ $thisPath = $qin244 -o $thisPath = "$yunos21" -o $thisPath = $qin244_d ];then
+	if [ "`is_make_project`" = "true" ];then
 		if [ -z $pro_name ];then
 			show_vir "请按照下面提示输入对应的编译平台: dolphin 和 eagle"
 			show_vir "-----------------------------------------------"
 			echo -n "Please follow the tips below input " && show_vig dolphin or eagle
 			read -p "Enter dolphin or eagle :" pro_name
 		fi
-
+if false;then
 		if [ -z $pro_type ];then
 			show_vir "请按照下面提示输入对应的编译类型: eng 和 user"
 			show_vir "-----------------------------------------------"
@@ -116,17 +59,25 @@ function lunch-chiphd
 			echo -n "Please follow the tips below input " && show_vig eng or user
 			read -p "Enter dolphin or eagle :" pro_type
 		fi
-
+fi
 	fi
+
+	case $pro_name in
+
+	dolphin)
+		thisPath=$dolphin44
+	;;
+	eagle)
+		thisPath=$eagle44
+	;;
+
+	esac
 
 	show_viy "pro_name = $pro_name"
 	show_viy "thisPath = $thisPath"
 	echo
+
 	case $thisPath in
-	
-	$debug44)
-		lunch eagle_fvd_p1-eng
-	;;
 
 	$eagle44)
 		lunch eagle_fvd_p1-eng
@@ -136,57 +87,76 @@ function lunch-chiphd
 		lunch dolphin_fvd_p1-eng
 	;;
 
-	$qin244)
-		if [ $pro_name = "dolphin" ];then
-			lunch dolphin_fvd_p1-eng
-		elif [ $pro_name = "eagle" ];then
-			lunch eagle_fvd_p1-eng
-		else
-			show_vir "--> you not choose eagle or dolphin, please choose again !"
-	#		exit	
-		fi		
-	;;
-
-	$qin244_d)
-		if [ $pro_name = "dolphin" ];then
-			lunch dolphin_fvd_p1-eng
-		elif [ $pro_name = "eagle" ];then
-			lunch eagle_fvd_p1-eng
-		else
-			show_vir "--> you not choose eagle or dolphin, please choose again !"
-	#		exit	
-		fi		
-	;;
-
-	$yunos21)
-		if [ $pro_name = "dolphin" ];then
-			if [ $pro_type = "eng" ];then
-				lunch dolphin_aliyun_p1-eng
-			elif [ $pro_type = "user" ];then
-				lunch dolphin_aliyun_p1-user
-			fi
-		elif [ $pro_name = "eagle" ];then
-			if [ $pro_type = "eng" ];then
-				lunch eagle_aliyun_p1-eng
-			elif [ $pro_type = "user" ];then
-				lunch eagle_aliyun_p1-user
-			fi
-		else
-			show_vir "--> you not choose eagle or dolphin, please choose again !"
-	#		exit
-		fi
-	;;
 	*)
 		show_vir "-------------do not choose lunch--------------"
 	;;
 	esac
 	
-	if [ $thisPath = $eagle44 -o $thisPath = $dolphin44 -o $thisPath = $yunos21 -o $thisPath = $qin244 -o $thisPath = $qin244_d ];then
+	if [ "`is_make_project`" = "true" ];then
 		show-lunch
 	else
 		show_vir "please your must go to the android root directory ..."
 	fi
 }
+
+### make android
+function make_android
+{
+	local ret=$1
+	case $ret in
+
+	###不执行pack 动作
+	-p)
+		make-project $ret
+	;;
+
+	*)
+		make-project $ret
+	;;
+	esac
+}
+
+### make all project
+function make-android
+{
+	if [ "`is_make_project`" = "true" ];then
+		show-make-project		
+		if lunch-chiphd;then 
+			make_android $1
+			echo
+		fi	
+	fi
+}
+
+make-project()
+{
+	cpu_num=`cat /proc/cpuinfo  | egrep 'processor' | wc -l`
+	if make installclean;then
+		show_vip "--> installclean end."
+		if extract-bsp;then
+			show_vip "--> bsp end."
+			if make -j${cpu_num};then
+				show_vip "--> make project end."
+				if [ "$1" = "-p" ];then
+					show_vip "--------------------------"
+					show_vip "-        make end        -"
+					show_vip "--------------------------"
+				else		
+					if pack;then
+						show_vip "--> pack finish."
+						if [ "$1" = "-t" ];then
+							make-target
+						elif [ "$1" = "-i" ];then
+							make-inc
+						fi
+					fi
+				fi	
+			fi
+		fi
+	fi
+}
+
+
 
 ########################################################## mmm modules
 ### common path
