@@ -6,9 +6,12 @@
 
 #!/bin/bash
 
+function DEBUG()
+{
+	[ "$_DEBUG" == "on" ] && $@ || :
+}
+
 ssh_path=~/.ssh
-ssh_aw_path=~/ssh_yafeng
-ssh_yfk_path=~/ssh_yfk
 
 function change_ssh
 {
