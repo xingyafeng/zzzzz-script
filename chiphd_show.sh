@@ -76,6 +76,12 @@ function show_vid
 }
 
 
+### debug
+function __msg
+{
+	[ "$__dbg" == "on" ] && $@ || :
+}
+
 function csoftwinner
 {
 	local T	
