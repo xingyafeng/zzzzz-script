@@ -7,3 +7,4 @@ source $CHIPHD_ANDROID_SCRIPT_PATH/chiphd_make_android.sh
 source $CHIPHD_ANDROID_SCRIPT_PATH/chiphd_make_lichee.sh
 source $CHIPHD_ANDROID_SCRIPT_PATH/chiphd_make_ota.sh
 source $CHIPHD_ANDROID_SCRIPT_PATH/chiphd_tools.sh
+source $CHIPHD_ANDROID_SCRIPT_PATH/chiphd_alias.sh
