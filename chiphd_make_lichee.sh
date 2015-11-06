@@ -135,6 +135,10 @@ function make-uboot
 				show_vir "--> choose sun8iw7p1_config end ..."
 				if make -j32;then
 					show_vip "--> make h3 uboot end."
+					echo
+					if make boot0;then
+						show_vip "--> make h3 boot0 end."
+					fi
 				fi
 			fi
 		fi
