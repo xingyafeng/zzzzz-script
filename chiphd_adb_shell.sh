@@ -8,6 +8,7 @@ devices_framework=framework.jar
 devices_services=services.jar
 devices_policy=android.policy.jar
 
+devices_prop=build.prop
 devices_sun6i_kl=sun6i-ir.kl
 devices_sun7i_kl=sun7i-ir.kl
 
