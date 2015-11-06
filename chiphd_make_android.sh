@@ -45,12 +45,10 @@ function lunch-chiphd
 	source build/envsetup.sh
 
 	if [ "`is_make_project`" = "true" ];then
-		if [ -z $pro_name ];then
-			show_vir "请按照下面提示输入对应的编译平台: dolphin 和 eagle"
-			show_vir "-----------------------------------------------"
-			echo -n "Please follow the tips below input " && show_vig dolphin or eagle
-			read -p "Enter dolphin or eagle :" pro_name
-		fi
+		show_vir "请按照下面提示输入对应的编译平台: dolphin 和 eagle"
+		show_vir "-----------------------------------------------"
+		echo -n "Please follow the tips below input " && show_vig dolphin or eagle
+		read -p "Enter dolphin or eagle :" pro_name
 if false;then
 		if [ -z $pro_type ];then
 			show_vir "请按照下面提示输入对应的编译类型: eng 和 user"
