@@ -3,6 +3,7 @@
 ### define
 devices_tvdsettings=TvdSettings.apk
 devices_systemui=SystemUI.apk
+devices_launcher=Launcher2.apk
 devices_framework_res=framework-res.apk
 devices_framework=framework.jar
 devices_services=services.jar
@@ -56,6 +57,10 @@ function adb-chmod
 
 adb-push-app()
 {
+	if [ "$DEVICE" ];then
+		cout
+	fi
+
 	local ret=$1		
     if adb-remount;then
 		if [ "$2" = "-p" ];then
@@ -71,6 +76,9 @@ adb-push-app()
 				adb shell am start -n com.android.settings/com.android.settings.Settings
 			;;
 			$devices_systemui)
+				adb-reboot
+			;;
+			$devices_launcher)
 				adb-reboot
 			;;
 			esac
