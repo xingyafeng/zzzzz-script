@@ -90,6 +90,11 @@ function csoftwinner
 	#show_vig $T
 }
 
+function crooooooot
+{
+	cdevice && croot
+}
+
 ###########################
 #### 	file EOF		###
 ###########################
