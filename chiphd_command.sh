@@ -31,7 +31,7 @@ dolphin_path=$ps/dolphin44-h3
 scode_path=/c/code/
 yunos2_1_2_path=$scode_path/yunos2.1.2
 yunos2_2_0_path=$scode_path/yunos2.2.0
-
+qin2_sdk_path=$scode_path/q2442g_v1.0_d
 ### other important path
 sdate=$td
 
@@ -57,7 +57,7 @@ function cdolphin
 #h38
 function cqin2
 {
-	cd $qin2_path
+	cd $qin2_sdk_path
 }
 
 ######for commont path
