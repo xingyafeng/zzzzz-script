@@ -10,8 +10,9 @@ devices_services=services.jar
 devices_policy=android.policy.jar
 
 devices_prop=build.prop
-devices_sun6i_kl=sun6i-ir.kl
-devices_sun7i_kl=sun7i-ir.kl
+devices_sunxi_kl=sunxi-ir.kl
+devices_device=device
+devices_host=host
 
 ###adb common
 function adb-connect
@@ -26,7 +27,36 @@ function adb-connect
 	adb-remount
 }
 
+function debug-mask
+{
+	local ip_addr=$1
 
+	if [ "$ip_addr" ];then
+		adb-connect $ip_addr
+		adb shell "echo 0xff > /sys/module/sunxi_ir_rx/parameters/debug_mask"
+		adb shell "dumpsys input | grep \".kl\""
+	else
+		show_vir "eg: debug-mask + ip"
+	fi
+}
+
+function change-mode
+{
+	local usb_mode=$1
+    local ip_addr=$2    
+
+    if [ "$ip_addr" ];then
+        adb-connect $ip_addr            
+    fi    
+
+	if [ $usb_mode == "$devices_device" ];then
+		adb shell cat sys/bus/platform/devices/sunxi_usb_udc/usb_device
+	elif [ $usb_mode == "$devices_host" ];then
+		adb shell cat /sys/bus/platform/devices/sunxi_usb_udc/usb_host
+    else
+        show_vir "eg: change-mode + $devices_host + ip"
+    fi
+}
 
 function adb-chmod
 {
@@ -37,38 +67,73 @@ function adb-chmod
         adb shell chmod 644 system/$ret
     ;;
 
-    $device_sun6i_kl)
-		adb shell chmod 644 system/usr/keylayout/$ret
-	;;
-
-	$devices_sun7i_kl)
-		adb shell chmod 644 system/usr/keylayout/$ret
+	$devices_sunxi_kl)
+		adb shell chmod 644 system/usr/keylayout/$ret	
 	;;
 
 	*)
         if [ "`echo $ret | grep ko 2>/dev/null`" ];then
             adb shell chmod 644 vendor/modules/$ret
         fi
+
+		if [ "`echo $ret | grep customer_ir_ 2>/dev/null`" ];then
+			adb shell chmod 644 system/usr/keylayout/$ret		
+		fi
     ;;
     esac
     show_vip "--------chmod" " $ret"
     adb shell sync
 }
 
-adb-push-app()
+function is_system_app()
 {
+	local ret=$1	
+	local system_app=`echo $devices_tvdsettings $devices_launcher`
+	if [ ! "$ret" ];then
+		return
+	fi
+
+	if [ "$system_app" == "$ret" ];then
+		echo true		
+	else
+		echo false		
+	fi
+}
+
+function is_priv_app()
+{
+	local ret=$1	
+	local priv_app=`echo $devices_systemui`
+
+	if [ ! "$ret" ];then
+		return
+	fi
+
+	if [ "$priv_app" == "$ret" ];then
+		echo true		
+	else
+		echo false		
+	fi
+}
+
+function adb-push-app()
+{
+	local old_path=`pwd`
+
 	if [ "$DEVICE" ];then
 		cout
 	fi
 
-	local ret=$1		
+	local ret=$1
     if adb-remount;then
-		if [ "$2" = "-p" ];then
-			show_vip "---adb push priv-app"
+		if [ "`is_priv_app $ret`" == "true" ];then
+			show_vip  "--- push priv-app"	
 			adb push system/priv-app/$ret system/priv-app
-		else
+		elif [ "`is_system_app $ret`" == "true" ];then
+			show_vip  "--- push system app"	
         	adb push system/app/$ret system/app
 		fi	
+
 		if [ $? -eq 0 ];then
 			case $ret in 
 			$devices_tvdsettings)
@@ -83,7 +148,9 @@ adb-push-app()
 			;;
 			esac
 		fi	
-    fi	
+    fi
+
+	cd $old_path
 }
 
 adb-pull-app()
@@ -94,7 +161,9 @@ adb-pull-app()
 		if adb-remount;then
 			adb pull system/app/$app_name $td
 		fi
-	fi	
+	else
+		return
+	fi
 }
 
 adb-push-framework()
@@ -154,9 +223,18 @@ adb-pull-prop()
 adb-push-sunxi-kl()
 {
 	local sunxi_kl=$1
+	local old_path=`pwd`
+
+	if [ "$DEVICE" ];then
+		cout
+	fi
+
+	if [ ! "$sunxi_kl" ];then
+		break;	
+	fi
 
 	if adb-remount;then
-		adb push $sunxi_kl system/usr/keylayout/
+		adb push system/usr/keylayout/$sunxi_kl system/usr/keylayout/
 		adb-chmod $sunxi_kl
 		adb shell sync
 		adb-reboot
