@@ -64,17 +64,6 @@ function change_ps
 	fi
 }
 
-function switch_usb_mode
-{
-	local usb_mode=$1
-
-	if [ $usb_mode == "device" ];then
-		adb shell cat sys/bus/platform/devices/sunxi_usb_udc/usb_device
-	elif [ $usb_mode == "host" ];then
-		adb shell cat /sys/bus/platform/devices/sunxi_usb_udc/usb_host
-	fi
-}
-
 function setgitconfig
 {
 	local your_name=$1
@@ -144,13 +133,33 @@ function get_modify_file
 			get_android_and_lichee__modify_file "$android_modify_file_path" $this_sdk_path
 		fi
 	elif [ $this_sdk_path == "lichee" ];then
-		lichee_modify_file_path=`repo status | awk '$1=="project" && NF >2 {prj=$2} NF==2 && $1 !~ "d" {printf "lichee/%s%s\n", prj, $2}'`
+		lichee_modify_file_path=`repo status | awk '$1=="project" && NF >2 {prj=$2} NF==2 && $1 !~ "d" && $2 !~ ".bin" && $2 !~ "cur.log" {printf "lichee/%s%s\n", prj, $2}'`
 
 		if [ "$lichee_modify_file_path" ] ;then
 			get_android_and_lichee__modify_file "$lichee_modify_file_path" $this_sdk_path
 		fi
 	fi
 	cd $this_sdk_path
+}
+
+### edit file
+function geditfs
+{
+	local tmp=$1
+
+	if [ "$tmp" ];then
+		gedit $1 &
+	fi
+}
+
+### get app package name
+function get-package-name()
+{
+	local apk_name=$1
+
+	if [ "$apk_name" ];then
+		aapt dump badging Update.apk  | grep name= | sed 's%.*name=%%'  | sed 's% .*%%'
+	fi
 }
 
 function mount_diyomate
