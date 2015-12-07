@@ -86,15 +86,58 @@ function csoftwinner
 {
 	local T	
 	T=$(gettop)
-	cd "$T/device/softwinner"
-	#show_vig $T
+
+	if [ "$T" ];then
+		cd "$T/device/softwinner"
+	fi
+}
+
+function ccommon()
+{
+	if [ "$DEVICE" ];then
+		cdevice && cd ../common
+	fi
 }
 
 function crooooooot
 {
-	cdevice && croot
+	if [ "$DEVICE" ];then
+		cdevice && croot
+	fi
 }
 
+function clichee
+{
+	if [ "$DEVICE" ];then
+		cdevice && cd "$(gettop)/../lichee"
+	fi
+}
+
+function ctools
+{
+	if [ "$DEVICE" ];then
+		cdevice && cd "$(gettop)/../lichee/tools"
+	fi
+}
+
+function cimg()
+{
+	cd $td/../img
+}
+
+function cpeagle()
+{
+	tPWD=`pwd`
+	cimg && cp sun8iw6p1_android_eagle-p1_uart0.img $td
+	cd $tPWD
+}
+
+function cpdolphin()
+{
+	tPWD=`pwd`
+	cimg && cp sun8iw7p1_android_dolphin-p1_uart0.img $td
+	cd $tPWD
+}
 ###########################
 #### 	file EOF		###
 ###########################
