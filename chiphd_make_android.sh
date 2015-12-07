@@ -3,7 +3,7 @@
 ### 是否是需要编译的工程
 function is_make_project
 {
-	thisPath=$(pwd) && thisPath=${thisPath%/*} && thisPath=${thisPath##*/}
+	local thisPath=$(pwd) && thisPath=${thisPath%/*} && thisPath=${thisPath##*/}
 	
 	if [ $thisPath = $eagle44 -o $thisPath = $dolphin44 -o $thisPath = $qin244 -o $thisPath = $qin244_d ];then
 		echo true
