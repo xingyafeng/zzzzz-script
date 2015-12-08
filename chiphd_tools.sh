@@ -153,13 +153,67 @@ function geditfs
 }
 
 ### get app package name
-function get-package-name()
+function get_package_name()
 {
 	local apk_name=$1
 
 	if [ "$apk_name" ];then
-		aapt dump badging Update.apk  | grep name= | sed 's%.*name=%%'  | sed 's% .*%%'
+		aapt dump badging $apk_name | grep name= | sed 's%.*name=%%'  | sed 's% .*%%'
 	fi
+}
+
+#### 恢复默认配置文件 android
+function recover_standard_android_project()
+{
+	local tOldPwd=$OLDPWD
+	local tNowPwd=$PWD
+	cd $(gettop)
+	#echo "now get all project from repo..."
+
+	local AllRepoProj=`chiphd_get_repo_git_path_from_xml`
+    #show_vip $AllRepoProj
+	if [ "$AllRepoProj" ]; then
+		for ProjPath in $AllRepoProj
+		do
+            if [ -d $(gettop)/$ProjPath ];then
+			    chiphd_recover_project $ProjPath
+            fi
+		done
+	fi
+	cd $tOldPwd
+	cd $tNowPwd
+}
+
+#### 恢复默认配置文件 lichee
+function recover_standard_lichee_project()
+{
+	local tOldPwd=$OLDPWD
+	local tNowPwd=$PWD
+    local licheePwd=$(gettop)/../lichee
+	cd $(gettop)
+	#echo "now get all project from repo..."
+	local AllRepoProj=`chiphd_get_repo_git_path_from_xml_lichee`
+    echo $AllRepoProj
+	if [ "$AllRepoProj" ]; then
+		for ProjPath in $AllRepoProj
+		do
+			if [ -d "$licheePwd/$ProjPath" ]; then
+				chiphd_recover_project_lichee $ProjPath
+			fi
+		done
+	fi
+	cd $tOldPwd
+	cd $tNowPwd
+}
+
+
+function recover_sdk()
+{
+    if [ "`is_make_project`" = "true" ];then
+        recover_standard_android_project
+        show_vir "-------------------------------------------------------------------------------------"
+	    recover_standard_lichee_project
+    fi
 }
 
 function mount_diyomate
