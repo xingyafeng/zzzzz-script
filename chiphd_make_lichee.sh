@@ -20,7 +20,7 @@ function make-lichee
 		show_vir  "thisPath is null!	"
 	fi
 
-	echo $thisPath
+	show_viy "thisPath = $thisPath"
 	if [ "`is_make_project`" = "true" ];then
 		### 判断pro_name 是否已经选择对应的平台	
 		if [ -z $pro_name ];then	
@@ -48,7 +48,7 @@ function make-lichee
 		rm eagle
 		rm dolphin
 
-		show_vir "---------------------------clean"
+		show_vir "--> clean end ..."
 	fi
 
 	case $thisPath in
@@ -59,7 +59,7 @@ function make-lichee
 		else
 			show_vir "please select: sun8iw6p1-android"	
 			echo "------------------------------------"
-			./build.sh lunch
+			./build.sh lunch 0
 		fi
 	;;
 
@@ -69,7 +69,7 @@ function make-lichee
 		else
 			show_vir "please select: sun8iw7p1-android"	
 			echo "------------------------------------"
-			./build.sh lunch
+			./build.sh lunch 2
 		fi
 	;;
 
