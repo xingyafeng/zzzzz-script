@@ -4,6 +4,7 @@
 devices_tvdsettings=TvdSettings.apk
 devices_systemui=SystemUI.apk
 devices_launcher=Launcher2.apk
+devices_browser=Browser.apk
 devices_framework_res=framework-res.apk
 devices_framework=framework.jar
 devices_services=services.jar
@@ -88,7 +89,7 @@ function adb-chmod
 function is_system_app()
 {
 	local ret=$1	
-	local system_app=`echo $devices_tvdsettings $devices_launcher`
+	local system_app=`echo $devices_tvdsettings $devices_launcher $devices_browser`
 	if [ ! "$ret" ];then
 		return
 	fi
@@ -140,6 +141,12 @@ function adb-push-app()
 				sleep 3s
 				adb shell am start -n com.android.settings/com.android.settings.Settings
 			;;
+
+            $devices_browser)
+				sleep 3s
+				adb shell am start -n com.android.browser/com.android.browser.BrowserActivity
+			;;
+
 			$devices_systemui)
 				adb-reboot
 			;;
