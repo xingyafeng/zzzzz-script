@@ -222,10 +222,10 @@ openfs()
     local file_path=$1    
 
 	if [ $# -eq 0 ];then		
-		nautilus .			
+		nautilus . &
 	else
         if [ "$file_path" ];then
-            nautilus $file_path
+            nautilus $file_path &
         fi
 	fi
 
