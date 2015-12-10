@@ -257,6 +257,45 @@ grepfs()
 	fi
 }
 
+## rsync
+function rsyncfs()
+{
+    sync_dryrun
+
+    echo -n "Want to sync ? "
+    read -p "Please Enter (Y/N):" sure
+
+    if [ "x$sure" = "xy" ]; then
+        show_vig "continue..."
+    elif [ "x$sure" = "xyes" ]; then
+        show_vig "continue..."
+    elif [ "x$sure" = "xY" ]; then
+        show_vig "continue..."
+    elif [ "x$sure" = "xYES" ]; then
+        show_vig "continue..."
+    else
+        show_vir "please enter Y or YES ..."
+        return
+    fi
+
+    sync_server
+
+    show_vip "-------------------------------"
+    show_vip "-          rsync end          -"
+    show_vip "-------------------------------"
+}
+
+sync_server()
+{
+    rsync -av --delete $da/yafeng/rsync-service/  boxbuilder@192.168.1.23:/home2/boxbuilder/0box_share/rsync-service/
+}
+
+
+sync_dryrun()
+{
+    rsync -av --delete $da/yafeng/rsync-service/  boxbuilder@192.168.1.23:/home2/boxbuilder/0box_share/rsync-service/ --dry-run
+}
+
 #### mount server
 function mount-server
 {
