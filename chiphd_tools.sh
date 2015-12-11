@@ -257,6 +257,22 @@ grepfs()
 	fi
 }
 
+## rename photo modify bootanimation.zip
+function renamefs
+{
+	local count=1
+
+	for old_photo_name in `find . -iname "*.png" -o -iname "*.jpg" -type f | sort`; do
+		#statements
+		new_photo_name=H8000000$count.${old_photo_name##*.}
+
+		#show_vir "renamephoto $old_photo_name to $new_photo_name"
+		mv "$old_photo_name" "$new_photo_name"
+
+		let count++
+	done
+}
+
 ## rsync
 function rsyncfs()
 {
