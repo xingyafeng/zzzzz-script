@@ -137,6 +137,7 @@ function make-uboot
 	$dolphin44)
 		if make distclean;then
 			show_vir "--> disclean end ..."
+			echo
 			if make sun8iw7p1_config;then
 				show_vir "--> choose sun8iw7p1_config end ..."
 				echo
