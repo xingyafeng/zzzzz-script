@@ -36,3 +36,35 @@ function tstring
 	echo File '#'  name: $name_11
 	echo File '##' name: $name_22
 }
+
+function test-env
+{
+	echo $*
+	echo $@
+	echo $#
+	echo $?
+
+	### $*  整体
+	for args in "$*"; do
+		#statements
+		show_vir $args
+	done
+
+	### $@  单个
+	for args in "$@"; do
+		#statements
+		show_vir $args
+	done
+
+	### $@  单个
+	for args in $*; do
+		#statements
+		show_vir $args
+	done
+
+	## 当前进程ID号
+	echo $$
+
+	## 后台最后一个进程号
+	echo $!
+}
