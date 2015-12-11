@@ -60,6 +60,11 @@ function cqin2
 	cd $qin2_sdk_path
 }
 
+## h38 test
+function ctest
+{
+	cd $scode_path/qin244-h38
+}
 ######for commont path
 function cscript
 {
