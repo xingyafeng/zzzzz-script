@@ -209,7 +209,7 @@ function recover_standard_lichee_project()
 
 function recover_sdk()
 {
-    if [ "`is_make_project`" = "true" ];then
+    if [ "`is_make_project`" == "true" ];then
         recover_standard_android_project
         show_vir "-------------------------------------------------------------------------------------"
 	    recover_standard_lichee_project
