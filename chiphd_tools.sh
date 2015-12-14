@@ -276,6 +276,8 @@ function renamefs
 ## rsync
 function rsyncfs()
 {
+	local args=$1
+
     sync_dryrun
 
     echo -n "Want to sync ? "
@@ -294,19 +296,36 @@ function rsyncfs()
         return
     fi
 
-    sync_server
+    if [ "$args" ];then
+	sync_pull_server
 
-    show_vip "-------------------------------"
-    show_vip "-          rsync end          -"
-    show_vip "-------------------------------"
+	    show_vip "------------------------------------"
+		show_vip "-          rsync pull end          -"
+		show_vip "------------------------------------"
+    else
+		sync_push_server
+
+		show_vip "------------------------------------"
+		show_vip "-          rsync push end          -"
+		show_vip "------------------------------------"
+    fi
+
+
 }
 
-sync_server()
+### 同步本地内容
+sync_push_server()
 {
     rsync -av --delete $da/yafeng/rsync-service/  boxbuilder@192.168.1.23:/home2/boxbuilder/0box_share/rsync-service/
 }
 
+### 同步服务上的内容
+sync_pull_server()
+{
+    rsync -av --delete boxbuilder@192.168.1.23:/home2/boxbuilder/0box_share/rsync-service/ $da/yafeng/rsync-service/
+}
 
+### 判断文件是否真要删除
 sync_dryrun()
 {
     rsync -av --delete $da/yafeng/rsync-service/  boxbuilder@192.168.1.23:/home2/boxbuilder/0box_share/rsync-service/ --dry-run
