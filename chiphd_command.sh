@@ -26,6 +26,7 @@ qn_path=/a/0ps/qn_sync_folder
 ### project path for b
 eagle_path=$ps/eagle44-h8
 dolphin_path=$ps/dolphin44-h3
+rsync_path=$yafeng_path/rsync-service
 
 ### common use c
 scode_path=/c/code/
@@ -104,6 +105,11 @@ function cyunos
 function cyafeng
 {
 	cd $yafeng_path
+}
+
+function crsync
+{
+	cd $rsync_path
 }
 
 function ccode
