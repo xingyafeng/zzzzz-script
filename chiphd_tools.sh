@@ -331,6 +331,67 @@ sync_dryrun()
     rsync -av --delete $da/yafeng/rsync-service/  boxbuilder@192.168.1.23:/home2/boxbuilder/0box_share/rsync-service/ --dry-run
 }
 
+obase()
+{
+	local dest_type=$1
+	local src_tpye=$2
+	local number=$3
+
+	echo "obase=$dest_type; ibase=$src_tpye; $number" | bc
+
+}
+
+## 十六进制 转 十进制
+function H-to-D()
+{
+	local number=$1
+	local cpaString=
+
+	if [[ ""$number"" ]]; then
+		cpaString=`echo $number | tr [a-z] [A-Z]`
+
+		obase 10 16 $cpaString
+	else
+		show_vir "please input args ... eg: H-to-D ff"
+	fi
+}
+
+## 十进制  转 十六进制
+function D-to-H()
+{
+	local number=$1
+
+	if [[ ""$number"" ]]; then
+		obase 16 10 $number
+	else
+		show_vir "please input args ... eg: D-to-H 9"
+	fi
+}
+
+## 十进制  转 二进制
+function D-to-B()
+{
+	local number=$1
+
+	if [[ ""$number"" ]]; then
+		obase 2 10 $number
+	else
+		show_vir "please input args ... eg: H-to-B 9"
+	fi
+}
+
+## 二进制  转 十进制
+function B-to-D()
+{
+	local number=$1
+
+	if [[ ""$number"" ]]; then
+		obase 10 2 $number
+	else
+		show_vir "please input args ... eg: H-to-D 1010101000"
+	fi
+}
+
 #### mount server
 function mount-server
 {
