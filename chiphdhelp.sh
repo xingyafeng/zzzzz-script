@@ -9,6 +9,7 @@ cat <<EOF
 	open terminal auto source
 
 	- lunch-chiphd          source android project and you select eagle dolphin.
+	- lunch-xw              cp customs folder to sdk.
 	- make-android          build android project.
 	- make-lichee           build android project.
 	- make-uboot            buold uboot and boot0
@@ -26,13 +27,18 @@ cat <<EOF
 	- change_mode           set usb mode  devices or host
 	- debug_mask            set net debug and ir debug
 	- mount-server          mount server boxbuilder and other
+	- H-to-D H-to-H
+	- B-to-D D-to-B
+	- setgitconfig 			set gitconfig list
 	- showfile:             e.g. showfile FileName 20 30   -- show the 20th to 30th lines of the "FileName" file.
 
 	------------------------
+
 	adb-tips, just show for copy to cmd windows:
 	adb reboot                                              -- reboot
-	adb install [apk]                                       -- install apk
-	adb pull /system/vendor/modules/                        -- pull .ko file
+	adb install -r [apk]                                    -- install apk
+	adb uninstall  [apk] 									-- uninstall apk
+	adb pull  /system/vendor/modules/                       -- pull .ko file
 	adb push  /system/vendor/modules                        -- push .ko file
 	adb push  /system/etc/permissions                       -- push permission file
 	adb push  /system/etc                                   -- push some cfg file
