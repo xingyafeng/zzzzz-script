@@ -18,11 +18,12 @@ devices_host=host
 ###adb common
 function adb-connect
 {
+	local ip_addr=$1
 	adb-kill-server
-	if [ -z $1 ];then
+	if [ -z $ip_addr ];then
 		adb connect 192.168.2.86
 	else
-		adb connect 192.168.2.$1
+		adb connect 192.168.$ip_addr
 	fi
 	sleep 1s
 	adb-remount
