@@ -127,7 +127,7 @@ function get_modify_file
 	fi
 
 	if [ $this_sdk_path == "android" ];then
-		android_modify_file_path=`repo status | awk '$1=="project" && NF > 2 {prj=$2} $1 !~ "d" && NF==2 && $2 !~ "preApk/system/app-lib" {printf "android/%s%s\n",prj,$2 }'`
+		android_modify_file_path=`repo status | awk '$1=="project" && NF > 2 {prj=$2} $1 !~ "d" && NF==2 && $2 !~ "preApk/system/app-lib" && $2 !~ "preApk" {printf "android/%s%s\n",prj,$2 }'`
 
 		if [ "$android_modify_file_path" ];then
 			get_android_and_lichee__modify_file "$android_modify_file_path" $this_sdk_path
@@ -297,20 +297,22 @@ function rsyncfs()
     fi
 
     if [ "$args" ];then
-	sync_pull_server
+		sync_pull_server
 
 	    show_vip "------------------------------------"
 		show_vip "-          rsync pull end          -"
 		show_vip "------------------------------------"
+
+		show_vig "local path : $da/yafeng/rsync-service/"
     else
 		sync_push_server
 
 		show_vip "------------------------------------"
 		show_vip "-          rsync push end          -"
 		show_vip "------------------------------------"
+
+		show_vig "server path : 0box_share/rsync-service/"
     fi
-
-
 }
 
 ### 同步本地内容
@@ -389,6 +391,28 @@ function B-to-D()
 		obase 10 2 $number
 	else
 		show_vir "please input args ... eg: H-to-D 1010101000"
+	fi
+}
+
+function get_week()
+{
+	local month_name=( [1]='Jan' [2]='Feb' [3]='Mar' [4]='Apr' [5]='May' [6]='Jun' [7]='Jul' [8]='Aug' [9]='Sep' [10]='Oct' [11]='Nov' [12]='Dec' )
+	local month=${month_name[$1]}
+	local date=$2
+	local year=$3
+
+	if [ "$month" -o "$date" -o "$year" ];then
+		date --date "$month $date $year" +%A
+	else
+		show_vir "eg : date --date month date year ..."
+	fi
+
+	if false;then
+		for m in ${month[@]}
+		do
+			#echo $m
+			date --date "$m 1 2015" +%A
+		done
 	fi
 }
 
@@ -471,9 +495,19 @@ function diyomate
 	ssh diyomate@192.168.1.11
 }
 
+function aw
+{
+	ssh allwinner@192.168.1.11
+}
+
 function mount_diyomate
 {
 	mount_project diyomate 11 123
+}
+
+function mount_aw
+{
+	mount_project allwinner 11 allwinner
 }
 
 diyomate_path=/mnt/diyomate
