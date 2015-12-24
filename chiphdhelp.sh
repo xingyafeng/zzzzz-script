@@ -37,7 +37,7 @@ cat <<EOF
 	adb-tips, just show for copy to cmd windows:
 	adb reboot                                              -- reboot
 	adb install -r [apk]                                    -- install apk
-	adb uninstall  [apk] 									-- uninstall apk
+	adb uninstall  [apk]                                    -- uninstall apk
 	adb pull  /system/vendor/modules/                       -- pull .ko file
 	adb push  /system/vendor/modules                        -- push .ko file
 	adb push  /system/etc/permissions                       -- push permission file
