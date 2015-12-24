@@ -131,8 +131,10 @@ make-project()
 	cpu_num=`cat /proc/cpuinfo  | egrep 'processor' | wc -l`
 	if make installclean;then
 		show_vip "--> installclean end."
+		echo
 		if extract-bsp;then
 			show_vip "--> bsp end."
+			echo
 			if make -j${cpu_num};then
 				show_vip "--> make project end."
 				if [ "$1" = "-p" ];then
@@ -142,6 +144,7 @@ make-project()
 				else		
 					if pack;then
 						show_vip "--> pack finish."
+						echo
 						if [ "$1" = "-t" ];then
 							make-target
 						elif [ "$1" = "-i" ];then
