@@ -159,6 +159,38 @@ function get_package_name()
 
 	if [ "$apk_name" ];then
 		aapt dump badging $apk_name | grep name= | sed 's%.*name=%%'  | sed 's% .*%%'
+	else
+		show_vir "eg: get_package_name + apk_name"
+	fi
+}
+
+function get_apk_info()
+{
+	local apk_name=$1
+
+	if [ "$apk_name" ];then
+		aapt dump badging $apk_name
+	else
+		show_vir "eg: get_package_name + apk_name"
+	fi
+}
+
+function checkout_apk_4()
+{
+	local apk_name_before=$1
+	local apk_name_after=${apk_name_before%.*}_after.apk
+
+	#echo $apk_name_after
+
+	if [ "$apk_name_before" -a "$apk_name_after" ]; then
+
+		### 带参数 -v 显示内容
+		if zipalign 4 $apk_name_before $apk_name_after;then
+			zipalign -c -v 4 $apk_name_after | grep Verification
+			show_vir ' $apk_name_after'
+		fi
+	else
+		show_vir "eg:  checkout_apk_4 + apk ..."
 	fi
 }
 
