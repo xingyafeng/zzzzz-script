@@ -328,22 +328,24 @@ function rsyncfs()
         return
     fi
 
+	if [ "$args" ];then
+		show_vig "local path : $da/yafeng/rsync-service/"
+	else
+		show_vig "server path : 0box_share/rsync-service/"
+    fi
+
     if [ "$args" ];then
 		sync_pull_server
 
 	    show_vip "------------------------------------"
 		show_vip "-          rsync pull end          -"
-		show_vip "------------------------------------"
-
-		show_vig "local path : $da/yafeng/rsync-service/"
+		show_vip "------------------------------------"	
     else
 		sync_push_server
 
 		show_vip "------------------------------------"
 		show_vip "-          rsync push end          -"
 		show_vip "------------------------------------"
-
-		show_vig "server path : 0box_share/rsync-service/"
     fi
 }
 
