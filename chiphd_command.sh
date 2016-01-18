@@ -16,8 +16,8 @@ test44=test
 swork_path=$ps/swork
 script_path=$ps/zzzzz-script
 
-sbox_path=$mh/box
-sworkspace_path=$mh/workspace
+sbox_path=$abox/box
+sworkspace_path=$abox/workspace
 qin2_path=$sbox_path/qin244-h38
 yunos_path=$sbox_path/yunos2.1.4
 yafeng_path=$td/../yafeng
@@ -29,7 +29,7 @@ dolphin_path=$ps/dolphin44-h3
 rsync_path=$yafeng_path/rsync-service
 
 ### common use c
-scode_path=/c/code/
+scode_path=$code
 yunos2_1_2_path=$scode_path/yunos2.1.2
 yunos2_2_0_path=$scode_path/yunos2.2.0
 qin2_sdk_path=$scode_path/q2442g_v1.0_d

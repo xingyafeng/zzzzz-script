@@ -64,6 +64,30 @@ function change_ps
 	fi
 }
 
+function setvimconfig
+{
+	vim_path=~/.vim
+	vimrc_path=~/.vimrc
+
+	vim_flag=$1
+
+	if [ -L $vim_path ]; then
+		rm $vim_path
+	fi
+
+	if [ -L $vimrc_path ];then
+		rm $vimrc_path
+	fi
+
+	if [ "$vim_flag" == "default" ];then
+		ln -s ~/.vim.${vim_flag} $vim_path
+		ln -s ~/.vimrc.${vim_flag} $vimrc_path
+	elif [ "$vim_flag" == "vim" ];then
+		ln -s /a/0ps/chiphd/install/vim $vim_path
+		ln -s /a/0ps/vim/vimrc $vimrc_path
+	fi
+}
+
 function setgitconfig
 {
 	local your_name=$1
