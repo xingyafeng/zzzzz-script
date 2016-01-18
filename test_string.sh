@@ -11,3 +11,10 @@ test-string()
 }
 
 
+test-reboot()
+{
+	###
+	echo reboot
+}
+
+
