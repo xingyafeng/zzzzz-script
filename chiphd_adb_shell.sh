@@ -87,36 +87,30 @@ function adb-chmod
     adb shell sync
 }
 
-function is_system_app()
+function push_system_app()
 {
-	local ret=$1	
-	local system_app=`echo $devices_tvdsettings $devices_launcher $devices_browser`
-	if [ ! "$ret" ];then
-		return
-	fi
-
-	if [ "$system_app" == "$ret" ];then
-		echo true		
+	local ret=$1
+	
+	if [[ "$ret" ]]; then
+		#statements
+   		adb push system/app/$ret system/app
 	else
-		echo false		
+		show_vir agrs is null!
 	fi
 }
 
-function is_priv_app()
+function push_priv_app()
 {
-	local ret=$1	
-	local priv_app=`echo $devices_systemui`
-
-	if [ ! "$ret" ];then
-		return
-	fi
-
-	if [ "$priv_app" == "$ret" ];then
-		echo true		
+	local ret=$1
+	
+	if [[ "$ret" ]]; then
+		#statements
+   		adb push system/priv-app/$ret system/priv-app
 	else
-		echo false		
+		show_vir agrs is null!
 	fi
 }
+
 
 function adb-push-app()
 {
@@ -127,31 +121,29 @@ function adb-push-app()
 	fi
 
 	local ret=$1
+	
     if adb-remount;then
-		if [ "`is_priv_app $ret`" == "true" ];then
-			show_vip  "--- push priv-app"	
-			adb push system/priv-app/$ret system/priv-app
-		elif [ "`is_system_app $ret`" == "true" ];then
-			show_vip  "--- push system app"	
-        	adb push system/app/$ret system/app
-		fi	
 
 		if [ $? -eq 0 ];then
 			case $ret in 
 			$devices_tvdsettings)
-				sleep 3s
+				push_system_app $ret
+				sleep 2s
 				adb shell am start -n com.android.settings/com.android.settings.Settings
 			;;
 
             $devices_browser)
-				sleep 3s
+				push_system_app $ret
+				sleep 2s
 				adb shell am start -n com.android.browser/com.android.browser.BrowserActivity
 			;;
 
 			$devices_systemui)
+				push_priv_app $ret
 				adb-reboot
 			;;
 			$devices_launcher)
+				push_priv_app $ret
 				adb-reboot
 			;;
 			esac
