@@ -31,6 +31,7 @@ code=/c/code
 ####
 script_path=/a/0ps/zzzzz-script
 
+#### define PS1 env color
 export pwd_black='\[\e[30m\]'
 export pwd_red='\[\e[31m\]'
 export pwd_green='\[\e[32m\]'
