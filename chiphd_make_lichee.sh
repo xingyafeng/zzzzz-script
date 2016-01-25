@@ -14,7 +14,7 @@ function make-lichee
 {
 #	local thisPath=$(pwd) && thisPath=${thisPath%/*} && thisPath=${thisPath##*/}
 	local lichee_name=lichee
-	if [ -z $thisPath ];then
+	if [ ! -z $thisPath ];then
 		show_ui $lichee_name $thisPath
 	else
 		show_vir  "thisPath is null!	"
@@ -40,6 +40,7 @@ function make-lichee
 		fi
 	fi
 
+if false;then
 	if [ -e eagle -a -e dolphin ];then
 		cd linux-3.4
 		make clean
@@ -50,12 +51,12 @@ function make-lichee
 
 		show_vir "--> clean end ..."
 	fi
-
+fi
 	case $thisPath in
 
     $eagle44)
 		if [ -d out ];then
-			./build.sh	
+			./build.sh lunch 0
 		else
 			show_vir "please select: sun8iw6p1-android"	
 			echo "------------------------------------"
@@ -65,7 +66,7 @@ function make-lichee
 
 	$dolphin44)
 		if [ -d out ];then
-			./build.sh
+			./build.sh lunch 2
 		else
 			show_vir "please select: sun8iw7p1-android"	
 			echo "------------------------------------"
@@ -98,13 +99,7 @@ function make-uboot
 		show_vir "请按照下面提示输入对应的编译平台: dolphin 和 eagle" 
 		show_vir "-----------------------------------------------"
 		echo -n "Please follow the tips below input " && show_vig dolphin or eagle
-		read -p "Enter dolphin or eagle :" pro_name
-
-		### 创建标志文件
-		if [ ! -e $pro_name ];then
-			touch $pro_name
-			show_vir "--------------------------------touch $pro_name"
-		fi
+		read -p "Enter dolphin or eagle :" pro_name		
 
 		if [ "$pro_name" == "dolphin" ];then
 			thisPath=$dolphin44

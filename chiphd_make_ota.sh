@@ -54,7 +54,7 @@ function make-update
 }
 
 ### make uboot, lichee, android
-function make-all
+function make-sdk
 {
 	local android_path=$(pwd)
 	local lichee_path=$android_path/../lichee
