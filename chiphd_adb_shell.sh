@@ -150,7 +150,7 @@ function adb-push-app()
 		fi	
     fi
 
-	cd $old_path
+	cd $old_path > /dev/null
 }
 
 adb-pull-app()
@@ -169,11 +169,16 @@ adb-pull-app()
 adb-push-framework()
 {
 	local jar_file=$1
+	local old_path=`pwd`
 
 	if [ ! "$jar_file" ];then
 		return	
 	fi
-	
+    
+    if [ "$DEVICE" ];then
+		cout
+	fi
+
 	if adb-remount;then
 		adb push system/framework/$jar_file system/framework
 		if [ $? -eq 0 ];then
@@ -181,6 +186,7 @@ adb-push-framework()
 			adb-reboot
 		fi
 	fi
+	cd $old_path > /dev/null
 }
 
 adb-pull-framework()
