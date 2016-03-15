@@ -29,6 +29,24 @@ function adb-connect
 	adb-remount
 }
 
+function adb-get-package-name
+{
+	local ip_addr=$1
+	local package_name=
+
+	if [[ ""$ip_addr"" ]]; then
+		adb-connect $ip_addr
+
+		package_name=`adb shell dumpsys activity | grep -i resumed | awk '{print $4}'`
+		#show_vir $package_name
+		package_name=${package_name%%/*}
+		adb pull data/system/packages.xml $td
+		cat $td/packages.xml | grep "codePath=" | grep $package_name
+	else
+		show_vir "eg: adb-get-package-name + ip"
+	fi
+}
+
 function debug-mask
 {
 	local ip_addr=$1
