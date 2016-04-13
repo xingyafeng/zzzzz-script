@@ -11,6 +11,22 @@ function DEBUG()
 	[ "$_DEBUG" == "on" ] && $@ || :
 }
 
+function loginjs()
+{
+	local jenkins_war_path=$workspace/tools/jenkins.war
+	local portN=
+
+	if [[ -f $jenkins_war_path ]]; then
+		#statements		
+		if [[ $portN ]]; then
+			#statements   portN  != null
+			java -jar $jenkins_war_path --httpPort=$portN
+		else			
+			java -jar $jenkins_war_path --httpPort=8089
+		fi
+	fi
+}
+
 function change_ssh
 {
 	local ssh_path=~/.ssh
@@ -105,6 +121,7 @@ function setgitconfig
 	git config --global  alias.ci commit
 	git config --global  alias.date iso
 	git config --global  core.editor vim
+	git config --global  core.ui auto
 	git config --global alias.lg "log --date=short --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %C(green)%s %C(reset)(%cd) %C(bold blue)<%an>%Creset' --abbrev-commit"
 }
 
@@ -528,49 +545,13 @@ function mount_project
 }
 
 ### login ssh server 
-function box
+function jenkins
 {
-	ssh boxbuilder@192.168.1.23
+	ssh jenkins@s3.y
 }
 
-function gittt
+function gitttt
 {
-	ssh git@192.168.1.20
+	ssh git@src1.spt-tek.com
 }
 
-function droid05
-{
-	ssh droid05@192.168.1.23
-}
-
-function hbc
-{
-	ssh hbc@192.168.1.20
-}
-
-function diyomate
-{
-	ssh diyomate@192.168.1.11
-}
-
-function aw
-{
-	ssh allwinner@192.168.1.11
-}
-
-function mount_diyomate
-{
-	mount_project diyomate 11 123
-}
-
-function mount_aw
-{
-	mount_project allwinner 11 allwinner
-}
-
-diyomate_path=/mnt/diyomate
-
-function cdiyomate
-{
-	cd $diyomate_path
-}
