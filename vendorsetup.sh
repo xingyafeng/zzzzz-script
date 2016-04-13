@@ -9,7 +9,6 @@
 
 #!/bin/bash
 
-#CHIPHD_ANDROID_SCRIPT_PATH=device/softwinner/zzzzz-script
-CHIPHD_ANDROID_SCRIPT_PATH=$ps/zzzzz-script
-THIS_SCRIPT_VERSION=v1.1
+CHIPHD_ANDROID_SCRIPT_PATH=$workspace/script/zzzzz-script
+THIS_SCRIPT_VERSION=v1.2
 source $CHIPHD_ANDROID_SCRIPT_PATH/chiphd_setup.sh
