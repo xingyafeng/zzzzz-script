@@ -7,29 +7,13 @@
 #
 ######################################
 
-
 #!/bin/bash
 
 ####################################################### commond
-### a
-abox=/a
-unset ps
-unset pr
-unset da
 
-ps=$abox/0ps
-pr=$abox/3pr
-da=$abox/5da
-
-### b
-bbox=/b
-
-### c
-cbox=/c
-code=/c/code
-
-####
-script_path=/a/0ps/zzzzz-script
+###commond
+workspace=~/workspace
+script_path=$workspace/script/zzzzz-script
 
 #### define PS1 env color
 export pwd_black='\[\e[30m\]'
@@ -43,6 +27,7 @@ export pwd_white='\[\e[37m\]'
 export pwd_default='\[\e[0m\]'
 export pwd_bold='\[\e[1m\]'
 
+da=$workspace/date
 time_date=`date +%m%d`
 td=$da/$time_date
 
@@ -51,7 +36,17 @@ if [ -d $script_path ];then
 fi
 
 if [ ! -e "$da/$time_date" ];then
-	mkdir $da/$time_date
+	mkdir -p $da/$time_date
 fi
+
 unset PS1
 export PS1="\[\e[35m\]\[\e[1m\]\w $ \[\e[0m\]"
+
+if false;then
+	mount_share_path=`mount | grep share_workspace | cut -d ' ' -f 3`
+	mount_share_path=${mount_share_path##*/}
+
+	if [[ "$mount_share_path" != "share_workspace" ]]; then
+		sudo mount -t vboxsf ubuntu /home/yafeng/share_workspace	
+	fi
+fi
