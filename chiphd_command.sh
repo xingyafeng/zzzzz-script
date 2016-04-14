@@ -4,6 +4,7 @@
 ### project name
 
 sdate=$td
+sz_yunovo=/home/yafeng/yunovo
 
 ### args
 pro_name=
@@ -24,6 +25,11 @@ function bcompare()
 	cd $OLD_PWD > /dev/null
 }
 
+function cyunovo()
+{
+	cd $sz_yunovo
+}
+
 function cworkspace
 {
 	cd $workspace
@@ -38,8 +44,6 @@ function cdate
 {
 	cd $sdate
 }
-
-
 
 function crsync
 {
