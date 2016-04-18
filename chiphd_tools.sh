@@ -235,6 +235,46 @@ function checkout_apk_4()
 	fi
 }
 
+#### checkout默认配置文件
+function chiphd_recover_project()
+{
+	local tDir=$1
+	if [ ! "$tDir" ]; then
+		tDir=.
+	fi
+	if [ -d $tDir/.git ]; then
+		local OldPWD=$(pwd)
+		cd $tDir && echo "---- recover $tDir"
+
+		git reset HEAD . ###recovery for cached files
+
+		thisFiles=`git clean -dn`
+		if [ "$thisFiles" ]; then
+			git clean -df
+		fi
+
+#		thisFiles=`git diff --cached --name-only`
+#		if [ "$thisFiles" ]; then
+#			git checkout HEAD $thisFiles
+#		fi
+
+		thisFiles=`git diff --name-only`
+		if [ "$thisFiles" ]; then
+			git checkout HEAD $thisFiles
+		fi
+		cd $OldPWD
+	fi
+}
+
+#### 获取所以git库路径,在android目录下调用
+function chiphd_get_repo_git_path_from_xml()
+{
+	local default_xml=.repo/manifest.xml
+	if [ -f $default_xml ]; then
+		grep '<project' $default_xml | sed 's%.*path="%%' | sed 's%".*%%'
+	fi
+}
+
 #### 恢复默认配置文件 android
 function recover_standard_android_project()
 {
@@ -285,7 +325,7 @@ function recover_sdk()
     if [ "`is_make_project`" == "true" ];then
         recover_standard_android_project
         show_vir "-------------------------------------------------------------------------------------"
-	    recover_standard_lichee_project
+	    #recover_standard_lichee_project
     fi
 }
 
