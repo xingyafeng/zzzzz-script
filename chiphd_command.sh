@@ -2,9 +2,12 @@
 
 ####################################################### define
 ### project name
+eastaeon51=eastaeon5.1-mt6735m
 
 sdate=$td
-sz_yunovo=/home/yafeng/yunovo
+
+yunovo_root=~/yunovocode
+sz_eastaeon=$yunovo_root/$eastaeon51/android
 
 ### args
 pro_name=
@@ -25,9 +28,14 @@ function bcompare()
 	cd $OLD_PWD > /dev/null
 }
 
+function ceastaeon()
+{
+	cd $sz_eastaeon
+}
+
 function cyunovo()
 {
-	cd $sz_yunovo
+	cd $yunovo_root
 }
 
 function cworkspace
