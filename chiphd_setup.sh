@@ -11,3 +11,4 @@ source $CHIPHD_ANDROID_SCRIPT_PATH/chiphd_alias.sh
 source $CHIPHD_ANDROID_SCRIPT_PATH/chiphdhelp.sh
 source $CHIPHD_ANDROID_SCRIPT_PATH/chiphd_test_shell.sh
 source $CHIPHD_ANDROID_SCRIPT_PATH/test_string.sh
+source $CHIPHD_ANDROID_SCRIPT_PATH/clone_project.sh
