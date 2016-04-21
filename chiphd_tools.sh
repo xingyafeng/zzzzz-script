@@ -17,11 +17,11 @@ function loginjs()
 	local portN=
 
 	if [[ -f $jenkins_war_path ]]; then
-		#statements		
+		#statements
 		if [[ $portN ]]; then
 			#statements   portN  != null
 			java -jar $jenkins_war_path --httpPort=$portN
-		else			
+		else
 			java -jar $jenkins_war_path --httpPort=8089
 		fi
 	fi
@@ -35,7 +35,7 @@ function change_ssh
 	if [ -L $ssh_path ];then
 		rm $ssh_path
 	fi
-	
+
 	if [ $project_name = "aw" ];then
 		ln -s ~/ssh_${project_name} $ssh_path
 	elif [ $1 = "yfk" ];then
@@ -52,7 +52,7 @@ function change_repo
 {
 	local repo_path=$pr/repo
 	local project_name=$1
-	
+
 	if [ -L $repo_path/repo ]; then
 		rm $repo_path/repo
 	fi
@@ -114,7 +114,7 @@ function setgitconfig
 		git config --global  user.name yafeng
 	fi
 
-	git config --global  user.email box@chiphd.com
+	git config --global  user.email xingyf@yunovo.cn
 	git config --global  alias.st status
 	git config --global  alias.br branch
 	git config --global  alias.co checkout
@@ -332,9 +332,9 @@ function recover_sdk()
 ### open file
 openfs()
 {
-    local file_path=$1    
+    local file_path=$1
 
-	if [ $# -eq 0 ];then		
+	if [ $# -eq 0 ];then
 		nautilus . &
 	else
         if [ "$file_path" ];then
@@ -343,7 +343,7 @@ openfs()
 	fi
 
 	if [ "file_path" == "--help" ];then
-		show_vip "----------help---------------"	
+		show_vip "----------help---------------"
 	fi
 }
 
@@ -420,7 +420,7 @@ function rsyncfs()
 
 	    show_vip "------------------------------------"
 		show_vip "-          rsync pull end          -"
-		show_vip "------------------------------------"	
+		show_vip "------------------------------------"
     else
 		sync_push_server
 
@@ -566,32 +566,26 @@ function mount_project
 	local server_name=$1
 	local server_no=$2
 	local server_key=$3
-	
+
 	if [ $# -lt 3 ];then
 		show_vir "please input three arsg."
 		show_vir "eg : mount_project droid05 23 123456"
 		show_vir "please eg: mount_project  服务器名称 + 服务器地址 + 密码"
 		return 1;
 	fi
-	
+
 	if [ ! -d /mnt/$server_name ];then
 		sudo mkdir /mnt/$server_name
 		if [ $? -eq 0 ];then
 			sudo mount -t cifs -o username=$server_name,password=$server_key,rw,uid=abc,gid=abc //192.168.1.$server_no/$server_name /mnt/$server_name
-		fi	
+		fi
 	else
 		sudo mount -t cifs -o username=$server_name,password=$server_key,rw,uid=abc,gid=abc //192.168.1.$server_no/$server_name /mnt/$server_name
 	fi
 }
 
-### login ssh server 
+### login ssh server
 function jenkins
 {
 	ssh jenkins@s3.y
 }
-
-function gitttt
-{
-	ssh git@src1.spt-tek.com
-}
-
