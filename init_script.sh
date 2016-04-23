@@ -40,7 +40,7 @@ if [ ! -e "$da/$time_date" ];then
 fi
 
 unset PS1
-export PS1="\[\e[35m\]\[\e[1m\]\w $ \[\e[0m\]"
+export PS1="$pwd_purple$pwd_bold\w $pwd_green$pwd_bold\u@\h $pwd_purple$pwd_bold$ $pwd_default"
 
 if false;then
 	mount_share_path=`mount | grep share_workspace | cut -d ' ' -f 3`
