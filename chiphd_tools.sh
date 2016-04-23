@@ -132,7 +132,7 @@ function setgitconfig
 	git config --global  alias.ci commit
 	git config --global  alias.date iso
 	git config --global  core.editor vim
-	git config --global  core.ui auto
+	git config --global  color.ui true
 #	git config --global  push.default simple
 	git config --global alias.lg "log --date=short --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %C(green)%s %C(reset)(%cd) %C(bold blue)<%an>%Creset' --abbrev-commit"
 }
