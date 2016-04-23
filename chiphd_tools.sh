@@ -27,6 +27,17 @@ function loginjs()
 	fi
 }
 
+function startMtk()
+{
+    local mtk_flash_tools=/home/yafeng/workspace/tools/Mtk_Tools/SP_Flash_Tool
+
+    if [ -x $mtk_flash_tools/flash_tool ];then
+        $mtk_flash_tools/flash_tool &
+    else
+        show_vir "$mtk_flash_tools is not exist !!!"
+    fi
+}
+
 function change_ssh
 {
 	local ssh_path=~/.ssh
@@ -585,7 +596,17 @@ function mount_project
 }
 
 ### login ssh server
-function jenkins
+function jenkins3
 {
 	ssh jenkins@s3.y
+}
+
+function jenkins4
+{
+	ssh jenkins@s4.y
+}
+
+function yunovo
+{
+	ssh yunovo@s4.y
 }
