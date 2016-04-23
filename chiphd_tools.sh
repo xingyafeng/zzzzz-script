@@ -27,12 +27,13 @@ function loginjs()
 	fi
 }
 
-function startMtk()
+function flash-chip()
 {
     local mtk_flash_tools=/home/yafeng/workspace/tools/Mtk_Tools/SP_Flash_Tool
 
     if [ -x $mtk_flash_tools/flash_tool ];then
-        $mtk_flash_tools/flash_tool &
+        cd $mtk_flash_tools > /dev/null
+        ./flash_tool &
     else
         show_vir "$mtk_flash_tools is not exist !!!"
     fi
