@@ -29,11 +29,12 @@ branch_nane=develop
 lunch_project=full_${build_device}-${build_type}
 project_link="init -u git@src1.spt-tek.com:projects/manifest.git"
 system_version=$custom_name\_$hw_versiom\_$build_version\_$projeck_name\_$second_version
+fota_version="SPT_VERSION_NO=${system_version}"
 
 ### clone system app
 commond_app=(FactoryTest CarEngine CarHomeBtn CarSystemUpdateAssistant CarPlatform GaodeMap KwPlayer UniSoundService)
 k86a_app=(CarUpdateDFU CarBack CarRecord GaodeNavigation GpsTester BaiduNavigation AnAnEDog)
-k86l_app=(CarUpdateDFU CarBack CarRecordDouble CarRecordUsb StormVideo GaodeNavigation XianzhiDSA)
+k86l_app=(CarUpdateDFU CarBack CarRecordDouble CarRecordUsb StormVideo GaodeNavigation XianzhiDSA CarConfig FileCopyManager)
 k86s_app=(CarUpdateDFU CarRecordDouble CarRecordUsb GpsTester BaiduNavigation AnAnEDog StormVideo)
 k26a_app=(CarRecord GpsTester BaiduNavigation)
 k26s_app=(CarRecordDouble CarRecordUsb GpsTester BaiduNavigation StormVideo)
@@ -68,8 +69,8 @@ function cpimage()
 	echo "prj_name = $prj_name"
 
     ### k86m_H520/S1
-	local BASE_PATH=/home/work5/public/k86A_Test/${prj_name}/${ver_name}
-
+	#local BASE_PATH=/home/work5/public/k86A_Test/${prj_name}/${ver_name}
+	local BASE_PATH=/home/jenkins/firmware/${prj_name}/${ver_name}
 	local DEST_PATH=$BASE_PATH/$system_version
 	local OTA_PATH=$BASE_PATH/${system_version}_full_and_ota
 
@@ -149,13 +150,13 @@ function clone_app()
 
 	echo "project_name = $projeck_name"
 
-	if [ $projeck_name == "k86A" -o $projeck_name == "k86m" -o $projeck_name == "k86sm" ];then
+	if [ $projeck_name == "k86a" -o $projeck_name == "k86m" -o $projeck_name == "k86sm" ];then
 		k86a_app+=("${commond_app[@]}")
 		allapp+=("${k86a_app[@]}")
 	elif [ $projeck_name == "k86l" ];then
 		k86l_app+=("${commond_app[@]}")
 		allapp+=("${k86l_app[@]}")
-		default_branch="master origin/long"
+		default_branch="long origin/long"
 	elif [ $projeck_name == "k86s" ];then
 		k86s_app+=("${commond_app[@]}")
 		allapp+=("${k86s_app[@]}")
@@ -201,15 +202,31 @@ function clone_app()
 ## download sdk
 function download_sdk()
 {
+
+    local defalut=
+
+    if [ $projeck_name == "k86a" -o $projeck_name == "k86m" ];then
+        defalut=k86A
+    elif [ $projeck_name == "k86s" -o $projeck_name == "k86sm" ] ;then
+        defalut=k86s
+    elif [ $projeck_name == "k86l" -o $projeck_name == "k86s6" -o $projeck_name == "k86s7" ];then
+        defalut=k86s_400x1280
+    elif [ $projeck_name == "k88" ];then
+        defalut=k88
+    elif [ $projeck_name == "k26a" -o $projeck_name == "k26b" ];then
+        defalut=k26
+    fi
+
+    echo "defalut = $defalut"
 	if [ ! -d $gettop/.repo ];then
 		#repo init -u git@src1.spt-tek.com:projects/manifest.git -m k86A.xml
-		repo $project_link -m ${projeck_name}.xml
+		repo $project_link -m ${defalut}.xml
 		repo sync -j${cpu_num}
 		ls -alF
-		repo start $branch_nane --all
+		repo start $defalut --all
 	else
 		repo forall -c git fetch && echo "-----------------git fetch ok"
-		#repo forall -c git pull && echo "-----------------git pull ok"
+		repo forall -c git pull && echo "-----------------git pull ok"
 		echo "--> sdk update ..."
 		echo
 	fi
@@ -232,17 +249,29 @@ if true;then
 	if make installclean;then
 		echo "--> make installclean end ..."
 		echo
+    else
+        echo "---> make installclean failed !"
 	fi
 
 	if [ -n "$(find . -maxdepth 1 -name "build*.log" -print0)" ];then
 		delete_log
 	fi
 
-	make -j${cpu_num} 2>&1 | tee build_$cur_time.log
-	echo "--> make project end ..."
+	make -j${cpu_num} ${fota_version} 2>&1 | tee build_$cur_time.log
+	if [ $? -eq 0 ];then
+        echo "--> make project end ..."
+    else
+        echo "make android failed !"
+        exit 1
+    fi
 
-	make -j${cpu_num} otapackage 2>&1 | tee build_$cur_time.log
-	echo "--> make otapackage end ..."
+#	make -j${cpu_num} otapackage 2>&1 | tee build_ota_$cur_time.log
+    if [ $? -eq 0 ];then
+        echo "--> make otapackage end ..."
+    else
+        echo "make otapackage failed !"
+        exit 1
+    fi
 fi
 	echo
 }
