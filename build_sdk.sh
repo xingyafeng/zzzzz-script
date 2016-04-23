@@ -19,6 +19,8 @@ build_type=$4
 custom_name=$5
 ### 01 02 ... 09 10 ...
 second_version=$6
+### fota flag
+fota_flag=$7
 
 ################################# common variate
 gettop=`pwd`
@@ -113,8 +115,10 @@ function cpimage()
 	cp -vf ${OUT}/obj/CGEN/APDB_MT*W15* ${DEST_PATH}/database/ap
 	cp -vf ${OUT}/system/etc/mddb/BPLGUInfoCustomAppSrcP* ${DEST_PATH}/database/moden
 
-	cp -v ${OUT}/full_${build_device}-ota*.zip ${OTA_PATH}
-	cp -v ${OUT}/obj/PACKAGING/target_files_intermediates/full_${build_device}-target_files*.zip ${OTA_PATH}
+    if [ $fota_flag -eq 1 ];then
+        cp -v ${OUT}/full_${build_device}-ota*.zip ${OTA_PATH}
+        cp -v ${OUT}/obj/PACKAGING/target_files_intermediates/full_${build_device}-target_files*.zip ${OTA_PATH}
+    fi
 
     echo "cpimage finish ..."
 }
@@ -136,6 +140,7 @@ function print_variable()
 	echo "\$4 = $4"
 	echo "\$5 = $5"
 	echo "\$6 = $6"
+	echo "\$7 = $7"
 	echo "\$# = $#"
 }
 
@@ -225,8 +230,8 @@ function download_sdk()
 		ls -alF
 		repo start $defalut --all
 	else
-		repo forall -c git fetch && echo "-----------------git fetch ok"
-		repo forall -c git pull && echo "-----------------git pull ok"
+		repo forall -c git fetch && echo "-----------------git fetch ok" && echo
+		repo forall -c git pull  && echo "-----------------git pull ok"  && echo
 		echo "--> sdk update ..."
 		echo
 	fi
@@ -265,20 +270,25 @@ if true;then
         exit 1
     fi
 
-#	make -j${cpu_num} otapackage 2>&1 | tee build_ota_$cur_time.log
-    if [ $? -eq 0 ];then
-        echo "--> make otapackage end ..."
-    else
-        echo "make otapackage failed !"
-        exit 1
+    if [ $fota_flag -eq 1 ];then
+        make -j${cpu_num} otapackage 2>&1 | tee build_ota_$cur_time.log
+
+        if [ $? -eq 0 ];then
+            echo "--> make otapackage end ..."
+        else
+            echo "make otapackage failed !"
+            echo
+            exit 1
+        fi
+
     fi
+
 fi
-	echo
 }
 
 function main()
 {
-	print_variable $projeck_name $build_version $build_device $build_type $custom_name $second_version
+	print_variable $projeck_name $build_version $build_device $build_type $custom_name $second_version $fota_flag
 	download_sdk
 	clone_app
 	make-sdk
