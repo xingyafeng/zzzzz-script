@@ -19,8 +19,16 @@ build_type=$4
 custom_name=$5
 ### 01 02 ... 09 10 ...
 second_version=$6
-### fota flag
-fota_flag=$7
+### build sdk flag, e.g. : ota.print.download.clone.make.cp
+build_skd_flag=$7
+
+### flag for main
+flag_fota=`echo $build_skd_flag | cut -d '.' -f1`
+flag_print=`echo $build_skd_flag | cut -d '.' -f2`
+flag_download_sdk=`echo $build_skd_flag | cut -d '.' -f3`
+flag_clone_app=`echo $build_skd_flag | cut -d '.' -f4`
+flag_make_sdk=`echo $build_skd_flag | cut -d '.' -f5`
+flag_cpimage=`echo $build_skd_flag | cut -d '.' -f6`
 
 ################################# common variate
 gettop=`pwd`
@@ -115,7 +123,7 @@ function cpimage()
 	cp -vf ${OUT}/obj/CGEN/APDB_MT*W15* ${DEST_PATH}/database/ap
 	cp -vf ${OUT}/system/etc/mddb/BPLGUInfoCustomAppSrcP* ${DEST_PATH}/database/moden
 
-    if [ $fota_flag -eq 1 ];then
+    if [ $flag_fota -eq 1 ];then
         cp -v ${OUT}/full_${build_device}-ota*.zip ${OTA_PATH}
         cp -v ${OUT}/obj/PACKAGING/target_files_intermediates/full_${build_device}-target_files*.zip ${OTA_PATH}
     fi
@@ -132,6 +140,13 @@ function print_variable()
 	echo "build_version = $build_version"
 	echo "build_device = $build_device"
 	echo "build_type = $build_type"
+	echo '-----------------------------------------'
+    echo "flag_fota = $flag_fota"
+    echo "flag_print = $flag_print"
+    echo "flag_download_sdk = $flag_download_sdk"
+    echo "flag_clone_app = $flag_clone_app"
+    echo "flag_make_sdk = $flag_make_sdk"
+    echo "flag_cpimage = $flag_cpimage"
 	echo '-----------------------------------------'
 	echo "lunch_project = $lunch_project"
 	echo "\$1 = $1"
@@ -270,7 +285,7 @@ if true;then
         exit 1
     fi
 
-    if [ $fota_flag -eq 1 ];then
+    if [ $flag_fota -eq 1 ];then
         make -j${cpu_num} otapackage 2>&1 | tee build_ota_$cur_time.log
 
         if [ $? -eq 0 ];then
@@ -288,11 +303,35 @@ fi
 
 function main()
 {
-	print_variable $projeck_name $build_version $build_device $build_type $custom_name $second_version $fota_flag
-	download_sdk
-	clone_app
-	make-sdk
-	cpimage
+    if [ $flag_print -eq 1 ];then
+	    print_variable $projeck_name $build_version $build_device $build_type $custom_name $second_version $build_skd_flag
+    else
+        echo "do not anythings output !"
+    fi
+
+    if [ $flag_download_sdk -eq 1 ];then
+        download_sdk
+    else
+        echo "do not download_sdk !"
+    fi
+
+    if [ $flag_clone_app -eq 1 ];then
+	    clone_app
+    else
+        echo "do not clone app !"
+    fi
+
+    if [ $flag_make_sdk -eq 1 ];then
+	    make-sdk
+    else
+        echo "do not make sdk !"
+    fi
+
+    if [ $flag_cpimage -eq 1 ];then
+	    cpimage
+    else
+        echo "do not cp image !"
+    fi
 }
 
 main
