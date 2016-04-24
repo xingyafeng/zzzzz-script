@@ -2,7 +2,7 @@
 ###
 ###				tools functions
 ###
-###	
+###
 ### date 	: 2013-12-05 19:55
 ### author  : yafeng
 ###
@@ -23,7 +23,7 @@ function show_vir
 	fi
 }
 
-### color green 
+### color green
 function show_vig
 {
 	if [ "$1" ]
@@ -36,7 +36,7 @@ function show_vig
 	fi
 }
 
-### color yellow 
+### color yellow
 function show_viy
 {
 	if [ "$1" ]
@@ -49,7 +49,7 @@ function show_viy
 	fi
 }
 
-### color purple 
+### color purple
 function show_vip
 {
 	if [ "$1" ]
@@ -62,7 +62,7 @@ function show_vip
 	fi
 }
 
-### color dark green 
+### color dark green
 function show_vid
 {
 	if [ "$1" ]
@@ -84,7 +84,7 @@ function __msg
 
 function csoftwinner
 {
-	local T	
+	local T
 	T=$(gettop)
 
 	if [ "$T" ];then

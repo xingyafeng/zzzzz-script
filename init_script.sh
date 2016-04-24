@@ -40,13 +40,13 @@ if [ ! -e "$da/$time_date" ];then
 fi
 
 unset PS1
-export PS1="$pwd_purple$pwd_bold\w $pwd_green$pwd_bold\u@\h $pwd_purple$pwd_bold$ $pwd_default"
+export PS1="$pwd_green$pwd_bold\u@\h$pwd_purple$pwd_bold $pwd_purple$pwd_bold\w $ $pwd_default"
 
 if false;then
 	mount_share_path=`mount | grep share_workspace | cut -d ' ' -f 3`
 	mount_share_path=${mount_share_path##*/}
 
 	if [[ "$mount_share_path" != "share_workspace" ]]; then
-		sudo mount -t vboxsf ubuntu /home/yafeng/share_workspace	
+		sudo mount -t vboxsf ubuntu /home/yafeng/share_workspace
 	fi
 fi
