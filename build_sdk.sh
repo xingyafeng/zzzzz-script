@@ -7,22 +7,31 @@ export CLASSPATH=.:$CLASSPATH:$JAVA_HOME/lib:$JRE_HOME/lib
 export PATH=${JAVA_HOME}/bin:$JRE_HOME/bin:$PATH
 
 ################################## args
-## k26 k86 k86A k86m k88
-projeck_name=$1
-## system version
+
+
+### build project name  e.g. : K86_H520
+build_prj_name=$1
+## system version  e.g. : S1.01
 build_version=$2
 ### build custom
 build_device=$3
 ### eng|user|userdebug
 build_type=$4
-### custom name H520
-custom_name=$5
-### 01 02 ... 09 10 ...
-second_version=$6
 ### build sdk flag, e.g. : ota.print.download.clone.make.cp
-build_skd_flag=$7
+build_skd_flag=$5
 
-### flag for main
+## project name for system k26 k86 k86A k86m k88
+projeck_name=${build_prj_name%_*}
+### custom name H520 ZX etc
+custom_name=${build_prj_name##*_}
+
+### version for system
+# S1 S2 ...
+first_version=${build_version%.*}
+#01 02 .. 08 09 ..
+second_version=${build_version##*.}
+
+### flag for main (0 or 1)
 flag_fota=`echo $build_skd_flag | cut -d '.' -f1`
 flag_print=`echo $build_skd_flag | cut -d '.' -f2`
 flag_download_sdk=`echo $build_skd_flag | cut -d '.' -f3`
@@ -38,7 +47,7 @@ hw_versiom=H3.1
 branch_nane=develop
 lunch_project=full_${build_device}-${build_type}
 project_link="init -u git@src1.spt-tek.com:projects/manifest.git"
-system_version=$custom_name\_$hw_versiom\_$build_version\_$projeck_name\_$second_version
+system_version=$custom_name\_$hw_versiom\_$first_version\_$projeck_name\_$second_version
 fota_version="SPT_VERSION_NO=${system_version}"
 
 ### clone system app
@@ -75,7 +84,7 @@ function cpimage()
 {
 	### k86A_H520
 	local prj_name=$projeck_name\_$custom_name
-	local ver_name=${build_version}.${second_version}
+	local ver_name=${first_version}.${second_version}
 	echo "prj_name = $prj_name"
 
     ### k86m_H520/S1
@@ -141,8 +150,14 @@ function print_variable()
 {
 	echo "cpu_num = $cpu_num"
 	echo '-----------------------------------------'
-	echo "project_name = $projeck_name"
+	echo "build_prj_name = $build_prj_name"
+    echo "project_name = $projeck_name"
+    echo "custom_name = $custom_name"
+	echo '-----------------------------------------'
 	echo "build_version = $build_version"
+    echo "first_version = $first_version"
+    echo "second_version = $second_version"
+	echo '-----------------------------------------'
 	echo "build_device = $build_device"
 	echo "build_type = $build_type"
 	echo '-----------------------------------------'
@@ -159,8 +174,6 @@ function print_variable()
 	echo "\$3 = $3"
 	echo "\$4 = $4"
 	echo "\$5 = $5"
-	echo "\$6 = $6"
-	echo "\$7 = $7"
 	echo "\$# = $#"
 }
 
@@ -309,7 +322,7 @@ fi
 function main()
 {
     if [ $flag_print -eq 1 ];then
-	    print_variable $projeck_name $build_version $build_device $build_type $custom_name $second_version $build_skd_flag
+	    print_variable $build_prj_name $build_version $build_device $build_type $build_skd_flag
     else
         echo "do not anythings output !"
     fi
