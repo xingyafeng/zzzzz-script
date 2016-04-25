@@ -123,12 +123,17 @@ function cpimage()
 	cp -vf ${OUT}/obj/CGEN/APDB_MT*W15* ${DEST_PATH}/database/ap
 	cp -vf ${OUT}/system/etc/mddb/BPLGUInfoCustomAppSrcP* ${DEST_PATH}/database/moden
 
+    echo "---> cp image end ..."
+    echo
     if [ $flag_fota -eq 1 ];then
         cp -v ${OUT}/full_${build_device}-ota*.zip ${OTA_PATH}
         cp -v ${OUT}/obj/PACKAGING/target_files_intermediates/full_${build_device}-target_files*.zip ${OTA_PATH}
+        echo "cp ota end ..."
+        echo
     fi
 
     echo "cpimage finish ..."
+    echo
 }
 
 ## print variable
