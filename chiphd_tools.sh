@@ -13,16 +13,16 @@ function DEBUG()
 
 function loginjs()
 {
-	local jenkins_war_path=$workspace/tools/jenkins.war
+	local jenkins_war_path=/home/work5/jenkins/jenkins.war
 	local portN=
 
 	if [[ -f $jenkins_war_path ]]; then
 		#statements
 		if [[ $portN ]]; then
 			#statements   portN  != null
-			java -jar $jenkins_war_path --httpPort=$portN
+			java -jar $jenkins_war_path --httpPort=$portN --daemon
 		else
-			java -jar $jenkins_war_path --httpPort=8089
+			java -jar $jenkins_war_path --httpPort=8089 --daemon
 		fi
 	fi
 }
