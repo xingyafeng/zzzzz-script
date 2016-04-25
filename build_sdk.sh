@@ -89,13 +89,20 @@ function cpimage()
 
     ### k86m_H520/S1
 	#local BASE_PATH=/home/work5/public/k86A_Test/${prj_name}/${ver_name}
-	local BASE_PATH=/home/jenkins/firmware/${prj_name}/${ver_name}
+    local firmware_path=~/firmware
+	local BASE_PATH=$firmware_path/${prj_name}/${ver_name}
 	local DEST_PATH=$BASE_PATH/$system_version
 	local OTA_PATH=$BASE_PATH/${system_version}_full_and_ota
 
 	echo "BASE_PATH = $BASE_PATH"
 	echo "DEST_PATH = $DEST_PATH"
 	echo "OTA_PATH = $OTA_PATH"
+
+    if [ ! -d $firmware_path ];then
+        mkdir -p $firmware_path
+    else
+        echo "---> create $firmware_path ..."
+    fi
 
 	if [ ! -d $DEST_PATH ];then
 		mkdir -p $DEST_PATH
