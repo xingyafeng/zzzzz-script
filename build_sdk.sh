@@ -311,7 +311,7 @@ if true;then
     fi
 
     if [ $flag_fota -eq 1 ];then
-        make -j${cpu_num} otapackage 2>&1 | tee build_ota_$cur_time.log
+        make -j${cpu_num} ${fota_version} otapackage 2>&1 | tee build_ota_$cur_time.log
 
         if [ $? -eq 0 ];then
             echo "--> make otapackage end ..."
