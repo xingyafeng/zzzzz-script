@@ -181,7 +181,7 @@ function get_modify_file
 	fi
 
 	if [ $this_sdk_path == "android" ];then
-		android_modify_file_path=`repo status | awk '$1=="project" && NF > 2 {prj=$2} $1 !~ "d" && NF==2 && $2 !~ "apps/" && $2 !~ "preApk" {printf "android/%s%s\n",prj,$2 }'`
+		android_modify_file_path=`repo status | awk '$1=="project" && NF > 2 {prj=$2} $1 !~ "d" && NF==2 && $2 !~ "apps/*" && $2 !~ "preApk" {printf "android/%s%s\n",prj,$2 }'`
 
 		if [ "$android_modify_file_path" ];then
 			get_android_and_lichee__modify_file "$android_modify_file_path" $this_sdk_path
