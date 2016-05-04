@@ -21,9 +21,12 @@ build_type=$4
 build_skd_flag=$5
 
 ## project name for system k26 k86 k86A k86m k88
-projeck_name=${build_prj_name%_*}
-### custom name H520 ZX etc
-custom_name=${build_prj_name##*_}
+projeck_name=${build_prj_name%%_*}
+### custom name newman qichen etc
+custom_name=${build_prj_name%_*} && custom_name=${custom_name##*_}
+### custom version H520 ZX etc
+custom_version=${build_prj_name##*_}
+
 
 ### version for system
 # S1 S2 ...
@@ -48,8 +51,9 @@ hw_versiom=H3.1
 branch_nane=develop
 lunch_project=full_${build_device}-${build_type}
 project_link="init -u git@src1.spt-tek.com:projects/manifest.git"
-system_version=$custom_name\_$hw_versiom\_$first_version\_$projeck_name\_$second_version
+system_version=$custom_version\_$hw_versiom\_$first_version\_$projeck_name\_$second_version
 fota_version="SPT_VERSION_NO=${system_version}"
+prefect_name="$projeck_name/$custom_name/$custom_version"
 
 ### clone system app
 commond_app=(FactoryTest CarEngine CarHomeBtn CarSystemUpdateAssistant CarPlatform GaodeMap KwPlayer UniSoundService)
@@ -163,7 +167,7 @@ function delete_log()
 function cpimage()
 {
 	### k86A_H520
-	local prj_name=$projeck_name\_$custom_name
+	local prj_name=$projeck_name\_$custom_version
 	local ver_name=${first_version}.${second_version}
 	echo "prj_name = $prj_name"
 
@@ -240,6 +244,8 @@ function print_variable()
 	echo "build_prj_name = $build_prj_name"
     echo "project_name = $projeck_name"
     echo "custom_name = $custom_name"
+    echo "custom_version = $custom_version"
+    echo "prefect_name = $prefect_name"
 	echo '-----------------------------------------'
 	echo "build_version = $build_version"
     echo "first_version = $first_version"
@@ -268,7 +274,7 @@ function print_variable()
 #### 复制差异化文件
 function cpcustoms()
 {
-    local select_project="k86l/newman/zx"
+    local select_project=$prefect_name
 	local thisSDKTop=$(gettop)
 	local ConfigsPath=${thisSDKTop}/../yunovo_customs
 
