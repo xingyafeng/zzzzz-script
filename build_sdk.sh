@@ -38,6 +38,7 @@ flag_download_sdk=`echo $build_skd_flag | cut -d '.' -f3`
 flag_clone_app=`echo $build_skd_flag | cut -d '.' -f4`
 flag_make_sdk=`echo $build_skd_flag | cut -d '.' -f5`
 flag_cpimage=`echo $build_skd_flag | cut -d '.' -f6`
+flag_cpcustom=`echo $build_skd_flag | cut -d '.' -f7`
 
 ################################# common variate
 gettop=`pwd`
@@ -71,6 +72,85 @@ function show_vip
 		done
 		echo
 	fi
+}
+
+#### touch all file
+function update_all_type_file_time_stamp()
+{
+	local tttDir=$1
+	if [ -d "$tttDir" ]; then
+		find $tttDir -name "*" | xargs touch -c
+		find $tttDir -name "*.*" | xargs touch -c
+		echo "    TimeStamp $tttDir"
+	fi
+}
+
+#### 获取所以git库路径,在android目录下调用
+function chiphd_get_repo_git_path_from_xml()
+{
+	local default_xml=.repo/manifest.xml
+	if [ -f $default_xml ]; then
+		grep '<project' $default_xml | sed 's%.*path="%%' | sed 's%".*%%'
+	fi
+}
+
+#### checkout默认配置文件
+function chiphd_recover_project()
+{
+	local tDir=$1
+	if [ ! "$tDir" ]; then
+		tDir=.
+	fi
+	if [ -d $tDir/.git ]; then
+		local OldPWD=$(pwd)
+		cd $tDir && echo "---- recover $tDir"
+
+		git reset HEAD . ###recovery for cached files
+
+		thisFiles=`git clean -dn`
+		if [ "$thisFiles" ]; then
+			git clean -df
+		fi
+
+#		thisFiles=`git diff --cached --name-only`
+#		if [ "$thisFiles" ]; then
+#			git checkout HEAD $thisFiles
+#		fi
+
+		thisFiles=`git diff --name-only`
+		if [ "$thisFiles" ]; then
+			git checkout HEAD $thisFiles
+		fi
+		cd $OldPWD
+	fi
+}
+
+#### 恢复默认配置文件
+function chiphd_recover_standard_device_cfg()
+{
+	local tDir=$1
+	if [ "$tDir" -a -d $tDir ]; then
+		#echo $tDir
+		:
+	else
+		return 0
+	fi
+	local tOldPwd=$OLDPWD
+	local tNowPwd=$PWD
+    cd $(gettop)
+
+	#echo "now get all project from repo..."
+	local AllRepoProj=`chiphd_get_repo_git_path_from_xml`
+	if [ "$AllRepoProj" ]; then
+		for ProjPath in $AllRepoProj
+		do
+			if [ -d "${tDir}/$ProjPath" ]; then
+				chiphd_recover_project $ProjPath
+			fi
+		done
+	fi
+	cd $tOldPwd
+	cd $tNowPwd
 }
 
 ## rm build_xxx.log
@@ -174,6 +254,7 @@ function print_variable()
     echo "flag_clone_app = $flag_clone_app"
     echo "flag_make_sdk = $flag_make_sdk"
     echo "flag_cpimage = $flag_cpimage"
+    echo "flag_cpcustom = $flag_cpcustom"
 	echo '-----------------------------------------'
 	echo "lunch_project = $lunch_project"
 	echo "\$1 = $1"
@@ -184,6 +265,76 @@ function print_variable()
 	echo "\$# = $#"
 }
 
+#### 复制差异化文件
+function cpcustoms()
+{
+    local select_project="k86a/newman/zx"
+	local thisSDKTop=$(gettop)
+	local ConfigsPath=${thisSDKTop}/../yunovo_customs
+
+	if [ -d "$ConfigsPath" ]; then
+		ConfigsPath=$(cd $ConfigsPath && pwd)
+	else
+		echo "no path : $ConfigsPath"
+		return 1
+	fi
+
+	local ConfigsFName=proj_help.sh
+	local ProductSetTop=${ConfigsPath}/custom
+
+    ##遍历所有客户方案配置
+	local ProductSetShort=`find $ProductSetTop -name $ConfigsFName | awk -F/ '{print $(NF-3) "/" $(NF-2) "/" $(NF-1)}' | sort`
+    local MySEL=
+
+    for custom_project in $ProductSetShort
+    do
+        if [ "$select_project"  == $custom_project ];then
+            MySEL=$custom_project
+        fi
+    done
+	local ProductSelPath="$ProductSetTop/$MySEL"
+
+#    echo "ProductSelPath = $ProductSelPath"
+	if [ -d "$ProductSelPath" -a ! "$ProductSelPath" = "$ProductSetTop/" ]; then
+
+	    if [ -f ${ConfigsPath}/NowCustom.sh ]; then
+			OldProductSelPath=$(sed -n '1p' ${ConfigsPath}/NowCustom.sh)
+			OldProductSelPath=${OldProductSelPath%/*}
+			OldProductSelDirAndroid=${OldProductSelPath}/android
+		fi
+		## 新项目
+		echo "${ProductSelPath}/$ConfigsFName" > ${ConfigsPath}/NowCustom.sh
+
+		#### 更新时间戳并拷贝到配置根目录
+		ProjectSelDirAndroid=$ProductSelPath/android
+
+		#echo "OldProductSelDirAndroid = $OldProductSelDirAndroid"
+		#echo "ProjectSelDirAndroid = $ProjectSelDirAndroid"
+
+        if [ -d $ProjectSelDirAndroid ]; then
+			local tOldPwd=$OLDPWD
+			local tNowPwd=$PWD
+
+			local thisProjDelFileSh=$thisSDKTop/chiphd_delete.sh
+			if [ -f "$thisProjDelFileSh" ]; then rm $thisProjDelFileSh; fi
+
+            ## 清除旧项目的修改
+			echo "clean by $OldProductSelDirAndroid" && chiphd_recover_standard_device_cfg $OldProductSelDirAndroid
+
+			## 确保新项目的修改纯净
+			echo "clean by $ProjectSelDirAndroid" && chiphd_recover_standard_device_cfg $ProjectSelDirAndroid
+
+			## 新项目代码拷贝
+			update_all_type_file_time_stamp $ProjectSelDirAndroid
+			echo "copy source code : $ProjectSelDirAndroid/*  " && cp -r $ProjectSelDirAndroid/*  $thisSDKTop/ && echo "copy android custom done"
+
+			cd $tOldPwd
+			cd $tNowPwd
+		else
+			echo "no config : $ProjectSelDir"
+		fi
+	fi
+}
 
 function clone_app()
 {
@@ -344,6 +495,12 @@ function main()
 	    clone_app
     else
         echo "do not clone app !"
+    fi
+
+    if [ $flag_cpcustom -eq 1 ];then
+        cpcustoms
+    else
+        echo "do not cp customs"
     fi
 
     if [ $flag_make_sdk -eq 1 ];then
