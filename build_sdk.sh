@@ -268,7 +268,7 @@ function print_variable()
 #### 复制差异化文件
 function cpcustoms()
 {
-    local select_project="k86a/newman/zx"
+    local select_project="k86l/newman/zx"
 	local thisSDKTop=$(gettop)
 	local ConfigsPath=${thisSDKTop}/../yunovo_customs
 
@@ -498,6 +498,14 @@ function main()
     fi
 
     if [ $flag_cpcustom -eq 1 ];then
+        source  build/envsetup.sh
+	    echo "--> source end ..."
+	    echo
+
+	    lunch $lunch_project
+	    echo "--> lunch end ..."
+	    echo
+
         cpcustoms
     else
         echo "do not cp customs"
