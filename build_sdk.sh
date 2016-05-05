@@ -57,7 +57,7 @@ hw_versiom=H3.1
 branch_nane=develop
 lunch_project=full_${build_device}-${build_type}
 project_link="init -u git@src1.spt-tek.com:projects/manifest.git"
-system_version=$custom_version\_$hw_versiom\_$first_version\_$projeck_name\_$second_version
+system_version=$custom_version\_$hw_versiom\_${first_version}.${projeck_name}.${second_version}
 fota_version="SPT_VERSION_NO=${system_version}"
 prefect_name="$file_project/$file_name/$file_version"
 
