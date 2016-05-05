@@ -19,14 +19,20 @@ build_device=$3
 build_type=$4
 ### build sdk flag, e.g. : ota.print.download.clone.make.cp
 build_skd_flag=$5
+### eg: k86l_yunovo_zx
+build_file=$6
 
 ## project name for system k26 k86 k86A k86m k88
 projeck_name=${build_prj_name%%_*}
-### custom name newman qichen etc
-custom_name=${build_prj_name%_*} && custom_name=${custom_name##*_}
 ### custom version H520 ZX etc
 custom_version=${build_prj_name##*_}
 
+### project name k26 k86
+file_project=${build_file%%_*}
+### custom name yunovo newman qichen etc
+file_name=${build_file%_*} && file_name=${file_name##*_}
+### zx etc
+file_version=${build_file##*_}
 
 ### version for system
 # S1 S2 ...
@@ -53,7 +59,7 @@ lunch_project=full_${build_device}-${build_type}
 project_link="init -u git@src1.spt-tek.com:projects/manifest.git"
 system_version=$custom_version\_$hw_versiom\_$first_version\_$projeck_name\_$second_version
 fota_version="SPT_VERSION_NO=${system_version}"
-prefect_name="$projeck_name/$custom_name/$custom_version"
+prefect_name="$file_project/$file_name/$file_version"
 
 ### clone system app
 commond_app=(FactoryTest CarEngine CarHomeBtn CarSystemUpdateAssistant CarPlatform GaodeMap KwPlayer UniSoundService)
@@ -243,9 +249,12 @@ function print_variable()
 	echo '-----------------------------------------'
 	echo "build_prj_name = $build_prj_name"
     echo "project_name = $projeck_name"
-    echo "custom_name = $custom_name"
     echo "custom_version = $custom_version"
+	echo '-----------------------------------------'
     echo "prefect_name = $prefect_name"
+    echo "file_project = $file_project"
+    echo "file_project = $file_name"
+    echo "file_version = $file_version"
 	echo '-----------------------------------------'
 	echo "build_version = $build_version"
     echo "first_version = $first_version"
@@ -268,6 +277,7 @@ function print_variable()
 	echo "\$3 = $3"
 	echo "\$4 = $4"
 	echo "\$5 = $5"
+	echo "\$6 = $6"
 	echo "\$# = $#"
 }
 
@@ -486,7 +496,7 @@ fi
 function main()
 {
     if [ $flag_print -eq 1 ];then
-	    print_variable $build_prj_name $build_version $build_device $build_type $build_skd_flag
+	    print_variable $build_prj_name $build_version $build_device $build_type $build_skd_flag $build_file
     else
         echo "do not anythings output !"
     fi
