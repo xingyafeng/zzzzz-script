@@ -419,14 +419,14 @@ function download_sdk()
 
     if [ $projeck_name == "k86a" -o $projeck_name == "k86m" ];then
         defalut=k86A
-    elif [ $projeck_name == "k86s" -o $projeck_name == "k86sm" ] ;then
+    elif [ $projeck_name == "k86s" -o $projeck_name == "k86sm" -o $projeck_name == "k86sa" ] ;then
         defalut=k86s
     elif [ $projeck_name == "k86l" -o $projeck_name == "k86s6" -o $projeck_name == "k86s7" ];then
         defalut=k86s_400x1280
     elif [ $projeck_name == "k88" ];then
         defalut=k88
     elif [ $projeck_name == "k26a" -o $projeck_name == "k26b" ];then
-        defalut=k26
+        defalut=K26
     fi
 
     echo "defalut = $defalut"
