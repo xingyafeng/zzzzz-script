@@ -232,8 +232,8 @@ function cpimage()
     echo "---> cp image end ..."
     echo
     if [ $flag_fota -eq 1 ];then
-        cp -v ${OUT}/full_${build_device}-ota*.zip ${OTA_PATH}
-        cp -v ${OUT}/obj/PACKAGING/target_files_intermediates/full_${build_device}-target_files*.zip ${OTA_PATH}
+        cp -v ${OUT}/full_${build_device}-ota*.zip ${OTA_PATH}/sdupdate.zip
+        cp -v ${OUT}/obj/PACKAGING/target_files_intermediates/full_${build_device}-target_files*.zip ${OTA_PATH}/${system_version}.zip
         echo "cp ota end ..."
         echo
     fi
