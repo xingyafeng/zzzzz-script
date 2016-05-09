@@ -598,6 +598,11 @@ function mount_project
 }
 
 ### login ssh server
+function jenkins1
+{
+	ssh jenkins@s1.y
+}
+
 function jenkins2
 {
 	ssh jenkins@s2.y
