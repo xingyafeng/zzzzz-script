@@ -51,7 +51,15 @@ cat <<EOF
 	adb shell getevent                                      -- get event
 	adb shell sendevent [device] [type] [code] [value]      -- send event
 	adb shell am start -n [packageName/className] -a [action] -d [data] -m [MIME-TYPE] -c [category] -e [ext-data]
-	
+
+    -----------------------
+    yunovo server status
+
+    s1.y    s2.y    s3.y    s4.y
+
+    k26     k86a    k86s    k86l
+
+    ----------------------
 	e.g. am start -n com.android.settings/com.android.settings.Settings     ---- open setting.apk
 	     am start -a android.intent.action.VIEW -d http://www.sohu.com      ---- open http://www.sohu.com
 
