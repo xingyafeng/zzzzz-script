@@ -369,7 +369,7 @@ function clone_app()
 		k86l_app+=("${commond_app[@]}")
 		allapp+=("${k86l_app[@]}")
 		default_branch="long origin/long"
-	elif [ $projeck_name == "k86s" ];then
+	elif [ $projeck_name == "k86s" -o $projeck_name == "k86sa" ];then
 		k86s_app+=("${commond_app[@]}")
 		allapp+=("${k86s_app[@]}")
 	elif [ $projeck_name == "k26a" ];then
