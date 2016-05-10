@@ -302,6 +302,7 @@ function cpcustoms()
 	local ProductSetShort=`find $ProductSetTop -name $ConfigsFName | awk -F/ '{print $(NF-3) "/" $(NF-2) "/" $(NF-1)}' | sort`
     local MySEL=
 
+    #echo "ProductSetShort = $ProductSetShort"
     for custom_project in $ProductSetShort
     do
         if [ "$select_project"  == $custom_project ];then
@@ -310,7 +311,8 @@ function cpcustoms()
     done
 	local ProductSelPath="$ProductSetTop/$MySEL"
 
-#    echo "ProductSelPath = $ProductSelPath"
+    #echo "ProductSelPath = $ProductSelPath"
+    #echo "MySEL = $MySEL"
 	if [ -d "$ProductSelPath" -a ! "$ProductSelPath" = "$ProductSetTop/" ]; then
 
 	    if [ -f ${ConfigsPath}/NowCustom.sh ]; then
