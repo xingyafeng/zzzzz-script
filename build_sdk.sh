@@ -364,14 +364,14 @@ function clone_app()
 
 	echo "project_name = $projeck_name"
 
-	if [ $projeck_name == "k86a" -o $projeck_name == "k86m" -o $projeck_name == "k86sm" ];then
+	if [ $projeck_name == "k86a" -o $projeck_name == "k86m" -o $projeck_name == "k86sm" -o $projeck_name == "k86sa" ];then
 		k86a_app+=("${commond_app[@]}")
 		allapp+=("${k86a_app[@]}")
-	elif [ $projeck_name == "k86l" ];then
+	elif [ $projeck_name == "k86l" -o $projeck_name == "k86s6" -o $projeck_name == "k86s7" ];then
 		k86l_app+=("${commond_app[@]}")
 		allapp+=("${k86l_app[@]}")
 		default_branch="long origin/long"
-	elif [ $projeck_name == "k86s" -o $projeck_name == "k86sa" ];then
+	elif [ $projeck_name == "k86s" -o $projeck_name == "k86sa1" ];then
 		k86s_app+=("${commond_app[@]}")
 		allapp+=("${k86s_app[@]}")
 	elif [ $projeck_name == "k26a" ];then
