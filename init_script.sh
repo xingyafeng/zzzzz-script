@@ -42,6 +42,11 @@ fi
 unset PS1
 export PS1="$pwd_green$pwd_bold\u@\h$pwd_purple$pwd_bold $pwd_purple$pwd_bold\w $ $pwd_default"
 
+hostname_jenkins=`hostname`
+if [ $hostname_jenkins == "s1" -o $hostname_jenkins == "s2" -o $hostname_jenkins == "s3" -o $hostname_jenkins == "s4" ];then
+    update-chiphd-script
+fi
+
 if false;then
 	mount_share_path=`mount | grep share_workspace | cut -d ' ' -f 3`
 	mount_share_path=${mount_share_path##*/}
