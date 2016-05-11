@@ -2,10 +2,7 @@
 ############################################################
 # show help
 function update-chiphd-script() {
-	local ooldPwd=$(cd -)
 	local nowPwd=$(pwd)
-
-	#local mytop=$(gettop)
 	local scriptDir=~/workspace/script/zzzzz-script
 
 	if [ -d ${scriptDir}/.git ]; then
@@ -21,9 +18,7 @@ if false;then
 		git clone $ScriptUpdatePath
 fi
     fi
-	echo "source again, please"
-
-	cd $ooldPwd && cd $nowPwd
+	cd $nowPwd
 }
 #############################################################
 ## end for this script file
