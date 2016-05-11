@@ -495,6 +495,27 @@ if true;then
 fi
 }
 
+function sync_jenkins_server()
+{
+    local firmware_path=~/firmware
+    local share_path=~/workspace/share
+    local jenkins_server=jenkins@s4.y
+    local server_name=`hostname`
+
+    if [ $server_name == "s1" -o $server_name == "s2" -o $server_name == "s3" ];then
+        rsync -av $firmware_path $jenkins_server:$share_path
+
+        echo
+        echo "--> sync end ..."
+        echo
+    elif [ $server_name == "s4" ];then
+        cp $firmware_path $share_path -rvf
+        echo
+        echo "---> cp s4.y end ..."
+        echo
+    fi
+}
+
 function main()
 {
     if [ $flag_print -eq 1 ];then
@@ -536,7 +557,9 @@ function main()
     fi
 
     if [ $flag_cpimage -eq 1 ];then
-	    cpimage
+	    if cpimage;then
+            sync_jenkins_server
+        fi
     else
         echo "do not cp image !"
     fi
