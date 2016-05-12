@@ -360,6 +360,23 @@ openfs()
 	fi
 }
 
+function cpfs()
+{
+    local sz_file=$1
+    local sz_hostname=$2
+    local sz_base_path=`echo $td | awk -F '/' '{ printf "%s/%s/%s\n", $4, $5, $6 }'`
+    local sz_server_path=/home/jenkins/$sz_base_path
+
+    #echo "sz_base_path = $sz_base_path"
+    #echo "sz_server_path = $sz_server_path"
+
+    if [ $sz_hostname == "s1" -o $sz_hostname == "s2" -o $sz_hostname == "s3" -o $sz_hostname == "s4" ];then
+        scp -r jenkins@${sz_hostname}.y:$sz_server_path/$sz_file .
+    else
+        echo "checkout your server at s1.y s2.y s3.y s4.y ..."
+    fi
+}
+
 ### find and grep
 gfind()
 {
@@ -372,7 +389,7 @@ gfind()
 	fi
 }
 
-grepfs() 
+grepfs()
 {
     local files=$1
 
