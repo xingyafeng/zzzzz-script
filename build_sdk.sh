@@ -508,11 +508,6 @@ function sync_jenkins_server()
         echo
         echo "--> sync end ..."
         echo
-    elif [ $server_name == "s4" ];then
-        cp $firmware_path $share_path -rvf
-        echo
-        echo "---> cp s4.y end ..."
-        echo
     fi
 }
 
