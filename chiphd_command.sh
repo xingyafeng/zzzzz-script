@@ -11,6 +11,11 @@ sz_eastaeon=$yunovo_root/$eastaeon51/android
 jenkins_path=/home/work5/jenkins
 share_path=~/workspace/share_jenkins
 
+s1_path=~/jobs/k26/android
+s2_path=~/jobs/k86s/android
+s3_path=~/jobs/k86a/android
+s4_path=~/jobs/k86l/android
+
 ### args
 pro_name=
 pro_type=
@@ -68,4 +73,24 @@ function cdate
 function crsync
 {
 	cd $rsync_path
+}
+
+function cs1.y()
+{
+    cd $s1_path
+}
+
+function cs2.y()
+{
+    cd $s2_path
+}
+
+function cs3.y()
+{
+    cd $s3_path
+}
+
+function cs4.y()
+{
+    cd $s4_path
 }
