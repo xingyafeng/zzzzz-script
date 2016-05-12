@@ -179,13 +179,13 @@ function cpimage()
 
     ### k86m_H520/S1
 	#local BASE_PATH=/home/work5/public/k86A_Test/${prj_name}/${ver_name}
-    local firmware_path=~/firmware
+    local firmware_path=~/debug
 	local BASE_PATH=$firmware_path/${prj_name}/${ver_name}
 	local DEST_PATH=$BASE_PATH/$system_version
 	local OTA_PATH=$BASE_PATH/${system_version}_full_and_ota
 
     local server_name=`hostname`
-    local firmware_path_server=~/workspace/share/firmware
+    local firmware_path_server=~/workspace/share/debug
     local BASE_PATH_SERVER=$firmware_path_server/$prj_name/$ver_name
     local DEST_PATH_SERVER=$BASE_PATH_SERVER/$system_version
     local OTA_PATH_SERVER=$BASE_PATH_SERVER/${system_version}_full_and_ota
@@ -561,7 +561,7 @@ fi
 
 function sync_jenkins_server()
 {
-    local firmware_path=~/firmware
+    local firmware_path=~/debug
     local share_path=~/workspace/share
     local jenkins_server=jenkins@s4.y
     local server_name=`hostname`
