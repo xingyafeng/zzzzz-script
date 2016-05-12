@@ -184,61 +184,125 @@ function cpimage()
 	local DEST_PATH=$BASE_PATH/$system_version
 	local OTA_PATH=$BASE_PATH/${system_version}_full_and_ota
 
+    local server_name=`hostname`
+    local firmware_path_server=~/workspace/share/firmware
+    local BASE_PATH_SERVER=$firmware_path_server/$prj_name/$ver_name
+    local DEST_PATH_SERVER=$BASE_PATH_SERVER/$system_version
+    local OTA_PATH_SERVER=$BASE_PATH_SERVER/${system_version}_full_and_ota
+
+    echo "-------------------------local base"
 	echo "BASE_PATH = $BASE_PATH"
 	echo "DEST_PATH = $DEST_PATH"
 	echo "OTA_PATH = $OTA_PATH"
+    echo "-------------------------server base"
+    echo "BASE_PATH_SERVER = $BASE_PATH_SERVER"
+    echo "DEST_PATH_SERVER = $DEST_PATH_SERVER"
+    echo "OTA_PATH_SERVER = $OTA_PATH_SERVER"
+    echo "---------------------------------end"
 
-    if [ ! -d $firmware_path ];then
-        mkdir -p $firmware_path
-    else
-        echo "---> create $firmware_path ..."
-    fi
+    if [ $server_name == "s1" -o $server_name == "s2" -o $server_name == "s3" ];then
+        if [ ! -d $firmware_path ];then
+            mkdir -p $firmware_path
+        else
+            echo "---> create $firmware_path ..."
+        fi
 
-	if [ ! -d $DEST_PATH ];then
-		mkdir -p $DEST_PATH
+	    if [ ! -d $DEST_PATH ];then
+		    mkdir -p $DEST_PATH
 
-		if [ ! -d ${DEST_PATH}/database/ ];then
-			mkdir -p ${DEST_PATH}/database/ap
-			mkdir -p ${DEST_PATH}/database/moden
-		else
-			echo "---> created /database/ap or /database/moden ..."
-		fi
-	else
-		echo "---> created $DEST_PATH"
-	fi
+		    if [ ! -d ${DEST_PATH}/database/ ];then
+			    mkdir -p ${DEST_PATH}/database/ap
+			    mkdir -p ${DEST_PATH}/database/moden
+		    else
+			    echo "---> created /database/ap or /database/moden ..."
+		    fi
+	    else
+		    echo "---> created $DEST_PATH"
+	    fi
 
-	if [ ! -d $OTA_PATH ];then
-		mkdir -p $OTA_PATH
-	else
-		echo "---> created $OTA_PATH "
-	fi
+	    if [ ! -d $OTA_PATH ];then
+		    mkdir -p $OTA_PATH
+	    else
+		    echo "---> created $OTA_PATH "
+	    fi
 
-	cp -vf ${OUT}/MT*.txt ${DEST_PATH}
-	cp -vf ${OUT}/preloader_${build_device}.bin ${DEST_PATH}
-	cp -vf ${OUT}/lk.bin ${DEST_PATH}
-	cp -vf ${OUT}/boot.img ${DEST_PATH}
-	cp -vf ${OUT}/recovery.img ${DEST_PATH}
-	cp -vf ${OUT}/secro.img ${DEST_PATH}
-	cp -vf ${OUT}/logo.bin ${DEST_PATH}
-	cp -vf ${OUT}/trustzone.bin ${DEST_PATH}
-	cp -vf ${OUT}/trustzone.bin ${DEST_PATH}
-	cp -vf ${OUT}/system.img ${DEST_PATH}
-	cp -vf ${OUT}/cache.img ${DEST_PATH}
-	cp -vf ${OUT}/userdata.img ${DEST_PATH}
+	    cp -vf ${OUT}/MT*.txt ${DEST_PATH}
+	    cp -vf ${OUT}/preloader_${build_device}.bin ${DEST_PATH}
+	    cp -vf ${OUT}/lk.bin ${DEST_PATH}
+	    cp -vf ${OUT}/boot.img ${DEST_PATH}
+	    cp -vf ${OUT}/recovery.img ${DEST_PATH}
+	    cp -vf ${OUT}/secro.img ${DEST_PATH}
+	    cp -vf ${OUT}/logo.bin ${DEST_PATH}
+	    cp -vf ${OUT}/trustzone.bin ${DEST_PATH}
+	    cp -vf ${OUT}/trustzone.bin ${DEST_PATH}
+	    cp -vf ${OUT}/system.img ${DEST_PATH}
+	    cp -vf ${OUT}/cache.img ${DEST_PATH}
+	    cp -vf ${OUT}/userdata.img ${DEST_PATH}
 
-	cp -vf ${OUT}/obj/CGEN/APDB_MT*W15* ${DEST_PATH}/database/ap
-	cp -vf ${OUT}/system/etc/mddb/BPLGUInfoCustomAppSrcP* ${DEST_PATH}/database/moden
+	    cp -vf ${OUT}/obj/CGEN/APDB_MT*W15* ${DEST_PATH}/database/ap
+	    cp -vf ${OUT}/system/etc/mddb/BPLGUInfoCustomAppSrcP* ${DEST_PATH}/database/moden
 
-    echo "---> cp image end ..."
-    echo
-    if [ $flag_fota -eq 1 ];then
-        cp -v ${OUT}/full_${build_device}-ota*.zip ${OTA_PATH}/sdupdate.zip
-        cp -v ${OUT}/obj/PACKAGING/target_files_intermediates/full_${build_device}-target_files*.zip ${OTA_PATH}/${system_version}.zip
-        echo "cp ota end ..."
+        echo "---> cp image end ..."
         echo
+        if [ $flag_fota -eq 1 ];then
+            cp -v ${OUT}/full_${build_device}-ota*.zip ${OTA_PATH}/sdupdate.zip
+            cp -v ${OUT}/obj/PACKAGING/target_files_intermediates/full_${build_device}-target_files*.zip ${OTA_PATH}/${system_version}.zip
+            echo "cp ota end ..."
+            echo
+        fi
+    elif [ $server_name == "s4" ];then
+        if [ ! -d $firmware_path_server ];then
+            mkdir -p $firmware_path_server
+        else
+            echo "---> create $firmware_path_server ... in $server_name"
+        fi
+
+	    if [ ! -d $DEST_PATH_SERVER ];then
+		    mkdir -p $DEST_PATH_SERVER
+
+		    if [ ! -d ${DEST_PATH_SERVER}/database/ ];then
+			    mkdir -p ${DEST_PATH_SERVER}/database/ap
+			    mkdir -p ${DEST_PATH_SERVER}/database/moden
+		    else
+			    echo "---> created /database/ap or /database/moden ... in $server_name"
+		    fi
+	    else
+		    echo "---> created $DEST_PATH_SERVER in $server_name"
+	    fi
+
+	    if [ ! -d $OTA_PATH_SERVER ];then
+		    mkdir -p $OTA_PATH_SERVER
+	    else
+		    echo "---> created $OTA_PATH_SERVER in $server_name"
+	    fi
+
+	    cp -vf ${OUT}/MT*.txt ${DEST_PATH_SERVER}
+	    cp -vf ${OUT}/preloader_${build_device}.bin ${DEST_PATH_SERVER}
+	    cp -vf ${OUT}/lk.bin ${DEST_PATH_SERVER}
+	    cp -vf ${OUT}/boot.img ${DEST_PATH_SERVER}
+	    cp -vf ${OUT}/recovery.img ${DEST_PATH_SERVER}
+	    cp -vf ${OUT}/secro.img ${DEST_PATH_SERVER}
+	    cp -vf ${OUT}/logo.bin ${DEST_PATH_SERVER}
+	    cp -vf ${OUT}/trustzone.bin ${DEST_PATH_SERVER}
+	    cp -vf ${OUT}/trustzone.bin ${DEST_PATH_SERVER}
+	    cp -vf ${OUT}/system.img ${DEST_PATH_SERVER}
+	    cp -vf ${OUT}/cache.img ${DEST_PATH_SERVER}
+	    cp -vf ${OUT}/userdata.img ${DEST_PATH_SERVER}
+
+	    cp -vf ${OUT}/obj/CGEN/APDB_MT*W15* ${DEST_PATH_SERVER}/database/ap
+	    cp -vf ${OUT}/system/etc/mddb/BPLGUInfoCustomAppSrcP* ${DEST_PATH_SERVER}/database/moden
+
+        echo "---> cp image end ... in $server_name"
+        echo
+        if [ $flag_fota -eq 1 ];then
+            cp -v ${OUT}/full_${build_device}-ota*.zip ${OTA_PATH_SERVER}/sdupdate.zip
+            cp -v ${OUT}/obj/PACKAGING/target_files_intermediates/full_${build_device}-target_files*.zip ${OTA_PATH_SERVER}/${system_version}.zip
+            echo "cp ota end ... in $server_name"
+            echo
+        fi
     fi
 
-    echo "cpimage finish ..."
+    echo "cpimage finish ... in $server_name"
     echo
 }
 
