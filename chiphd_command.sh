@@ -3,6 +3,10 @@
 ####################################################### define
 ### project name
 eastaeon51=eastaeon5.1-mt6735m
+k2651=k26
+k86a51=k86a
+k86s51=k86s
+k86l51=k86l
 
 sdate=$td
 
