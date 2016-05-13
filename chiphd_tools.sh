@@ -440,9 +440,9 @@ function rsyncfs()
     fi
 
 	if [ "$args" ];then
-		show_vig "local path : $da/yafeng/rsync-service/"
+		show_vig "local path : ~/jenkins_firmware "
 	else
-		show_vig "server path : 0box_share/rsync-service/"
+		show_vig "server path : jenkins@s4.y:~/workspace/share/debug "
     fi
 
     if [ "$args" ];then
@@ -463,19 +463,19 @@ function rsyncfs()
 ### 同步本地内容
 sync_push_server()
 {
-    rsync -av --delete $da/yafeng/rsync-service/  boxbuilder@192.168.1.23:/home2/boxbuilder/0box_share/rsync-service/
+    rsync -av --delete ~/jenkins_firmware jenkins@s4.y:~/workspace/share/debug
 }
 
 ### 同步服务上的内容
 sync_pull_server()
 {
-    rsync -av --delete boxbuilder@192.168.1.23:/home2/boxbuilder/0box_share/rsync-service/ $da/yafeng/rsync-service/
+    rsync -av --delete jenkins@s4.y:~/workspace/share/debug ~/jenkins_firmware
 }
 
 ### 判断文件是否真要删除
 sync_dryrun()
 {
-    rsync -av --delete $da/yafeng/rsync-service/  boxbuilder@192.168.1.23:/home2/boxbuilder/0box_share/rsync-service/ --dry-run
+    rsync -av --delete ~/jenkins_firmware jenkins@s4.y:~/workspace/share/debug --dry-run
 }
 
 obase()
