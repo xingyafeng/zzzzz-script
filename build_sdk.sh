@@ -575,6 +575,27 @@ function sync_jenkins_server()
     fi
 }
 
+function update_yunovo_customs_auto()
+{
+	local nowPwd=$(pwd)
+    local sz_projeck_name=`echo k86s k86a k86l`
+    local sz_yunovo_customs_path=
+
+    for sz_custom in $sz_projeck_name
+    do
+        sz_yunovo_customs_path=~/jobs/$sz_custom/yunovo_customs
+        #echo "sz_custom = $sz_custom"
+        if [ -d $sz_yunovo_customs_path/.git ];then
+            #echo "sz_yunovo_customs_path = $sz_yunovo_customs_path"
+            cd $sz_yunovo_customs_path > /dev/null
+            git pull $sz_custom master && echo "-------- $sz_custom update_yunovo_customs_auto successful ..."
+            cd - > /dev/null
+        fi
+    done
+
+	cd $nowPwd
+}
+
 function main()
 {
     if [ $flag_print -eq 1 ];then
@@ -582,6 +603,9 @@ function main()
     else
         echo "do not anythings output !"
     fi
+
+    ## auto update
+    update_yunovo_customs_auto
 
     if [ $flag_download_sdk -eq 1 ];then
         download_sdk
