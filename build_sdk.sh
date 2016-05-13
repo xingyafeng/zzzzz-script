@@ -590,7 +590,12 @@ function update_yunovo_customs_auto()
         if [ -d $sz_yunovo_customs_path/.git ];then
             #echo "sz_yunovo_customs_path = $sz_yunovo_customs_path"
             cd $sz_yunovo_customs_path > /dev/null
-            git pull $sz_custom master && echo "-------- $sz_custom update_yunovo_customs_auto successful ..."
+
+            if [ `hostname` == "s4" ];then
+                git pull $sz_custom master && echo "-------- $sz_custom update_yunovo_customs_auto successful ..."
+            else
+                git pull && echo "-------- $sz_custom update_yunovo_customs_auto successful ..."
+            fi
             cd - > /dev/null
         fi
     done
