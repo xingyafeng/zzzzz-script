@@ -94,3 +94,24 @@ function cs4.y()
 {
     cd $s4_path
 }
+
+function ctoms()
+{
+    local sz_hostname=`hostname`
+    local sz_project_path=
+    local sz_project=
+
+    if [ $sz_hostname == "s1" ];then
+        sz_project=k26
+    elif [ $sz_hostname == "s2" ];then
+        sz_project=k86s
+    elif [ $sz_hostname == "s3" ];then
+        sz_project=k86a
+    elif [ $sz_hostname == "s4" ];then
+        sz_project=k86l
+    fi
+
+    sz_project_path=~/jobs/$sz_project/yunovo_customs/custom
+
+    cd $sz_project_path
+}
