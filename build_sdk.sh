@@ -580,7 +580,7 @@ function sync_jenkins_server()
 function update_yunovo_customs_auto()
 {
 	local nowPwd=$(pwd)
-    local sz_projeck_name=`echo k86s k86a k86l`
+    local sz_projeck_name=`echo k26 k86s k86a k86l`
     local sz_yunovo_customs_path=
 
     for sz_custom in $sz_projeck_name
