@@ -233,9 +233,12 @@ function cpimage()
 	    cp -vf ${OUT}/recovery.img ${DEST_PATH}
 	    cp -vf ${OUT}/secro.img ${DEST_PATH}
 	    cp -vf ${OUT}/logo.bin ${DEST_PATH}
-	    cp -vf ${OUT}/trustzone.bin ${DEST_PATH}
-	    cp -vf ${OUT}/trustzone.bin ${DEST_PATH}
-	    cp -vf ${OUT}/system.img ${DEST_PATH}
+
+	    if [ $server_name == "s2" -o $server_name == "s3" ];then
+            cp -vf ${OUT}/trustzone.bin ${DEST_PATH}
+        fi
+
+        cp -vf ${OUT}/system.img ${DEST_PATH}
 	    cp -vf ${OUT}/cache.img ${DEST_PATH}
 	    cp -vf ${OUT}/userdata.img ${DEST_PATH}
 
@@ -283,7 +286,6 @@ function cpimage()
 	    cp -vf ${OUT}/recovery.img ${DEST_PATH_SERVER}
 	    cp -vf ${OUT}/secro.img ${DEST_PATH_SERVER}
 	    cp -vf ${OUT}/logo.bin ${DEST_PATH_SERVER}
-	    cp -vf ${OUT}/trustzone.bin ${DEST_PATH_SERVER}
 	    cp -vf ${OUT}/trustzone.bin ${DEST_PATH_SERVER}
 	    cp -vf ${OUT}/system.img ${DEST_PATH_SERVER}
 	    cp -vf ${OUT}/cache.img ${DEST_PATH_SERVER}
