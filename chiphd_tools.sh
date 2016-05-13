@@ -421,7 +421,11 @@ function rsyncfs()
 {
 	local args=$1
 
-    sync_dryrun
+    if [ "$args" ];then
+        sync_dryrun_server
+    else
+        sync_dryrun_local
+    fi
 
     echo -n "Want to sync ? "
     read -p "Please Enter (Y/N):" sure
@@ -472,10 +476,16 @@ sync_pull_server()
     rsync -av --delete jenkins@s4.y:~/workspace/share/debug ~/jenkins_firmware
 }
 
-### 判断文件是否真要删除
-sync_dryrun()
+### 判断文件是否真要删除 服务器的内容
+sync_dryrun_local()
 {
     rsync -av --delete ~/jenkins_firmware jenkins@s4.y:~/workspace/share/debug --dry-run
+}
+
+### 判断文件是否真要删除 本地内容
+sync_dryrun_server()
+{
+    rsync -av --delete jenkins@s4.y:~/workspace/share/debug ~/jenkins_firmware --dry-run
 }
 
 obase()
