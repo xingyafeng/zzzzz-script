@@ -62,7 +62,7 @@ fota_version="SPT_VERSION_NO=${system_version}"
 prefect_name="$file_project/$file_name/$file_version"
 
 ### clone system app
-commond_app=(FactoryTest CarEngine CarHomeBtn CarSystemUpdateAssistant CarPlatform GaodeMap KwPlayer UniSoundService CarConfig XianzhiDSA FileCopyManager CarBack GpsTester YOcRadPowerManager BaiduInput CarDog)
+commond_app=(FactoryTest CarEngine CarHomeBtn CarSystemUpdateAssistant CarPlatform GaodeMap KwPlayer UniSoundService CarConfig XianzhiDSA FileCopyManager CarBack GpsTester YOcRadPowerManager BaiduInput CarDog AnAnEDogUE)
 k86a_app=(CarUpdateDFU CarRecord GaodeNavigation GpsTester BaiduNavigation AnAnEDog CldNavi NewsmyNewyan NewsmyRecorder NewsmySPTAdapter)
 k86l_app=(CarUpdateDFU CarRecordDouble CarRecordUsb GpsTester XianzhiDSA FileCopyManager GaodeCarMap)
 k86s_app=(CarUpdateDFU CarRecordDouble CarRecordUsb GpsTester BaiduNavigation AnAnEDog CldNavi NewsmyNewyan NewsmyRecorder NewsmySPTAdapter)
