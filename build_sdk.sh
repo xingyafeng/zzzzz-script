@@ -62,13 +62,13 @@ fota_version="SPT_VERSION_NO=${system_version}"
 prefect_name="$file_project/$file_name/$file_version"
 
 ### clone system app
-commond_app=(FactoryTest CarEngine CarHomeBtn CarSystemUpdateAssistant CarPlatform GaodeMap KwPlayer UniSoundService CarConfig XianzhiDSA FileCopyManager CarBack GpsTester YOcRadPowerManager BaiduInput CarDog AnAnEDogUE)
-k86a_app=(CarUpdateDFU CarRecord GaodeNavigation GpsTester BaiduNavigation AnAnEDog CldNavi NewsmyNewyan NewsmyRecorder NewsmySPTAdapter)
+commond_app=(FactoryTest CarEngine CarHomeBtn CarSystemUpdateAssistant CarPlatform GaodeMap KwPlayer UniSoundService CarConfig XianzhiDSA FileCopyManager CarBack GpsTester YOcRadPowerManager BaiduInput CarDog AnAnEDogUE AnAnEDog)
+k86a_app=(CarUpdateDFU CarRecord GaodeNavigation GpsTester BaiduNavigation CldNavi NewsmyNewyan NewsmyRecorder NewsmySPTAdapter)
 k86l_app=(CarUpdateDFU CarRecordDouble CarRecordUsb GpsTester XianzhiDSA FileCopyManager GaodeCarMap)
-k86s_app=(CarUpdateDFU CarRecordDouble CarRecordUsb GpsTester BaiduNavigation AnAnEDog CldNavi NewsmyNewyan NewsmyRecorder NewsmySPTAdapter)
+k86s_app=(CarUpdateDFU CarRecordDouble CarRecordUsb GpsTester BaiduNavigation CldNavi NewsmyNewyan NewsmyRecorder NewsmySPTAdapter)
 k26a_app=(CarRecord GpsTester BaiduNavigation)
 k26s_app=(CarRecordDouble CarRecordUsb GpsTester BaiduNavigation)
-k88_app=(CarUpdateDFU CarBack CarRecord GaodeNavigation GpsTester BaiduNavigation AnAnEDog)
+k88_app=(CarUpdateDFU CarBack CarRecord GaodeNavigation GpsTester BaiduNavigation)
 allapp=()
 
 ### color purple
