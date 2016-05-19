@@ -23,7 +23,7 @@ build_skd_flag=$5
 build_file=$6
 
 ## project name for system k26 k86 k86A k86m k88
-projeck_name=${build_prj_name%%_*}
+project_name=${build_prj_name%%_*}
 ### custom version H520 ZX etc
 custom_version=${build_prj_name##*_}
 
@@ -57,7 +57,7 @@ hw_versiom=H3.1
 branch_nane=develop
 lunch_project=full_${build_device}-${build_type}
 project_link="init -u git@src1.spt-tek.com:projects/manifest.git"
-system_version=$custom_version\_$hw_versiom\_${first_version}.${projeck_name}.${second_version}
+system_version=$custom_version\_$hw_versiom\_${first_version}.${project_name}.${second_version}
 fota_version="SPT_VERSION_NO=${system_version}"
 prefect_name="$file_project/$file_name/$file_version"
 
@@ -173,7 +173,7 @@ function delete_log()
 function cpimage()
 {
 	### k86A_H520
-	local prj_name=$projeck_name\_$custom_version
+	local prj_name=$project_name\_$custom_version
 	local ver_name=${first_version}.${second_version}
 	echo "prj_name = $prj_name"
 
@@ -314,7 +314,7 @@ function print_variable()
 	echo "cpu_num = $cpu_num"
 	echo '-----------------------------------------'
 	echo "build_prj_name = $build_prj_name"
-    echo "project_name = $projeck_name"
+    echo "project_name = $project_name"
     echo "custom_version = $custom_version"
 	echo '-----------------------------------------'
     echo "prefect_name = $prefect_name"
@@ -428,25 +428,25 @@ function clone_app()
 	local ssh_link=ssh://jenkins@gerrit2.spt-tek.com:29418
 	local default_branch="master origin/master"
 
-	echo "project_name = $projeck_name"
+	echo "project_name = $project_name"
 
-	if [ $projeck_name == "k86a" -o $projeck_name == "k86m" -o $projeck_name == "k86sm" -o $projeck_name == "k86sa" ];then
+	if [ $project_name == "k86a" -o $project_name == "k86m" -o $project_name == "k86sm" -o $project_name == "k86sa" ];then
 		k86a_app+=("${commond_app[@]}")
 		allapp+=("${k86a_app[@]}")
-	elif [ $projeck_name == "k86l" -o $projeck_name == "k86s6" -o $projeck_name == "k86s7" ];then
+	elif [ $project_name == "k86l" -o $project_name == "k86s6" -o $project_name == "k86s7" ];then
 		k86l_app+=("${commond_app[@]}")
 		allapp+=("${k86l_app[@]}")
 		default_branch="long origin/long"
-	elif [ $projeck_name == "k86s" -o $projeck_name == "k86sa1" ];then
+	elif [ $project_name == "k86s" -o $project_name == "k86sa1" ];then
 		k86s_app+=("${commond_app[@]}")
 		allapp+=("${k86s_app[@]}")
-	elif [ $projeck_name == "k26a" ];then
+	elif [ $project_name == "k26a" ];then
 		k26a_app+=("${commond_app[@]}")
 		allapp+=("${k26a_app[@]}")
-	elif [ $projeck_name == "k26s" ];then
+	elif [ $project_name == "k26s" ];then
 		k26s_app+=("${commond_app[@]}")
 		allapp+=("${k26s_app[@]}")
-	elif [ $projeck_name == "k88" ];then
+	elif [ $project_name == "k88" ];then
 		k88_app+=("${commond_app[@]}")
 		allapp+=("${k88_app[@]}")
 	fi
@@ -485,15 +485,15 @@ function download_sdk()
 
     local defalut=
 
-    if [ $projeck_name == "k86a" -o $projeck_name == "k86m" ];then
+    if [ $project_name == "k86a" -o $project_name == "k86m" ];then
         defalut=k86A
-    elif [ $projeck_name == "k86s" -o $projeck_name == "k86sm" -o $projeck_name == "k86sa" -o $projeck_name == "k86sa1" ] ;then
+    elif [ $project_name == "k86s" -o $project_name == "k86sm" -o $project_name == "k86sa" -o $project_name == "k86sa1" ] ;then
         defalut=k86s
-    elif [ $projeck_name == "k86l" -o $projeck_name == "k86s6" -o $projeck_name == "k86s7" ];then
+    elif [ $project_name == "k86l" -o $project_name == "k86s6" -o $project_name == "k86s7" ];then
         defalut=k86s_400x1280
-    elif [ $projeck_name == "k88" ];then
+    elif [ $project_name == "k88" ];then
         defalut=k88
-    elif [ $projeck_name == "k26a" -o $projeck_name == "k26b" -o $projeck_name == "k26s" ];then
+    elif [ $project_name == "k26a" -o $project_name == "k26b" -o $project_name == "k26s" ];then
         defalut=K26
     fi
 
@@ -580,10 +580,10 @@ function sync_jenkins_server()
 function update_yunovo_customs_auto()
 {
 	local nowPwd=$(pwd)
-    local sz_projeck_name=`echo k26 k86s k86a k86l`
+    local sz_project_name=`echo k26 k86s k86a k86l`
     local sz_yunovo_customs_path=
 
-    for sz_custom in $sz_projeck_name
+    for sz_custom in $sz_project_name
     do
         sz_yunovo_customs_path=~/jobs/$sz_custom/yunovo_customs
         #echo "sz_custom = $sz_custom"
