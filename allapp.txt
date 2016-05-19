@@ -1,8 +1,10 @@
 AnAnEDog
+AnAnEDogUE
 BaiduInput
 BaiduNavigation
 CarBack
 CarConfig
+CarDog
 CarEngine
 CarHomeBtn
 CarPlatform
