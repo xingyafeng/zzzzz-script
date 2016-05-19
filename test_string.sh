@@ -1,5 +1,13 @@
 #!/bin/bash
 
+test-readfs()
+{
+    while read line
+    do
+        echo $line
+    done < allapp.txt
+}
+
 test-string()
 {
 	local var=chiphd
