@@ -423,6 +423,58 @@ function cpcustoms()
 function clone_app()
 {
 	local OLDP=`pwd`
+    local app_file=~/workspace/script/zzzzz-script/allapp.txt
+	local app_path=packages/apps
+	local default_branch="master origin/master"
+	local ssh_link=ssh://jenkins@gerrit2.spt-tek.com:29418
+
+    echo
+    echo "---------------------------"
+    echo "-   project_name = $project_name   -"
+    echo "---------------------------"
+    echo
+    if [ $project_name == "k86l" -o $project_name == "k86s6" -o $project_name == "k86s7" ];then
+        default_branch="long origin/long"
+    fi
+
+	cd $app_path > /dev/null
+
+    while read app_name
+    do
+		#echo ${app_name}
+		if [ -d $app_name ];then
+			cd $app_name > /dev/null
+			git pull
+			echo "-------------- pull $app_name"
+            echo
+			cd .. > /dev/null
+		else
+			git clone $ssh_link/$app_name
+			echo "-------------- clone $app_name"
+            echo
+			if [ $app_name == "CarEngine"  -o $app_name == "CarRecordDouble" ];then
+				if [ "$default_branch" != "master origin/master" ];then
+                    echo "app_name = $app_name"
+                    echo "default_branch = $default_branch"
+                    cd $app_name > /dev/null
+				    git checkout -b ${default_branch}
+                    echo
+				    cd .. > /dev/null
+                fi
+			fi
+		fi
+    done < $app_file
+
+    echo
+    echo "--> clone app or pull app end ..."
+	echo
+	cd $OLDP > /dev/null
+}
+
+
+function clone_app_old()
+{
+	local OLDP=`pwd`
 	local remote_name="master origin/master"
 	local app_path=packages/apps
 	local ssh_link=ssh://jenkins@gerrit2.spt-tek.com:29418
