@@ -633,21 +633,37 @@ function update_yunovo_customs_auto()
 {
 	local nowPwd=$(pwd)
     local sz_project_name=`echo k26 k86s k86a k86l`
+    local sz_base_path=~/jobs
+    local sz_yunovo_path=
+    local sz_yunovo_customs_link=
     local sz_yunovo_customs_path=
 
     for sz_custom in $sz_project_name
     do
-        sz_yunovo_customs_path=~/jobs/$sz_custom/yunovo_customs
+        sz_yunovo_customs_path=$sz_base_path/$sz_custom/yunovo_customs
+        sz_yunovo_customs_link=`echo ssh://jenkins@s4.y/home/jenkins/workspace/git_server/$sz_custom/yunovo_customs.git`
+
         #echo "sz_custom = $sz_custom"
         if [ -d $sz_yunovo_customs_path/.git ];then
             #echo "sz_yunovo_customs_path = $sz_yunovo_customs_path"
             cd $sz_yunovo_customs_path > /dev/null
 
             if [ `hostname` == "s4" ];then
-                git pull $sz_custom master && echo "-------- $sz_custom update_yunovo_customs_auto successful ..."
+                git pull $sz_custom master && echo "-------- $sz_custom yunovo_customs update successful ..."
+                echo
             else
-                git pull && echo "-------- $sz_custom update_yunovo_customs_auto successful ..."
+                git pull && echo "-------- $sz_custom yunovo_customs update successful ..."
+                echo
             fi
+            cd - > /dev/null
+        else
+            sz_yunovo_path=$sz_base_path/$sz_custom
+            mkdir -p $sz_yunovo_path
+
+            cd $sz_yunovo_path > /dev/null
+            echo $sz_yunovo_customs_link
+            git clone $sz_yunovo_customs_link
+            echo
             cd - > /dev/null
         fi
     done
