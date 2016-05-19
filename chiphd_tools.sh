@@ -574,30 +574,97 @@ function get_week()
 #### mount server
 function mount-server
 {
-	mount_box
-	mount_droid05
-	mount_hbc
-	mount_yj
+    mount_box
 }
 
-mount_box()
+function mount_box()
 {
 	mount_project boxbuilder 23 123456
 }
 
-mount_droid05()
+### sshfs server
+function sshfs-server()
 {
-	mount_project droid05 23 123456
+    if [ `hostname` == "happysongs" ];then
+        s1.y
+        s2.y
+        s3.y
+        s4.y
+    fi
 }
 
-mount_hbc()
+function fusermount-server()
 {
-	mount_project hbc 20 hbc
+    if [ `hostname` == "happysongs" ];then
+        for server_no in s1.y s2.y s3.y s4.y
+        do
+            fusermount -u ~/$server_no
+        done
+    fi
 }
 
-mount_yj()
+function s1.y()
 {
-	mount_project yj 22 123456
+    local slave_jar=slave.jar
+    local server_name=s1.y
+    local jobs_path=/home/jenkins/jobs
+    local local_path=~/$server_name
+
+    if [ ! -d $local_path ];then
+        mkdir -p $local_path
+    fi
+
+    if [ ! -d $local_path/k26 -o ! -f $local_path/$slave_jar ];then
+        sshfs jenkins@$server_name://$jobs_path $local_path
+    fi
+}
+
+function s2.y()
+{
+    local slave_jar=slave.jar
+    local server_name=s2.y
+    local jobs_path=/home/jenkins/jobs
+    local local_path=/home/yafeng/$server_name
+
+    if [ ! -d $local_path ];then
+        mkdir -p $local_path
+    fi
+
+    if [ ! -d $local_path/k26 -o ! -f $local_path/$slave_jar ];then
+        sshfs jenkins@$server_name://$jobs_path $local_path
+    fi
+}
+
+function s3.y()
+{
+    local slave_jar=slave.jar
+    local server_name=s3.y
+    local jobs_path=home/work5/jenkins/jobs
+    local local_path=/home/yafeng/$server_name
+
+    if [ ! -d $local_path ];then
+        mkdir -p $local_path
+    fi
+
+    if [ ! -d $local_path/k26 ];then
+        sshfs jenkins@$server_name://$jobs_path $local_path
+    fi
+}
+
+function s4.y()
+{
+    local slave_jar=slave.jar
+    local server_name=s4.y
+    local jobs_path=/home/jenkins/jobs
+    local local_path=/home/yafeng/$server_name
+
+    if [ ! -d local_path ];then
+        mkdir -p $local_path
+    fi
+
+    if [ ! -d $local_path/k26 -o ! -f $local_path/$slave_jar ];then
+        sshfs jenkins@$server_name://$jobs_path $local_path
+    fi
 }
 
 ### mount base function
