@@ -591,6 +591,14 @@ if true;then
 		delete_log
 	fi
 
+    if make clean-lk;then
+		echo "--> make clean lk end ..."
+        echo
+    else
+		echo "--> make clean lk fail ..."
+        echo
+    fi
+
 	make -j${cpu_num} ${fota_version} 2>&1 | tee build_$cur_time.log
 	if [ $? -eq 0 ];then
         echo "--> make project end ..."
