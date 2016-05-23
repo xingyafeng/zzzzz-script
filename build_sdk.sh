@@ -632,7 +632,7 @@ function sync_jenkins_server()
 
     if [ $server_name == "s1" -o $server_name == "s2" -o $server_name == "s3" ];then
         rsync -av $firmware_path $jenkins_server:$share_path
-
+        rm $firmware_path/* -rf
         echo
         echo "--> sync end ..."
         echo
