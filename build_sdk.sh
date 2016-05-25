@@ -172,12 +172,14 @@ function recover_standard_android_project()
 	#echo "now get all project from repo..."
 
 	local AllRepoProj=`chiphd_get_repo_git_path_from_xml`
-    #show_vip $AllRepoProj
+    #echo $AllRepoProj
 	if [ "$AllRepoProj" ]; then
 		for ProjPath in $AllRepoProj
 		do
             if [ -d $(gettop)/$ProjPath ];then
-			    chiphd_recover_project $ProjPath
+                if [ $ProjPath != "packages" ];then
+                    chiphd_recover_project $ProjPath
+                fi
             fi
 		done
 	fi
