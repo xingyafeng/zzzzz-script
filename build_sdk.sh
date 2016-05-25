@@ -163,6 +163,28 @@ function chiphd_recover_standard_device_cfg()
 	cd $tNowPwd
 }
 
+#### 恢复默认配置文件 android
+function recover_standard_android_project()
+{
+	local tOldPwd=$OLDPWD
+	local tNowPwd=$PWD
+	cd $(gettop)
+	#echo "now get all project from repo..."
+
+	local AllRepoProj=`chiphd_get_repo_git_path_from_xml`
+    #show_vip $AllRepoProj
+	if [ "$AllRepoProj" ]; then
+		for ProjPath in $AllRepoProj
+		do
+            if [ -d $(gettop)/$ProjPath ];then
+			    chiphd_recover_project $ProjPath
+            fi
+		done
+	fi
+	cd $tOldPwd
+	cd $tNowPwd
+}
+
 ## rm build_xxx.log
 function delete_log()
 {
@@ -536,7 +558,7 @@ function clone_app_old()
 ## download sdk
 function download_sdk()
 {
-
+    local hostname=`hostname`
     local defalut=
 
     if [ $project_name == "k86a" -o $project_name == "k86m" ];then
@@ -559,27 +581,24 @@ function download_sdk()
 		ls -alF
 		repo start $defalut --all
 	else
-		repo forall -c git fetch && echo "-----------------git fetch ok" && echo
-		repo forall -c git pull  && echo "-----------------git pull ok"  && echo
-		echo "--> sdk update ..."
-		echo
+
+        if [ $hostname == "s4" -o $hostname == "s3" -o $hostname == "s2" -o $hostname == "s1" ];then
+            ## 还原 androiud源代码 ...
+            recover_standard_android_project
+
+            ## 更新 android源代码 ...
+		    repo forall -c git fetch && echo "-----------------git fetch ok"
+		    repo forall -c git pull  && echo "-----------------git pull ok"
+
+		    echo "--> sdk update ..."
+		    echo
+        fi
 	fi
 }
 
 ## build sdk
 function make-sdk()
 {
-	source  build/envsetup.sh
-	echo "--> source end ..."
-	echo
-
-	lunch $lunch_project
-	echo "--> lunch end ..."
-	echo
-	echo "ROOT = $(gettop)"
-	echo "OUT = $OUT"
-
-if true;then
 	if make installclean;then
 		echo "--> make installclean end ..."
 		echo
@@ -617,10 +636,7 @@ if true;then
             echo
             exit 1
         fi
-
     fi
-
-fi
 }
 
 function sync_jenkins_server()
@@ -681,6 +697,17 @@ function update_yunovo_customs_auto()
 	cd $nowPwd
 }
 
+function source_init()
+{
+    source  build/envsetup.sh
+    echo "--> source end ..."
+    echo
+
+    lunch $lunch_project
+    echo "--> lunch end ..."
+    echo
+}
+
 function main()
 {
     if [ $flag_print -eq 1 ];then
@@ -688,6 +715,8 @@ function main()
     else
         echo "do not anythings output !"
     fi
+    ## source env
+    source_init
 
     ## auto update
     update_yunovo_customs_auto
@@ -705,13 +734,6 @@ function main()
     fi
 
     if [ $flag_cpcustom -eq 1 ];then
-        source  build/envsetup.sh
-	    echo "--> source end ..."
-	    echo
-
-	    lunch $lunch_project
-	    echo "--> lunch end ..."
-	    echo
 
         cpcustoms
     else
