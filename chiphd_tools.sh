@@ -590,13 +590,14 @@ function sshfs-server()
         s2.y
         s3.y
         s4.y
+        share_s4
     fi
 }
 
 function fusermount-server()
 {
     if [ `hostname` == "happysongs" ];then
-        for server_no in s1.y s2.y s3.y s4.y
+        for server_no in s1.y s2.y s3.y s4.y share_s4
         do
             fusermount -u ~/$server_no
         done
@@ -664,6 +665,21 @@ function s4.y()
 
     if [ ! -d $local_path/k26 -o ! -f $local_path/$slave_jar ];then
         sshfs jenkins@$server_name://$jobs_path $local_path
+    fi
+}
+
+function share_s4()
+{
+    local server_name=s4.y
+    local share_path=/home/jenkins/workspace/share
+    local local_path=/home/yafeng/share_s4
+
+    if [ ! -d $local_path ];then
+        mkdir -p $local_path
+    fi
+
+    if [ `hostname` == "happysongs" ];then
+        sshfs jenkins@$server_name://$share_path $local_path
     fi
 }
 
