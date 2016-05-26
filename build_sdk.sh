@@ -21,6 +21,8 @@ build_type=$4
 build_skd_flag=$5
 ### eg: k86l_yunovo_zx
 build_file=$6
+### test
+build_test=$7
 
 ## project name for system k26 k86 k86A k86m k88
 project_name=${build_prj_name%%_*}
@@ -210,9 +212,12 @@ function cpimage()
 
     local server_name=`hostname`
     local firmware_path_server=~/workspace/share/debug
+    local test_path_server=~/workspace/share/Test
+    local TEST_DEST_PATH_SERVER=$test_path_server/$prj_name
     local BASE_PATH_SERVER=$firmware_path_server/$prj_name/$ver_name
     local DEST_PATH_SERVER=$BASE_PATH_SERVER/$system_version
     local OTA_PATH_SERVER=$BASE_PATH_SERVER/${system_version}_full_and_ota
+    local ret=$1
 
     echo "-------------------------local base"
 	echo "BASE_PATH = $BASE_PATH"
@@ -284,6 +289,10 @@ function cpimage()
             echo "---> create $firmware_path_server ... in $server_name"
         fi
 
+        if [ ! -d $test_path_server ];then
+            mkdir -p $test_path_server
+        fi
+
 	    if [ ! -d $DEST_PATH_SERVER ];then
 		    mkdir -p $DEST_PATH_SERVER
 
@@ -325,6 +334,13 @@ function cpimage()
             cp -v ${OUT}/obj/PACKAGING/target_files_intermediates/full_${build_device}-target_files*.zip ${OTA_PATH_SERVER}/${system_version}.zip
             echo "cp ota end ... in $server_name"
             echo
+        fi
+
+        if [ $ret ];then
+            if [ ! -d $TEST_DEST_PATH_SERVER ];then
+                mkdir -p $TEST_DEST_PATH_SERVER
+            fi
+            mv $BASE_PATH_SERVER $TEST_DEST_PATH_SERVER
         fi
     fi
 
@@ -368,6 +384,7 @@ function print_variable()
 	echo "\$4 = $4"
 	echo "\$5 = $5"
 	echo "\$6 = $6"
+	echo "\$7 = $7"
 	echo "\$# = $#"
 	echo '-----------------------------------------'
     echo
@@ -647,9 +664,15 @@ function sync_jenkins_server()
     local share_path=~/workspace/share
     local jenkins_server=jenkins@s4.y
     local server_name=`hostname`
+    local ret=$1
 
     if [ $server_name == "s1" -o $server_name == "s2" -o $server_name == "s3" ];then
-        rsync -av $firmware_path $jenkins_server:$share_path
+        if [ $ret ];then
+            rsync -av $firmware_path/ $jenkins_server:$share_path/Test
+        else
+            rsync -av $firmware_path $jenkins_server:$share_path
+        fi
+
         rm $firmware_path/* -rf
         echo
         echo "--> sync end ..."
@@ -713,7 +736,7 @@ function source_init()
 function main()
 {
     if [ $flag_print -eq 1 ];then
-	    print_variable $build_prj_name $build_version $build_device $build_type $build_skd_flag $build_file
+	    print_variable $build_prj_name $build_version $build_device $build_type $build_skd_flag $build_file $build_test
     else
         echo "do not anythings output !"
     fi
@@ -749,8 +772,8 @@ function main()
     fi
 
     if [ $flag_cpimage -eq 1 ];then
-	    if cpimage;then
-            sync_jenkins_server
+	    if cpimage $build_test;then
+            sync_jenkins_server $build_test
         fi
     else
         echo "do not cp image !"
