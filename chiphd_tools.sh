@@ -798,7 +798,7 @@ function git-tag-for-app()
                         if [ ! "`git tag | grep L$tag_version`" ];then
                             git commit --allow-empty -m "commit empty id for tags"
                             git tag -m "Release L$tag_version" L$tag_version
-                            git push origin long:origin/long --tags
+                            git push origin long:long --tags
                         fi
                     fi
                 fi
@@ -814,7 +814,7 @@ function git-tag-for-app()
                         if [ ! "`git tag | grep L$tag_version`" ];then
                             git commit --allow-empty -m "commit empty id for tags"
                             git tag -m "Release L$tag_version" L$tag_version
-                            git push origin long:origin/long --tags
+                            git push origin long:long --tags
                         fi
                     fi
                 fi
