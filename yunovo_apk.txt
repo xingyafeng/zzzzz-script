@@ -15,15 +15,3 @@ NewsmyRecorder
 NewsmySPTAdapter
 UniSoundService
 XianzhiDSA
-CarBack
-CarDog
-CarEngine
-CarHomeBtn
-CarPlatform
-CarRecord
-CarRecordDouble
-CarRecordUsb
-CarUpdateDFU
-FactoryTest
-FileCopyManager
-YOcRadPowerManager
