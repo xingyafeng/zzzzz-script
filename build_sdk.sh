@@ -36,11 +36,17 @@ file_name=${build_file%_*} && file_name=${file_name##*_}
 ### zx etc
 file_version=${build_file##*_}
 
-### version for system
-# S1 S2 ...
-first_version=${build_version%.*}
-#01 02 .. 08 09 ..
-second_version=${build_version##*.}
+### system version and tag version
+build_version_tmp=
+tag_version_tmp=
+
+### S1.00 S1.01 ...
+first_version=
+second_version=
+
+### 1.00 1.01 ...
+first_tag_version=
+second_tag_version=
 
 ### flag for main (0 or 1)
 flag_fota=`echo $build_skd_flag | cut -d '.' -f1`
@@ -50,6 +56,7 @@ flag_clone_app=`echo $build_skd_flag | cut -d '.' -f4`
 flag_make_sdk=`echo $build_skd_flag | cut -d '.' -f5`
 flag_cpimage=`echo $build_skd_flag | cut -d '.' -f6`
 flag_cpcustom=`echo $build_skd_flag | cut -d '.' -f7`
+flag_jenkins_tag=
 
 ################################# common variate
 gettop=`pwd`
@@ -59,19 +66,9 @@ hw_versiom=H3.1
 branch_nane=develop
 lunch_project=full_${build_device}-${build_type}
 project_link="init -u git@src1.spt-tek.com:projects/manifest.git"
-system_version=$custom_version\_$hw_versiom\_${first_version}.${project_name}.${second_version}
-fota_version="SPT_VERSION_NO=${system_version}"
 prefect_name="$file_project/$file_name/$file_version"
-
-### clone system app
-commond_app=(FactoryTest CarEngine CarHomeBtn CarSystemUpdateAssistant CarPlatform GaodeMap KwPlayer UniSoundService CarConfig XianzhiDSA FileCopyManager CarBack GpsTester YOcRadPowerManager BaiduInput CarDog AnAnEDogUE AnAnEDog)
-k86a_app=(CarUpdateDFU CarRecord GaodeNavigation GpsTester BaiduNavigation CldNavi NewsmyNewyan NewsmyRecorder NewsmySPTAdapter)
-k86l_app=(CarUpdateDFU CarRecordDouble CarRecordUsb GpsTester XianzhiDSA FileCopyManager GaodeCarMap)
-k86s_app=(CarUpdateDFU CarRecordDouble CarRecordUsb GpsTester BaiduNavigation CldNavi NewsmyNewyan NewsmyRecorder NewsmySPTAdapter)
-k26a_app=(CarRecord GpsTester BaiduNavigation)
-k26s_app=(CarRecordDouble CarRecordUsb GpsTester BaiduNavigation)
-k88_app=(CarUpdateDFU CarBack CarRecord GaodeNavigation GpsTester BaiduNavigation)
-allapp=()
+system_version=
+fota_version=
 
 ### color purple
 function show_vip
@@ -84,6 +81,55 @@ function show_vip
 		done
 		echo
 	fi
+}
+
+function handler_vairable()
+{
+    local tag_file=~/workspace/script/zzzzz-script/apptag.txt
+
+    if [ "`echo $build_version | grep "_"`" ];then
+        build_version_tmp=${build_version%_*}
+        tag_version_tmp=${build_version##*_}
+
+        # system version S1.00 S1.02 ...
+        first_version=${build_version_tmp%.*}
+        second_version=${build_version_tmp##*.}
+
+        if [ "$tag_version_tmp" == "all" ];then
+
+            ### tag version 1.00 1.02 ... 2.00 2.01 ...
+            first_tag_version=9
+            second_tag_version=99
+        else
+
+            ### tag version 1.00 1.02 ... 2.00 2.01 ...
+            first_tag_version=${tag_version_tmp%.*}
+            second_tag_version=${tag_version_tmp##*.}
+        fi
+
+        ### flag jenkins or not
+        flag_jenkins_tag=true
+    else
+        build_version_tmp=$build_version
+        first_version=${build_version%.*}
+        second_version=${build_version##*.}
+
+        while read apptag;do
+            tag_version_tmp=${apptag##*=}
+            first_tag_version=${tag_version_tmp%.*}
+            second_tag_version=${tag_version_tmp##*.}
+        done < $tag_file
+
+        ### flag jenkins or not
+        flag_jenkins_tag=false
+    fi
+
+    echo "================================"
+    echo "-   flag_jenkins_tag = $flag_jenkins_tag"   -
+    echo "================================"
+
+    system_version=$custom_version\_$hw_versiom\_${first_version}.${project_name}.${second_version}
+    fota_version="SPT_VERSION_NO=${system_version}"
 }
 
 #### touch all file
@@ -363,8 +409,12 @@ function print_variable()
     echo "file_version = $file_version"
 	echo '-----------------------------------------'
 	echo "build_version = $build_version"
+    echo "build_version_tmp = $build_version_tmp"
+    echo "tag_version_tmp = $tag_version_tmp"
     echo "first_version = $first_version"
     echo "second_version = $second_version"
+    echo "first_tag_version = $first_tag_version"
+    echo "second_tag_version = $second_tag_version"
 	echo '-----------------------------------------'
 	echo "build_device = $build_device"
 	echo "build_type = $build_type"
@@ -376,6 +426,7 @@ function print_variable()
     echo "flag_make_sdk = $flag_make_sdk"
     echo "flag_cpimage = $flag_cpimage"
     echo "flag_cpcustom = $flag_cpcustom"
+    echo "flag_jenkins_tag = $flag_jenkins_tag"
 	echo '-----------------------------------------'
 	echo "lunch_project = $lunch_project"
 	echo "\$1 = $1"
@@ -463,13 +514,55 @@ function cpcustoms()
 	fi
 }
 
+function handler_tag_branch()
+{
+    local branch_nane=$1
+    local tag_name=$2
+    local app_name=$3
+
+    #echo "branch_nane = $branch_nane"
+    #echo "tag_name = $tag_name"
+    #echo "app_name = $app_name"
+
+    ### 检查是否有打相关的tag
+    if [ "`git tag | grep $tag_name$first_tag_version.$second_tag_version`" ];then
+
+        ### 检查是否已经检出tag分支
+        if [ "`git branch | grep $tag_name$first_tag_version.$second_tag_version`" ];then
+            ### 检查当前分支是否是tag分支
+            if [ "`git branch -a | grep \* | cut -d ' ' -f2`" != "$tag_name$first_tag_version.$second_tag_version" ];then
+                ### 切换到相关tag分支
+                git checkout $tag_name$first_tag_version.$second_tag_version && echo "-------- switch $tag_name tag $app_name"
+                echo
+            fi
+        else
+            ### 检出相关tag分支
+            git checkout -b $tag_name$first_tag_version.$second_tag_version $tag_name$first_tag_version.$second_tag_version
+            echo "-------- switch $tag_name tag -b $app_name"
+            echo
+        fi
+    ### 没有打相关tag, 用于处理中性软件
+    else
+        ### 检出当前分支是否在long分支
+        if [ "`git branch -a | grep \* | cut -d ' ' -f2`" != "$branch" ];then
+            ### 切换到long分支,并且更新代码
+            git checkout $branch && echo "-------- switch $branch $app_name"
+            echo
+        fi
+    fi
+}
+
 function clone_app()
 {
 	local OLDP=`pwd`
     local app_file=~/workspace/script/zzzzz-script/allapp.txt
+    local yunovo_apk_file=~/workspace/script/zzzzz-script/yunovo_apk.txt
+    local yunovo_app_file=~/workspace/script/zzzzz-script/yunovo_app.txt
 	local app_path=packages/apps
 	local default_branch="master origin/master"
 	local ssh_link=ssh://jenkins@gerrit2.spt-tek.com:29418
+	local branch_nane=
+	local tag_name=
 
     echo
     echo "---------------------------"
@@ -486,11 +579,89 @@ function clone_app()
     do
 		#echo ${app_name}
 		if [ -d $app_name ];then
-			cd $app_name > /dev/null
-			git pull
-			echo "-------------- pull $app_name"
-            echo
-			cd .. > /dev/null
+            ### 第三方apk 不进行tag分支处理
+            while read apk_name
+            do
+                if [ $apk_name == $app_name  ];then
+                    cd $app_name > /dev/null
+                    git pull && echo "-------------- pull $app_name"
+                    echo
+                fi
+            done < $yunovo_apk_file
+
+            ### 客户化apk进行tag处理
+            while read app_name_yunovo
+            do
+                if [ $app_name == $app_name_yunovo ];then
+                    cd $app_name > /dev/null
+
+                    ### 确保每次分支都在master or long
+                    ### 检查是否是是long分支
+                    if [ "$default_branch" != "master origin/master" ];then
+                        if [ $app_name == "CarEngine" -o $app_name == "CarRecordDouble" ] ;then
+                            if [ "`git branch -a | grep \* | cut -d ' ' -f2`" != "long"  ];then
+                                git checkout long
+                                git pull && echo "-------------- pull $app_name"
+                                echo
+                            else
+                                git pull && echo "-------------- pull $app_name"
+                                echo
+                            fi
+                        else
+                            if [ "`git branch -a | grep \* | cut -d ' ' -f2`" != "master" ];then
+                                git checkout master
+                                git pull && echo "-------------- pull $app_name"
+                                echo
+                            else
+                                git pull && echo "-------------- pull $app_name"
+                                echo
+                            fi
+                        fi
+                    else
+                        if [ "`git branch -a | grep \* | cut -d ' ' -f2`" != "master" ];then
+                            git checkout master
+                            git pull && echo "-------------- pull $app_name"
+                            echo
+                        else
+                            git pull && echo "-------------- pull $app_name"
+                            echo
+                        fi
+                    fi
+
+                    ### i.特殊apk 处理
+                    if [ $app_name == "CarEngine" -o $app_name == "CarRecordDouble" ];then
+                        ### ii. 处理long tag
+                        if [ "$default_branch" != "master origin/master" ];then
+                            branch_nane=long
+                            tag_name=L
+                        ### ii. 处理 master tag
+                        else
+                            branch_nane=master
+                            tag_name=M
+                        fi
+                    ### i.其他apk处理  master tag
+                    else
+                        branch_nane=master
+                        tag_name=M
+                    fi
+
+                    ### jenkins tag
+                    if [ "$flag_jenkins_tag" == "true" ];then
+
+                        #echo "--------$app_name jenkins tag = $flag_jenkins_tag"
+                        ### 处理不同分支tag
+                        handler_tag_branch $branch_nane $tag_name $app_name
+
+                    ### file tag
+                    else
+                        #echo "--------$app_name file tag"
+                        ### 处理不同分支tag
+                        handler_tag_branch $branch_nane $tag_name $app_name
+                    fi
+                fi
+            done < $yunovo_app_file
+
+            cd .. > /dev/null
 		else
 			git clone $ssh_link/$app_name
 			echo "-------------- clone $app_name"
@@ -753,6 +924,8 @@ function source_init()
 
 function main()
 {
+    handler_vairable
+
     if [ $flag_print -eq 1 ];then
 	    print_variable $build_prj_name $build_version $build_device $build_type $build_skd_flag $build_file $build_test
     else
