@@ -5,7 +5,9 @@ test-readfs()
     while read line
     do
         echo $line
-    done < allapp.txt
+        ret=${line##*=}
+        echo $ret
+    done < apptag.txt
 }
 
 test-string()
