@@ -27,3 +27,4 @@ CarUpdateDFU
 FactoryTest
 FileCopyManager
 YOcRadPowerManager
+CheKongbaoQR
