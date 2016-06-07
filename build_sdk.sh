@@ -598,7 +598,7 @@ function clone_app()
                     ### 确保每次分支都在master or long
                     ### 检查是否是是long分支
                     if [ "$default_branch" != "master origin/master" ];then
-                        if [ $app_name == "CarEngine" -o $app_name == "CarRecordDouble" ] ;then
+                        if [ $app_name == "CarEngine" -o $app_name == "CarRecordDouble" -o $app_name == "NewsmyNewyan" -o $app_name == "NewsmyRecorder" -o $app_name == "NewsmySPTAdapter" ] ;then
                             if [ "`git branch -a | grep \* | cut -d ' ' -f2`" != "long"  ];then
                                 git checkout long
                                 git pull && echo "-------------- pull $app_name"
@@ -629,7 +629,7 @@ function clone_app()
                     fi
 
                     ### i.特殊apk 处理
-                    if [ $app_name == "CarEngine" -o $app_name == "CarRecordDouble" ];then
+                    if [ $app_name == "CarEngine" -o $app_name == "CarRecordDouble" -o $app_name == "NewsmyNewyan" -o $app_name == "NewsmyRecorder" -o $app_name == "NewsmySPTAdapter" ];then
                         ### ii. 处理long tag
                         if [ "$default_branch" != "master origin/master" ];then
                             branch_nane=long
@@ -666,7 +666,7 @@ function clone_app()
 			git clone $ssh_link/$app_name
 			echo "-------------- clone $app_name"
             echo
-			if [ $app_name == "CarEngine"  -o $app_name == "CarRecordDouble" ];then
+			if [ $app_name == "CarEngine" -o $app_name == "CarRecordDouble" -o $app_name == "NewsmyNewyan" -o $app_name == "NewsmyRecorder" -o $app_name == "NewsmySPTAdapter" ];then
 				if [ "$default_branch" != "master origin/master" ];then
                     echo "app_name = $app_name"
                     echo "default_branch = $default_branch"
