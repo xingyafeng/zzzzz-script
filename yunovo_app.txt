@@ -10,3 +10,4 @@ CarUpdateDFU
 FactoryTest
 FileCopyManager
 YOcRadPowerManager
+YOcVoice

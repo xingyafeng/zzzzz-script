@@ -15,6 +15,10 @@ NewsmyRecorder
 NewsmySPTAdapter
 UniSoundService
 XianzhiDSA
+CheKongbaoQR
+MazdaYujia
+UniSoundServiceAEC
+Ximalaya
 CarBack
 CarDog
 CarEngine
@@ -27,5 +31,4 @@ CarUpdateDFU
 FactoryTest
 FileCopyManager
 YOcRadPowerManager
-CheKongbaoQR
-MazdaYujia
+YOcVoice
