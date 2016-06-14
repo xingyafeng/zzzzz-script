@@ -766,68 +766,75 @@ function git-tag-for-app()
 		#echo ${app_name}
 		if [ -d $app_name ];then
 			cd $app_name > /dev/null
-			git pull && show_vig "------ pull $app_name"
-            echo
 
             if [ ! -e $git_hook/commit-msg ];then
                 cp $commit_msg $git_hook
                 chmod +x $git_hook/commit-msg
             fi
 
-            if [ "`git branch -a | grep \* | cut -d ' ' -f2`" != "$branch_name" ];then
-                if [ $branch_name == "master" ];then
-                    if [ "`git branch | grep $branch_name`" ];then
-                        git checkout $branch_name
+            if [ $branch_name == "long" ];then
+                if [ $app_name == "CarEngine" -o $app_name == "CarRecordDouble" ] ;then
+                    if [ "`git branch -a | grep \* | cut -d ' ' -f2`" != "long"  ];then
+                        git checkout long
+                        git pull && echo "-------------- pull $app_name"
+                        echo
                     else
-                        git checkout -b $branch_name origin/$branch_name
+                        git pull && echo "-------------- pull $app_name"
+                        echo
                     fi
 
+                    ### 新增加tag
+                    if [ ! "`git tag | grep L$tag_version`" ];then
+                        git tag -m "Release L$tag_version" L$tag_version
+                        git push origin --tags
+                    fi
+                else
+                    if [ "`git branch -a | grep \* | cut -d ' ' -f2`" != "master" ];then
+                        git checkout master
+                        git pull && echo "-------------- pull $app_name"
+                        echo
+                    else
+                        git pull && echo "-------------- pull $app_name"
+                        echo
+                    fi
+
+                    ### 新增加tag
                     if [ ! "`git tag | grep M$tag_version`" ];then
-                        git commit --allow-empty -m "commit empty id for tags"
                         git tag -m "Release M$tag_version" M$tag_version
-                        git push origin master --tags
-                    fi
-                elif [ $branch_name == "long" ];then
-                    if [ "`git branch -r | grep long`" ];then
-                        if [ "`git branch | grep $branch_name`" ];then
-                            git checkout $branch_name
-                        else
-                            git checkout -b $branch_name origin/$branch_name
-                        fi
-
-                        if [ ! "`git tag | grep L$tag_version`" ];then
-                            git commit --allow-empty -m "commit empty id for tags"
-                            git tag -m "Release L$tag_version" L$tag_version
-                            git push origin long:long --tags
-                        fi
+                        git push origin --tags
                     fi
                 fi
-            else
-                if [ $branch_name == "master" ];then
-                    if [ ! "`git tag | grep M$tag_version`" ];then
-                        git commit --allow-empty -m "commit empty id for tags"
-                        git tag -m "Release M$tag_version" M$tag_version
-                        git push origin master --tags
-                    fi
-                elif [ $branch_name  == "long" ];then
-                    if [ "`git branch -r | grep long`" ];then
-                        if [ ! "`git tag | grep L$tag_version`" ];then
-                            git commit --allow-empty -m "commit empty id for tags"
-                            git tag -m "Release L$tag_version" L$tag_version
-                            git push origin long:long --tags
-                        fi
-                    fi
+            elif [ $branch_name == "master" ];then
+                if [ "`git branch -a | grep \* | cut -d ' ' -f2`" != "master" ];then
+                    git checkout master
+                    git pull && echo "-------------- pull $app_name"
+                    echo
+                else
+                    git pull && echo "-------------- pull $app_name"
+                    echo
+                fi
+
+                ### 新增加tag
+                if [ ! "`git tag | grep M$tag_version`" ];then
+                    git tag -m "Release M$tag_version" M$tag_version
+                    git push origin --tags
                 fi
             fi
 
             if false;then
                 if [ $branch_name == "master" ];then
                     if [ "`git tag | grep M$tag_version`" ];then
-                        git tag -d M$tag_version
+                        if [ "`git branch -a | grep \* | cut -d ' ' -f2`" == "master" ];then
+                            git tag -d M$tag_version
+                        fi
                     fi
                 elif [ $branch_name == "long" ];then
                     if [ "`git tag | grep L$tag_version`" ];then
-                        git tag -d L$tag_version
+                        if [ "`git branch -a | grep \* | cut -d ' ' -f2`" == "long" ];then
+                            git tag -d L$tag_version
+                        elif [ "`git branch -a | grep \* | cut -d ' ' -f2`" == "master" ];then
+                            git tag -d M$tag_version
+                        fi
                     fi
                 fi
             fi
@@ -840,23 +847,30 @@ function git-tag-for-app()
 			git clone $ssh_link/$app_name
 			show_vig "-------------- sync_dryrun_localne $app_name"
             echo
-            if false;then
-            if [ $app_name == "CarEngine"  -o $app_name == "CarRecordDouble" ];then
-                if [ "$default_branch" != "master origin/master" ];then
-                    echo "app_name = $app_name"
-                    echo "default_branch = $default_branch"
-                    cd $app_name > /dev/null
-                    git checkout -b ${default_branch}
-                    echo
-                    cd .. > /dev/null
-                fi
-            fi
-            fi
         fi
     done < $app_file
 
     echo
     show_vig git-tag-for-app end ...
     echo
+    cd $OLDP > /dev/null
+}
+
+function rmappfs()
+{
+    local OLDP=`pwd`
+    local app_file=~/workspace/script/zzzzz-script/allapp.txt
+    local app_path=packages/apps
+
+    if [ ! "`is_make_project`" == "true" ];then
+        return 1
+    fi
+
+    cd $app_path > /dev/null
+
+    while read app_name;do
+        rm  $app_name -r && echo "---> rm $app_name ..."
+    done < $app_file
+
     cd $OLDP > /dev/null
 }
