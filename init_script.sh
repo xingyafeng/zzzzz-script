@@ -46,7 +46,7 @@ export PS1="$pwd_green$pwd_bold\u@\h$pwd_purple$pwd_bold $pwd_purple$pwd_bold\w 
 source $script_path/chiphd_script_update.sh
 
 hostname_jenkins=`hostname`
-if [ $hostname_jenkins == "s1" -o $hostname_jenkins == "s2" -o $hostname_jenkins == "s3" -o $hostname_jenkins == "s4" ];then
+if [ $hostname_jenkins == "s1" -o $hostname_jenkins == "s2" -o $hostname_jenkins == "s3" -o $hostname_jenkins == "s4" -o $hostname_jenkins == "happysongs" ];then
     update-chiphd-script
 fi
 
