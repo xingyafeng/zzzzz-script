@@ -28,3 +28,4 @@ FactoryTest
 FileCopyManager
 YOcRadPowerManager
 CheKongbaoQR
+MazdaYujia

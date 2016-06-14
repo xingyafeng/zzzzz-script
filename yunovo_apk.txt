@@ -16,3 +16,4 @@ NewsmySPTAdapter
 UniSoundService
 XianzhiDSA
 CheKongbaoQR
+MazdaYujia
