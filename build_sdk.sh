@@ -275,7 +275,7 @@ function cpimage()
     echo "OTA_PATH_SERVER = $OTA_PATH_SERVER"
     echo "---------------------------------end"
 
-    if [ $server_name == "s1" -o $server_name == "s2" -o $server_name == "s3" ];then
+    if [ $server_name == "s1" -o $server_name == "s2" -o $server_name == "s3" -o $server_name == "happysongs" ];then
         if [ ! -d $firmware_path ];then
             mkdir -p $firmware_path
         else
@@ -309,7 +309,7 @@ function cpimage()
 	    cp -vf ${OUT}/secro.img ${DEST_PATH}
 	    cp -vf ${OUT}/logo.bin ${DEST_PATH}
 
-	    if [ $server_name == "s2" -o $server_name == "s3" ];then
+	    if [ -e ${OUT}/trustzone.bin ];then
             cp -vf ${OUT}/trustzone.bin ${DEST_PATH}
         fi
 
@@ -772,7 +772,7 @@ function download_sdk()
 		repo start $defalut --all
 	else
 
-        if [ $hostname == "s4" -o $hostname == "s3" -o $hostname == "s2" -o $hostname == "s1" ];then
+        if [ $hostname == "s4" -o $hostname == "s3" -o $hostname == "s2" -o $hostname == "s1" -o $hostname == "happysongs" ];then
             ## 还原 androiud源代码 ...
             recover_standard_android_project
 
@@ -837,7 +837,7 @@ function sync_jenkins_server()
     local server_name=`hostname`
     local ret=$1
 
-    if [ $server_name == "s1" -o $server_name == "s2" -o $server_name == "s3" ];then
+    if [ $server_name == "s1" -o $server_name == "s2" -o $server_name == "s3" -o $server_name == "happysongs" ];then
         if [ $ret ];then
             rsync -av $firmware_path/ $jenkins_server:$share_path/Test
         else
