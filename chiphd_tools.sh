@@ -874,3 +874,30 @@ function rmappfs()
 
     cd $OLDP > /dev/null
 }
+
+function ssh-update-script()
+{
+    local server_ip=`echo s1.y s2.y s3.y s4.y happysongs`
+    local portN=22
+    local server_name=jenkins
+    local init_script=/home/jenkins/workspace/script/zzzzz-script/init_script.sh
+
+    for ip in $server_ip;do
+
+        if [ "$ip" == "happysongs" ];then
+            ip=10.0.0.18
+        fi
+
+        ssh -t -p $portN $server_name@$ip "
+            source $init_script && echo "server: $ip" && \
+            echo
+        "
+
+        if false;then
+            ssh -t -p $portN $server_name@$ip '
+                cd ~/workspace && touch ssh_test && mkdir test && \
+                cd ~ && touch xxx
+            '
+        fi
+    done
+}
