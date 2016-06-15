@@ -34,3 +34,4 @@ YOcRadPowerManager
 YOcVoice
 ECar
 ECarVoip
+iFlyIME
