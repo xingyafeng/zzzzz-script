@@ -257,8 +257,9 @@ function cpimage()
 	local OTA_PATH=$BASE_PATH/${system_version}_full_and_ota
 
     local server_name=`hostname`
-    local firmware_path_server=~/workspace/share/debug
-    local test_path_server=~/workspace/share/Test
+    local firmware_path_server=/home/share/jenkins_share/debug
+    local test_path_server=/home/share/jenkins_share/Test
+
     local TEST_DEST_PATH_SERVER=$test_path_server/$prj_name
     local BASE_PATH_SERVER=$firmware_path_server/$prj_name/$ver_name
     local DEST_PATH_SERVER=$BASE_PATH_SERVER/$system_version
@@ -832,7 +833,7 @@ function make-sdk()
 function sync_jenkins_server()
 {
     local firmware_path=~/debug
-    local share_path=~/workspace/share
+    local share_path=/home/share/jenkins_share
     local jenkins_server=jenkins@s4.y
     local server_name=`hostname`
     local ret=$1
