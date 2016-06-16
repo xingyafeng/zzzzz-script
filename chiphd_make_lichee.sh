@@ -22,9 +22,9 @@ function make-lichee
 
 	show_viy "thisPath = $thisPath"
 	if [ "`is_make_project`" = "true" ];then
-		### 判断pro_name 是否已经选择对应的平台	
-		if [ -z $pro_name ];then	
-			show_vir "请按照下面提示输入对应的编译平台: dolphin 和 eagle" 
+		### 判断pro_name 是否已经选择对应的平台
+		if [ -z $pro_name ];then
+			show_vir "请按照下面提示输入对应的编译平台: dolphin 和 eagle"
 			show_vir "-----------------------------------------------"
 			echo -n "Please follow the tips below input " && show_vig dolphin or eagle
 			read -p "Enter dolphin or eagle :" pro_name
@@ -58,7 +58,7 @@ fi
 		if [ -d out ];then
 			./build.sh lunch 0
 		else
-			show_vir "please select: sun8iw6p1-android"	
+			show_vir "please select: sun8iw6p1-android"
 			echo "------------------------------------"
 			./build.sh lunch 0
 		fi
@@ -68,7 +68,7 @@ fi
 		if [ -d out ];then
 			./build.sh lunch 2
 		else
-			show_vir "please select: sun8iw7p1-android"	
+			show_vir "please select: sun8iw7p1-android"
 			echo "------------------------------------"
 			./build.sh lunch 2
 		fi
@@ -96,10 +96,10 @@ function make-uboot
 
 
 	if [ "`is_make_project`" == "true" ];then
-		show_vir "请按照下面提示输入对应的编译平台: dolphin 和 eagle" 
+		show_vir "请按照下面提示输入对应的编译平台: dolphin 和 eagle"
 		show_vir "-----------------------------------------------"
 		echo -n "Please follow the tips below input " && show_vig dolphin or eagle
-		read -p "Enter dolphin or eagle :" pro_name		
+		read -p "Enter dolphin or eagle :" pro_name
 
 		if [ "$pro_name" == "dolphin" ];then
 			thisPath=$dolphin44
@@ -124,11 +124,11 @@ function make-uboot
 						show_vip "--> make h8 uboot end."
 						echo
 					fi
-				fi	
+				fi
 			fi
 		fi
 	;;
-	
+
 	$dolphin44)
 		if make distclean;then
 			show_vir "--> disclean end ..."
@@ -147,11 +147,11 @@ function make-uboot
 			fi
 		fi
 	;;
-	
+
 	*)
 		show_vir "do not matching ..."
 	;;
 	esac
-	
+
 	cd $old_pwd
 }

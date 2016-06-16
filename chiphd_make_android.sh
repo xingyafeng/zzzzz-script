@@ -18,7 +18,7 @@ show-make-project()
 	show_vir "###################################################"
 	show_vir "#  make rebuilder android  ... for $thisPath  #"
 	show_vir "###################################################"
-	echo 
+	echo
 }
 
 show-lunch()
@@ -37,7 +37,7 @@ show-lunch()
 	echo
 }
 
-### source && lunch 
+### source && lunch
 function lunch-chiphd
 {
 	thisPath=$(pwd) && thisPath=${thisPath%/*} && thisPath=${thisPath##*/}
@@ -80,7 +80,7 @@ fi
 	$eagle44)
 		lunch eagle_fvd_p1-eng
 	;;
-	
+
 	$dolphin44)
 		lunch dolphin_fvd_p1-eng
 	;;
@@ -89,7 +89,7 @@ fi
 		show_vir "-------------do not choose lunch--------------"
 	;;
 	esac
-	
+
 	if [ "`is_make_project`" = "true" ];then
 		show-lunch
 	else
@@ -118,11 +118,11 @@ function make_android
 function make-android
 {
 	if [ "`is_make_project`" = "true" ];then
-		show-make-project		
-		if lunch-chiphd;then 
+		show-make-project
+		if lunch-chiphd;then
 			make_android $1
 			echo
-		fi	
+		fi
 	fi
 }
 
@@ -141,7 +141,7 @@ make-project()
 					show_vip "--------------------------"
 					show_vip "-        make end        -"
 					show_vip "--------------------------"
-				else		
+				else
 					if pack;then
 						show_vip "--> pack finish."
 						echo
@@ -151,7 +151,7 @@ make-project()
 							make-inc
 						fi
 					fi
-				fi	
+				fi
 			fi
 		fi
 	fi
@@ -191,7 +191,7 @@ make_framework()
 make-framework()
 {
 	thisPath=$(pwd) && thisPath=${thisPath%/*} && thisPath=${thisPath##*/}
-	
+
 	case $thisPath in
 	$test44)
 		show-make-app
@@ -202,7 +202,7 @@ make-framework()
 	;;
 
 	*)
-		show-make-app	
+		show-make-app
 		make_framework
 		show_vip "#############################"
 		show_vip "#   --> make framework end  #"
@@ -220,7 +220,7 @@ make_policy()
 make-policy()
 {
 	thisPath=$(pwd) && thisPath=${thisPath%/*} && thisPath=${thisPath##*/}
-	
+
 	case $thisPath in
 	$test44)
 		show-make-app
@@ -235,9 +235,9 @@ make-policy()
 		show_vip "###########################"
 		show_vip "#   --> make policy end   #"
 		show_vip "###########################"
-		
+
 	;;
-	esac	
+	esac
 }
 
 make_systemui()
@@ -249,7 +249,7 @@ make_systemui()
 make-systemui()
 {
 	thisPath=$(pwd) && thisPath=${thisPath%/*} && thisPath=${thisPath##*/}
-	
+
 	case $thisPath in
 	$test44)
 		show-make-app
@@ -278,7 +278,7 @@ make_launcher2()
 make-launcher2()
 {
 	thisPath=$(pwd) && thisPath=${thisPath%/*} && thisPath=${thisPath##*/}
-	
+
 	case $thisPath in
 	$test44)
 		show-make-app
@@ -306,16 +306,16 @@ make_tvdsettings()
 make-tvdsettings()
 {
 	thisPath=$(pwd) && thisPath=${thisPath%/*} && thisPath=${thisPath##*/}
-	
+
 	case $thisPath in
 	$test44)
 		show-make-app
-		make_tvdsettings	
+		make_tvdsettings
 		show_vip "################################"
 		show_vip "#   --> make tvdsettings end   #"
 		show_vip "################################"
 	;;
-	
+
 	*)
 		show-make-app
 		make_tvdsettings
@@ -335,7 +335,7 @@ make_settings()
 make-settings()
 {
 	thisPath=$(pwd) && thisPath=${thisPath%/*} && thisPath=${thisPath##*/}
-	
+
 	case $thisPath in
 	$test44)
 		show-make-app
