@@ -30,3 +30,7 @@ if [ $hostname_jenkins == "s1" -o $hostname_jenkins == "s2" -o $hostname_jenkins
     update-chiphd-script
     mkdir_data_folder
 fi
+
+if [ $hostname_jenkins == "s3" ];then
+    auto_running_jenkins
+fi

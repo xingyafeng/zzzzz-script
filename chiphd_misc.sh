@@ -25,3 +25,19 @@ function mkdir_data_folder()
         mkdir -p $da/$time_date
     fi
 }
+
+function auto_running_jenkins()
+{
+    local jenkins_war_path=/home/work5/jenkins/jenkins.war
+    local jenkins_war=jenkins.war
+
+    if [ -f $jenkins_war_path ];then
+
+        if [ "`ps aux | grep jenkins.war | grep -v "color=auto" | awk '{print $13}'`" != "$jenkins_war" ];then
+            java -jar $jenkins_war_path --httpPort=8089 --daemon
+        fi
+    else
+        echo " $jenkins_war_path is no found ..."
+    fi
+
+}
