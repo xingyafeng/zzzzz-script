@@ -13,10 +13,10 @@ cat <<EOF
 	- make-android          build android project.
 	- make-lichee           build android project.
 	- make-uboot            buold uboot and boot0
-	- gfind                 find on all local  
+	- gfind                 find on all local
 	- grepfs                Greps on all local .c .cc .cpp .h .java .xml .sh .mk .cfg Kconfig  .sh files.
 	- openfs                open file folder
-	- rsyncfs               rsync file and folder 
+	- rsyncfs               rsync file and folder
 	- geditfs               open file run backgroud
 	- renamefs              rename photo FileName
 	- recover_sdk           clean all customs file
