@@ -1,6 +1,12 @@
 #!/bin/bash
 
 ####################################################### define
+
+### define common
+da=$workspace/date
+time_date=`date +%m%d`
+td=$da/$time_date
+
 ### project name
 eastaeon51=eastaeon5.1-mt6735m
 k2651=k26
