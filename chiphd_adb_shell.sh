@@ -63,11 +63,11 @@ function debug-mask
 function change-mode
 {
 	local usb_mode=$1
-    local ip_addr=$2    
+    local ip_addr=$2
 
     if [ "$ip_addr" ];then
-        adb-connect $ip_addr            
-    fi    
+        adb-connect $ip_addr
+    fi
 
 	if [ $usb_mode == "$devices_device" ];then
 		adb shell cat sys/bus/platform/devices/sunxi_usb_udc/usb_device
@@ -81,14 +81,14 @@ function change-mode
 function adb-chmod
 {
     local ret=$1
-    
+
     case $ret in
     $devices_prop)
         adb shell chmod 644 system/$ret
     ;;
 
 	$devices_sunxi_kl)
-		adb shell chmod 644 system/usr/keylayout/$ret	
+		adb shell chmod 644 system/usr/keylayout/$ret
 	;;
 
 	*)
@@ -97,7 +97,7 @@ function adb-chmod
         fi
 
 		if [ "`echo $ret | grep customer_ir_ 2>/dev/null`" ];then
-			adb shell chmod 644 system/usr/keylayout/$ret		
+			adb shell chmod 644 system/usr/keylayout/$ret
 		fi
     ;;
     esac
@@ -108,7 +108,7 @@ function adb-chmod
 function push_system_app()
 {
 	local ret=$1
-	
+
 	if [[ "$ret" ]]; then
 		#statements
    		adb push system/app/$ret system/app
@@ -120,7 +120,7 @@ function push_system_app()
 function push_priv_app()
 {
 	local ret=$1
-	
+
 	if [[ "$ret" ]]; then
 		#statements
    		adb push system/priv-app/$ret system/priv-app
@@ -139,11 +139,11 @@ function adb-push-app()
 	fi
 
 	local ret=$1
-	
+
     if adb-remount;then
 
 		if [ $? -eq 0 ];then
-			case $ret in 
+			case $ret in
 			$devices_tvdsettings)
 				push_system_app $ret
 				sleep 2s
@@ -165,7 +165,7 @@ function adb-push-app()
 				adb-reboot
 			;;
 			esac
-		fi	
+		fi
     fi
 
 	cd $old_path > /dev/null
@@ -174,7 +174,7 @@ function adb-push-app()
 adb-pull-app()
 {
 	local app_name=$1
-	
+
 	if [ "$app_name" ];then
 		if adb-remount;then
 			adb pull system/app/$app_name $td
@@ -190,9 +190,9 @@ adb-push-framework()
 	local old_path=`pwd`
 
 	if [ ! "$jar_file" ];then
-		return	
+		return
 	fi
-    
+
     if [ "$DEVICE" ];then
 		cout
 	fi
@@ -212,11 +212,11 @@ adb-pull-framework()
 	local jar_file=$1
 
 	if [ ! "$jar_file" ];then
-		return	
+		return
 	fi
 
   	if adb-remount;then
-  		adb pull system/framework/$jar_file $td	
+  		adb pull system/framework/$jar_file $td
 	fi
 }
 
@@ -230,7 +230,7 @@ adb-push-prop()
             if adb-chmod $prop_file;then
 				adb shell sync
                 adb-reboot
-            fi     
+            fi
         fi
     fi
 }
@@ -238,8 +238,8 @@ adb-push-prop()
 adb-pull-prop()
 {
 	local device_prop=build.prop
-	
-	if adb-remount;then	
+
+	if adb-remount;then
     	adb pull system/$device_prop $td
 	fi
 }
@@ -254,7 +254,7 @@ adb-push-sunxi-kl()
 	fi
 
 	if [ ! "$sunxi_kl" ];then
-		break;	
+		break;
 	fi
 
 	if adb-remount;then
@@ -268,7 +268,7 @@ adb-push-sunxi-kl()
 adb-pull-sunxi-kl()
 {
 	local sunxi_kl=$1
-	
+
 	if adb-remount;then
 		adb pull system/usr/keylayout/$sunxi_kl $td
 	fi
@@ -276,8 +276,8 @@ adb-pull-sunxi-kl()
 
 adb-push-ko()
 {
-	local linux_ko=$1	
-	
+	local linux_ko=$1
+
 	if adb-remount;then
 		adb push $linux_ko system/vendor/modules/
 		adb-chmod $linux_ko
