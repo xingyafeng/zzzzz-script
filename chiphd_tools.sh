@@ -411,9 +411,15 @@ function renamefs
 
 	for old_photo_name in `find . -iname "*.png" -o -iname "*.jpg" -type f | sort`; do
 		#statements
-		new_photo_name=H8000000$count.${old_photo_name##*.}
+        if [ $count -lt 10 ];then
+		    new_photo_name=000$count.${old_photo_name##*.}
+        elif [ $count -lt 100 ];then
+		    new_photo_name=00$count.${old_photo_name##*.}
+        elif [ $count -lt 1000 ];then
+		    new_photo_name=0$count.${old_photo_name##*.}
+        fi
 
-		#show_vir "renamephoto $old_photo_name to $new_photo_name"
+        #show_vir "renamephoto $old_photo_name to $new_photo_name"
 		mv "$old_photo_name" "$new_photo_name"
 
 		let count++
