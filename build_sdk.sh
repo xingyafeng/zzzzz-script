@@ -790,6 +790,7 @@ function download_sdk()
 ## build sdk
 function make-sdk()
 {
+    source_init
 	if make installclean;then
 		echo "--> make installclean end ..."
 		echo
