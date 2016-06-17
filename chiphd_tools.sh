@@ -718,6 +718,13 @@ function mount_project
 }
 
 ### login ssh server
+function jenkins
+{
+    local jenkins_ip=10.0.0.18
+
+	ssh jenkins@$jenkins_ip
+}
+
 function jenkins1
 {
 	ssh jenkins@s1.y
