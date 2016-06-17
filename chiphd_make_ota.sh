@@ -22,13 +22,57 @@ function make-target
 	fi
 }
 
+function sync_ota_server()
+{
+    local ota_local_path=~/OTA
+    local server_name=`hostname`
+    local share_path=/home/share/jenkins_share
+    local jenkins_server=jenkins@s4.y
+    local custom_project=$1
+    local custom_version=$2
+    local ota_version_path=$3
+    local ota_server_custom_path=$share_path/OTA/${custom_project}\_${custom_version}
+
+    #echo "-------------"
+    #echo "ota_version_path = $ota_version_path"
+    #echo "ota_server_custom_path = $ota_server_custom_path"
+    #echo "-------------"
+
+    if [ $server_name == "s1" -o $server_name == "s2" -o $server_name == "s3" -o $server_name == "happysongs"  ];then
+        if [ -d $ota_local_path ];then
+            rsync -av $ota_local_path $jenkins_server:$share_path
+        fi
+    elif [ $server_name == "s4" ];then
+        if [ ! -d $ota_server_custom_path ];then
+            mkdir -p $ota_server_custom_path
+        fi
+
+        if [ -d $ota_version_path -a -d $ota_server_path ];then
+            mv $ota_version_path $ota_server_custom_path
+        fi
+    fi
+}
+
 function make-inc
 {
     if [ $# -eq 2 ];then
-        echo
-        show_vir "make inc start ..."
-        echo
+
+        if [ "`is_make_project`" == "true" ];then
+            echo
+            show_vir "make inc start ..."
+            echo
+        else
+            echo
+            show_vir "please checkout your dirictory in xxx/androd/* "
+            echo
+            return 1
+        fi
     else
+        echo
+        show_vir "------------------------------------------"
+        show_vir "e.g : make-inc xxx.04.zip xxx.05.zip"
+        show_vir "------------------------------------------"
+        echo
         return 1
     fi
 
@@ -43,6 +87,10 @@ function make-inc
     local firmware_curr_version=$ota_current && firmware_curr_version=${firmware_curr_version%.*} && firmware_curr_version=${firmware_curr_version##*.}
     local OTA_FILE=${custom_project}\_${custom_version}\_${hardware_version}\_${software_version}.${firmware_curr_version}\_for\_${software_version}.${firmware_prev_version}.zip
 
+    local ota_local_path=~/OTA
+    local ota_server_path=/home/share/jenkins_share
+    local ota_version_path=$ota_local_path/${custom_project}\_${custom_version}/${software_version}.${firmware_curr_version}\_for\_${software_version}.${firmware_prev_version}
+
 if false;then
     echo "ota_previous = $ota_previous"
     echo "ota_current = $ota_current"
@@ -51,10 +99,28 @@ if false;then
     echo "firmware_prev_version = $firmware_prev_version"
     echo "firmware_curr_version = $firmware_curr_version"
     echo "OTA_FILE = $OTA_FILE"
+    echo "ota_version_path = $ota_version_path"
 fi
 
+    if [ ! -d $ota_local_path ];then
+        mkdir -p $ota_local_path
+    fi
+
+    if [ ! -d $ota_version_path ];then
+        mkdir -p $ota_version_path
+    fi
+
     if [ -e $ota_py -a "`is_make_project`" == "true" ];then
-        $ota_py -i $td/$ota_previous $td/$ota_current $td/$OTA_FILE
+        $ota_py -i $td/$ota_previous $td/$ota_current $ota_version_path/$OTA_FILE
+        cp -vf $td/$ota_previous $ota_version_path
+        cp -vf $td/$ota_current $ota_version_path
+    fi
+
+    ### sync server for OTA
+    sync_ota_server $custom_project $custom_version $ota_version_path
+
+    if [ $? -eq 0 ];then
+        rm $ota_local_path/* -r
     fi
 
     echo
