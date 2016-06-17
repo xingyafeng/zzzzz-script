@@ -19,7 +19,7 @@ sdate=$td
 yunovo_root=~/yunovocode
 sz_eastaeon=$yunovo_root/$eastaeon51/android
 jenkins_path=/home/work5/jenkins
-share_path=~/workspace/share_jenkins
+share_path=/home/share/jenkins_share
 
 s1_path=~/jobs/k26/android
 s2_path=~/jobs/k86s/android
@@ -67,7 +67,11 @@ function cjenkins
 
 function cshare
 {
-	cd $share_path
+    if [ -d $share_path ];then
+	    cd $share_path
+    else
+        show_vir " $share_path is no found !"
+    fi
 }
 
 function cscript
