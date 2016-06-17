@@ -595,7 +595,7 @@ function mount_box()
 ### sshfs server
 function sshfs-server()
 {
-    if [ `hostname` == "happysongs" ];then
+    if [ `hostname` == "happysongs" -o `hostname` == "s1" -o `hostname` == "s2" -o `hostname` == "s3" -o `hostname` == "s4" ];then
         s1.y
         s2.y
         s3.y
@@ -635,7 +635,7 @@ function s2.y()
     local slave_jar=slave.jar
     local server_name=s2.y
     local jobs_path=/home/jenkins/jobs
-    local local_path=/home/yafeng/$server_name
+    local local_path=~/$server_name
 
     if [ ! -d $local_path ];then
         mkdir -p $local_path
@@ -651,7 +651,7 @@ function s3.y()
     local slave_jar=slave.jar
     local server_name=s3.y
     local jobs_path=home/work5/jenkins/jobs
-    local local_path=/home/yafeng/$server_name
+    local local_path=~/$server_name
 
     if [ ! -d $local_path ];then
         mkdir -p $local_path
@@ -667,7 +667,7 @@ function s4.y()
     local slave_jar=slave.jar
     local server_name=s4.y
     local jobs_path=/home/jenkins/jobs
-    local local_path=/home/yafeng/$server_name
+    local local_path=~/$server_name
 
     if [ ! -d local_path ];then
         mkdir -p $local_path
@@ -682,7 +682,7 @@ function share_s4()
 {
     local server_name=s4.y
     local share_path=/home/jenkins/workspace/share
-    local local_path=/home/yafeng/share_s4
+    local local_path=~/share_s4
 
     if [ ! -d $local_path ];then
         mkdir -p $local_path
