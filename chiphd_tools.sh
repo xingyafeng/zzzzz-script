@@ -914,3 +914,90 @@ function ssh-update-script()
         fi
     done
 }
+
+## 批量复制文件到制定路径
+function cplogofs()
+{
+    ### e.g: magc6580_we_l.mk
+    local findfs_name=$1
+
+    ### e.g: yunovo_customs_logo_hd720
+    local content_name=$2
+
+    local boot_logo_mk=$findfs_name
+
+    local boot_logo_file=boot_logo.mk
+    local boot_logo_file_path=$script_path/$boot_logo_file
+
+    local findfs_file=$script_path/findfs.txt
+
+    if [ $# -eq 2 ];then
+        echo
+        show_vig "cp files start ..."
+        echo
+    else
+        show_vir "e.g: cp_boot_logo file_name content_name"
+    fi
+
+    ### 获取项目路径
+    if [ "$findfs_name" ];then
+        find . -name $findfs_name -print0 | xargs -0 grep $content_name | cut -d ":" -f1 > $findfs_file
+    fi
+
+    echo "boot_logo_file = $boot_logo_file"
+
+    ## 拷贝到指定项目中
+    while read findfs
+    do
+        findfs=${findfs%/*}
+
+        ### 生成HardWareConfig.mk
+        if [ -f $findfs/$boot_logo_mk ];then
+            cat $findfs/$boot_logo_mk | grep BOOT_LOGO > $boot_logo_file_path
+        else
+            echo "$findfs/$boot_logo_mk not found !"
+            return 1
+        fi
+
+        if [ -f $boot_logo_file_path -a "$findfs" ];then
+            cp -vf $boot_logo_file_path $findfs
+        else
+            echo "$boot_logo_file_path not found !"
+            return 1
+        fi
+
+        if [ -f $findfs/$boot_logo_mk ];then
+            rm $findfs/$boot_logo_mk
+            #echo "1---> $findfs/$boot_logo_mk"
+        else
+            echo "$findfs/$boot_logo_mk not found !"
+            return 1
+        fi
+    done < $findfs_file
+
+    ### del tmp file
+    if [ -f $findfs_file ];then
+        rm $findfs_file
+        #echo "2---> $findfs_file"
+    fi
+
+    ### del tmp file
+    if [ -f $boot_logo_file_path ];then
+        rm $boot_logo_file_path
+        #echo "3---> $boot_logo_file_path"
+    fi
+
+    echo
+    show_vig "cp files end ..."
+    echo
+}
+
+##　批量删除指定文件
+function deletefs()
+{
+    local deletefs=$1
+
+    if [ "$deletefs" ];then
+        gfind $deletefs | xargs rm -r
+    fi
+}
