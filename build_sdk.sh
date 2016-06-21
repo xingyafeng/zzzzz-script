@@ -686,66 +686,6 @@ function clone_app()
 	cd $OLDP > /dev/null
 }
 
-
-function clone_app_old()
-{
-	local OLDP=`pwd`
-	local remote_name="master origin/master"
-	local app_path=packages/apps
-	local ssh_link=ssh://jenkins@gerrit2.spt-tek.com:29418
-	local default_branch="master origin/master"
-
-	echo "project_name = $project_name"
-
-	if [ $project_name == "k86a" -o $project_name == "k86m" -o $project_name == "k86sm" -o $project_name == "k86sa" ];then
-		k86a_app+=("${commond_app[@]}")
-		allapp+=("${k86a_app[@]}")
-	elif [ $project_name == "k86l" -o $project_name == "k86s6" -o $project_name == "k86s7" ];then
-		k86l_app+=("${commond_app[@]}")
-		allapp+=("${k86l_app[@]}")
-		default_branch="long origin/long"
-	elif [ $project_name == "k86s" -o $project_name == "k86sa1" ];then
-		k86s_app+=("${commond_app[@]}")
-		allapp+=("${k86s_app[@]}")
-	elif [ $project_name == "k26a" ];then
-		k26a_app+=("${commond_app[@]}")
-		allapp+=("${k26a_app[@]}")
-	elif [ $project_name == "k26s" ];then
-		k26s_app+=("${commond_app[@]}")
-		allapp+=("${k26s_app[@]}")
-	elif [ $project_name == "k88" ];then
-		k88_app+=("${commond_app[@]}")
-		allapp+=("${k88_app[@]}")
-	fi
-
-	cd $app_path > /dev/null
-
-	for app_name in ${allapp[@]}; do
-		#statements
-		#echo ${app_name}
-		if [ -d $app_name ];then
-			echo "-------------- pull $app_name app code"
-			cd $app_name > /dev/null
-			git pull
-			cd .. > /dev/null
-		else
-			echo "-------------- clone $app_name app code"
-			git clone $ssh_link/$app_name
-
-			if [ $app_name == "CarEngine"  -o $app_name == "CarRecordDouble" ];then
-				echo "app name = $app_name"
-				cd $app_name > /dev/null
-				git checkout -b ${default_branch}
-				cd .. > /dev/null
-			fi
-		fi
-	done
-
-	echo "--> clone or pull app end ..."
-	echo
-	cd $OLDP > /dev/null
-}
-
 ## download sdk
 function download_sdk()
 {
