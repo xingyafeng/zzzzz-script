@@ -65,7 +65,7 @@ cur_time=`date +%m%d_%H%M`
 hw_versiom=H3.1
 branch_nane=develop
 lunch_project=full_${build_device}-${build_type}
-project_link="init -u git@src1.spt-tek.com:projects/manifest.git"
+project_link="init -u git@c1.y:projects/manifest.git"
 prefect_name="$file_project/$file_name/$file_version"
 system_version=
 fota_version=
@@ -561,7 +561,7 @@ function clone_app()
     local yunovo_app_file=~/workspace/script/zzzzz-script/yunovo_app.txt
 	local app_path=packages/apps
 	local default_branch="master origin/master"
-	local ssh_link=ssh://jenkins@gerrit2.spt-tek.com:29418
+	local ssh_link=ssh://jenkins@gerrit2.y:29418
 	local branch_nane=
 	local tag_name=
 
