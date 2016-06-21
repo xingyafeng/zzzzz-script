@@ -891,13 +891,13 @@ function update_yunovo_customs_auto()
 	local nowPwd=$(pwd)
     local sz_project_name=`echo k26 k86s k86a k86l k86m k86sm k86ls`
     local sz_base_path=~/jobs
-    local sz_yunovo_path=
-    local sz_yunovo_customs_link=
-    local sz_yunovo_customs_path=
 
     for sz_custom in $sz_project_name
     do
-        sz_yunovo_customs_path=$sz_base_path/$sz_custom/yunovo_customs
+        local sz_yunovo_customs_path=$sz_base_path/$sz_custom/yunovo_customs
+        local sz_yunovo_customs_link=`echo /home/jenkins/workspace/git_server/$sz_custom/yunovo_customs.git`
+        local sz_yunovo_customs_link_server=`echo ssh://jenkins@s4.y/home/jenkins/workspace/git_server/$sz_custom/yunovo_customs.git`
+        local sz_yunovo_path=$sz_base_path/$sz_custom
 
         #echo "sz_custom = $sz_custom"
         if [ -d $sz_yunovo_customs_path/.git ];then
@@ -905,7 +905,7 @@ function update_yunovo_customs_auto()
             cd $sz_yunovo_customs_path > /dev/null
 
             if [ `hostname` == "s4" ];then
-                if [ $sz_custom == "k86ls" -o $sz_custom == "k26" ];then
+                if [ $sz_custom == "k26" ];then
                     git pull && echo "-------- $sz_custom yunovo_customs update successful ..."
                 else
                     git pull $sz_custom master && echo "-------- $sz_custom yunovo_customs update successful ..."
@@ -917,28 +917,39 @@ function update_yunovo_customs_auto()
             fi
             cd - > /dev/null
         else
-            if [ $sz_custom == "k86ls" ];then
-                sz_yunovo_path=$sz_base_path/$sz_custom
-                if [ ! -d $sz_yunovo_path ];then
-                    mkdir -p $sz_yunovo_path
-                fi
-
-                cd $sz_yunovo_path > /dev/null
-                sz_custom=k86l
-                sz_yunovo_customs_link=`echo ssh://jenkins@s4.y/home/jenkins/workspace/git_server/$sz_custom/yunovo_customs.git`
-			else
-                sz_yunovo_customs_link=`echo ssh://jenkins@s4.y/home/jenkins/workspace/git_server/$sz_custom/yunovo_customs.git`
-                sz_yunovo_path=$sz_base_path/$sz_custom
-                if [ ! -d $sz_yunovo_path ];then
-                    mkdir -p $sz_yunovo_path
-                fi
-                cd $sz_yunovo_path > /dev/null
+            if [ ! -d $sz_yunovo_path ];then
+                mkdir -p $sz_yunovo_path
             fi
 
+            cd $sz_yunovo_path > /dev/null
 
-            echo $sz_yunovo_customs_link
-            git clone $sz_yunovo_customs_link
-            echo
+            if [ `hostname` == "s4" ];then
+                if [ "$sz_yunovo_customs_link" ];then
+                    echo
+                    echo "custom link = $sz_yunovo_customs_link"
+                    echo
+
+                    git clone $sz_yunovo_customs_link
+                    echo
+                else
+                    echo "$sz_yunovo_customs_link not found !"
+                    return 1
+                fi
+            else
+
+                if [ "$sz_yunovo_customs_link_server" ];then
+                    echo
+                    echo "custom link = $sz_yunovo_customs_link_server"
+                    echo
+
+                    git clone $sz_yunovo_customs_link_server
+                    echo
+                else
+                    echo "$sz_yunovo_customs_link_server not found !"
+                    return 1
+                fi
+            fi
+
             cd - > /dev/null
         fi
     done
