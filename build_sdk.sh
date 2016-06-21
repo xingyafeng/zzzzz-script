@@ -750,18 +750,48 @@ function clone_app_old()
 function download_sdk()
 {
     local hostname=`hostname`
+    local project_name=$(pwd) && project_name=${project_name%/*} && project_name=${project_name##*/}
     local defalut=
 
-    if [ $project_name == "k86a" -o $project_name == "k86m" ];then
-        defalut=k86A
-    elif [ $project_name == "k86s" -o $project_name == "k86sm" -o $project_name == "k86sa" -o $project_name == "k86sa1" ] ;then
-        defalut=k86s
-    elif [ $project_name == "k86l" -o $project_name == "k86s6" -o $project_name == "k86s7" ];then
-        defalut=k86s_400x1280
-    elif [ $project_name == "k88" ];then
-        defalut=k88
-    elif [ $project_name == "k26a" -o $project_name == "k26b" -o $project_name == "k26s" ];then
-        defalut=K26
+    if [ "$project_name" ];then
+
+        if [ $project_name == "k86a" -o $project_name == "k86m" ];then
+            defalut=k86A
+        elif [ $project_name == "k86s" -o $project_name == "k86sm" ] ;then
+            defalut=k86s
+        elif [ $project_name == "k86l" ];then
+            defalut=k86s_400x1280
+        elif [ $project_name == "k86ls" ];then
+            defalut=k86l_split
+        elif [ $project_name == "k88" ];then
+            defalut=k88
+        elif [ $project_name == "k26" ];then
+            defalut=K26
+        else
+            echo "project do not match it !"
+            return 1
+        fi
+    else
+
+        if false;then
+            if [ $project_name == "k86a" -o $project_name == "k86m" ];then
+                defalut=k86A
+            elif [ $project_name == "k86s" -o $project_name == "k86sm" -o $project_name == "k86sa" -o $project_name == "k86sa1" ] ;then
+                defalut=k86s
+            elif [ $project_name == "k86l" -o $project_name == "k86s6" -o $project_name == "k86s7" ];then
+                defalut=k86s_400x1280
+            elif [ $project_name == "k88" ];then
+                defalut=k88
+            elif [ $project_name == "k26a" -o $project_name == "k26b" -o $project_name == "k26s" ];then
+                defalut=K26
+            else
+                echo "project do not match it !"
+                return 1
+            fi
+        fi
+
+        echo "project path do not found !"
+        return 1
     fi
 
     echo "defalut = $defalut"
