@@ -11,3 +11,11 @@ FactoryTest
 FileCopyManager
 YOcRadPowerManager
 YOcVoice
+YOcLauncher
+YOcMediaFolder
+YOcSettings
+YOcSplitScreen
+YOcTools
+YOcBTCall
+YOcRecord
+YOcFM
