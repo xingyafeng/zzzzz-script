@@ -765,7 +765,7 @@ function download_sdk()
     fi
 
     echo "defalut = $defalut"
-	if [ ! -d $gettop/.repo ];then
+	if [ ! -d ${gettop}/.repo ];then
 		#repo init -u git@src1.spt-tek.com:projects/manifest.git -m k86A.xml
 		repo $project_link -m ${defalut}.xml
 		repo sync -j${cpu_num}
@@ -790,7 +790,10 @@ function download_sdk()
 ## build sdk
 function make-sdk()
 {
-    source_init
+	if [ -d ${gettop}/.repo ];then
+        source_init
+    fi
+
 	if make installclean;then
 		echo "--> make installclean end ..."
 		echo
@@ -933,8 +936,10 @@ function main()
     else
         echo "do not anythings output !"
     fi
-    ## source env
-    source_init
+
+    if [ -d ${gettop}/.repo ];then
+        source_init
+    fi
 
     ## auto update
     update_yunovo_customs_auto
