@@ -159,9 +159,16 @@ function chiphd_recover_project()
 	if [ ! "$tDir" ]; then
 		tDir=.
 	fi
+
 	if [ -d $tDir/.git ]; then
 		local OldPWD=$(pwd)
-		cd $tDir && echo "---- recover $tDir"
+		cd $tDir > /dev/null
+        if [ "`git status -s`" ];then
+            echo "---- recover $tDir"
+        else
+            cd $OLDPWD
+            return 1
+        fi
 
 		git reset HEAD . ###recovery for cached files
 
