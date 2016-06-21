@@ -570,7 +570,10 @@ function clone_app()
     echo "-   project_name = $project_name   -"
     echo "---------------------------"
     echo
-    if [ $project_name == "k86l" -o $project_name == "k86s6" -o $project_name == "k86s7" ];then
+
+    local prj_name=$(pwd) && prj_name=${prj_name%/*} && prj_name=${prj_name##*/}
+
+    if [ $prj_name == "k86l" ];then
         default_branch="long origin/long"
     fi
 
