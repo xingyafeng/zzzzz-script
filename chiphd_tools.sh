@@ -936,7 +936,7 @@ function cplogofs()
         show_vig "cp files start ..."
         echo
     else
-        show_vir "e.g: cp_boot_logo file_name content_name"
+        show_vir "e.g: cplogofs file_name content_name"
     fi
 
     ### 获取项目路径
@@ -944,7 +944,7 @@ function cplogofs()
         find . -name $findfs_name -print0 | xargs -0 grep $content_name | cut -d ":" -f1 > $findfs_file
     fi
 
-    echo "boot_logo_file = $boot_logo_file"
+    #echo "boot_logo_file = $boot_logo_file"
 
     ## 拷贝到指定项目中
     while read findfs
@@ -985,6 +985,88 @@ function cplogofs()
     if [ -f $boot_logo_file_path ];then
         rm $boot_logo_file_path
         #echo "3---> $boot_logo_file_path"
+    fi
+
+    echo
+    show_vig "cp files end ..."
+    echo
+}
+
+function cphardwarefs()
+{
+    local findfs_name=$1
+    local findfs_file=$script_path/findfs.txt
+    local hardware_file=HardWareConfig.mk
+    local hardware_file_path=$script_path/$hardware_file
+
+    local start_line=
+    local end_line=
+
+    if [ $# -eq 1 ];then
+        echo
+        show_vig "cphardwarefs start ..."
+        echo
+    else
+        show_vir "please e.g: cphardwarefs ProjectConfig.mk"
+        return 1
+    fi
+
+    if [ "$findfs_name" ];then
+        find . -name $findfs_name > $findfs_file
+    else
+        show_vir "$findfs_name not found !"
+        return 1
+    fi
+
+    while read findfs
+    do
+        ### get project path
+        findfs=${findfs%/*}
+
+        if [ "$findfs/$findfs_name" ];then
+            start_line=$(sed -n '/^AUTO_ADD_GLOBAL_DEFINE_BY_VALUE/=' $findfs/$findfs_name)
+            end_line=$(sed -n '/^BOOT_LOGO/=' $findfs/$findfs_name)
+
+            if [ "$start_line" ];then
+                start_line=`expr $start_line + 1`
+            fi
+
+            if [ "$end_line" ];then
+                end_line=`expr $end_line - 1`
+            fi
+        fi
+
+        if [ $start_line -a $end_line -a -f $findfs/$findfs_name ];then
+            echo "### hardware info for yunovo cumstoms" > $hardware_file_path
+            sed -n "$start_line,$end_line"p $findfs/$findfs_name >> $hardware_file_path
+
+            ### del tmp file
+            if [ -f $hardware_file_path ];then
+                cp -vf  $hardware_file_path $findfs
+                if [ $? -eq 0 -a "$hardware_file_path" ];then
+                    rm $hardware_file_path
+                else
+                    show_vir "$hardware_file_path not found !"
+                    return 1
+                fi
+            fi
+
+            ### del ProjectConfig.mk
+            if [ "$findfs/$findfs_name" ];then
+                rm $findfs/$findfs_name
+            else
+                show_vir "$findfs/$findfs_name not found !"
+                return 1
+            fi
+        fi
+
+    done < $findfs_file
+
+    if [ -f $findfs_file ];then
+        rm $findfs_file
+    else
+        show_vir "$findfs_file not fount ! "
+        return 1
     fi
 
     echo
