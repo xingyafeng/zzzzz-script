@@ -951,18 +951,18 @@ function cplogofs()
     do
         findfs=${findfs%/*}
 
-        ### 生成HardWareConfig.mk
+        ### 生成boot_logo.mk
         if [ -f $findfs/$boot_logo_mk ];then
             cat $findfs/$boot_logo_mk | grep BOOT_LOGO > $boot_logo_file_path
         else
-            echo "$findfs/$boot_logo_mk not found !"
+            echo "1. $findfs/$boot_logo_mk not found !"
             return 1
         fi
 
         if [ -f $boot_logo_file_path -a "$findfs" ];then
             cp -vf $boot_logo_file_path $findfs
         else
-            echo "$boot_logo_file_path not found !"
+            echo "2. $boot_logo_file_path not found !"
             return 1
         fi
 
@@ -970,7 +970,7 @@ function cplogofs()
             rm $findfs/$boot_logo_mk
             #echo "1---> $findfs/$boot_logo_mk"
         else
-            echo "$findfs/$boot_logo_mk not found !"
+            echo "2. $findfs/$boot_logo_mk not found !"
             return 1
         fi
     done < $findfs_file
@@ -995,6 +995,7 @@ function cplogofs()
 function cphardwarefs()
 {
     local findfs_name=$1
+    local project_name=$2
     local findfs_file=$script_path/findfs.txt
     local hardware_file=HardWareConfig.mk
     local hardware_file_path=$script_path/$hardware_file
@@ -1002,12 +1003,12 @@ function cphardwarefs()
     local start_line=
     local end_line=
 
-    if [ $# -eq 1 ];then
+    if [ $# -eq 2 ];then
         echo
         show_vig "cphardwarefs start ..."
         echo
     else
-        show_vir "please e.g: cphardwarefs ProjectConfig.mk"
+        show_vir "please e.g: cphardwarefs ProjectConfig.mk k26"
         return 1
     fi
 
@@ -1024,19 +1025,36 @@ function cphardwarefs()
         findfs=${findfs%/*}
 
         if [ "$findfs/$findfs_name" ];then
-            start_line=$(sed -n '/^AUTO_ADD_GLOBAL_DEFINE_BY_VALUE/=' $findfs/$findfs_name)
-            end_line=$(sed -n '/^BOOT_LOGO/=' $findfs/$findfs_name)
+            if [ $project_name == "k26" ];then
+                start_line=$(sed -n '/^AUTO_ADD_GLOBAL_DEFINE_BY_VALUE/=' $findfs/$findfs_name)
+                end_line=$(sed -n '/^BOOT_LOGO/=' $findfs/$findfs_name)
 
-            if [ "$start_line" ];then
-                start_line=`expr $start_line + 1`
+                if [ "$start_line" ];then
+                    start_line=`expr $start_line + 1`
+                fi
+
+                if [ "$end_line" ];then
+                    end_line=`expr $end_line - 1`
+                fi
+            else
+                start_line=$(sed -n '/yafeng/=' $findfs/$findfs_name)
+                end_line=$(sed -n '/^BOOT_LOGO/=' $findfs/$findfs_name)
+
+                if [ "$start_line" ];then
+                    start_line=`expr $start_line - 1`
+                fi
+
+                if [ "$end_line" ];then
+                    end_line=`expr $end_line - 1`
+                fi
             fi
 
-            if [ "$end_line" ];then
-                end_line=`expr $end_line - 1`
-            fi
         fi
 
         if [ $start_line -a $end_line -a -f $findfs/$findfs_name ];then
+
+            echo "start_line = $start_line"
+            echo "end_line = $end_line"
             echo "### hardware info for yunovo cumstoms" > $hardware_file_path
             sed -n "$start_line,$end_line"p $findfs/$findfs_name >> $hardware_file_path
 
