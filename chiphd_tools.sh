@@ -1036,9 +1036,31 @@ function cphardwarefs()
                 if [ "$end_line" ];then
                     end_line=`expr $end_line - 1`
                 fi
-            else
+            elif [ $project_name == "k86l" -o $project_name == "k86s" ];then
                 start_line=$(sed -n '/yafeng/=' $findfs/$findfs_name)
                 end_line=$(sed -n '/^BOOT_LOGO/=' $findfs/$findfs_name)
+
+                if [ "$start_line" ];then
+                    start_line=`expr $start_line - 1`
+                fi
+
+                if [ "$end_line" ];then
+                    end_line=`expr $end_line - 1`
+                fi
+            elif [ $project_name == "k86m" -o $project_name == "k86sm" ];then
+                start_line=$(sed -n '/add yafeng hardware start/=' $findfs/$findfs_name)
+                end_line=$(sed -n '/^BOOT_LOGO/=' $findfs/$findfs_name)
+
+                if [ "$start_line" ];then
+                    start_line=`expr $start_line - 1`
+                fi
+
+                if [ "$end_line" ];then
+                    end_line=`expr $end_line - 1`
+                fi
+            elif [ $project_name == "k86a" ];then
+                start_line=$(sed -n '/yafeng/=' $findfs/$findfs_name)
+                end_line=$(sed -n '/^#BOOT_LOGO/=' $findfs/$findfs_name)
 
                 if [ "$start_line" ];then
                     start_line=`expr $start_line - 1`
@@ -1053,8 +1075,6 @@ function cphardwarefs()
 
         if [ $start_line -a $end_line -a -f $findfs/$findfs_name ];then
 
-            echo "start_line = $start_line"
-            echo "end_line = $end_line"
             echo "### hardware info for yunovo cumstoms" > $hardware_file_path
             sed -n "$start_line,$end_line"p $findfs/$findfs_name >> $hardware_file_path
 
