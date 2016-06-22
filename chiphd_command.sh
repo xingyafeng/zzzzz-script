@@ -47,22 +47,43 @@ function bcompare()
 
 function ceastaeon()
 {
-	cd $sz_eastaeon
+    if [ -d $sz_eastaeon ];then
+	    cd $sz_eastaeon
+    else
+        show_vir " $sz_eastaeon not found !"
+        return 1
+    fi
 }
 
 function cyunovo()
 {
-	cd $yunovo_root
+    if [ -d $yunovo_root ];then
+	    cd $yunovo_root
+    else
+        show_vir " $yunovo_root not found !"
+        return 1
+    fi
 }
 
 function cworkspace
 {
-	cd $workspace
+    if [ -d $workspace ];then
+	    cd $workspace
+    else
+        show_vir " $workspace mot found !"
+        return 1
+    fi
 }
 
 function cjenkins
 {
-	cd $jenkins_path
+    if [ -d $jenkins_paths ];then
+	    cd $jenkins_path
+    else
+        show_vir " $jenkins_path not found !"
+        return 1
+    fi
+
 }
 
 function cshare
@@ -70,43 +91,78 @@ function cshare
     if [ -d $share_path ];then
 	    cd $share_path
     else
-        show_vir " $share_path is no found !"
+        show_vir " $share_path  not found !"
     fi
 }
 
 function cscript
 {
-	cd $script_path
+    if [ -d $script_path ]
+	    cd $script_path
+    else
+        show_vir " $script_path not found !"
+        return 1
+    fi
 }
 
 function cdate
 {
-	cd $sdate
+    if [ -d $sdate ];then
+	    cd $sdate
+    else
+        show_vir " $sdate not found !"
+        return 1
+    fi
 }
 
 function crsync
 {
-	cd $rsync_path
+    if [ -d $rsync_path ];then
+	    cd $rsync_path
+    else
+        show_vir " $rsync_path not found !"
+        return 1
+    fi
 }
 
 function cs1.y()
 {
-    cd $s1_path
+    if [ -d $s1_path ];then
+        cd $s1_path
+    else
+        show_vir " $s1_path not found !"
+        return 1
+    fi
 }
 
 function cs2.y()
 {
-    cd $s2_path
+    if [ -d $s2_path ];then
+        cd $s2_path
+    else
+        show_vir " $s2_path not found !"
+        return 1
+    fi
 }
 
 function cs3.y()
 {
-    cd $s3_path
+    if [ -d $s3_path ];then
+        cd $s3_path
+    else
+        show_vir " $s3_path not found !"
+        return 1
+    fi
 }
 
 function cs4.y()
 {
-    cd $s4_path
+    if [ -d $s4_path ];then
+        cd $s4_path
+    else
+        show_vir " $s4_path not found !"
+        return 1
+    fi
 }
 
 function ctoms()
@@ -127,5 +183,10 @@ function ctoms()
 
     sz_project_path=~/jobs/$sz_project/yunovo_customs/custom
 
-    cd $sz_project_path
+    if [ -d $sz_project_path ];then
+        cd $sz_project_path
+    else
+        show_vir " $sz_project_path not found !"
+        return 1
+    fi
 }
