@@ -19,6 +19,7 @@ YOcTools
 YOcBTCall
 YOcRecord
 YOcFM
+CarLogTools
 AnAnEDog
 AnAnEDogUE
 BaiduInput
@@ -44,3 +45,7 @@ ECar
 ECarVoip
 iFlyIME
 WuliuRuyibao
+BaiduGou
+BaiduCustomerNavi
+BaiduCodriver
+CldNaviLong

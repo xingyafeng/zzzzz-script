@@ -23,3 +23,7 @@ ECar
 ECarVoip
 iFlyIME
 WuliuRuyibao
+BaiduGou
+BaiduCustomerNavi
+BaiduCodriver
+CldNaviLong
