@@ -31,6 +31,6 @@ if [ $hostN == "s1" -o $hostN == "s2" -o $hostN == "s3" -o $hostN == "s4" -o $ho
     mkdir_data_folder
 fi
 
-if [ $hostname_jenkins == "s3" ];then
+if [ $hostN == "s3" ];then
     auto_running_jenkins
 fi
