@@ -595,7 +595,7 @@ function mount_box()
 ### sshfs server
 function sshfs-server()
 {
-    if [ `hostname` == "happysongs" -o `hostname` == "s1" -o `hostname` == "s2" -o `hostname` == "s3" -o `hostname` == "s4" ];then
+    if [ `hostname` == "happysongs" -o `hostname` == "siawen" -o `hostname` == "s1" -o `hostname` == "s2" -o `hostname` == "s3" -o `hostname` == "s4" ];then
         s1.y
         s2.y
         s3.y
@@ -606,7 +606,7 @@ function sshfs-server()
 
 function fusermount-server()
 {
-    if [ `hostname` == "happysongs" ];then
+    if [ `hostname` == "happysongs" - o `hostname` == "siawen" ];then
         for server_no in s1.y s2.y s3.y s4.y share_s4
         do
             fusermount -u ~/$server_no
@@ -681,14 +681,14 @@ function s4.y()
 function share_s4()
 {
     local server_name=s4.y
-    local share_path=/home/jenkins/workspace/share
+    local share_path=/home/share/jenkins_share
     local local_path=~/share_s4
 
     if [ ! -d $local_path ];then
         mkdir -p $local_path
     fi
 
-    if [ `hostname` == "happysongs" ];then
+    if [ `hostname` == "happysongs" `hostname` == "siawen" ];then
         sshfs jenkins@$server_name://$share_path $local_path
     fi
 }
