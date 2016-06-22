@@ -70,6 +70,11 @@ prefect_name="$file_project/$file_name/$file_version"
 system_version=
 fota_version=
 
+################################ system env
+DEVICE=
+ROOT=
+OUT=
+
 ### color purple
 function show_vip
 {
@@ -522,6 +527,87 @@ function cpcustoms()
 	fi
 }
 
+function handler_custom_config()
+{
+    local hardware_config=HardWareConfig.mk
+    local project_config=ProjectConfig.mk
+    local bootable_config=${DEVICE_PROJECT}.mk
+    local boot_logo_config=boot_logo.mk
+    local bootable_config_path=bootable/bootloader/lk/project
+    local hardware_config_file=$ROOT/$DEVICE/$hardware_config
+    local project_config_file=$ROOT/$DEVICE/$project_config
+    local boot_logo_config_file=$ROOT/$bootable_config_path/$boot_logo_config
+    local bootable_config_file=$ROOT/$bootable_config_path/$bootable_config
+
+    local src_boot_logo=
+    local src_boot_logo_other=`echo BOOT_LOGO=cmcc_lte_qhd`
+    local src_boot_logo_k26=`echo BOOT_LOGO := cmcc_lte_hd720`
+
+
+    ### handler customs config file
+    if [ -f $hardware_config_file -a -f $project_config_file ];then
+        cat $hardware_config_file >> $project_config_file
+
+        if [ $? -eq 0 ];then
+            rm $hardware_config_file
+        fi
+
+        echo
+        echo "------------------------------"
+        echo "    hardware config modify    "
+        echo "------------------------------"
+        echo
+    fi
+
+    while read sz_boot_logo
+    do
+        #echo "$sz_boot_logo"
+        if [ "$sz_boot_logo" == "$src_boot_logo_other" ];then
+            src_boot_logo=$src_boot_logo_other
+        elif [ "$sz_boot_logo" == "$src_boot_logo_k26" ];then
+            src_boot_logo=$src_boot_logo_k26
+        fi
+    done < $bootable_config_file
+
+    if [ -f $boot_logo_config_file -a -f $bootable_config_file ];then
+        local dest_boot_logo=`cat $boot_logo_config_file`
+
+        #echo "src_boot_logo = $src_boot_logo"
+        #echo "dest_boot_logo = $dest_boot_logo"
+
+        if [ "$src_boot_logo" ];then
+            sed -i "s/${src_boot_logo}/${dest_boot_logo}/g" $bootable_config_file
+        else
+            echo "sed fail ..."
+            return 1
+        fi
+
+        if [ $? -eq 0 ];then
+            rm $boot_logo_config_file
+        fi
+
+        echo
+        echo "------------------------------"
+        echo "    boot logo config modify   "
+        echo "------------------------------"
+        echo
+
+    fi
+
+    if false;then
+        echo "-----------------------------------------------"
+        echo "pwd = `pwd`"
+        echo "DEVICE = $DEVICE"
+        echo "hardware_config_file = $hardware_config_file"
+        echo "project_config_file  = $project_config_file"
+
+        echo "boot_logo_config_file = $boot_logo_config_file"
+        echo "bootable_config_file = $bootable_config_file"
+
+        echo "-----------------------------------------------"
+    fi
+}
+
 function handler_tag_branch()
 {
     local branch_nane=$1
@@ -909,6 +995,11 @@ function update_yunovo_customs_auto()
 
 function source_init()
 {
+    local magcomm_project=magc6580_we_l
+    local eastaeon_project=aeon6735_65c_s_l1
+    local eastaeon_project_m=aeon6735m_65c_s_l1
+
+
     source  build/envsetup.sh
     echo "--> source end ..."
     echo
@@ -916,6 +1007,23 @@ function source_init()
     lunch $lunch_project
     echo "--> lunch end ..."
     echo
+
+    ROOT=$(gettop)
+    OUT=$OUT
+    DEVICE_PROJECT=`get_build_var TARGET_DEVICE`
+
+    if [ $DEVICE_PROJECT == $magcomm_project ];then
+        DEVICE=device/magcomm/$DEVICE_PROJECT
+    elif [ $DEVICE_PROJECT == $eastaeon_project -o $DEVICE_PROJECT == $eastaeon_project_m ];then
+        DEVICE=device/eastaeon/$DEVICE_PROJECT
+    else
+        DEVICE=device/eastaeon/$DEVICE_PROJECT
+        echo "do not match it ..."
+    fi
+
+    echo "ROOT = $(gettop)"
+    echo "OUT = $OUT"
+    echo "DEVICE = $DEVICE"
 }
 
 function main()
@@ -950,6 +1058,7 @@ function main()
     if [ $flag_cpcustom -eq 1 ];then
 
         cpcustoms
+        handler_custom_config
     else
         echo "do not cp customs"
     fi
