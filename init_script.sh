@@ -14,7 +14,7 @@
 ###commond
 workspace=~/workspace
 script_path=$workspace/script/zzzzz-script
-hostname_jenkins=`hostname`
+hostN=`hostname`
 
 if [ -d $script_path ];then
 	source $script_path/vendorsetup.sh
@@ -26,7 +26,7 @@ source $script_path/chiphd_script_update.sh
 ### misc
 source $script_path/chiphd_misc.sh
 
-if [ $hostname_jenkins == "s1" -o $hostname_jenkins == "s2" -o $hostname_jenkins == "s3" -o $hostname_jenkins == "s4" -o $hostname_jenkins == "happysongs" ];then
+if [ $hostN == "s1" -o $hostN == "s2" -o $hostN == "s3" -o $hostN == "s4" -o $hostN == "happysongs" -o $hostN == "siawen" ];then
     update-chiphd-script
     mkdir_data_folder
 fi
