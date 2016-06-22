@@ -97,7 +97,7 @@ function cshare
 
 function cscript
 {
-    if [ -d $script_path ]
+    if [ -d $script_path ];then
 	    cd $script_path
     else
         show_vir " $script_path not found !"
