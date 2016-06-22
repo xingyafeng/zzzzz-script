@@ -1092,6 +1092,38 @@ function cphardwarefs()
     echo
 }
 
+### 批量删除文件夹
+function deletefolder()
+{
+    local deletefs=$1
+    local findfs_file=$script_path/findfs.txt
+
+    if [ $deletefs ];then
+        gfind $deletefs > $findfs_file
+    fi
+
+    while read findfs
+    do
+        findfs=${findfs%/*}
+        #echo "fs = $findfs"
+
+        if [ "$findfs" ];then
+            rm $findfs -rf
+        else
+            show_vir "$findfs not found !"
+            return 1
+        fi
+
+    done < $findfs_file
+
+    if [ -f $findfs_file ];then
+        rm $findfs_file -rf
+    else
+        echo "$findfs_file not found !"
+        return 1
+    fi
+}
+
 ##　批量删除指定文件
 function deletefs()
 {
@@ -1099,5 +1131,8 @@ function deletefs()
 
     if [ "$deletefs" ];then
         gfind $deletefs | xargs rm -r
+    else
+        echo "$deletefs not found !"
+        return 1
     fi
 }
