@@ -38,7 +38,7 @@ function sync_ota_server()
     #echo "ota_server_custom_path = $ota_server_custom_path"
     #echo "-------------"
 
-    if [ $server_name == "s1" -o $server_name == "s2" -o $server_name == "s3" -o $server_name == "happysongs"  ];then
+    if [ $server_name == "s1" -o $server_name == "s2" -o $server_name == "s3" -o $server_name == "happysongs" -o $server_name == "siawen" ];then
         if [ -d $ota_local_path ];then
             rsync -av $ota_local_path $jenkins_server:$share_path
         fi
