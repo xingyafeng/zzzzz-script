@@ -20,3 +20,4 @@ YOcBTCall
 YOcRecord
 YOcFM
 CarLogTools
+BaiduVoice

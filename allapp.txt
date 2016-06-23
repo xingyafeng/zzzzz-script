@@ -20,6 +20,7 @@ YOcBTCall
 YOcRecord
 YOcFM
 CarLogTools
+BaiduVoice
 AnAnEDog
 AnAnEDogUE
 BaiduInput
@@ -49,3 +50,6 @@ BaiduGou
 BaiduCustomerNavi
 BaiduCodriver
 CldNaviLong
+BaiduGou
+BaiduCustomerNavi
+BaiduCodriver
