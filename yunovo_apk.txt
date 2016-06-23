@@ -27,6 +27,3 @@ BaiduGou
 BaiduCustomerNavi
 BaiduCodriver
 CldNaviLong
-BaiduGou
-BaiduCustomerNavi
-BaiduCodriver
