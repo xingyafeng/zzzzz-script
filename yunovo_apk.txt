@@ -28,3 +28,4 @@ BaiduCustomerNavi
 BaiduCodriver
 CldNaviLong
 DiDiCar
+CarBandMode
