@@ -27,3 +27,4 @@ BaiduGou
 BaiduCustomerNavi
 BaiduCodriver
 CldNaviLong
+DiDiCar

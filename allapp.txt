@@ -27,6 +27,7 @@ BaiduGou
 BaiduCustomerNavi
 BaiduCodriver
 CldNaviLong
+DiDiCar
 CarBack
 CarDog
 CarEngine
