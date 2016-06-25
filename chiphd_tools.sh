@@ -1156,3 +1156,28 @@ function deletefs()
         return 1
     fi
 }
+
+## 批量删除out目录
+function rmoutfs()
+{
+    local project_name=`echo k26 k86a k86l k86ls k86m k86s k86sm`
+    local project_path=""
+
+    for prj_name in $project_name
+    do
+        project_path=/home/jenkins/jobs/${prj_name}/android/out
+
+        if [ -d $project_path ];then
+            mv $project_path $td/out_${prj_name}
+        else
+            show_vir "$project_path not found !"
+        fi
+    done
+
+    if [ -d $td ];then
+        rm $td/* -rf
+    else
+        show_vir "$td not found !"
+        return 1
+    fi
+}
