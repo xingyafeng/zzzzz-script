@@ -5,68 +5,71 @@ export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64
 export JRE_HOME=$JAVA_HOME/jre
 export CLASSPATH=.:$CLASSPATH:$JAVA_HOME/lib:$JRE_HOME/lib
 export PATH=${JAVA_HOME}/bin:$JRE_HOME/bin:$PATH
+export LANGUAGE=en_US
+export LC_ALL=en_US.UTF-8
 
 ################################## args
 
-
-### build project name  e.g. : K86_H520
-build_prj_name=$1
-## system version  e.g. : S1.01
-build_version=$2
 ### build custom
-build_device=$3
-### eng|user|userdebug
-build_type=$4
+build_device=$1
 ### build sdk flag, e.g. : ota.print.download.clone.make.cp
-build_skd_flag=$5
+build_skd_flag=$2
+### build project name  e.g. : K86_H520
+build_prj_name=$3
 ### eg: k86l_yunovo_zx
-build_file=$6
+build_file=$4
+### eng|user|userdebug
+build_type=
 ### test
-build_test=$7
+build_test=
 
+## system version  e.g. : S1.01
+build_version=""
 ## project name for system k26 k86 k86A k86m k88
-project_name=${build_prj_name%%_*}
+project_name=""
 ### custom version H520 ZX etc
-custom_version=${build_prj_name##*_}
+custom_version=""
 
 ### project name k26 k86
-file_project=${build_file%%_*}
+file_project=""
 ### custom name yunovo newman qichen etc
-file_name=${build_file%_*} && file_name=${file_name##*_}
+file_name=""
 ### zx etc
-file_version=${build_file##*_}
+file_version=""
 
 ### system version and tag version
-build_version_tmp=
-tag_version_tmp=
+build_version_tmp=""
+tag_version_tmp=""
 
 ### S1.00 S1.01 ...
-first_version=
-second_version=
+first_version=""
+second_version=""
 
 ### 1.00 1.01 ...
-first_tag_version=
-second_tag_version=
+first_tag_version=""
+second_tag_version=""
 
 ### flag for main (0 or 1)
-flag_fota=`echo $build_skd_flag | cut -d '.' -f1`
-flag_print=`echo $build_skd_flag | cut -d '.' -f2`
-flag_download_sdk=`echo $build_skd_flag | cut -d '.' -f3`
-flag_clone_app=`echo $build_skd_flag | cut -d '.' -f4`
-flag_make_sdk=`echo $build_skd_flag | cut -d '.' -f5`
-flag_cpimage=`echo $build_skd_flag | cut -d '.' -f6`
-flag_cpcustom=`echo $build_skd_flag | cut -d '.' -f7`
+flag_fota=
+flag_print=
+flag_download_sdk=
+flag_clone_app=
+flag_make_sdk=
+flag_cpimage=
+flag_cpcustom=
+
 flag_jenkins_tag=
 
 ################################# common variate
 gettop=`pwd`
-cpu_num=`cat /proc/cpuinfo  | egrep 'processor' | wc -l`
-cur_time=`date +%m%d_%H%M`
 hw_versiom=H3.1
 branch_nane=develop
-lunch_project=full_${build_device}-${build_type}
+cur_time=`date +%m%d_%H%M`
+cpu_num=`cat /proc/cpuinfo  | egrep 'processor' | wc -l`
 project_link="init -u git@src1.spt-tek.com:projects/manifest.git"
-prefect_name="$file_project/$file_name/$file_version"
+
+lunch_project=
+prefect_name=
 system_version=
 fota_version=
 
@@ -88,9 +91,95 @@ function show_vip
 	fi
 }
 
+### handler vairable for jenkins
 function handler_vairable()
 {
     local tag_file=~/workspace/script/zzzzz-script/apptag.txt
+    local sz_build_device=$1
+    local sz_build_project=$2
+    local sz_build_file=$3
+    local sz_build_flag=$4
+
+    ### 1. project name
+    if [ "$sz_build_project" ];then
+        build_prj_name=$sz_build_project
+
+        project_name=${build_prj_name%%_*}
+        custom_version=${build_prj_name##*_}
+
+    else
+        echo "sz_build_project not found !" && return 1
+    fi
+
+    ### 2. build version
+    if [ "$yunovo_version" ];then
+        build_version=$yunovo_version
+    else
+        echo "yunovo_version not found !" && return 1
+    fi
+
+    ### 3. build file
+    if [ "$sz_build_file" ];then
+        build_file=$sz_build_file
+
+        file_project=${build_file%%_*}
+        file_name=${build_file%_*} && file_name=${file_name##*_}
+        file_version=${build_file##*_}
+
+        if [ "$file_project" -a "$file_name" -a "$file_version" ];then
+            prefect_name="$file_project/$file_name/$file_version"
+        else
+            echo "prefect_name not found !" && return 1
+        fi
+    else
+        echo "sz_build_file not found !" && return 1
+    fi
+
+    ### 4. build device
+    if [ "$sz_build_device" ];then
+        build_device=$sz_build_device
+    else
+        echo "build_device not found !" && return 1
+    fi
+
+    ### 5. build type
+    if [ "$yunovo_type" ];then
+        build_type=$yunovo_type
+    else
+        echo "build_type not found !" && return 1
+    fi
+
+    if [ "$build_device" -a "$build_type" ];then
+        lunch_project=full_${build_device}-${build_type}
+    else
+        echo "lunch_project not found !" && return 1
+    fi
+
+    ### 6. build flag
+    if [ "$sz_build_flag" ];then
+        build_skd_flag=$sz_build_flag
+
+        if [ "$build_skd_flag" ];then
+            flag_fota=`echo $build_skd_flag | cut -d '.' -f1`
+            flag_print=`echo $build_skd_flag | cut -d '.' -f2`
+            flag_download_sdk=`echo $build_skd_flag | cut -d '.' -f3`
+            flag_clone_app=`echo $build_skd_flag | cut -d '.' -f4`
+            flag_make_sdk=`echo $build_skd_flag | cut -d '.' -f5`
+            flag_cpimage=`echo $build_skd_flag | cut -d '.' -f6`
+            flag_cpcustom=`echo $build_skd_flag | cut -d '.' -f7`
+        else
+            echo "build_sdk_flag not found !" && return 1
+        fi
+    else
+        echo "build_sdk_flag not found !" && return 1
+    fi
+
+    ### 7. build test
+    if [ "$yunovo_test" ];then
+        build_test=$yunovo_test
+    else
+        echo "build_test not found !" && return 1
+    fi
 
     if [ "`echo $build_version | grep "_"`" ];then
         build_version_tmp=${build_version%_*}
@@ -276,7 +365,6 @@ function cpimage()
     local BASE_PATH_SERVER=$firmware_path_server/$prj_name/$ver_name
     local DEST_PATH_SERVER=$BASE_PATH_SERVER/$system_version
     local OTA_PATH_SERVER=$BASE_PATH_SERVER/${system_version}_full_and_ota
-    local ret=$1
 
     echo "-------------------------local base"
 	echo "BASE_PATH = $BASE_PATH"
@@ -395,7 +483,7 @@ function cpimage()
             echo
         fi
 
-        if [ $ret ];then
+        if [ $build_test == "true" ];then
             if [ ! -d $TEST_DEST_PATH_SERVER ];then
                 mkdir -p $TEST_DEST_PATH_SERVER
             fi
@@ -422,15 +510,16 @@ function print_variable()
     echo "file_version = $file_version"
 	echo '-----------------------------------------'
 	echo "build_version = $build_version"
-    echo "build_version_tmp = $build_version_tmp"
-    echo "tag_version_tmp = $tag_version_tmp"
     echo "first_version = $first_version"
     echo "second_version = $second_version"
+    echo
+    echo "tag_version = $tag_version_tmp"
     echo "first_tag_version = $first_tag_version"
     echo "second_tag_version = $second_tag_version"
 	echo '-----------------------------------------'
 	echo "build_device = $build_device"
 	echo "build_type = $build_type"
+	echo "lunch_project = $lunch_project"
 	echo '-----------------------------------------'
     echo "flag_fota = $flag_fota"
     echo "flag_print = $flag_print"
@@ -439,9 +528,11 @@ function print_variable()
     echo "flag_make_sdk = $flag_make_sdk"
     echo "flag_cpimage = $flag_cpimage"
     echo "flag_cpcustom = $flag_cpcustom"
-    echo "flag_jenkins_tag = $flag_jenkins_tag"
 	echo '-----------------------------------------'
-	echo "lunch_project = $lunch_project"
+    echo "flag_jenkins_tag = $flag_jenkins_tag"
+    echo "yunovo_test = $yunovo_test"
+	echo '-----------------------------------------'
+
 	echo "\$1 = $1"
 	echo "\$2 = $2"
 	echo "\$3 = $3"
@@ -906,17 +997,20 @@ function sync_jenkins_server()
     local share_path=/home/share/jenkins_share
     local jenkins_server=jenkins@s4.y
     local server_name=`hostname`
-    local ret=$1
 
     if [ $server_name == "s1" -o $server_name == "s2" -o $server_name == "s3" -o $server_name == "happysongs" ];then
-        if [ $ret ];then
+        if [ $build_test == "true" ];then
             rsync -av $firmware_path/ $jenkins_server:$share_path/Test
         else
             rsync -av $firmware_path $jenkins_server:$share_path
         fi
 
-        rm $firmware_path/* -rf
-        echo
+        if [ -d $firmware_path ];then
+            rm $firmware_path/* -rf
+        else
+            echo "$firmware_path not found !" && return 1
+        fi
+
         echo "--> sync end ..."
         echo
     fi
@@ -1028,7 +1122,7 @@ function source_init()
 
 function main()
 {
-    handler_vairable
+    handler_vairable $build_device $build_prj_name $build_file $build_skd_flag
 
     if [ $flag_print -eq 1 ];then
 	    print_variable $build_prj_name $build_version $build_device $build_type $build_skd_flag $build_file $build_test
@@ -1070,8 +1164,8 @@ function main()
     fi
 
     if [ $flag_cpimage -eq 1 ];then
-	    if cpimage $build_test;then
-            sync_jenkins_server $build_test
+	    if cpimage;then
+            sync_jenkins_server
         fi
     else
         echo "do not cp image !"
