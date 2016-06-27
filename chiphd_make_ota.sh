@@ -31,7 +31,7 @@ function sync_ota_server()
     local custom_project=$1
     local custom_version=$2
     local ota_version_path=$3
-    local ota_server_custom_path=$share_path/OTA/${custom_project}\_${custom_version}
+    local ota_server_custom_path=$share_path/OTA/$custom_project/${custom_project}\_${custom_version}
 
     #echo "-------------"
     #echo "ota_version_path = $ota_version_path"
@@ -89,7 +89,7 @@ function make-inc
 
     local ota_local_path=~/OTA
     local ota_server_path=/home/share/jenkins_share
-    local ota_version_path=$ota_local_path/${custom_project}\_${custom_version}/${software_version}.${firmware_curr_version}\_for\_${software_version}.${firmware_prev_version}
+    local ota_version_path=$ota_local_path/$custom_project/${custom_project}\_${custom_version}/${software_version}.${firmware_curr_version}\_for\_${software_version}.${firmware_prev_version}
 
 if false;then
     echo "ota_previous = $ota_previous"
