@@ -757,7 +757,7 @@ function clone_app()
 
     local prj_name=$(pwd) && prj_name=${prj_name%/*} && prj_name=${prj_name##*/}
 
-    if [ $prj_name == "k86l" ];then
+    if [ $prj_name == "k86l" -o $prj_name == "k26c" ];then
         default_branch="long origin/long"
     fi
 
