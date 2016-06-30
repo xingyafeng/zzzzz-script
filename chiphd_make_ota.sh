@@ -111,7 +111,7 @@ fi
     fi
 
     if [ -e $ota_py -a "`is_make_project`" == "true" ];then
-        $ota_py -i -w $td/$ota_previous $td/$ota_current $ota_version_path/$OTA_FILE
+        $ota_py -w -i $td/$ota_previous $td/$ota_current $ota_version_path/$OTA_FILE
         cp -vf $td/$ota_previous $ota_version_path
         cp -vf $td/$ota_current $ota_version_path
     fi
