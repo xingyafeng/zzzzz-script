@@ -26,9 +26,10 @@ source $script_path/chiphd_script_update.sh
 ### misc
 source $script_path/chiphd_misc.sh
 
-if [ $hostN == "s1" -o $hostN == "s2" -o $hostN == "s3" -o $hostN == "s4" -o $hostN == "happysongs" -o $hostN == "siawen" ];then
+if [ $hostN == "f1" -o $hostN == "s1" -o $hostN == "s2" -o $hostN == "s3" -o $hostN == "s4" -o $hostN == "happysongs" -o $hostN == "siawen" ];then
     update-chiphd-script
     mkdir_data_folder
+    set_alias
 fi
 
 if [ $hostN == "s3" ];then
