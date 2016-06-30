@@ -371,7 +371,7 @@ function cpfs()
     #echo "sz_base_path = $sz_base_path"
     #echo "sz_server_path = $sz_server_path"
 
-    if [ $sz_hostname == "s1" -o $sz_hostname == "s2" -o $sz_hostname == "s3" -o $sz_hostname == "s4" ];then
+    if [ $sz_hostname == "s1" -o $sz_hostname == "s2" -o $sz_hostname == "s3" -o $sz_hostname == "s4" -o $sz_hostname == "f1" ];then
         scp -r jenkins@${sz_hostname}.y:$sz_server_path/$sz_file .
     elif [ $sz_hostname == "happysongs" ];then
         sz_hostname=10.0.0.18
@@ -890,7 +890,7 @@ function rmappfs()
 
 function ssh-update-script()
 {
-    local server_ip=`echo s1.y s2.y s3.y s4.y happysongs`
+    local server_ip=`echo s1.y s2.y s3.y s4.y happysongs f1.y`
     local portN=22
     local server_name=jenkins
     local init_script=/home/jenkins/workspace/script/zzzzz-script/init_script.sh
