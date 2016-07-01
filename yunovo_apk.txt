@@ -29,3 +29,5 @@ BaiduCodriver
 CldNaviLong
 DiDiCar
 CarBandMode
+TxzAudio
+TxzCore

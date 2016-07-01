@@ -29,6 +29,8 @@ BaiduCodriver
 CldNaviLong
 DiDiCar
 CarBandMode
+TxzAudio
+TxzCore
 CarBack
 CarDog
 CarEngine
@@ -52,3 +54,4 @@ YOcRecord
 YOcFM
 CarLogTools
 BaiduVoice
+TxzVoice

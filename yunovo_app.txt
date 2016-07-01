@@ -21,3 +21,4 @@ YOcRecord
 YOcFM
 CarLogTools
 BaiduVoice
+TxzVoice
