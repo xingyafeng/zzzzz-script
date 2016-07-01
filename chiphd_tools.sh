@@ -897,10 +897,6 @@ function ssh-update-script()
 
     for ip in $server_ip;do
 
-        if [ "$ip" == "happysongs" ];then
-            ip=10.0.0.18
-        fi
-
         ssh -t -p $portN $server_name@$ip "
             source $init_script && echo "server: $ip" && \
             echo
