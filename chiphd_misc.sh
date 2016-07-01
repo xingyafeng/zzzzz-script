@@ -54,3 +54,27 @@ function set_alias()
     alias la='ls -A'
     alias l='ls -CF'
 }
+
+function is_yunovo_server
+{
+    local yunovo_server=`echo s1 s2 s3 s4 f1 happysongs`
+    local hostN=`hostname`
+
+    for n in $yunovo_server
+    do
+        if [ $n == $hostN ];then
+            echo true
+        fi
+    done
+}
+
+function is_yunovo_project
+{
+    local thisP=$(pwd) && thisP=${thisP%/*} && thisP=${thisP##*/}
+
+    if [ $thisP == $k26P -o $thisP == $k86aP -o $thisP == $k86mP -o $thisP == $k86sP $thisP == $k86smP -o  $thisP == $k86lP -o $thisP == $k86lsP ];then
+        echo true
+    else
+        echo false
+    fi
+}

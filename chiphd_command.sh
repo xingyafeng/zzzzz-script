@@ -8,11 +8,14 @@ time_date=`date +%m%d`
 td=$da/$time_date
 
 ### project name
-eastaeon51=eastaeon5.1-mt6735m
-k2651=k26
-k86a51=k86a
-k86s51=k86s
-k86l51=k86l
+eastaeonP=eastaeon5.1-mt6735m
+k26P=k26
+k86aP=k86a
+k86mP=k86m
+k86sP=k86s
+k86smP=k86sm
+k86lP=k86l
+k86lsP=k86ls
 
 sdate=$td
 
