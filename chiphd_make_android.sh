@@ -5,7 +5,7 @@ function is_make_project
 {
 	local thisPath=$(pwd) && thisPath=${thisPath%/*} && thisPath=${thisPath##*/}
 
-	if [ $thisPath == $eastaeon51 -o $thisPath == $k2651 -o $thisPath == $k86a51 -o $thisPath == $k86s51 -o  $thisPath == $k86l51 ];then
+	if [ $thisPath == $eastaeonP -o $thisPath == $k26P -o $thisPath == $k86aP -o $thisPath == $k86mP -o $thisPath == $k86sP -o $thisPath == $k86smP -o  $thisPath == $k86lP -o thisPath == $k86lsP ];then
 		echo true
 	else
 		echo false
