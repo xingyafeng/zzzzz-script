@@ -750,6 +750,11 @@ function yunovo
 	ssh yunovo@s4.y
 }
 
+function jenkins5()
+{
+    ssh jenkins@f1.y
+}
+
 function git-tag-for-app()
 {
     local OLDP=`pwd`
