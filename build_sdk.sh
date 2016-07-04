@@ -924,12 +924,19 @@ function download_sdk()
     echo "defalut = $defalut"
 	if [ ! -d ${gettop}/.repo ];then
 		#repo init -u git@src1.spt-tek.com:projects/manifest.git -m k86A.xml
-		repo $project_link -m ${defalut}.xml
+		if [ "$defalut" -a "$project_link" ];then
+            repo $project_link -m ${defalut}.xml
+        fi
 		repo sync -j${cpu_num}
-		ls -alF
-		repo start $defalut --all
-	else
+        ls -alF
+        if [ "$defalut" == "k86A" ]
+            defalut=master
+        fi
 
+        if [ $defalut ];then
+            repo start $defalut --all
+        fi
+	else
         if [ $hostname == "s4" -o $hostname == "s3" -o $hostname == "s2" -o $hostname == "s1" -o $hostname == "happysongs" ];then
             ## 还原 androiud源代码 ...
             recover_standard_android_project
