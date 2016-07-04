@@ -720,9 +720,7 @@ function mount_project
 ### login ssh server
 function jenkins
 {
-    local jenkins_ip=10.0.0.18
-
-	ssh jenkins@$jenkins_ip
+	ssh jenkins@happysongs
 }
 
 function jenkins1
