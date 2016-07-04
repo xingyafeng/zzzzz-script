@@ -1158,8 +1158,14 @@ function main()
 
     if [ $flag_cpcustom -eq 1 ];then
 
-        cpcustoms
-        handler_custom_config
+        if [ -d ${gettop}/.repo ];then
+            source_init
+        fi
+
+        if [ $(gettop) ];then
+            cpcustoms
+            handler_custom_config
+        fi
     else
         echo "do not cp customs"
     fi
