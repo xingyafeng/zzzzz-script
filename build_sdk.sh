@@ -929,7 +929,7 @@ function download_sdk()
         fi
 		repo sync -j${cpu_num}
         ls -alF
-        if [ "$defalut" == "k86A" ]
+        if [ "$defalut" == "k86A" ];then
             defalut=master
         fi
 
