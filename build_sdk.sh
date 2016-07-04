@@ -1019,7 +1019,7 @@ function sync_jenkins_server()
 function update_yunovo_customs_auto()
 {
 	local nowPwd=$(pwd)
-    local sz_project_name=`echo k26 k86s k86a k86l k86m k86sm k86ls`
+    local sz_project_name=`echo k26 k86a k86m k86s k86sm k86l k86ls`
     local sz_base_path=~/jobs
 
     for sz_custom in $sz_project_name
