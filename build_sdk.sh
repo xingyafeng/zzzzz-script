@@ -1209,6 +1209,9 @@ function main()
 
     if [ $build_update_api == "true" ];then
         make update-api -j${cpu_num}
+        if [ $? -eq 0 ];then
+            echo "---> make update-api end !"
+        fi
     else
         echo "do not make update-api"
     fi
