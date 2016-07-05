@@ -688,7 +688,7 @@ function share_s4()
         mkdir -p $local_path
     fi
 
-    if [ `hostname` == "happysongs" `hostname` == "siawen" ];then
+    if [ `hostname` == "happysongs" -o `hostname` == "siawen" ];then
         sshfs jenkins@$server_name://$share_path $local_path
     fi
 }
