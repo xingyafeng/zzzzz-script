@@ -374,7 +374,7 @@ function cpfs()
     if [ $sz_hostname == "s1" -o $sz_hostname == "s2" -o $sz_hostname == "s3" -o $sz_hostname == "s4" -o $sz_hostname == "f1" ];then
         scp -r jenkins@${sz_hostname}.y:$sz_server_path/$sz_file .
     elif [ $sz_hostname == "happysongs" ];then
-        sz_hostname=10.0.0.18
+        sz_hostname=happysongs
         scp -r yafeng@${sz_hostname}:$sz_yafeng_path/$sz_file .
     else
         echo "checkout your server at s1.y s2.y s3.y s4.y ..."
