@@ -22,6 +22,8 @@ build_file=$4
 build_type=
 ### test
 build_test=
+### make update-api
+build_update_api=
 
 ## system version  e.g. : S1.01
 build_version=""
@@ -179,6 +181,13 @@ function handler_vairable()
         build_test=$yunovo_test
     else
         echo "build_test not found !" && return 1
+    fi
+
+    ### 8. build make update-api
+    if [ "$yunovo_updae_api" ];then
+        build_update_api=$yunovo_update_api
+    else
+        echo "build_update_api not found !" && return 1
     fi
 
     if [ "`echo $build_version | grep "_"`" ];then
@@ -1168,6 +1177,12 @@ function main()
         fi
     else
         echo "do not cp customs"
+    fi
+
+    if [ $build_update_api == "true" ];then
+        make update-api -j${cpu_num}
+    else
+        echo "do not make update-api"
     fi
 
     if [ $flag_make_sdk -eq 1 ];then
