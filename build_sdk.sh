@@ -75,6 +75,15 @@ prefect_name=
 system_version=
 fota_version=
 
+### project name for yunovo
+k26P=k26
+k86aP=k86a
+k86mP=k86m
+k86sP=k86s
+k86smP=k86sm
+k86lP=k86l
+k86lsP=k86ls
+
 ################################ system env
 DEVICE=
 ROOT=
@@ -91,6 +100,18 @@ function show_vip
 		done
 		echo
 	fi
+}
+
+### 是否为云智易联项目
+function is_yunovo_project
+{
+    local thisP=$(pwd) && thisP=${thisP%/*} && thisP=${thisP##*/}
+
+    if [ $thisP == $k26P -o $thisP == $k86aP -o $thisP == $k86mP -o $thisP == $k86sP -o $thisP == $k86smP -o  $thisP == $k86lP -o $thisP == $k86lsP ];then
+        echo true
+    else
+        echo false
+    fi
 }
 
 ### handler vairable for jenkins
@@ -184,7 +205,7 @@ function handler_vairable()
     fi
 
     ### 8. build make update-api
-    if [ "$yunovo_updae_api" ];then
+    if [ "$yunovo_update_api" ];then
         build_update_api=$yunovo_update_api
     else
         echo "build_update_api not found !" && return 1
@@ -540,6 +561,7 @@ function print_variable()
 	echo '-----------------------------------------'
     echo "flag_jenkins_tag = $flag_jenkins_tag"
     echo "yunovo_test = $yunovo_test"
+    echo "yunovo_update_api = $yunovo_update_api"
 	echo '-----------------------------------------'
 
 	echo "\$1 = $1"
@@ -1146,8 +1168,14 @@ function main()
         echo "do not anythings output !"
     fi
 
-    if [ -d ${gettop}/.repo ];then
-        source_init
+    if [ "`is_yunovo_project`" == "true" ];then
+        if [ -d ${gettop}/.repo ];then
+            source_init
+        else
+            echo "current directory is not android !" && exit 1
+        fi
+    else
+        echo "current directory is not android !" && exit 1
     fi
 
     ## auto update
