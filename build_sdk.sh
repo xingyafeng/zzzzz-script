@@ -131,14 +131,14 @@ function handler_vairable()
         custom_version=${build_prj_name##*_}
 
     else
-        echo "sz_build_project not found !" && return 1
+        echo "sz_build_project not found !"
     fi
 
     ### 2. build version
     if [ "$yunovo_version" ];then
         build_version=$yunovo_version
     else
-        echo "yunovo_version not found !" && return 1
+        echo "yunovo_version not found !"
     fi
 
     ### 3. build file
@@ -152,30 +152,30 @@ function handler_vairable()
         if [ "$file_project" -a "$file_name" -a "$file_version" ];then
             prefect_name="$file_project/$file_name/$file_version"
         else
-            echo "prefect_name not found !" && return 1
+            echo "prefect_name not found !"
         fi
     else
-        echo "sz_build_file not found !" && return 1
+        echo "sz_build_file not found !"
     fi
 
     ### 4. build device
     if [ "$sz_build_device" ];then
         build_device=$sz_build_device
     else
-        echo "build_device not found !" && return 1
+        echo "build_device not found !"
     fi
 
     ### 5. build type
     if [ "$yunovo_type" ];then
         build_type=$yunovo_type
     else
-        echo "build_type not found !" && return 1
+        echo "build_type not found !"
     fi
 
     if [ "$build_device" -a "$build_type" ];then
         lunch_project=full_${build_device}-${build_type}
     else
-        echo "lunch_project not found !" && return 1
+        echo "lunch_project not found !"
     fi
 
     ### 6. build flag
@@ -191,24 +191,24 @@ function handler_vairable()
             flag_cpimage=`echo $build_skd_flag | cut -d '.' -f6`
             flag_cpcustom=`echo $build_skd_flag | cut -d '.' -f7`
         else
-            echo "build_sdk_flag not found !" && return 1
+            echo "build_sdk_flag not found !"
         fi
     else
-        echo "build_sdk_flag not found !" && return 1
+        echo "build_sdk_flag not found !"
     fi
 
     ### 7. build test
     if [ "$yunovo_test" ];then
         build_test=$yunovo_test
     else
-        echo "build_test not found !" && return 1
+        echo "build_test not found !"
     fi
 
     ### 8. build make update-api
     if [ "$yunovo_update_api" ];then
         build_update_api=$yunovo_update_api
     else
-        echo "build_update_api not found !" && return 1
+        echo "build_update_api not found !"
     fi
 
     if [ "`echo $build_version | grep "_"`" ];then
@@ -291,7 +291,6 @@ function chiphd_recover_project()
             echo "---- recover $tDir"
         else
             cd $OLDPWD
-            return 1
         fi
 
 		git reset HEAD . ###recovery for cached files
@@ -927,7 +926,6 @@ function download_sdk()
             defalut=K26
         else
             echo "project do not match it !"
-            return 1
         fi
     else
 
@@ -944,12 +942,10 @@ function download_sdk()
                 defalut=K26
             else
                 echo "project do not match it !"
-                return 1
             fi
         fi
 
         echo "project path do not found !"
-        return 1
     fi
 
     echo "defalut = $defalut"
@@ -1046,7 +1042,7 @@ function sync_jenkins_server()
         if [ -d $firmware_path ];then
             rm $firmware_path/* -rf
         else
-            echo "$firmware_path not found !" && return 1
+            echo "$firmware_path not found !"
         fi
 
         echo "--> sync end ..."
@@ -1101,7 +1097,6 @@ function update_yunovo_customs_auto()
                     echo
                 else
                     echo "$sz_yunovo_customs_link not found !"
-                    return 1
                 fi
             else
 
@@ -1114,7 +1109,6 @@ function update_yunovo_customs_auto()
                     echo
                 else
                     echo "$sz_yunovo_customs_link_server not found !"
-                    return 1
                 fi
             fi
 
