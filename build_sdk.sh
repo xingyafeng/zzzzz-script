@@ -291,6 +291,7 @@ function chiphd_recover_project()
             echo "---- recover $tDir"
         else
             cd $OLDPWD
+            return 1
         fi
 
 		git reset HEAD . ###recovery for cached files
