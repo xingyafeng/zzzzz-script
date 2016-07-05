@@ -1202,7 +1202,7 @@ function main()
         echo "do not cp customs"
     fi
 
-    if [ $build_update_api == "true" ];then
+    if [ "$build_update_api" == "true" ];then
         make update-api -j${cpu_num}
         if [ $? -eq 0 ];then
             echo "---> make update-api end !"
