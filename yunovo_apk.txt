@@ -31,3 +31,7 @@ DiDiCar
 CarBandMode
 TxzAudio
 TxzCore
+YoukuApp
+CarUdpServer
+DriverMonitor
+OpenCVManager
