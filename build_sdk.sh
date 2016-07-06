@@ -1059,7 +1059,7 @@ function sync_jenkins_server()
 function update_yunovo_customs_auto()
 {
 	local nowPwd=$(pwd)
-    local sz_project_name=`echo k26 k86a k86m k86s k86sm k86l k86ls`
+    local sz_project_name=`echo k26 k86a k86m k86s k86sm k86l k86ls k88c`
     local sz_base_path=~/jobs
 
     for sz_custom in $sz_project_name
@@ -1074,17 +1074,9 @@ function update_yunovo_customs_auto()
             #echo "sz_yunovo_customs_path = $sz_yunovo_customs_path"
             cd $sz_yunovo_customs_path > /dev/null
 
-            if [ `hostname` == "s4" ];then
-                if [ $sz_custom == "k26" ];then
-                    git pull && echo "-------- $sz_custom yunovo_customs update successful ..."
-                else
-                    git pull $sz_custom master && echo "-------- $sz_custom yunovo_customs update successful ..."
-                fi
-                echo
-            else
-                git pull && echo "-------- $sz_custom yunovo_customs update successful ..."
-                echo
-            fi
+            git pull && echo "-------- $sz_custom yunovo_customs update successful ..."
+            echo
+
             cd - > /dev/null
         else
             if [ ! -d $sz_yunovo_path ];then
