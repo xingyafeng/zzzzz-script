@@ -35,6 +35,7 @@ YoukuApp
 CarUdpServer
 DriverMonitor
 OpenCVManager
+IqiyiHD
 CarBack
 CarDog
 CarEngine
