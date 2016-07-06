@@ -937,7 +937,7 @@ function download_sdk()
             defalut=k86s_400x1280
         elif [ $project_name == "k86ls" ];then
             defalut=k86l_split
-        elif [ $project_name == "k88" ];then
+        elif [ $project_name == "k88c" ];then
             defalut=k88
         elif [ $project_name == "k26" ];then
             defalut=K26
@@ -945,27 +945,11 @@ function download_sdk()
             echo "project do not match it !"
         fi
     else
-
-        if false;then
-            if [ $project_name == "k86a" -o $project_name == "k86m" ];then
-                defalut=k86A
-            elif [ $project_name == "k86s" -o $project_name == "k86sm" -o $project_name == "k86sa" -o $project_name == "k86sa1" ] ;then
-                defalut=k86s
-            elif [ $project_name == "k86l" -o $project_name == "k86s6" -o $project_name == "k86s7" ];then
-                defalut=k86s_400x1280
-            elif [ $project_name == "k88" ];then
-                defalut=k88
-            elif [ $project_name == "k26a" -o $project_name == "k26b" -o $project_name == "k26s" ];then
-                defalut=K26
-            else
-                echo "project do not match it !"
-            fi
-        fi
-
         echo "project path do not found !"
     fi
 
     echo "defalut = $defalut"
+
 	if [ ! -d ${gettop}/.repo ];then
 		#repo init -u git@src1.spt-tek.com:projects/manifest.git -m k86A.xml
 		if [ "$defalut" -a "$project_link" ];then
@@ -973,8 +957,11 @@ function download_sdk()
         fi
 		repo sync -j${cpu_num}
         ls -alF
-        if [ "$defalut" == "k86A" ];then
+
+        if [ "$defalut" == "K26" -o "$defalut" == "k86A" ];then
             defalut=master
+        elif [ "$defalut" == "k88" ];then
+            defalut=k88c
         fi
 
         if [ $defalut ];then
