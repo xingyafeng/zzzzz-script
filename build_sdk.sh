@@ -114,6 +114,22 @@ function is_yunovo_project
     fi
 }
 
+### 是否为编译服务器
+function is_yunovo_server()
+{
+    local hostN=`hostname`
+    local server_name=`echo s1 s2 s3 s4 happysongs ww`
+
+    for serverN in $server_name
+    do
+        if [ "$serverN" == "$hostN"  ];then
+            echo true
+        else
+            echo false
+        fi
+    done
+}
+
 ### handler vairable for jenkins
 function handler_vairable()
 {
