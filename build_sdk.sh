@@ -961,8 +961,6 @@ function download_sdk()
 
         if [ "$defalut" == "K26" -o "$defalut" == "k86A" ];then
             defalut=master
-        elif [ "$defalut" == "k88" ];then
-            defalut=k88c
         fi
 
         if [ $defalut ];then
