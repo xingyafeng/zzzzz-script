@@ -1171,7 +1171,7 @@ function main()
         if [ -d ${gettop}/.repo ];then
             source_init
         else
-            echo "current directory is not android !" && exit 1
+            echo ". repo not found ! please download sdk ..."
         fi
     else
         echo "current directory is not android !" && exit 1
