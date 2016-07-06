@@ -681,6 +681,7 @@ function handler_custom_config()
     local src_boot_logo=
     local src_boot_logo_other=`echo BOOT_LOGO=cmcc_lte_qhd`
     local src_boot_logo_k26=`echo BOOT_LOGO := cmcc_lte_hd720`
+    local src_boot_logo_k88=`echo BOOT_LOGO=cu_lte_wvga cmcc_lte_hd720`
 
 
     ### handler customs config file
@@ -705,6 +706,8 @@ function handler_custom_config()
             src_boot_logo=$src_boot_logo_other
         elif [ "$sz_boot_logo" == "$src_boot_logo_k26" ];then
             src_boot_logo=$src_boot_logo_k26
+        elif [ "$sz_boot_logo" == "$src_boot_logo_k88" ];then
+            src_boot_logo=$src_boot_logo_k88
         fi
     done < $bootable_config_file
 
