@@ -16,6 +16,7 @@ k86sP=k86s
 k86smP=k86sm
 k86lP=k86l
 k86lsP=k86ls
+k88cP=k88c
 
 sdate=$td
 

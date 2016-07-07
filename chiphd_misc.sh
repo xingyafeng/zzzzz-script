@@ -55,6 +55,7 @@ function set_alias()
     alias l='ls -CF'
 }
 
+### 是否为编译服务器
 function is_yunovo_server
 {
     local yunovo_server=`echo s1 s2 s3 s4 f1 happysongs`
@@ -68,13 +69,26 @@ function is_yunovo_server
     done
 }
 
+### 是否是云智易联项目
 function is_yunovo_project
 {
     local thisP=$(pwd) && thisP=${thisP%/*} && thisP=${thisP##*/}
 
-    if [ $thisP == $k26P -o $thisP == $k86aP -o $thisP == $k86mP -o $thisP == $k86sP -o $thisP == $k86smP -o  $thisP == $k86lP -o $thisP == $k86lsP ];then
+    if [ $thisP == $k26P -o $thisP == $k86aP -o $thisP == $k86mP -o $thisP == $k86sP -o $thisP == $k86smP -o  $thisP == $k86lP -o $thisP == $k86lsP -o $thisP == $k88cP ];then
         echo true
     else
         echo false
+    fi
+}
+
+### 获取当前编译项目名称
+function get_project_name()
+{
+    local thisP=$(pwd) && thisP=${thisP%/*} && thisP=${thisP##*/}
+
+    if [ "$thisP" ];then
+        echo $thisP
+    else
+        echo "do not get project name !"
     fi
 }
