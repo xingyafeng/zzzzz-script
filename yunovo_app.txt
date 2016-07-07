@@ -22,3 +22,4 @@ YOcFM
 CarLogTools
 BaiduVoice
 TxzVoice
+GoogleVoice
