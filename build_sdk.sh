@@ -842,6 +842,12 @@ function clone_app()
             ### 客户化apk进行tag处理
             while read app_name_yunovo
             do
+                ### 临时处理DT-M40
+                if [ $build_prj_name == "k86a_DT-M40" -a $app_name == "CarRecord" -a $app_name_yunovo == "CarRecord" ];then
+                    echo "build_prj_name = $build_prj_name"
+                    continue
+                fi
+
                 if [ $app_name == $app_name_yunovo ];then
                     cd $app_name > /dev/null
 
