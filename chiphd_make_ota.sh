@@ -26,29 +26,13 @@ function sync_ota_server()
 {
     local ota_local_path=~/OTA
     local server_name=`hostname`
-    local share_path=/home/share/jenkins_share
-    local jenkins_server=jenkins@s4.y
-    local custom_project=$1
-    local custom_version=$2
-    local ota_version_path=$3
+    local share_path=/public/share
+    local jenkins_server=jenkins@f1.y
     local ota_server_custom_path=$share_path/OTA/$custom_project/${custom_project}\_${custom_version}
 
-    #echo "-------------"
-    #echo "ota_version_path = $ota_version_path"
-    #echo "ota_server_custom_path = $ota_server_custom_path"
-    #echo "-------------"
-
-    if [ $server_name == "s1" -o $server_name == "s2" -o $server_name == "s3" -o $server_name == "happysongs" -o $server_name == "siawen" ];then
+    if [ "`is_yunovo_server`" == "true" -a "`is_yunovo_project`" == "true" ];then
         if [ -d $ota_local_path ];then
             rsync -av $ota_local_path $jenkins_server:$share_path
-        fi
-    elif [ $server_name == "s4" ];then
-        if [ ! -d $ota_server_custom_path ];then
-            mkdir -p $ota_server_custom_path
-        fi
-
-        if [ -d $ota_version_path -a -d $ota_server_path ];then
-            mv $ota_version_path $ota_server_custom_path
         fi
     fi
 }
@@ -57,7 +41,7 @@ function make-inc
 {
     if [ $# -eq 2 ];then
 
-        if [ "`is_make_project`" == "true" ];then
+        if [ "`is_yunovo_project`" == "true" ];then
             echo
             show_vir "make inc start ..."
             echo
@@ -110,17 +94,27 @@ fi
         mkdir -p $ota_version_path
     fi
 
-    if [ -e $ota_py -a "`is_make_project`" == "true" ];then
+    if [ -e $ota_py -a "`is_yunovo_project`" == "true" -a -f $td/$ota_previous -a -f $td/$ota_current ];then
         $ota_py -i $td/$ota_previous $td/$ota_current $ota_version_path/$OTA_FILE
-        cp -vf $td/$ota_previous $ota_version_path
-        cp -vf $td/$ota_current $ota_version_path
+
+        if [ -d $ota_version_path ];then
+            cp -vf $td/$ota_previous $ota_version_path
+            cp -vf $td/$ota_current $ota_version_path
+        fi
     fi
 
     ### sync server for OTA
-    sync_ota_server $custom_project $custom_version $ota_version_path
-
-    if [ $? -eq 0 ];then
-        rm $ota_local_path/* -r
+    if [ "`is_yunovo_project`" == "true" -a "`is_yunovo_server`" == "true" ];then
+        sync_ota_server
+        if [ $? -eq 0 ];then
+            rm $ota_local_path/* -r
+        else
+            show_vir "sync_ota_server fail !"
+            return 1
+        fi
+    else
+        show_vir "please checkout your direction and your server name !"
+        return 1
     fi
 
     echo
