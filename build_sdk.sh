@@ -115,6 +115,17 @@ function is_yunovo_project
     fi
 }
 
+function get_project_name()
+{
+    local thisP=$(pwd) && thisP=${thisP%/*} && thisP=${thisP##*/}
+
+    if [ "$thisP" ];then
+        echo $thisP
+    else
+        echo "do not get project name !"
+    fi
+}
+
 ### 是否为编译服务器
 function is_yunovo_server()
 {
@@ -1064,10 +1075,14 @@ function update_yunovo_customs_auto()
 
     for sz_custom in $sz_project_name
     do
-        local sz_yunovo_customs_path=$sz_base_path/$sz_custom/yunovo_customs
-        local sz_yunovo_customs_link=`echo /home/jenkins/workspace/git_server/$sz_custom/yunovo_customs.git`
-        local sz_yunovo_customs_link_server=`echo ssh://jenkins@s4.y/home/jenkins/workspace/git_server/$sz_custom/yunovo_customs.git`
-        local sz_yunovo_path=$sz_base_path/$sz_custom
+        if [ "`get_project_name`" == "$sz_custom" ];then
+            local sz_yunovo_customs_path=$sz_base_path/$sz_custom/yunovo_customs
+            local sz_yunovo_customs_link=`echo /home/jenkins/workspace/git_server/$sz_custom/yunovo_customs.git`
+            local sz_yunovo_customs_link_server=`echo ssh://jenkins@s4.y/home/jenkins/workspace/git_server/$sz_custom/yunovo_customs.git`
+            local sz_yunovo_path=$sz_base_path/$sz_custom
+        else
+            continue
+        fi
 
         #echo "sz_custom = $sz_custom"
         if [ -d $sz_yunovo_customs_path/.git ];then
