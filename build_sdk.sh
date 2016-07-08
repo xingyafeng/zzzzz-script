@@ -432,7 +432,7 @@ function cpimage()
     echo "OTA_PATH_SERVER = $OTA_PATH_SERVER"
     echo "---------------------------------end"
 
-    if [ $server_name == "s1" -o $server_name == "s2" -o $server_name == "s3" -o $server_name == "happysongs" ];then
+    if [ "`is_yunovo_server`" == "true" ];then
         if [ ! -d $firmware_path ];then
             mkdir -p $firmware_path
         else
@@ -1049,11 +1049,10 @@ function make-sdk()
 function sync_jenkins_server()
 {
     local firmware_path=~/debug
-    local share_path=/home/share/jenkins_share
-    local jenkins_server=jenkins@s4.y
-    local server_name=`hostname`
+    local share_path=/public/share
+    local jenkins_server=jenkins@f1.y
 
-    if [ $server_name == "s1" -o $server_name == "s2" -o $server_name == "s3" -o $server_name == "happysongs" ];then
+    if [ "`is_yunovo_server`" == "true" ];then
         if [ $build_test == "true" ];then
             rsync -av $firmware_path/ $jenkins_server:$share_path/Test
         else
