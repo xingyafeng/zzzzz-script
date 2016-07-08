@@ -38,6 +38,7 @@ CarUdpServer
 DriverMonitor
 OpenCVManager
 IqiyiHD
+XiaowoDF
 CarBack
 CarDog
 CarEngine
