@@ -130,14 +130,12 @@ function get_project_name()
 function is_yunovo_server()
 {
     local hostN=`hostname`
-    local server_name=`echo s1 s2 s3 s4 happysongs ww`
+    local serverN=`echo s1 s2 s3 s4 happysongs ww`
 
-    for serverN in $server_name
+    for n in $serverN
     do
-        if [ "$serverN" == "$hostN"  ];then
+        if [ "$n" == "$hostN"  ];then
             echo true
-        else
-            echo false
         fi
     done
 }
