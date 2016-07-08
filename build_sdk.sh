@@ -409,7 +409,7 @@ function cpimage()
     ### k86m_H520/S1
 	#local BASE_PATH=/home/work5/public/k86A_Test/${prj_name}/${ver_name}
     local firmware_path=~/debug
-	local BASE_PATH=$firmware_path/${prj_name}/${ver_name}
+	local BASE_PATH=$firmware_path/${project_name}/${prj_name}/${ver_name}
 	local DEST_PATH=$BASE_PATH/$system_version
 	local OTA_PATH=$BASE_PATH/${system_version}_full_and_ota
 
