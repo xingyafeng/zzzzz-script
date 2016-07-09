@@ -595,101 +595,66 @@ function mount_box()
 ### sshfs server
 function sshfs-server()
 {
-    if [ `hostname` == "happysongs" -o `hostname` == "siawen" -o `hostname` == "s1" -o `hostname` == "s2" -o `hostname` == "s3" -o `hostname` == "s4" ];then
-        s1.y
-        s2.y
-        s3.y
-        s4.y
-        share_s4
+    local userN=jenkins
+    local hostN=`echo s1.y s2.y s3.y s4.y f1.y`
+    local jobs_path=/home/$userN/jobs
+    local share_path=/public/share
+    local s3_path=/home/work5/jenkins/jobs
+
+    if [ "`is_yunovo_server`" == "true" ];then
+        for hostname in $hostN
+        do
+            if [ ! -d ~/$hostname ];then
+                mkdir -p ~/$hostname
+            fi
+
+            if [ -d ~/$hostname ];then
+                if [ $hostname == "f1.y" ];then
+                    sshfs $userN@$hostname:$share_path ~/$hostname
+                elif [ $hostname == "s3.y" ];then
+                    sshfs $userN@$hostname:$s3_path ~/$hostname
+                else
+                    sshfs $userN@$hostname:$jobs_path ~/$hostname
+                fi
+            else
+                show_vir "hostname path is not exist, please checkout path !"
+                exit 1
+            fi
+        done
+    fi
+}
+
+function ls-server()
+{
+    local hostN=`echo s1.y s2.y s3.y s4.y f1.y`
+
+    if [ "`is_yunovo_server`" == "true" ];then
+        for hostname in $hostN
+        do
+            if [ -d ~/$hostname ];then
+                ls ~/$hostname
+                show_vig "--------$hostname"
+            else
+                show_vir " $hostname is not exist ."
+            fi
+        done
     fi
 }
 
 function fusermount-server()
 {
-    if [ `hostname` == "happysongs" - o `hostname` == "siawen" ];then
-        for server_no in s1.y s2.y s3.y s4.y share_s4
+    local hostN=`echo s1.y s2.y s3.y s4.y f1.y`
+
+    if [ "`is_yunovo_server`" == "true" ];then
+        for hostname in $hostN
         do
-            fusermount -u ~/$server_no
+            if [ -d ~/$hostname ];then
+                fusermount -u ~/$hostname
+                if [ $? -eq 0 ];then
+                    rm ~/$hostname -r
+                fi
+            fi
         done
-    fi
-}
-
-function s1.y()
-{
-    local slave_jar=slave.jar
-    local server_name=s1.y
-    local jobs_path=/home/jenkins/jobs
-    local local_path=~/$server_name
-
-    if [ ! -d $local_path ];then
-        mkdir -p $local_path
-    fi
-
-    if [ ! -d $local_path/k26 -o ! -f $local_path/$slave_jar ];then
-        sshfs jenkins@$server_name://$jobs_path $local_path
-    fi
-}
-
-function s2.y()
-{
-    local slave_jar=slave.jar
-    local server_name=s2.y
-    local jobs_path=/home/jenkins/jobs
-    local local_path=~/$server_name
-
-    if [ ! -d $local_path ];then
-        mkdir -p $local_path
-    fi
-
-    if [ ! -d $local_path/k26 -o ! -f $local_path/$slave_jar ];then
-        sshfs jenkins@$server_name://$jobs_path $local_path
-    fi
-}
-
-function s3.y()
-{
-    local slave_jar=slave.jar
-    local server_name=s3.y
-    local jobs_path=home/work5/jenkins/jobs
-    local local_path=~/$server_name
-
-    if [ ! -d $local_path ];then
-        mkdir -p $local_path
-    fi
-
-    if [ ! -d $local_path/k26 ];then
-        sshfs jenkins@$server_name://$jobs_path $local_path
-    fi
-}
-
-function s4.y()
-{
-    local slave_jar=slave.jar
-    local server_name=s4.y
-    local jobs_path=/home/jenkins/jobs
-    local local_path=~/$server_name
-
-    if [ ! -d local_path ];then
-        mkdir -p $local_path
-    fi
-
-    if [ ! -d $local_path/k26 -o ! -f $local_path/$slave_jar ];then
-        sshfs jenkins@$server_name://$jobs_path $local_path
-    fi
-}
-
-function share_s4()
-{
-    local server_name=s4.y
-    local share_path=/home/share/jenkins_share
-    local local_path=~/share_s4
-
-    if [ ! -d $local_path ];then
-        mkdir -p $local_path
-    fi
-
-    if [ `hostname` == "happysongs" -o `hostname` == "siawen" ];then
-        sshfs jenkins@$server_name://$share_path $local_path
     fi
 }
 
