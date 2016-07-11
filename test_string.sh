@@ -1,5 +1,65 @@
 #!/bin/bash
 
+function checkout_debug_info()
+{
+    local build_flag=$1
+    local which_flag=(1 2 3 4 5 6 7)
+    local flag=
+
+    for f in ${which_flag[@]}
+    do
+        if [ "$build_flag" ];then
+            flag=`echo $build_flag | cut -d '.' -f${f}`
+
+            if [ -z $flag ];then
+                echo " flag is error , please checkout it !"
+                exit 1
+            fi
+
+            if [ $flag -ne 0 -a $flag -ne 1 ];then
+                echo " flag is error , please checkout it !"
+                exit 1
+            else
+                echo true
+            fi
+        fi
+    done
+}
+
+### 获取debug配置信息
+function get_debug_info()
+{
+    local build_flag=$1
+    local which_flag=(1 2 3 4 5 6 7)
+
+    for f in ${which_flag[@]}
+    do
+        case $f in
+            1)
+                flag_fota=`echo $build_flag | cut -d '.' -f${f}`
+                ;;
+            2)
+                flag_print=`echo $build_flag | cut -d '.' -f${f}`
+                ;;
+            3)
+                flag_download_sdk=`echo $build_flag | cut -d '.' -f${f}`
+                ;;
+            4)
+                flag_clone_app=`echo $build_flag | cut -d '.' -f${f}`
+                ;;
+            5)
+                flag_make_sdk=`echo $build_flag | cut -d '.' -f${f}`
+                ;;
+            6)
+                flag_cpimage=`echo $build_flag | cut -d '.' -f${f}`
+                ;;
+            7)
+                flag_cpcustom=`echo $build_flag | cut -d '.' -f${f}`
+                ;;
+        esac
+    done
+}
+
 test-str-z()
 {
     local src=$1
