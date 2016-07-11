@@ -1,5 +1,27 @@
 #!/bin/bash
 
+test-str-z()
+{
+    local src=$1
+    if [ -n "$src" ];then
+        echo $src
+
+        ### 字符串  为空为真
+        if [ -z "$src" ];then
+            echo "zzzzzzzzzzzzzzzzzzzzz"
+        else
+            echo "xxxxxxxxx"
+        fi
+
+        ### 字符串　不为空为真
+        if [ -n "$src" ];then
+            echo "nnnnnnnnnnnnnn"
+        else
+            echo "xxx"
+        fi
+    fi
+}
+
 test-readfs()
 {
     while read line
@@ -15,7 +37,7 @@ test-string()
 	local var=chiphd
 
 	# get string length
-	local length=${#var}	
+	local length=${#var}
 
 	show_vir $length
 }
