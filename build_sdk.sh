@@ -1049,8 +1049,8 @@ function make-sdk()
 function sync_jenkins_server()
 {
     local firmware_path=~/debug
-    local share_path=/public/share
-    local jenkins_server=jenkins@f1.y
+    local share_path=/home/share/jenkins_share
+    local jenkins_server=jenkins@s4.y
 
     if [ "`is_yunovo_server`" == "true" ];then
         if [ $build_test == "true" ];then
