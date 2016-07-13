@@ -92,3 +92,23 @@ function get_project_name()
         echo "do not get project name !"
     fi
 }
+
+function remove_space_for_vairable()
+{
+    ## 去掉空格后的变量
+    local new_v=
+    local old_v=$1
+    local tmp_file=~/workspace/script/zzzzz-script/tmp.txt
+
+    new_v=`cat $tmp_file | sed 's/[ ]\+//g'`
+
+    if [ "$new_v" != "$old_v"  ];then
+        echo $new_v
+    else
+        echo $old_v
+    fi
+
+    if [ -f $tmp_file ];then
+        rm $tmp_file -r
+    fi
+}
