@@ -1,5 +1,32 @@
 #!/bin/bash
 
+function remove_space()
+{
+    local new_v=
+    local old_v=$1
+    tmp_file=~/workspace/script/zzzzz-script/tmp.txt
+
+    new_v=`cat $tmp_file | sed 's/[   ]\+//g'`
+    if [ "$new_v" != "$old_v" ];then
+        echo $new_v
+    else
+        echo $old_v
+    fi
+}
+
+function test_()
+{
+    local tmp_file=~/workspace/script/zzzzz-script/tmp.txt
+    local ret="xxx xxx xxx zzz xxx"
+    local new_v=
+
+    echo $ret > $tmp_file
+    remove_space $ret
+
+    if [ -f $tmp_file ];then
+        rm $tmp_file -r
+    fi
+}
 function checkout_debug_info()
 {
     local build_flag=$1
