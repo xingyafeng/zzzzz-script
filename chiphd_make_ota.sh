@@ -26,7 +26,7 @@ function sync_ota_server()
 {
     local ota_local_path=~/OTA
     local server_name=`hostname`
-    local share_path=/public/share
+    local share_path=/public/jenkins/jenkins_share_20T
     local jenkins_server=jenkins@f1.y
     local ota_server_custom_path=$share_path/OTA/$custom_project/${custom_project}\_${custom_version}
 
