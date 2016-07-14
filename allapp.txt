@@ -39,6 +39,7 @@ DriverMonitor
 OpenCVManager
 IqiyiHD
 XiaowoDF
+SogoInput
 CarBack
 CarDog
 CarEngine
