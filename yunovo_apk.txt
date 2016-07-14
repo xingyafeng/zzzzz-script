@@ -39,3 +39,4 @@ DriverMonitor
 OpenCVManager
 IqiyiHD
 XiaowoDF
+SogoInput
