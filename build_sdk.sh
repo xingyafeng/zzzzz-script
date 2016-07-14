@@ -821,6 +821,10 @@ function clone_app()
         default_branch="long origin/long"
     fi
 
+    if [ $project_name == "k26c" ];then
+        default_branch="long origin/long"
+    fi
+
 	cd $app_path > /dev/null
 
     while read app_name
