@@ -84,6 +84,7 @@ k86smP=k86sm
 k86lP=k86l
 k86lsP=k86ls
 k88cP=k88c
+k86ldP=k86ld
 
 ################################ system env
 DEVICE=
@@ -108,7 +109,7 @@ function is_yunovo_project
 {
     local thisP=$(pwd) && thisP=${thisP%/*} && thisP=${thisP##*/}
 
-    if [ $thisP == $k26P -o $thisP == $k86aP -o $thisP == $k86mP -o $thisP == $k86sP -o $thisP == $k86smP -o  $thisP == $k86lP -o $thisP == $k86lsP -o $thisP == $k88cP ];then
+    if [ $thisP == $k26P -o $thisP == $k86aP -o $thisP == $k86mP -o $thisP == $k86sP -o $thisP == $k86smP -o  $thisP == $k86lP -o $thisP == $k86lsP -o $thisP == $k88cP -o $thisP == $k86ld ];then
         echo true
     else
         echo false
