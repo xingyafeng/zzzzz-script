@@ -822,7 +822,7 @@ function clone_app()
         default_branch="long origin/long"
     fi
 
-    if [ $project_name == "k26c" ];then
+    if [ $project_name == "k26c" -o $project_name == "k86mx1" ];then
         default_branch="long origin/long"
     fi
 
