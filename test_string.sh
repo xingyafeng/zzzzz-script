@@ -1,4 +1,16 @@
 #!/bin/bash
+function test_is_number()
+{
+    local n=$1
+
+    expr $n "+" 10 &> /dev/null
+
+    if [ $? -eq 0  ];then
+        echo "$n is number"
+    else
+        echo "$n not number"
+    fi
+}
 
 function remove_space()
 {
