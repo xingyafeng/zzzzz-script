@@ -282,6 +282,11 @@ function handler_vairable()
     local sz_build_file=$3
     local sz_build_flag=$4
 
+    ### 处理k86l系类工程
+    if [ $prj_name == "k86l" ];then
+        prj_name=k86
+    fi
+
     ### 1. project name
     if [ "$sz_build_project" ];then
 
