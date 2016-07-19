@@ -40,3 +40,5 @@ OpenCVManager
 IqiyiHD
 XiaowoDF
 SogoInput
+YiqiRelease
+
