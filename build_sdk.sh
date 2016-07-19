@@ -1,5 +1,8 @@
 #!/bin/bash
 
+### 若某一个命令返回非零值就退出
+set -e
+
 #set java env
 export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64
 export JRE_HOME=$JAVA_HOME/jre
@@ -13,7 +16,7 @@ export LC_ALL=en_US.UTF-8
 ### build custom
 build_device=$1
 ### build sdk flag, e.g. : ota.print.download.clone.make.cp
-build_skd_flag=$2
+build_flag=$2
 ### build project name  e.g. : K86_H520
 build_prj_name=$3
 ### eg: k86l_yunovo_zx
@@ -32,16 +35,8 @@ project_name=""
 ### custom version H520 ZX etc
 custom_version=""
 
-### project name k26 k86
-file_project=""
-### custom name yunovo newman qichen etc
-file_name=""
-### zx etc
-file_version=""
-
 ### system version and tag version
-build_version_tmp=""
-tag_version_tmp=""
+tag_version=""
 
 ### S1.00 S1.01 ...
 first_version=""
@@ -63,13 +58,13 @@ flag_cpcustom=
 flag_jenkins_tag=
 
 ################################# common variate
-gettop=`pwd`
 hw_versiom=H3.1
 branch_nane=develop
 cur_time=`date +%m%d_%H%M`
+zz_script_path=/home/jenkins/workspace/script/zzzzz-script
 cpu_num=`cat /proc/cpuinfo  | egrep 'processor' | wc -l`
 project_link="init -u git@src1.spt-tek.com:projects/manifest.git"
-
+tmp_file=$zz_script_path/tmp.txt
 lunch_project=
 prefect_name=
 system_version=
@@ -104,6 +99,41 @@ function show_vip
 	fi
 }
 
+function __msg()
+{
+    local pwd=`pwd`
+    echo "currect dir is : $pwd"
+}
+
+### 检查是否有lunch
+function is_check_lunch()
+{
+    if [ "$DEVICE" ];then
+        echo "lunch : path $DEVICE"
+    else
+        echo "no lunch"
+    fi
+}
+
+### 去除变量存在的空格
+function remove_space_for_vairable()
+{
+    ## 去掉空格后的变量
+    local new_v=
+    local old_v=$1
+
+    new_v=`cat $tmp_file | sed 's/[  ]\+//g'`
+    if [ "$new_v" != "$old_v" ];then
+        echo $new_v
+    else
+        echo $old_v
+    fi
+
+    if [ -f $tmp_file ];then
+        rm $tmp_file
+    fi
+}
+
 ### 是否为云智易联项目
 function is_yunovo_project
 {
@@ -131,9 +161,9 @@ function get_project_name()
 function is_yunovo_server()
 {
     local hostN=`hostname`
-    local serverN=`echo s1 s2 s3 s4 happysongs ww`
+    local serverN=(s1 s2 s3 s4 happysongs ww)
 
-    for n in $serverN
+    for n in ${serverN[@]}
     do
         if [ "$n" == "$hostN"  ];then
             echo true
@@ -141,143 +171,303 @@ function is_yunovo_server()
     done
 }
 
+### 是否为使用的芯片类型
+function is_build_device()
+{
+    local cpu_type_more=(aeon6735_65c_s_l1 aeon6735m_65c_s_l1 magc6580_we_l)
+    local cpu_type=$1
+
+    for c in ${cpu_type_more[@]}
+    do
+        if [ $c == $cpu_type ];then
+            echo true
+        fi
+    done
+}
+
+### 是否是正确的编译类型
+function is_build_type()
+{
+    local build_type_more=(eng user userdebug)
+    local buildT=$1
+
+    for t in ${build_type_more[@]}
+    do
+        if [ $t == $buildT ];then
+            echo true
+        fi
+    done
+}
+
+### 是否为长屏分支的app
+function is_long_branch_app()
+{
+    local check_long_app=$1
+    local long_branch_app_name=(CarEngine CarRecordDouble NewsmyNewyan NewsmyRecorder NewsmySPTAdapter)
+
+    for a in ${long_branch_app_name[@]}
+    do
+        if [ $a == $check_long_app ];then
+            echo true
+        fi
+    done
+}
+
+function checkout_debug_info()
+{
+    local which_flag=(1 2 3 4 5 6 7)
+    local flag=""
+
+    for f in ${which_flag[@]}
+    do
+        flag=`cat $tmp_file | cut -d '.' -f${f}`
+
+        if [ -z $flag ];then
+            return 1
+        fi
+
+        if [ "$flag" == "0" -o "$flag" == "1" ];then
+            continue
+        else
+            return 1
+        fi
+    done
+
+    echo true
+}
+
+### 获取debug配置信息
+function get_debug_info()
+{
+    local build_flag=$1
+    local which_flag=(1 2 3 4 5 6 7)
+
+    for f in ${which_flag[@]}
+    do
+        case $f in
+            1)
+                flag_fota=`echo $build_flag | cut -d '.' -f${f}`
+                ;;
+            2)
+                flag_print=`echo $build_flag | cut -d '.' -f${f}`
+                ;;
+            3)
+                flag_download_sdk=`echo $build_flag | cut -d '.' -f${f}`
+                ;;
+            4)
+                flag_clone_app=`echo $build_flag | cut -d '.' -f${f}`
+                ;;
+            5)
+                flag_make_sdk=`echo $build_flag | cut -d '.' -f${f}`
+                ;;
+            6)
+                flag_cpimage=`echo $build_flag | cut -d '.' -f${f}`
+                ;;
+            7)
+                flag_cpcustom=`echo $build_flag | cut -d '.' -f${f}`
+                ;;
+        esac
+    done
+}
+
 ### handler vairable for jenkins
 function handler_vairable()
 {
     local tag_file=~/workspace/script/zzzzz-script/apptag.txt
-    local sz_build_device=$1
-    local sz_build_project=$2
+
+    local prj_name=`get_project_name`
+
+    local sz_build_project=$1
+    local sz_build_device=$2
     local sz_build_file=$3
     local sz_build_flag=$4
 
     ### 1. project name
     if [ "$sz_build_project" ];then
-        build_prj_name=$sz_build_project
 
-        project_name=${build_prj_name%%_*}
-        custom_version=${build_prj_name##*_}
+        ### remove space
+        echo "$sz_build_project" > $tmp_file
+        sz_build_project=`remove_space_for_vairable $sz_build_project`
 
+        ## 检查是否是要进行编译的工程
+        if [ -n "`echo $sz_build_project | grep $prj_name`" ];then
+            build_prj_name=$sz_build_project
+
+            project_name=${build_prj_name%%_*}
+            custom_version=${build_prj_name##*_}
+
+            if [ -z "$project_name" -o  -z "$custom_version" ];then
+                echo "project_name or custom_version is null ."
+                return 1
+            fi
+        else
+            echo "build_prj_name is error, please checkout it ."
+            return 1
+        fi
     else
-        echo "sz_build_project not found !"
+        echo "sz_build_project is null !"
+        return 1
     fi
 
     ### 2. build version
     if [ "$yunovo_version" ];then
-        build_version=$yunovo_version
-    else
-        echo "yunovo_version not found !"
-    fi
 
-    ### 3. build file
-    if [ "$sz_build_file" ];then
-        build_file=$sz_build_file
+        ### remove space
+        echo "$yunovo_version" > $tmp_file
+        yunovo_version=`remove_space_for_vairable $yunovo_version`
 
-        file_project=${build_file%%_*}
-        file_name=${build_file%_*} && file_name=${file_name##*_}
-        file_version=${build_file##*_}
+        ## 检查版本号是否是以S开头
+        if [ -n "`echo $yunovo_version | sed -n '/^S/p'`" ];then
+            build_version=$yunovo_version
 
-        if [ "$file_project" -a "$file_name" -a "$file_version" ];then
-            prefect_name="$file_project/$file_name/$file_version"
+            first_version=${build_version%.*}
+            second_version=${build_version##*.}
+            if [ -z "$first_version" -o -z "$second_version" ];then
+                echo "first_version or second_version is null !"
+                return 1
+            fi
         else
-            echo "prefect_name not found !"
+            echo "build_version is error, please checkout it ."
+            return 1
         fi
     else
-        echo "sz_build_file not found !"
+        echo "yunovo_version is null !"
+        return 1
     fi
 
-    ### 4. build device
+    ### 3. build device
     if [ "$sz_build_device" ];then
-        build_device=$sz_build_device
+
+        ### remove space
+        echo "$sz_build_device" > $tmp_file
+        sz_build_device=`remove_space_for_vairable $sz_build_device`
+
+        if [ `is_build_device $sz_build_device` == "true" ];then
+            build_device=$sz_build_device
+        else
+            echo "build_device is error, please checkout it"
+            return 1
+        fi
     else
-        echo "build_device not found !"
+        echo "build_device is null !"
     fi
 
-    ### 5. build type
+    ### 4. build type
     if [ "$yunovo_type" ];then
-        build_type=$yunovo_type
+
+        ### remove space
+        echo "$yunovo_type" >$tmp_file
+        yunovo_type=`remove_space_for_vairable $yunovo_type`
+
+        if [ `is_build_type $yunovo_type` == "true" ];then
+            build_type=$yunovo_type
+        else
+            ## jenkins 填写不符合规范，默认为user
+            build_type=user
+        fi
     else
-        echo "build_type not found !"
+        ## jenkins　不填写，默认为user
+        build_type=user
     fi
 
     if [ "$build_device" -a "$build_type" ];then
         lunch_project=full_${build_device}-${build_type}
     else
-        echo "lunch_project not found !"
+        echo "lunch_project is null !"
+        return 1
     fi
 
-    ### 6. build flag
+    ### 5. build flag
     if [ "$sz_build_flag" ];then
-        build_skd_flag=$sz_build_flag
 
-        if [ "$build_skd_flag" ];then
-            flag_fota=`echo $build_skd_flag | cut -d '.' -f1`
-            flag_print=`echo $build_skd_flag | cut -d '.' -f2`
-            flag_download_sdk=`echo $build_skd_flag | cut -d '.' -f3`
-            flag_clone_app=`echo $build_skd_flag | cut -d '.' -f4`
-            flag_make_sdk=`echo $build_skd_flag | cut -d '.' -f5`
-            flag_cpimage=`echo $build_skd_flag | cut -d '.' -f6`
-            flag_cpcustom=`echo $build_skd_flag | cut -d '.' -f7`
+        ### remove space
+        echo "$sz_build_flag" > $tmp_file
+        sz_build_flag=`remove_space_for_vairable $sz_build_flag`
+
+        ## 保存至文件中
+        echo $sz_build_flag > $tmp_file
+
+        if [ "`checkout_debug_info`" == "true" ];then
+            build_flag=$sz_build_flag
+
+            get_debug_info $build_flag
+            ### 处理完成后，删除$tmp_file
+            if [ $? -eq 0 ];then
+                rm $tmp_file -r
+            else
+                echo "get_debug_info error . please checkout it ."
+                return 1
+            fi
         else
-            echo "build_sdk_flag not found !"
+            echo "build_flag is error, please checkout it !"
+            return 1
         fi
     else
-        echo "build_sdk_flag not found !"
+        echo "build_sdk_flag is null !"
+        return 1
+    fi
+
+    ### 6. build file
+    if [ "$sz_build_file" ];then
+
+        ### remove space
+        echo "$sz_build_file" > $tmp_file
+        sz_build_file=`remove_space_for_vairable $sz_build_file`
+
+        if [ `echo $sz_build_file | grep $prj_name | egrep /` ];then
+            prefect_name=$sz_build_file
+        else
+            echo "build_file is error, please checkout it !"
+            return 1
+        fi
+    else
+        echo "sz_build_file is null !"
+        return 1
     fi
 
     ### 7. build test
     if [ "$yunovo_test" ];then
         build_test=$yunovo_test
     else
-        echo "build_test not found !"
+        build_test=false
     fi
 
     ### 8. build make update-api
     if [ "$yunovo_update_api" ];then
         build_update_api=$yunovo_update_api
     else
-        echo "build_update_api not found !"
+        build_update_api=false
     fi
 
-    if [ "`echo $build_version | grep "_"`" ];then
-        build_version_tmp=${build_version%_*}
-        tag_version_tmp=${build_version##*_}
+    if [ "$yunovo_tag" ];then
 
-        # system version S1.00 S1.02 ...
-        first_version=${build_version_tmp%.*}
-        second_version=${build_version_tmp##*.}
+        ### remove space
+        echo "$yunovo_tag" > $tmp_file
+        yunovo_tag=`remove_space_for_vairable $yunovo_tag`
 
-        if [ "$tag_version_tmp" == "all" ];then
+        tag_version=$yunovo_tag
 
+        if [ "$tag_version" == "all" -o "$tag_version" == "ALL" ];then
             ### tag version 1.00 1.02 ... 2.00 2.01 ...
             first_tag_version=9
             second_tag_version=99
         else
-
-            ### tag version 1.00 1.02 ... 2.00 2.01 ...
-            first_tag_version=${tag_version_tmp%.*}
-            second_tag_version=${tag_version_tmp##*.}
+            if [ "`echo $tag_version | grep '.'`" ];then
+                ### tag version 1.00 1.02 ... 2.00 2.01 ...
+                first_tag_version=${tag_version%.*}
+                second_tag_version=${tag_version##*.}
+            else
+                echo "tag_version is error ! please check it !"
+                return 1
+            fi
         fi
-
-        ### flag jenkins or not
-        flag_jenkins_tag=true
     else
-        build_version_tmp=$build_version
-        first_version=${build_version%.*}
-        second_version=${build_version##*.}
-
         while read apptag;do
-            tag_version_tmp=${apptag##*=}
-            first_tag_version=${tag_version_tmp%.*}
-            second_tag_version=${tag_version_tmp##*.}
+            tag_version=${apptag##*=}
+            first_tag_version=${tag_version%.*}
+            second_tag_version=${tag_version##*.}
         done < $tag_file
-
-        ### flag jenkins or not
-        flag_jenkins_tag=false
     fi
-
-    echo "================================"
-    echo "-   flag_jenkins_tag = $flag_jenkins_tag"   -
-    echo "================================"
 
     system_version=$custom_version\_$hw_versiom\_${first_version}.${project_name}.${second_version}
     fota_version="SPT_VERSION_NO=${system_version}"
@@ -318,7 +508,7 @@ function chiphd_recover_project()
             echo "---- recover $tDir"
         else
             cd $OLDPWD
-            return 1
+            return 0
         fi
 
 		git reset HEAD . ###recovery for cached files
@@ -562,15 +752,12 @@ function print_variable()
     echo "custom_version = $custom_version"
 	echo '-----------------------------------------'
     echo "prefect_name = $prefect_name"
-    echo "file_project = $file_project"
-    echo "file_project = $file_name"
-    echo "file_version = $file_version"
 	echo '-----------------------------------------'
 	echo "build_version = $build_version"
     echo "first_version = $first_version"
     echo "second_version = $second_version"
-    echo
-    echo "tag_version = $tag_version_tmp"
+	echo '-----------------------------------------'
+    echo "tag_version = $tag_version"
     echo "first_tag_version = $first_tag_version"
     echo "second_tag_version = $second_tag_version"
 	echo '-----------------------------------------'
@@ -586,7 +773,6 @@ function print_variable()
     echo "flag_cpimage = $flag_cpimage"
     echo "flag_cpcustom = $flag_cpcustom"
 	echo '-----------------------------------------'
-    echo "flag_jenkins_tag = $flag_jenkins_tag"
     echo "yunovo_test = $yunovo_test"
     echo "yunovo_update_api = $yunovo_update_api"
 	echo '-----------------------------------------'
@@ -700,13 +886,15 @@ function handler_custom_config()
 
         if [ $? -eq 0 ];then
             rm $hardware_config_file
+        else
+            echo "cat fail and >> file !"
+            return 1
         fi
 
         echo
-        echo "------------------------------"
-        echo "    hardware config modify    "
-        echo "------------------------------"
-        echo
+        echo "--------------------------------"
+        echo "-   1.hardware config modify   -"
+        echo "--------------------------------"
     fi
 
     while read sz_boot_logo
@@ -729,19 +917,21 @@ function handler_custom_config()
 
         if [ "$src_boot_logo" ];then
             sed -i "s/${src_boot_logo}/${dest_boot_logo}/g" $bootable_config_file
+            if [ $? -eq 0 ];then
+                rm $boot_logo_config_file
+            else
+                echo "sed fail ..."
+                return 1
+            fi
         else
-            echo "sed fail ..."
+            echo "src_boot_logo is null !"
             return 1
         fi
 
-        if [ $? -eq 0 ];then
-            rm $boot_logo_config_file
-        fi
-
         echo
-        echo "------------------------------"
-        echo "    boot logo config modify   "
-        echo "------------------------------"
+        echo "---------------------------------"
+        echo "-   2.boot logo config modify   -"
+        echo "---------------------------------"
         echo
 
     fi
@@ -810,7 +1000,6 @@ function clone_app()
 	local branch_nane=
 	local tag_name=
 
-    echo
     echo "---------------------------"
     echo "-   project_name = $project_name   -"
     echo "---------------------------"
@@ -857,7 +1046,7 @@ function clone_app()
                     ### 确保每次分支都在master or long
                     ### 检查是否是是long分支
                     if [ "$default_branch" != "master origin/master" ];then
-                        if [ $app_name == "CarEngine" -o $app_name == "CarRecordDouble" -o $app_name == "NewsmyNewyan" -o $app_name == "NewsmyRecorder" -o $app_name == "NewsmySPTAdapter" ] ;then
+                        if [ "`is_long_branch_app $app_name`" == "true" ] ;then
                             if [ "`git branch -a | grep \* | cut -d ' ' -f2`" != "long"  ];then
                                 git checkout long
                                 git pull && echo "-------------- pull $app_name"
@@ -888,7 +1077,7 @@ function clone_app()
                     fi
 
                     ### i.特殊apk 处理
-                    if [ $app_name == "CarEngine" -o $app_name == "CarRecordDouble" -o $app_name == "NewsmyNewyan" -o $app_name == "NewsmyRecorder" -o $app_name == "NewsmySPTAdapter" ];then
+                    if [ "`is_long_branch_app $app_name`" == "true" ];then
                         ### ii. 处理long tag
                         if [ "$default_branch" != "master origin/master" ];then
                             branch_nane=long
@@ -904,16 +1093,7 @@ function clone_app()
                         tag_name=M
                     fi
 
-                    ### jenkins tag
-                    if [ "$flag_jenkins_tag" == "true" ];then
-
-                        #echo "--------$app_name jenkins tag = $flag_jenkins_tag"
-                        ### 处理不同分支tag
-                        handler_tag_branch $branch_nane $tag_name $app_name
-
-                    ### file tag
-                    else
-                        #echo "--------$app_name file tag"
+                    if [ "$branch_nane" -a "$tag_name" -o "$app_name" ];then
                         ### 处理不同分支tag
                         handler_tag_branch $branch_nane $tag_name $app_name
                     fi
@@ -925,7 +1105,7 @@ function clone_app()
 			git clone $ssh_link/$app_name
 			echo "-------------- clone $app_name"
             echo
-			if [ $app_name == "CarEngine"  -o $app_name == "CarRecordDouble" -o $app_name == "NewsmyNewyan" -o $app_name == "NewsmyRecorder" -o $app_name == "NewsmySPTAdapter" ];then
+			if [ "`is_long_branch_app $app_name`" == "true" ];then
 				if [ "$default_branch" != "master origin/master" ];then
                     echo "app_name = $app_name"
                     echo "default_branch = $default_branch"
@@ -938,7 +1118,6 @@ function clone_app()
 		fi
     done < $app_file
 
-    echo
     echo "--> clone app or pull app end ..."
 	echo
 	cd $OLDP > /dev/null
@@ -947,12 +1126,10 @@ function clone_app()
 ## download sdk
 function download_sdk()
 {
-    local hostname=`hostname`
-    local project_name=$(pwd) && project_name=${project_name%/*} && project_name=${project_name##*/}
+    local project_name=`get_project_name`
     local defalut=
 
     if [ "$project_name" ];then
-
         if [ $project_name == "k86a" -o $project_name == "k86m" ];then
             defalut=k86A
         elif [ $project_name == "k86s" -o $project_name == "k86sm" ] ;then
@@ -967,15 +1144,16 @@ function download_sdk()
             defalut=K26
         else
             echo "project do not match it !"
+            return 1
         fi
     else
         echo "project path do not found !"
+        return 1
     fi
 
     echo "defalut = $defalut"
 
-	if [ ! -d ${gettop}/.repo ];then
-		#repo init -u git@src1.spt-tek.com:projects/manifest.git -m k86A.xml
+	if [ ! -d .repo ];then
 		if [ "$defalut" -a "$project_link" ];then
             repo $project_link -m ${defalut}.xml
         fi
@@ -989,26 +1167,43 @@ function download_sdk()
         if [ $defalut ];then
             repo start $defalut --all
         fi
+
+        ## 第一次下载完成后，需要初始化环境变量
+        if [ -d .repo ];then
+            source_init
+        else
+            echo "The (.repo) not found ! please download sdk !"
+            return 1
+        fi
 	else
-        if [ $hostname == "s4" -o $hostname == "s3" -o $hostname == "s2" -o $hostname == "s1" -o $hostname == "happysongs" ];then
+        if [ `is_yunovo_server` == "true" ];then
             ## 还原 androiud源代码 ...
             recover_standard_android_project
 
             ## 更新 android源代码 ...
-		    repo forall -c git fetch && echo "-----------------git fetch ok"
-		    repo forall -c git pull  && echo "-----------------git pull ok"
+		    repo forall -c git fetch
+            echo "-----------------git fetch successful ."
+            echo
 
-		    echo "--> sdk update ..."
+		    repo forall -c git pull
+            echo "-----------------git pull successful ."
 		    echo
         fi
 	fi
 }
 
-## build sdk
+## build sdk for yunovo project
 function make-sdk()
 {
-	if [ -d ${gettop}/.repo ];then
-        source_init
+	if [ "$DEVICE" ];then
+        :
+    else
+        if [ -d .repo ];then
+            source_init
+        else
+            echo "The (.repo) not found ! please download sdk !"
+            return 1
+        fi
     fi
 
 	if make installclean;then
@@ -1016,10 +1211,13 @@ function make-sdk()
 		echo
     else
         echo "---> make installclean failed !"
+        return 1
 	fi
 
 	if [ -n "$(find . -maxdepth 1 -name "build*.log" -print0)" ];then
 		delete_log
+    else
+        echo "log is not delete, please checkout it ! "
 	fi
 
     if make clean-lk;then
@@ -1028,14 +1226,24 @@ function make-sdk()
     else
 		echo "--> make clean lk fail ..."
         echo
+        return 1
     fi
 
-	make -j${cpu_num} ${fota_version} 2>&1 | tee build_$cur_time.log
-	if [ $? -eq 0 ];then
+    if [ "$cpu_num" -gt 0 ];then
+        :
+    else
+        echo "cpu_num in not number ..."
+        return 1
+    fi
+
+    make -j${cpu_num} ${fota_version} 2>&1 | tee build_$cur_time.log
+    if [ $? -eq 0 ];then
         echo "--> make project end ..."
+        echo
     else
         echo "make android failed !"
-        exit 1
+        echo
+        return 1
     fi
 
     if [ $flag_fota -eq 1 ];then
@@ -1046,7 +1254,7 @@ function make-sdk()
         else
             echo "make otapackage failed !"
             echo
-            exit 1
+            return 1
         fi
     fi
 }
@@ -1054,8 +1262,8 @@ function make-sdk()
 function sync_jenkins_server()
 {
     local firmware_path=~/debug
-    local share_path=/home/share/jenkins_share
-    local jenkins_server=jenkins@s4.y
+    local share_path=/public/jenkins/jenkins_share_20T
+    local jenkins_server=jenkins@f1.y
 
     if [ "`is_yunovo_server`" == "true" ];then
         if [ $build_test == "true" ];then
@@ -1075,7 +1283,7 @@ function sync_jenkins_server()
     fi
 }
 
-function update_yunovo_customs_auto()
+function auto_update_yunovo_customs()
 {
 	local nowPwd=$(pwd)
     local sz_project_name=`echo k26 k86a k86m k86s k86sm k86l k86ls k88c`
@@ -1092,11 +1300,9 @@ function update_yunovo_customs_auto()
             continue
         fi
 
-        #echo "sz_custom = $sz_custom"
         if [ -d $sz_yunovo_customs_path/.git ];then
-            #echo "sz_yunovo_customs_path = $sz_yunovo_customs_path"
-            cd $sz_yunovo_customs_path > /dev/null
 
+            cd $sz_yunovo_customs_path > /dev/null
             git pull && echo "-------- $sz_custom yunovo_customs update successful ..."
             echo
 
@@ -1120,7 +1326,6 @@ function update_yunovo_customs_auto()
                     echo "$sz_yunovo_customs_link not found !"
                 fi
             else
-
                 if [ "$sz_yunovo_customs_link_server" ];then
                     echo
                     echo "custom link = $sz_yunovo_customs_link_server"
@@ -1140,14 +1345,23 @@ function update_yunovo_customs_auto()
 	cd $nowPwd
 }
 
+### 打印系统环境变量
+function print_env()
+{
+    echo "ROOT = $(gettop)"
+    echo "OUT = $OUT"
+    echo "DEVICE = $DEVICE"
+    echo
+}
+
 function source_init()
 {
     local magcomm_project=magc6580_we_l
     local eastaeon_project=aeon6735_65c_s_l1
     local eastaeon_project_m=aeon6735m_65c_s_l1
 
-
     source  build/envsetup.sh
+    echo
     echo "--> source end ..."
     echo
 
@@ -1165,38 +1379,57 @@ function source_init()
         DEVICE=device/eastaeon/$DEVICE_PROJECT
     else
         DEVICE=device/eastaeon/$DEVICE_PROJECT
-        echo "do not match it ..."
+        echo "DEVICE do not match it ..."
     fi
-
-    echo "ROOT = $(gettop)"
-    echo "OUT = $OUT"
-    echo "DEVICE = $DEVICE"
+    print_env
 }
 
 function main()
 {
-    handler_vairable $build_device $build_prj_name $build_file $build_skd_flag
+    if [ "`is_yunovo_project`" == "true" ];then
+        :
+    else
+        echo "current directory is not android !"
+        return 1
+    fi
+
+    if [ "`is_yunovo_server`" == "true" ];then
+        echo
+        echo "---> make android start ."
+        echo
+    else
+        echo "server name is not s1 s2 s3 s4 happysongs ww !"
+        return 1
+    fi
+
+    if [ "$build_prj_name" -a "$build_device" -a "$build_file" -a "$build_flag"  ];then
+        ### 处理输入参数，并检查其有效性...
+        handler_vairable $build_prj_name $build_device $build_file $build_flag
+    else
+        echo "xargs is error ,please checkout xargs ."
+        return 1
+    fi
 
     if [ $flag_print -eq 1 ];then
-	    print_variable $build_prj_name $build_version $build_device $build_type $build_skd_flag $build_file $build_test
+	    print_variable $build_prj_name $build_version $build_device $build_type $build_flag $build_file $build_test
     else
-        echo "do not anythings output !"
+        echo "it is not print variable . please checkout your flag_print !"
     fi
 
-    if [ "`is_yunovo_project`" == "true" ];then
-        if [ -d ${gettop}/.repo ];then
+    if [ -d .repo ];then
+        ### 初始化环境变量
+        if [ "`is_check_lunch`" == "no lunch" ];then
             source_init
         else
-            echo ". repo not found ! please download sdk ..."
+            print_env
         fi
-    else
-        echo "current directory is not android !" && exit 1
     fi
 
-    ## auto update
-    update_yunovo_customs_auto
+    ## auto update customs
+    auto_update_yunovo_customs
 
     if [ $flag_download_sdk -eq 1 ];then
+        ### download source code
         download_sdk
     else
         echo "do not download_sdk !"
@@ -1210,25 +1443,27 @@ function main()
 
     if [ $flag_cpcustom -eq 1 ];then
 
-        if [ -d ${gettop}/.repo ];then
-            source_init
-        fi
-
-        if [ $(gettop) ];then
+        if [ "`is_check_lunch`" == "no lunch" ];then
+            echo "current directory is not android ! gettop is null !"
+            return 1
+        else
             cpcustoms
             handler_custom_config
         fi
     else
-        echo "do not cp customs"
+        echo "do not cp customs !"
     fi
 
     if [ "$build_update_api" == "true" ];then
         make update-api -j${cpu_num}
         if [ $? -eq 0 ];then
             echo "---> make update-api end !"
+        else
+            echo "make update-api fail !"
+            return 1
         fi
     else
-        echo "do not make update-api"
+        echo "do not make update-api !"
     fi
 
     if [ $flag_make_sdk -eq 1 ];then
@@ -1243,6 +1478,15 @@ function main()
         fi
     else
         echo "do not cp image !"
+    fi
+
+    if [ "`is_yunovo_server`" == "true" ];then
+        echo
+        echo "---> make android end ."
+        echo
+    else
+        echo "server name is not s1 s2 s3 s4 happysongs ww !"
+        return 1
     fi
 }
 
