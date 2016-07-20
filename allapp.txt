@@ -41,8 +41,8 @@ IqiyiHD
 XiaowoDF
 SogoInput
 YiqiRelease
-CmytCard-signed
-CmytUpdate-signed
+CmytCard
+CmytUpdate
 CarBack
 CarDog
 CarEngine
