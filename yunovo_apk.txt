@@ -41,3 +41,5 @@ IqiyiHD
 XiaowoDF
 SogoInput
 YiqiRelease
+CmytCard-signed
+CmytUpdate-signed
