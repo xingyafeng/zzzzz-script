@@ -608,6 +608,12 @@ function sshfs-server()
                 mkdir -p ~/$hostname
             fi
 
+            ##检查是否有挂载上，有就返回，否则进行挂载动作
+            if [ "`mount | grep $hostname`" ];then
+                #echo $hostname
+                continue
+            fi
+
             if [ -d ~/$hostname ];then
                 if [ $hostname == "f1.y" ];then
                     sshfs $userN@$hostname:$share_path ~/$hostname
