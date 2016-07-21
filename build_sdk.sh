@@ -516,7 +516,10 @@ function chiphd_recover_project()
             return 0
         fi
 
-		git reset HEAD . ###recovery for cached files
+        thisFiles=`git diff --cached --name-only`
+        if [ "$thisFiles" ];then
+            git reset HEAD . ###recovery for cached files
+        fi
 
 		thisFiles=`git clean -dn`
 		if [ "$thisFiles" ]; then
