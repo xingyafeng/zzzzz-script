@@ -1142,7 +1142,7 @@ function download_sdk()
             defalut=k86A
         elif [ $project_name == "k86s" -o $project_name == "k86sm" ] ;then
             defalut=k86s
-        elif [ $project_name == "k86l" ];then
+        elif [ $project_name == "k86l" -o $project_name == "k86ld" ];then
             defalut=k86s_400x1280
         elif [ $project_name == "k86ls" ];then
             defalut=k86l_split
