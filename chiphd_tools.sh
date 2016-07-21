@@ -335,7 +335,7 @@ function recover_standard_lichee_project()
 
 function recover_sdk()
 {
-    if [ "`is_make_project`" == "true" ];then
+    if [ "`is_yunovo_project`" == "true" ];then
         recover_standard_android_project
         show_vir "-------------------------------------------------------------------------------------"
 	    #recover_standard_lichee_project
@@ -735,7 +735,7 @@ function git-tag-for-app()
     local tag_version=$1
     local branch_name=$2
 
-    if [ ! "`is_make_project`" == "true" ];then
+    if [ ! "`is_yunovo_project`" == "true" ];then
         return 1
     fi
 
@@ -849,7 +849,7 @@ function rmappfs()
     local app_file=~/workspace/script/zzzzz-script/allapp.txt
     local app_path=packages/apps
 
-    if [ ! "`is_make_project`" == "true" ];then
+    if [ ! "`is_yunovo_project`" == "true" ];then
         return 1
     fi
 
