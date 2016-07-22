@@ -16,6 +16,7 @@ k86sP=k86s
 k86smP=k86sm
 k86lP=k86l
 k86lsP=k86ls
+k86ldP=k86ld
 k88cP=k88c
 
 sdate=$td
@@ -23,7 +24,14 @@ sdate=$td
 yunovo_root=~/yunovocode
 sz_eastaeon=$yunovo_root/$eastaeon51/android
 jenkins_path=/home/work5/jenkins
-share_path=/home/share/jenkins_share
+
+### share for server path
+s1_share_path=/home/jenkins/workspace/share
+s2_share_path=/home/jenkins/workspace/share
+s3_share_path=/home/work5/public/share
+s4_share_path=/home/share/jenkins_share
+f1_share_path=/public/jenkins/jenkins_share_20T
+
 
 s1_path=~/jobs/k26/android
 s2_path=~/jobs/k86s/android
@@ -92,11 +100,58 @@ function cjenkins
 
 function cshare
 {
-    if [ -d $share_path ];then
-	    cd $share_path
-    else
-        show_vir " $share_path  not found !"
-    fi
+    local hostN=`hostname`
+
+    case $hostN in
+    s1)
+        if [ -d $s1_share_path ];then
+            cd $s1_share_path
+        else
+            show_vir "$s1_share_path not found !"
+            return 1
+        fi
+        ;;
+    s2)
+        if [ -d $s2_share_path ];then
+            cd $s2_share_path
+        else
+            show_vir "$s2_share_path not found !"
+            return 1
+        fi
+        ;;
+    s3)
+        if [ -d $s3_share_path ];then
+            cd $s3_share_path
+        else
+            show_vir "$s3_share_path not found !"
+            return 1
+        fi
+
+        ;;
+    s4)
+        if [ -d $s4_share_path ];then
+            cd $s4_share_path
+        else
+            show_vir "$s4_share_path not found !"
+            return 1
+        fi
+
+        ;;
+    f1)
+        if [ -d $f1_share_path ];then
+            cd $f1_share_path
+        else
+            show_vir "$f1_share_path not found !"
+            return 1
+        fi
+
+        ;;
+
+    *)
+        show_vir "it do not match anythings !"
+        return 1
+        ;;
+    esac
 }
 
 function cscript

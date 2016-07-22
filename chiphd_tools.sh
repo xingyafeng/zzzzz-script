@@ -335,7 +335,7 @@ function recover_standard_lichee_project()
 
 function recover_sdk()
 {
-    if [ "`is_make_project`" == "true" ];then
+    if [ "`is_yunovo_project`" == "true" ];then
         recover_standard_android_project
         show_vir "-------------------------------------------------------------------------------------"
 	    #recover_standard_lichee_project
@@ -608,6 +608,12 @@ function sshfs-server()
                 mkdir -p ~/$hostname
             fi
 
+            ##检查是否有挂载上，有就返回，否则进行挂载动作
+            if [ "`mount | grep $hostname`" ];then
+                #echo $hostname
+                continue
+            fi
+
             if [ -d ~/$hostname ];then
                 if [ $hostname == "f1.y" ];then
                     sshfs $userN@$hostname:$share_path ~/$hostname
@@ -729,7 +735,7 @@ function git-tag-for-app()
     local tag_version=$1
     local branch_name=$2
 
-    if [ ! "`is_make_project`" == "true" ];then
+    if [ ! "`is_yunovo_project`" == "true" ];then
         return 1
     fi
 
@@ -843,7 +849,7 @@ function rmappfs()
     local app_file=~/workspace/script/zzzzz-script/allapp.txt
     local app_path=packages/apps
 
-    if [ ! "`is_make_project`" == "true" ];then
+    if [ ! "`is_yunovo_project`" == "true" ];then
         return 1
     fi
 

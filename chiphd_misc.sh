@@ -74,11 +74,48 @@ function is_yunovo_project
 {
     local thisP=$(pwd) && thisP=${thisP%/*} && thisP=${thisP##*/}
 
-    if [ $thisP == $k26P -o $thisP == $k86aP -o $thisP == $k86mP -o $thisP == $k86sP -o $thisP == $k86smP -o  $thisP == $k86lP -o $thisP == $k86lsP -o $thisP == $k88cP ];then
-        echo true
-    else
-        echo false
-    fi
+    case $thisP in
+
+        $k26P)
+            echo true
+
+            ;;
+        $k86aP)
+            echo true
+
+            ;;
+        $k86mP)
+            echo true
+            ;;
+        $k86sP)
+            echo true
+
+            ;;
+        $k86smP)
+            echo true
+
+            ;;
+        $k86lP)
+            echo true
+
+            ;;
+        $k86lsP)
+            echo true
+
+            ;;
+        $k86ldP)
+            echo true
+
+            ;;
+        $k88cP)
+            echo true
+
+            ;;
+        *)
+            echo false
+
+            ;;
+    esac
 }
 
 ### 获取当前编译项目名称

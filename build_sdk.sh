@@ -283,7 +283,7 @@ function handler_vairable()
     local sz_build_flag=$4
 
     ### 处理k86l系类工程
-    if [ $prj_name == "k86l" ];then
+    if [ $prj_name == "k86l" -o $prj_name == "k86ld" ];then
         prj_name=k86
     fi
 
@@ -516,7 +516,10 @@ function chiphd_recover_project()
             return 0
         fi
 
-		git reset HEAD . ###recovery for cached files
+        thisFiles=`git diff --cached --name-only`
+        if [ "$thisFiles" ];then
+            git reset HEAD . ###recovery for cached files
+        fi
 
 		thisFiles=`git clean -dn`
 		if [ "$thisFiles" ]; then
@@ -1139,7 +1142,7 @@ function download_sdk()
             defalut=k86A
         elif [ $project_name == "k86s" -o $project_name == "k86sm" ] ;then
             defalut=k86s
-        elif [ $project_name == "k86l" ];then
+        elif [ $project_name == "k86l" -o $project_name == "k86ld" ];then
             defalut=k86s_400x1280
         elif [ $project_name == "k86ls" ];then
             defalut=k86l_split
