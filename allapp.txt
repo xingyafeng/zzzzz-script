@@ -8,6 +8,7 @@ CarSystemUpdateAssistant
 GaodeCarMap
 GaodeMap
 GaodeNavigation
+GaodeCustomerMap
 GpsTester
 KwPlayer
 NewsmyNewyan
@@ -41,9 +42,9 @@ IqiyiHD
 XiaowoDF
 SogoInput
 YiqiRelease
+CoDriver
 CmytCard
 CmytUpdate
-CoDriver
 CarBack
 CarDog
 CarEngine
