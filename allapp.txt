@@ -45,6 +45,9 @@ YiqiRelease
 CoDriver
 CmytCard
 CmytUpdate
+AiosDaemon
+AiosMusic
+AiosTubaNavi
 CarBack
 CarDog
 CarEngine

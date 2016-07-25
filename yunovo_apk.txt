@@ -45,3 +45,6 @@ YiqiRelease
 CoDriver
 CmytCard
 CmytUpdate
+AiosDaemon
+AiosMusic
+AiosTubaNavi
