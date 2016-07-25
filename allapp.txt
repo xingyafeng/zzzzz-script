@@ -73,3 +73,4 @@ CarLogTools
 BaiduVoice
 TxzVoice
 GoogleVoice
+AiosAdapterVoice
