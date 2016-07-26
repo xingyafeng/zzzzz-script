@@ -48,3 +48,7 @@ CmytUpdate
 AiosDaemon
 AiosMusic
 AiosTubaNavi
+yiqidaohang
+yiqidrivinganalysis
+yiqipeihuo
+yiqiyuyue

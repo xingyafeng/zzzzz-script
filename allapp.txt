@@ -42,6 +42,10 @@ IqiyiHD
 XiaowoDF
 SogoInput
 YiqiRelease
+yiqidaohang
+yiqidrivinganalysis
+yiqipeihuo
+yiqiyuyue
 CoDriver
 CmytCard
 CmytUpdate
