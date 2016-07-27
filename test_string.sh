@@ -1,4 +1,29 @@
 #!/bin/bash
+
+function get_project_name()
+{
+    local thisP=$(pwd) && thisP=${thisP%/*} && thisP=${thisP##*/}
+    local project_name=($k26P $k86aP $k86mP $k86sP $k86smP $k86lP $k86lsP $k86ldP $k88cP)
+    local isroot=false
+
+    if [ "$thisP" ];then
+
+        for p in ${project_name[@]}
+        do
+            if [ "$thisP" == "${p}_root" ];then
+                isroot=true
+                echo $p
+            fi
+        done
+
+        if [ "$isroot" == "false" ];then
+            echo $thisP
+        fi
+    else
+        echo "do not get project name !"
+    fi
+}
+
 function test_is_number()
 {
     local n=$1
