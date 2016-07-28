@@ -81,6 +81,16 @@ k86lsP=k86ls
 k88cP=k88c
 k86ldP=k86ld
 
+k26PR=k26_root
+k86aPR=k86a_root
+k86mPR=k86m_root
+k86sPR=k86s_root
+k86smPR=k86sm_root
+k86lPR=k86l_root
+k86lsPR=k86ls_root
+k88cPR=k88c_root
+k86ldPR=k86ld_root
+
 ################################ system env
 DEVICE=
 ROOT=
@@ -139,21 +149,85 @@ function is_yunovo_project
 {
     local thisP=$(pwd) && thisP=${thisP%/*} && thisP=${thisP##*/}
 
-    if [ $thisP == $k26P -o $thisP == $k86aP -o $thisP == $k86mP -o $thisP == $k86sP -o $thisP == $k86smP -o  $thisP == $k86lP -o $thisP == $k86lsP -o $thisP == $k88cP -o $thisP == $k86ldP ];then
-        echo true
-    else
-        echo false
-    fi
+    case $thisP in
+
+        $k26P | $k26PR)
+            echo true
+
+            ;;
+        $k86aP | $k86aPR)
+            echo true
+
+            ;;
+        $k86mP | $k86mPR)
+            echo true
+            ;;
+
+        $k86sP | $k86sPR)
+            echo true
+
+            ;;
+        $k86smP | $k86smPR)
+            echo true
+
+            ;;
+        $k86lP | $k86lPR)
+            echo true
+
+            ;;
+        $k86lsP | $k86lsPR)
+            echo true
+
+            ;;
+        $k86ldP | $k86ldPR)
+            echo true
+
+            ;;
+        $k88cP | $k88cPR)
+            echo true
+
+            ;;
+        *)
+            echo false
+
+            ;;
+    esac
 }
 
-function get_project_name()
+function get_project_real_name()
 {
     local thisP=$(pwd) && thisP=${thisP%/*} && thisP=${thisP##*/}
 
     if [ "$thisP" ];then
         echo $thisP
     else
-        echo "do not get project name !"
+        echo "it do not get project name !"
+        return 1
+    fi
+}
+
+function get_project_name()
+{
+    local thisP=$(pwd) && thisP=${thisP%/*} && thisP=${thisP##*/}
+    local project_name=($k26P $k86aP $k86mP $k86sP $k86smP $k86lP $k86lsP $k86ldP $k88cP)
+    local isroot=false
+
+    if [ "$thisP" ];then
+
+        for p in ${project_name[@]}
+        do
+            if [ "$thisP" == "${p}_root" ];then
+                isroot=true
+                echo $p
+            fi
+        done
+
+        if [ "$isroot" == "false" ];then
+            echo $thisP
+        fi
+    else
+        echo "it do not get project name !"
+        return 1
     fi
 }
 
@@ -162,13 +236,20 @@ function is_yunovo_server()
 {
     local hostN=`hostname`
     local serverN=(s1 s2 s3 s4 happysongs ww)
+    local isServer=false
 
     for n in ${serverN[@]}
     do
         if [ "$n" == "$hostN"  ];then
+            isServer=true
             echo true
         fi
     done
+
+    if [ $isServer == "false" ];then
+        echo "it do not make on yunovo server !"
+        return 1
+    fi
 }
 
 ### 是否为使用的芯片类型
@@ -1294,12 +1375,13 @@ function sync_jenkins_server()
 function auto_update_yunovo_customs()
 {
 	local nowPwd=$(pwd)
-    local sz_project_name=`echo k26 k86a k86m k86s k86sm k86l k86ls k88c`
+    local project_name=($k26P $k86aP $k86mP $k86sP $k86smP $k86lP $k86lsP $k86ldP $k88cP)
+    local sz_project_name=`echo k26 k86a k86m k86s k86sm k86l k86ls k88c k26_root k86a_root k86m_root k86s_root k86sm_root k86l_root k86ls_root k86ld_root k88c_root`
     local sz_base_path=~/jobs
 
     for sz_custom in $sz_project_name
     do
-        if [ "`get_project_name`" == "$sz_custom" ];then
+        if [ "`get_project_real_name`" == "$sz_custom" ];then
             local sz_yunovo_customs_path=$sz_base_path/$sz_custom/yunovo_customs
             local sz_yunovo_customs_link=`echo /home/jenkins/workspace/git_server/$sz_custom/yunovo_customs.git`
             local sz_yunovo_customs_link_server=`echo ssh://jenkins@s4.y/home/jenkins/workspace/git_server/$sz_custom/yunovo_customs.git`
@@ -1319,6 +1401,16 @@ function auto_update_yunovo_customs()
             if [ ! -d $sz_yunovo_path ];then
                 mkdir -p $sz_yunovo_path
             fi
+
+            for p in ${project_name[@]}
+            do
+                if [ $sz_custom == "${p}_root" ];then
+                    sz_custom=`get_project_name`
+                    sz_yunovo_customs_link=`echo /home/jenkins/workspace/git_server/$sz_custom/yunovo_customs.git`
+                    sz_yunovo_customs_link_server=`echo ssh://jenkins@s4.y/home/jenkins/workspace/git_server/$sz_custom/yunovo_customs.git`
+
+                fi
+            done
 
             cd $sz_yunovo_path > /dev/null
 
