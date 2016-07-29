@@ -27,6 +27,8 @@ build_type=
 build_test=
 ### make update-api
 build_update_api=
+### readme.txt
+build_readme=
 
 ## system version  e.g. : S1.01
 build_version=""
@@ -60,11 +62,13 @@ flag_jenkins_tag=
 ################################# common variate
 hw_versiom=H3.1
 branch_nane=develop
+debug_path=~/debug
 cur_time=`date +%m%d_%H%M`
 zz_script_path=/home/jenkins/workspace/script/zzzzz-script
 cpu_num=`cat /proc/cpuinfo  | egrep 'processor' | wc -l`
 project_link="init -u git@src1.spt-tek.com:projects/manifest.git"
-tmp_file=$zz_script_path/tmp.txt
+tmp_file=$debug_path/tmp.txt
+readme_file=$debug_path/readme.txt
 lunch_project=
 prefect_name=
 system_version=
@@ -555,6 +559,28 @@ function handler_vairable()
         done < $tag_file
     fi
 
+    ### 9. build readme.txt
+    if [ "$yunovo_readme" ];then
+        build_readme="$yunovo_readme"
+
+        if [ "$build_readme" ];then
+
+            echo -e "$build_prj_name ${build_version} 修改点:" > $readme_file
+            echo >> $readme_file
+
+            for r in ${yunovo_readme[@]}
+            do
+                echo -e "$r" >> "$readme_file"
+            done
+        fi
+    else
+        echo -e "$build_prj_name ${build_version} 修改点:" > $readme_file
+        echo >> $readme_file
+
+        build_readme="未填写，请与出版本的同学联系，并让其补全修改点."
+        echo "$build_readme" >> $readme_file
+    fi
+
     system_version=$custom_version\_$hw_versiom\_${first_version}.${project_name}.${second_version}
     fota_version="SPT_VERSION_NO=${system_version}"
 }
@@ -764,6 +790,14 @@ function cpimage()
             cp -v ${OUT}/obj/PACKAGING/target_files_intermediates/full_${build_device}-target_files*.zip ${OTA_PATH}/${system_version}.zip
             echo "cp ota end ..."
             echo
+        fi
+
+        ### add readme.txt in version
+        if [ -f $readme_file ];then
+            cp -vf $readme_file ${BASE_PATH}
+            if [ $? -eq 0 ];then
+                rm $readme_file -r
+            fi
         fi
     elif [ $server_name == "s4" ];then
         if [ ! -d $firmware_path_server ];then
