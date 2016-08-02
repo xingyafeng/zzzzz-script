@@ -29,6 +29,8 @@ build_test=
 build_update_api=
 ### readme.txt
 build_readme=
+### develop master
+build_branch=
 
 ## system version  e.g. : S1.01
 build_version=""
@@ -119,6 +121,48 @@ function __msg()
     echo "currect dir is : $pwd"
 }
 
+function _echo()
+{
+    local msg=$1
+
+    if [ $# -eq 1 ];then
+        :
+    else
+        __echo "e.g : _echo xxx"
+        return 1
+    fi
+
+    if [ "$msg" ];then
+        echo "$msg"
+        echo
+    else
+        echo "msg is null, please check it !"
+        return 1
+    fi
+}
+
+function __echo()
+{
+    local msg=$1
+
+    if [ $# -eq 1 ];then
+        :
+    else
+        echo
+        echo "e.g : __echo xxx"
+        echo
+        return 1
+    fi
+
+    if [ "$msg" ];then
+        echo
+        echo "--> $msg"
+        echo
+    else
+        echo "msg is null, please check it !"
+        return 1
+    fi
+}
 ### 检查是否有lunch
 function is_check_lunch()
 {
@@ -135,6 +179,13 @@ function remove_space_for_vairable()
     ## 去掉空格后的变量
     local new_v=
     local old_v=$1
+
+    if [ $# -eq 1 ];then
+        :
+    else
+        _echo "$# is error, please check args !"
+        return 1
+    fi
 
     new_v=`cat $tmp_file | sed 's/[  ]\+//g'`
     if [ "$new_v" != "$old_v" ];then
@@ -235,6 +286,27 @@ function get_project_name()
     fi
 }
 
+### 是否为master or develop分支
+function is_yunovo_branch()
+{
+    local branch_name=$1
+    local branchN=(master develop)
+
+    if [ $# -eq 1 ];then
+        :
+    else
+        _echo "$# is error, please check args !"
+        return 1
+    fi
+
+    for b in ${branchN[@]}
+    do
+        if [ $b == $branch_name ];then
+            echo true
+        fi
+    done
+}
+
 ### 是否为编译服务器
 function is_yunovo_server()
 {
@@ -262,6 +334,13 @@ function is_build_device()
     local cpu_type_more=(aeon6735_65c_s_l1 aeon6735m_65c_s_l1 magc6580_we_l)
     local cpu_type=$1
 
+    if [ $# -eq 1 ];then
+        :
+    else
+        _echo "$# is error, please check args !"
+        return 1
+    fi
+
     for c in ${cpu_type_more[@]}
     do
         if [ $c == $cpu_type ];then
@@ -275,6 +354,13 @@ function is_build_type()
 {
     local build_type_more=(eng user userdebug)
     local buildT=$1
+
+    if [ $# -eq 1 ];then
+        :
+    else
+        _echo "$# is error, please check args !"
+        return 1
+    fi
 
     for t in ${build_type_more[@]}
     do
@@ -290,12 +376,51 @@ function is_long_branch_app()
     local check_long_app=$1
     local long_branch_app_name=(CarEngine CarRecordDouble NewsmyNewyan NewsmyRecorder NewsmySPTAdapter)
 
+    if [ $# -eq 1 ];then
+        :
+    else
+        _echo "$# is error, please check args !"
+        return 1
+    fi
+
     for a in ${long_branch_app_name[@]}
     do
         if [ $a == $check_long_app ];then
             echo true
         fi
     done
+}
+
+###是否为长屏项目
+function is_long_project()
+{
+    ### jenkins path name
+    local prjN=(k86l k86ld)
+
+    ### jenkins project name
+    local projectN=(k26c)
+
+    local OLDP=`pwd`
+
+    cd $ROOT > /dev/null
+
+    local prj_name=$(pwd) && prj_name=${prj_name%/*} && prj_name=${prj_name##*/}
+
+    for p1 in ${prjN[@]}
+    do
+        if [ "$prj_name" == "$p1" ];then
+            echo true
+        fi
+    done
+
+    for p2 in ${projectN[@]}
+    do
+        if [ "$project_name" == "$p2"  ];then
+            echo true
+        fi
+    done
+
+    cd $OLDP > /dev/null
 }
 
 function checkout_debug_info()
@@ -579,6 +704,20 @@ function handler_vairable()
 
         build_readme="未填写，请与出版本的同学联系，并让其补全修改点."
         echo "$build_readme" >> $readme_file
+    fi
+
+    ### 10. build branch
+    if [ "$yunovo_branch" ];then
+
+        if [ `is_yunovo_branch $yunovo_branch` == "true" ];then
+            build_branch=$yunovo_branch
+        else
+            echo "yunovo_branch is error , please check it !"
+            return 1
+        fi
+    else
+        ### jenkins 没有填写，默认为master
+        build_branch=master
     fi
 
     system_version=$custom_version\_$hw_versiom\_${first_version}.${project_name}.${second_version}
@@ -886,6 +1025,7 @@ function print_variable()
 	echo '-----------------------------------------'
 	echo "build_device = $build_device"
 	echo "build_type = $build_type"
+    echo "build_branch= $build_branch"
 	echo "lunch_project = $lunch_project"
 	echo '-----------------------------------------'
     echo "flag_fota = $flag_fota"
@@ -897,6 +1037,7 @@ function print_variable()
     echo "flag_cpcustom = $flag_cpcustom"
 	echo '-----------------------------------------'
     echo "yunovo_test = $yunovo_test"
+    echo "yunovo_branch = $yunovo_branch"
     echo "yunovo_update_api = $yunovo_update_api"
 	echo '-----------------------------------------'
 
@@ -1075,11 +1216,11 @@ function handler_custom_config()
 
 function handler_tag_branch()
 {
-    local branch_nane=$1
+    local local_branch_name=$1
     local tag_name=$2
     local app_name=$3
 
-    #echo "branch_nane = $branch_nane"
+    #echo "local_branch_name = $local_branch_name"
     #echo "tag_name = $tag_name"
     #echo "app_name = $app_name"
 
@@ -1100,18 +1241,350 @@ function handler_tag_branch()
             echo "-------- switch $tag_name tag -b $app_name"
             echo
         fi
+
     ### 没有打相关tag, 用于处理中性软件
     else
-        ### 检出当前分支是否在long分支
-        if [ "`git branch -a | grep \* | cut -d ' ' -f2`" != "$branch" ];then
-            ### 切换到long分支,并且更新代码
-            git checkout $branch && echo "-------- switch $branch $app_name"
-            echo
+
+        ### 检查当前是否存在　local_branch_name
+        if [ "`git branch | grep $local_branch_name`" ];then
+
+            ## 检查当前是切换到了local_branch_name
+            if [ "`git branch | grep \* | cut -d ' ' -f2`" != "$local_branch_name" ];then
+                git checkout $local_branch_name && _echo "---- switch $local_branch_name $app_name"
+            fi
         fi
     fi
 }
 
+function handler_branch_for_apk()
+{
+    local apk_name=$1
+    local default_branch=""
+    local local_branch_name=""
+    local remote_branch_name=""
+    local master_branch="master origin/master"
+    local long_branch="long origin/long"
+
+    if [ $# -eq 1 ];then
+        :
+    else
+        __echo "e.g : handler_branch  name ..."
+        return 1
+    fi
+
+    cd $apk_name > /dev/null
+
+    ## 长屏方案
+    if [ "`is_long_project`" == "true" ];then
+
+        if [ "`is_long_branch_app $apk_name`" == "true" ];then
+
+            defalut_branch=$long_branch
+        else
+
+            defalut_branch=$master_branch
+        fi
+
+    ## 短屏方案
+    else
+        defalut_branch=$master_branch
+    fi
+
+    if [ "$defalut_branch" ];then
+        local_branch_name=${defalut_branch% *}
+        remote_branch_name=${defalut_branch##* }
+    else
+        echo "defalut_branch is null, please check it !"
+        return 1
+    fi
+
+    #echo "local_branch_name = $local_branch_name"
+    #echo "remote_branch_name = $remote_branch_name"
+
+    ## 检查当前分支是否有检出对应的分支
+    if [ "`git branch | grep $local_branch_name`" ];then
+
+        ## 检查当前分支是否为需要切换的分支
+        if [ "`git branch | grep \* | cut -d ' ' -f2`" != $local_branch_name ];then
+
+            if git checkout $local_branch_name;then
+                _echo "---- checkout $local_branch_name $apk_name successful ..."
+            else
+                _echo "---- checkout $local_branch_name $apk_name fail ..."
+                return 1
+            fi
+
+            if git pull;then
+                _echo "---- pull $local_branch_name $apk_name successful ..."
+            else
+                _echo "---- pull $local_branch_name $apk_name fail ... "
+                return 1
+            fi
+        else
+            if git pull;then
+                _echo "---- pull $local_branch_name $apk_name successful ..."
+            else
+                _echo "---- pull $local_branch_name $apk_name fail ... "
+                return 1
+            fi
+        fi
+    else
+
+        ## 检查 local_branch_name 远程分支是否存在?
+        if [ "`git branch -r | grep $local_branch_name`" ];then
+
+            ## 当前没有检出分支，开始进行检出分支..
+            if git checkout -b $defalut_branch;then
+                _echo "---- checkout $local_branch_name $apk_name successful ..."
+            else
+                _echo "---- checkout $local_branch_name $apk_name fail ..."
+                return 1
+            fi
+
+            ## update apk
+            if git pull;then
+                _echo "---- pull $local_branch_name $apk_name successful ..."
+            else
+                _echo "---- pull $local_branch_name $apk_name fail ... "
+                return 1
+            fi
+
+        ## 若不存在,则默认master分支
+        else
+            git checkout -b $master_branch
+
+            if git pull;then
+                _echo "---- pull $master_branch $apk_name successful ..."
+            else
+                _echo "---- pull $master_branch $apk_name fail ..."
+            fi
+        fi
+
+    fi
+
+    cd .. > /dev/null
+}
+
+
+function handler_branch_for_app()
+{
+    local app_name=$1
+    local tag_name=""
+    local branch_name=""
+    local default_branch=""
+    local local_branch_name=""
+    local remote_branch_name=""
+    local master_branch="master origin/master"
+    local develop_branch="develop origin/develop"
+    local long_branch="long origin/long"
+    local develop_long_branch="develop_long origin/develop_long"
+
+    if [ $# -eq 1 ];then
+        :
+    else
+        __echo "e.g : handler_branch  app name ..."
+        return 1
+    fi
+
+    cd $app_name > /dev/null
+
+    ## 长屏方案
+    if [ "`is_long_project`" == "true" ];then
+
+        if [ "`is_long_branch_app $app_name`" == "true" ];then
+
+            if [ $build_branch == "develop" ];then
+                defalut_branch=$develop_long_branch
+            elif [ $build_branch == "master" ];then
+                defalut_branch=$long_branch
+            else
+                defalut_branch=$long_branch
+            fi
+
+        else
+            if [ $build_branch == "develop" ];then
+                defalut_branch=$develop_branch
+            elif [ $build_branch == "master" ];then
+                defalut_branch=$master_branch
+            else
+                defalut_branch=$master_branch
+            fi
+        fi
+
+    ## 短屏方案
+    else
+        if [ $build_branch == "develop" ];then
+            defalut_branch=$develop_branch
+        elif [ $build_branch == "master" ];then
+            defalut_branch=$master_branch
+        else
+            defalut_branch=$master_branch
+        fi
+    fi
+
+    if [ "$defalut_branch" ];then
+        local_branch_name=${defalut_branch% *}
+        remote_branch_name=${defalut_branch##* }
+    else
+        echo "defalut_branch is null, please check it !"
+        return 1
+    fi
+
+    #echo "local_branch_name = $local_branch_name"
+    #echo "remote_branch_name = $remote_branch_name"
+
+    ## 1. 检查当前分支是否有检出对应的分支
+    if [ "`git branch | grep $local_branch_name`" ];then
+
+        ## 2. 检查当前分支是否为需要切换的分支
+        if [ "`git branch | grep \* | cut -d ' ' -f2`" != $local_branch_name ];then
+
+            if git checkout $local_branch_name;then
+                _echo "---- checkout $local_branch_name $app_name successful ..."
+            else
+                _echo "---- checkout $local_branch_name $app_name fail ..."
+                return 1
+            fi
+
+            if git pull;then
+                _echo "---- pull $local_branch_name $app_name successful ..."
+            else
+                _echo "---- pull $local_branch_name $app_name fail ... "
+                return 1
+            fi
+        else
+            if git pull;then
+                _echo "---- pull $local_branch_name $app_name successful ..."
+            else
+                _echo "---- pull $local_branch_name $app_name fail ... "
+                return 1
+            fi
+        fi
+
+    ## 当前没有检出分支，开始进行检出分支..
+    else
+
+        ## 检查 local_branch_name 远程分支是否存在?
+        if [ "`git branch -r | grep $local_branch_name`" ];then
+
+            if git checkout -b $defalut_branch;then
+                _echo "---- checkout $local_branch_name $app_name successful ..."
+            else
+                _echo "---- checkout $local_branch_name $app_name fail ..."
+                return 1
+            fi
+
+            ## update apk
+            if git pull;then
+                _echo "---- pull $local_branch_name $app_name successful ..."
+            else
+                _echo "---- pull $local_branch_name $app_name fail ... "
+                return 1
+            fi
+
+        ## 若不存在，则默认
+        else
+            if [ $first_tag_version == "9" -a $second_tag_version == "99"  ];then
+                ## update apk
+                if git pull;then
+                    _echo "---- pull $local_branch_name $app_name successful ..."
+                else
+                    _echo "---- pull $local_branch_name $app_name fail ... "
+                    return 1
+                fi
+            else
+                :
+            fi
+        fi
+    fi
+
+    if [ $local_branch_name == "long" -o $local_branch_name == "develop_long" ];then
+        tag_name=L
+    elif [ $local_branch_name == "master" -o $local_branch_name == "develop" ];then
+        tag_name=M
+    fi
+
+    if [ "$local_branch_name" -a "$tag_name" -o "$app_name" ];then
+
+        ### 处理不同分支tag
+        handler_tag_branch $local_branch_name $tag_name $app_name
+    fi
+
+    cd .. > /dev/null
+}
+
+function clone_apk()
+{
+    local OLDP=`pwd`
+    local app_path=packages/apps
+
+    local ssh_link=ssh://jenkins@gerrit2.y:29418
+    local yunovo_apk_file=$zz_script_path/yunovo_apk.txt
+
+    cd $app_path > /dev/null
+
+    while read apk_name
+    do
+        if [ -d $apk_name ];then
+
+            ## handler switch branch
+            handler_branch_for_apk $apk_name
+        else
+
+            ## clone apk
+            if [ "$ssh_link" ];then
+                git clone $ssh_link/$apk_name
+                _echo "---- clone $apk_name"
+            fi
+
+            ## handler switch branch
+            handler_branch_for_apk $apk_name
+        fi
+    done < $yunovo_apk_file
+
+    _echo "clone apk end !"
+
+    cd $OLDP
+}
+
 function clone_app()
+{
+    local OLDP=`pwd`
+    local app_path=packages/apps
+
+    local ssh_link=ssh://jenkins@gerrit2.y:29418
+    local yunovo_app_file=$zz_script_path/yunovo_app.txt
+
+    cd $app_path > /dev/null
+
+    while read app_name
+    do
+        if [ -d $app_name ];then
+
+            ## handler switch branch
+            handler_branch_for_app $app_name
+        else
+
+            ## clone apk
+            if [ "$ssh_link" ];then
+                git clone $ssh_link/$app_name
+                _echo "---- clone $app_name"
+            else
+                _echo "ssh_link is error, please check it !"
+                return 1
+            fi
+
+            ## handler switch branch
+            handler_branch_for_app $app_name
+        fi
+    done < $yunovo_app_file
+
+    _echo "clone app end !"
+
+    cd $OLDP
+}
+
+function clone_app_old()
 {
 	local OLDP=`pwd`
     local app_file=~/workspace/script/zzzzz-script/allapp.txt
@@ -1130,12 +1603,17 @@ function clone_app()
 
     local prj_name=$(pwd) && prj_name=${prj_name%/*} && prj_name=${prj_name##*/}
 
-    if [ $prj_name == "k86l" -o $prj_name == "k86ld" ];then
-        default_branch="long origin/long"
-    fi
+    ### 支持长屏分支项目
+    if [ $prj_name == "k86l" -o $prj_name == "k86ld" -o $project_name == "k26c" ];then
 
-    if [ $project_name == "k26c" ];then
-        default_branch="long origin/long"
+        ## 1. master branch
+        if [ $build_branch == "master" ];then
+            default_branch="long origin/long"
+
+        ## 2. develop branch
+        elif [ $build_branch == "develop" ];then
+            defalut_branch="develop_long origin/develop_long"
+        fi
     fi
 
 	cd $app_path > /dev/null
@@ -1228,6 +1706,7 @@ function clone_app()
 			git clone $ssh_link/$app_name
 			echo "-------------- clone $app_name"
             echo
+
 			if [ "`is_long_branch_app $app_name`" == "true" ];then
 				if [ "$default_branch" != "master origin/master" ];then
                     echo "app_name = $app_name"
@@ -1570,6 +2049,7 @@ function main()
     fi
 
     if [ $flag_clone_app -eq 1 ];then
+        clone_apk
 	    clone_app
     else
         echo "do not clone app !"
