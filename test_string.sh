@@ -1,5 +1,43 @@
 #!/bin/bash
 
+function test_args()
+{
+    local ret=$1
+
+    if [ $# -eq 1 ];then
+        echo "-----"
+        echo "$#"
+
+    else
+        echo "$#"
+    fi
+}
+
+function is_long_project()
+{
+    ### jenkins path name
+    local prjN=(k86l k86ld)
+
+    ### jenkins project name
+    local projectN=(k26c)
+
+    local prj_name=$(pwd) && prj_name=${prj_name%/*} && prj_name=${prj_name##*/}
+
+    for p1 in ${prjN[@]}
+    do
+        if [ "$prj_name" == "$p1" ];then
+            echo true
+        fi
+    done
+
+    for p2 in ${projectN[@]}
+    do
+        if [ "$project_name" == "$p2"  ];then
+            echo true
+        fi
+    done
+}
+
 function get_project_name()
 {
     local thisP=$(pwd) && thisP=${thisP%/*} && thisP=${thisP##*/}
