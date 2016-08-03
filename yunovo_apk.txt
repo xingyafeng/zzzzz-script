@@ -54,3 +54,5 @@ yiqipeihuo
 yiqiyuyue
 YidaoCar
 ShizhuanVideo
+Dina_BLE_X
+Dina_vin
