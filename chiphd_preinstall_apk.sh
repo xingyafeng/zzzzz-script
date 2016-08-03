@@ -52,7 +52,7 @@ EOF
     if [ "$curr_apk_name" ];then
         curr_apk_name="${curr_apk_name/%.apk/}"
     else
-        retrun 1
+        return 1
     fi
 
     (cat << EOF) >> ./$android_mk_file_name
@@ -71,6 +71,9 @@ EOF
         unzip -l ${curr_apk_name}.apk | awk '$(NF) ~ /armeabi-v7a\/.*.so$/ {print $(NF)}' > $td/${armeabi_v7a_so}.txt
     elif [ "`unzip -l ${curr_apk_name}.apk | awk '$(NF) ~ /armeabi\/.*.so$/ {print $(NF)}'`" ];then
         unzip -l ${curr_apk_name}.apk | awk '$(NF) ~ /armeabi\/.*.so$/ {print $(NF)}' > $td/${armeabi_so}.txt
+    else
+        echo $privileged_module >> ./$android_mk_file_name
+        echo $build_prebuild >> ./$android_mk_file_name
     fi
 
     if [ -f $td/${armeabi_v7a_so}.txt ];then
@@ -85,9 +88,7 @@ EOF
         echo $build_prebuild >> ./$android_mk_file_name
 
         rm $td/${armeabi_v7a_so}.txt
-    fi
-
-    if [ -f $td/${armeabi_so}.txt ];then
+    elif [ -f $td/${armeabi_so}.txt ];then
 
         echo $jni_lib >> ./$android_mk_file_name
 
@@ -101,6 +102,13 @@ EOF
         echo $build_prebuild >> ./$android_mk_file_name
 
         rm $td/${armeabi_so}.txt
+    else
+        if [ -d $android_mk_file_name ];then
+            sed -i '/LOCAL_MULTILIB := 32/d' $android_mk_file_name
+        else
+            __echo "Android.mk not found, please check it !"
+            return 1
+        fi
     fi
 
     echo
