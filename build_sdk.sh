@@ -249,6 +249,26 @@ function is_yunovo_project
     esac
 }
 
+function is_root_yunovo_project()
+{
+    local thisP=$(pwd) && thisP=${thisP%/*} && thisP=${thisP##*/}
+    local project_name=($k26P $k86aP $k86mP $k86sP $k86smP $k86lP $k86lsP $k86ldP $k88cP)
+
+    if [ "$thisP" ];then
+
+        for p in ${project_name[@]}
+        do
+            if [ "$thisP" == "${p}_root" ];then
+                echo true
+            fi
+        done
+    else
+        echo "it do not get project name !"
+        return 1
+    fi
+
+}
+
 function get_project_real_name()
 {
     local thisP=$(pwd) && thisP=${thisP%/*} && thisP=${thisP##*/}
@@ -395,7 +415,7 @@ function is_long_branch_app()
 function is_long_project()
 {
     ### jenkins path name
-    local prjN=(k86l k86ld)
+    local prjN=(k86l k86ld k86l_root k86ld_root)
 
     ### jenkins project name
     local projectN=(k26c)
@@ -1365,6 +1385,41 @@ function handler_branch_for_apk()
     cd .. > /dev/null
 }
 
+function handler_system_app()
+{
+    local app_name=$1
+    local outputP=output
+    local apk_path=~/android/packages/apps
+
+    if [ "$app_name" ];then
+        :
+    else
+        _echo "app name is null, please check it !"
+        return 1
+    fi
+
+    if [ ! -d $apk_path/$app_name ];then
+        mkdir -p $apk_path/$app_name
+    fi
+
+    ## 1. 复制app 到指定目录下
+    if [ -f ${outputP}/${app_name}.apk ];then
+        cp -vf ${outputP}/${app_name}.apk $apk_path/$app_name
+    fi
+
+    ## 2. 自动生成自己的android.mk文件
+    if [ -f ${apk_path}/$app_name/${app_name}.apk ];then
+
+        cd $apk_path/$app_name > /dev/null
+
+        auto_create_android_mk $app_name
+
+        cd - > /dev/null
+    else
+        _echo "app name not found, please check it !"
+        return 1
+    fi
+}
 
 function handler_branch_for_app()
 {
@@ -1547,13 +1602,107 @@ function clone_apk()
     cd $OLDP
 }
 
+## ant source code app for project
+function ant_app()
+{
+    local OLDP=`pwd`
+    local app_path=~/yunovo_app/packages/apps
+    local yunovo_app_file=$zz_script_path/yunovo_app.txt
+    local project_file=$zz_script_path/fs/project.txt
+    local branch_file=$zz_script_path/fs/branch.txt
+    local is_same_project=false
+    local is_same_branch=false
+    local prj_name=""
+    local branch_name=""
+
+    if [ ! -d $zz_script_path/fs ];then
+        mkdir -p $zz_script_path/fs
+    fi
+
+    cd $app_path > /dev/null
+
+    if [ -f $project_file ];then
+        prj_name=`cat $project_file`
+    fi
+
+    if [ -f $branch_file ];then
+        branch_name=`cat $branch_file`
+    fi
+
+    ##若为同一个项目,就不进行清除bin文件
+    if [ "$prj_name" ];then
+        if [ "$build_prj_name" == "$prj_name" ];then
+            is_same_project=true
+        else
+            is_same_project=false
+            echo $build_prj_name > $project_file
+        fi
+    else
+        is_same_project=false
+        echo $build_prj_name > $project_file
+    fi
+
+    if [ "$branch_name" ];then
+        if [ "$branch_name" == "$build_branch" ];then
+            is_same_branch=true
+        else
+            is_same_branch=false
+            echo $branch_name > $branch_file
+        fi
+    else
+        is_same_branch=false
+        echo $branch_name > $branch_file
+    fi
+
+    while read appN
+    do
+        cd $appN > /dev/null
+
+        ###编译之前是否进行清理 bin/
+        if [ $is_same_project == "true" ];then
+
+            if [ $is_same_branch == "true" ];then
+                :
+            else
+                if [ -d /bin ];then
+                    rm bin/ -rf
+                fi
+            fi
+        else
+            if [ -d bin/ ];then
+                rm bin/ -rf
+            fi
+        fi
+
+        (
+            if (ant -q > /dev/null);then
+                handler_system_app $appN
+            else
+                _echo "make $appN fail ..."
+                return 1
+            fi
+        )
+
+        cd .. > /dev/null
+
+    done < $yunovo_app_file
+
+    cd $OLDP > /dev/null
+
+    __echo "ant app end ..."
+}
+
 function clone_app()
 {
     local OLDP=`pwd`
-    local app_path=packages/apps
+    local app_path=~/yunovo_app/packages/apps
 
     local ssh_link=ssh://jenkins@gerrit2.y:29418
     local yunovo_app_file=$zz_script_path/yunovo_app.txt
+
+    if [ ! -d $app_path ];then
+        mkdir -p $app_path
+    fi
 
     cd $app_path > /dev/null
 
@@ -1870,8 +2019,18 @@ function sync_jenkins_server()
     if [ "`is_yunovo_server`" == "true" ];then
         if [ $build_test == "true" ];then
             rsync -av $firmware_path/ $jenkins_server:$share_path/Test
+        elif [ "$build_branch" == "develop" ];then
+            if [ "`is_root_yunovo_project`" == "true" -a "$build_type" == "userdebug" ];then
+                rsync -av $firmware_path/ $jenkins_server:$share_path/develop_root
+            else
+                rsync -av $firmware_path/ $jenkins_server:$share_path/develop
+            fi
         else
-            rsync -av $firmware_path $jenkins_server:$share_path
+            if [ "`is_root_yunovo_project`" == "true" -a "$build_type" == "userdebug" ];then
+                rsync -av $firmware_path/ $jenkins_server:$share_path/debug_root
+            else
+                rsync -av $firmware_path $jenkins_server:$share_path
+            fi
         fi
 
         if [ -d $firmware_path ];then
@@ -2050,7 +2209,9 @@ function main()
 
     if [ $flag_clone_app -eq 1 ];then
         clone_apk
-	    clone_app
+        clone_app
+        ant_app
+        auto_copy_app_to_android
     else
         echo "do not clone app !"
     fi
@@ -2101,6 +2262,113 @@ function main()
     else
         echo "server name is not s1 s2 s3 s4 happysongs ww !"
         return 1
+    fi
+}
+
+### 自动拷贝系统app
+function auto_copy_app_to_android()
+{
+    local apk_path=~/android
+    local prj_name=`get_project_real_name`
+
+    if [ "prj_name" ];then
+        local prj_path=~/jobs/${prj_name}/android/
+    else
+        _echo "prj_name is null, please check it ..."
+        return 1
+    fi
+
+    if [ -d $apk_path -a -d $prj_path ];then
+        cp -r $apk_path/* $prj_path && _echo "cp done: $prj_path ."
+    else
+        _echo "apk_path prj_path not found, please check it ..."
+        return 1
+    fi
+}
+
+### 自动创建android.mk
+function auto_create_android_mk()
+{
+    local android_mk_file_name=Android.mk
+    local armeabi_so=armeabi
+    local armeabi_v7a_so=armeabi-v7a
+    local curr_apk_name=$1
+
+    local jni_lib="LOCAL_PREBUILT_JNI_LIBS := \\"
+    local privileged_module="LOCAL_PRIVILEGED_MODULE := true"
+    local build_prebuild="include \$(BUILD_PREBUILT)"
+
+    if [ $# -eq 1 ];then
+        :
+    else
+        _echo "Please e.g auto_create_android_mk  xxx.apk ..."
+        return 1
+    fi
+
+    (cat << EOF) > ./$android_mk_file_name
+LOCAL_PATH := \$(call my-dir)
+
+EOF
+
+if false;then
+    if [ "$curr_apk_name" ];then
+        curr_apk_name="${curr_apk_name/%.apk/}"
+    else
+        return 1
+    fi
+fi
+
+    (cat << EOF) >> ./$android_mk_file_name
+include \$(CLEAR_VARS)
+LOCAL_MODULE := $curr_apk_name
+LOCAL_MODULE_TAGS := optional
+LOCAL_CERTIFICATE := PRESIGNED
+LOCAL_MODULE_CLASS := APPS
+LOCAL_SRC_FILES := \$(LOCAL_MODULE).apk
+LOCAL_MODULE_SUFFIX := \$(COMMON_ANDROID_PACKAGE_SUFFIX)
+LOCAL_MULTILIB := 32
+
+EOF
+    if [ "`unzip -l ${curr_apk_name}.apk | awk '$(NF) ~ /armeabi-v7a\/.*.so$/ {print $(NF)}'`" ];then
+        unzip -l ${curr_apk_name}.apk | awk '$(NF) ~ /armeabi-v7a\/.*.so$/ {print $(NF)}' > $zz_script_path/${armeabi_v7a_so}.txt
+    elif [ "`unzip -l ${curr_apk_name}.apk | awk '$(NF) ~ /armeabi\/.*.so$/ {print $(NF)}'`" ];then
+        unzip -l ${curr_apk_name}.apk | awk '$(NF) ~ /armeabi\/.*.so$/ {print $(NF)}' > $zz_script_path/${armeabi_so}.txt
+    else
+        echo $privileged_module >> ./$android_mk_file_name
+        echo $build_prebuild >> ./$android_mk_file_name
+    fi
+
+    if [ -f $zz_script_path/${armeabi_v7a_so}.txt ];then
+        echo $jni_lib >> ./$android_mk_file_name
+        while read lib_path;do
+            echo "    @$lib_path \\" >> ./$android_mk_file_name
+        done < $zz_script_path/${armeabi_v7a_so}.txt
+
+        echo >> ./$android_mk_file_name
+        echo $privileged_module >> ./$android_mk_file_name
+        echo $build_prebuild >> ./$android_mk_file_name
+
+        rm $zz_script_path/${armeabi_v7a_so}.txt
+    elif [ -f $zz_script_path/${armeabi_so}.txt ];then
+
+        echo $jni_lib >> ./$android_mk_file_name
+
+        while read lib_path;do
+            echo "    @$lib_path \\" >> ./$android_mk_file_name
+        done < $zz_script_path/${armeabi_so}.txt
+
+        echo >> ./$android_mk_file_name
+        echo $privileged_module >> ./$android_mk_file_name
+        echo $build_prebuild >> ./$android_mk_file_name
+
+        rm $zz_script_path/${armeabi_so}.txt
+    else
+        if [ -f $android_mk_file_name ];then
+            sed -i '/LOCAL_MULTILIB := 32/d' $android_mk_file_name
+        else
+            __echo "Android.mk not found, please check it !"
+            return 1
+        fi
     fi
 }
 
