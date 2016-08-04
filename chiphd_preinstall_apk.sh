@@ -56,7 +56,6 @@ EOF
     fi
 
     (cat << EOF) >> ./$android_mk_file_name
-
 include \$(CLEAR_VARS)
 LOCAL_MODULE := $curr_apk_name
 LOCAL_MODULE_TAGS := optional
@@ -103,10 +102,10 @@ EOF
 
         rm $td/${armeabi_so}.txt
     else
-        if [ -d $android_mk_file_name ];then
+        if [ -f $android_mk_file_name ];then
             sed -i '/LOCAL_MULTILIB := 32/d' $android_mk_file_name
         else
-            __echo "Android.mk not found, please check it !"
+            echo "Android.mk not found, please check it !"
             return 1
         fi
     fi
