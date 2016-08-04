@@ -1,5 +1,25 @@
 #!/bin/bash
 
+function is_root_yunovo_project()
+{
+    local thisP=$(pwd) && thisP=${thisP%/*} && thisP=${thisP##*/}
+    local project_name=($k26P $k86aP $k86mP $k86sP $k86smP $k86lP $k86lsP $k86ldP $k88cP)
+
+    if [ "$thisP" ];then
+
+        for p in ${project_name[@]}
+        do
+            if [ "$thisP" == "${p}_root" ];then
+                echo true
+            fi
+        done
+    else
+        echo "it do not get project name !"
+        return 1
+    fi
+
+}
+
 function test_args()
 {
     local ret=$1
