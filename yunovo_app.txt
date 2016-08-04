@@ -6,7 +6,6 @@ CarPlatform
 CarRecord
 CarRecordDouble
 CarRecordUsb
-CarUpdateDFU
 FactoryTest
 FileCopyManager
 YOcRadPowerManager
@@ -19,7 +18,6 @@ YOcTools
 YOcBTCall
 YOcRecord
 YOcFM
-CarLogTools
 BaiduVoice
 TxzVoice
 GoogleVoice
