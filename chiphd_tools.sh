@@ -857,7 +857,11 @@ function rmappfs()
     cd $app_path > /dev/null
 
     while read app_name;do
-        rm  $app_name -r && echo "---> rm $app_name ..."
+        if [ -d $app_name ];then
+            rm  $app_name -r && echo "---> rm $app_name ..."
+        else
+            show_vir "---> $app_name is not exist !"
+        fi
     done < $app_file
 
     cd $OLDP > /dev/null
