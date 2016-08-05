@@ -825,7 +825,9 @@ function chiphd_recover_standard_device_cfg()
 		for ProjPath in $AllRepoProj
 		do
 			if [ -d "${tDir}/$ProjPath" ]; then
-				chiphd_recover_project $ProjPath
+                if [ $ProjPath != "packages" ];then
+                    chiphd_recover_project $ProjPath
+                fi
 			fi
 		done
 	fi
@@ -1647,12 +1649,15 @@ function ant_app()
             is_same_branch=true
         else
             is_same_branch=false
-            echo $branch_name > $branch_file
+            echo $build_branch > $branch_file
         fi
     else
         is_same_branch=false
-        echo $branch_name > $branch_file
+        echo $build_branch > $branch_file
     fi
+
+    _echo "is same project = $is_same_project"
+    _echo "is same branch  = $is_same_branch "
 
     while read appN
     do
