@@ -22,6 +22,5 @@ BaiduVoice
 TxzVoice
 GoogleVoice
 AiosAdapterVoice
-CarConfig
 CarSystemUpdateAssistant
 CarBandMode
