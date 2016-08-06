@@ -3,8 +3,6 @@ AnAnEDogUE
 BaiduInput
 BaiduNavigation
 CldNavi
-CarConfig
-CarSystemUpdateAssistant
 GaodeCarMap
 GaodeMap
 GaodeNavigation
@@ -29,13 +27,11 @@ BaiduCustomerNavi
 BaiduCodriver
 CldNaviLong
 DiDiCar
-CarBandMode
 TxzAudio
 TxzCore
 TxzWebchat
 TxzNavi
 YoukuApp
-CarUdpServer
 DriverMonitor
 OpenCVManager
 IqiyiHD
