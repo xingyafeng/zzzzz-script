@@ -2053,7 +2053,7 @@ function auto_update_yunovo_customs()
 {
 	local nowPwd=$(pwd)
     local project_name=($k26P $k86aP $k86mP $k86sP $k86smP $k86lP $k86lsP $k86ldP $k88cP)
-    local sz_project_name=`echo k26 k86a k86m k86s k86sm k86l k86ls k88c k26_root k86a_root k86m_root k86s_root k86sm_root k86l_root k86ls_root k86ld_root k88c_root`
+    local sz_project_name=`echo k26 k86a k86m k86s k86sm k86l k86ls k86ld k88c k26_root k86a_root k86m_root k86s_root k86sm_root k86l_root k86ls_root k86ld_root k88c_root`
     local sz_base_path=~/jobs
 
     for sz_custom in $sz_project_name
