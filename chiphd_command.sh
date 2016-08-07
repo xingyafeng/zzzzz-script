@@ -9,6 +9,8 @@ td=$da/$time_date
 
 ### project name
 eastaeonP=eastaeon5.1-mt6735m
+
+### project name for yunovo
 k26P=k26
 k86aP=k86a
 k86mP=k86m
@@ -16,9 +18,18 @@ k86sP=k86s
 k86smP=k86sm
 k86lP=k86l
 k86lsP=k86ls
-k86ldP=k86ld
 k88cP=k88c
+k86ldP=k86ld
 
+k26PR=k26_root
+k86aPR=k86a_root
+k86mPR=k86m_root
+k86sPR=k86s_root
+k86smPR=k86sm_root
+k86lPR=k86l_root
+k86lsPR=k86ls_root
+k88cPR=k88c_root
+k86ldPR=k86ld_root
 sdate=$td
 
 yunovo_root=~/yunovocode

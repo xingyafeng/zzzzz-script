@@ -69,45 +69,46 @@ function is_yunovo_server
     done
 }
 
-### 是否是云智易联项目
+### 是否为云智易联项目
 function is_yunovo_project
 {
     local thisP=$(pwd) && thisP=${thisP%/*} && thisP=${thisP##*/}
 
     case $thisP in
 
-        $k26P)
+        $k26P | $k26PR)
             echo true
 
             ;;
-        $k86aP)
+        $k86aP | $k86aPR)
             echo true
 
             ;;
-        $k86mP)
+        $k86mP | $k86mPR)
             echo true
             ;;
-        $k86sP)
+
+        $k86sP | $k86sPR)
             echo true
 
             ;;
-        $k86smP)
+        $k86smP | $k86smPR)
             echo true
 
             ;;
-        $k86lP)
+        $k86lP | $k86lPR)
             echo true
 
             ;;
-        $k86lsP)
+        $k86lsP | $k86lsPR)
             echo true
 
             ;;
-        $k86ldP)
+        $k86ldP | $k86ldPR)
             echo true
 
             ;;
-        $k88cP)
+        $k88cP | $k88cPR)
             echo true
 
             ;;
