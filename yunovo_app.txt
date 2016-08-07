@@ -5,6 +5,7 @@ CarHomeBtn
 CarPlatform
 CarRecord
 CarRecordDouble
+CarUpdateDFU
 CarRecordUsb
 FactoryTest
 FileCopyManager
