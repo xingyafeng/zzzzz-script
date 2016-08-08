@@ -120,14 +120,40 @@ function is_yunovo_project
 }
 
 ### 获取当前编译项目名称
-function get_project_name()
+function get_project_real_name()
 {
     local thisP=$(pwd) && thisP=${thisP%/*} && thisP=${thisP##*/}
 
     if [ "$thisP" ];then
         echo $thisP
     else
-        echo "do not get project name !"
+        echo "it do not get project name !"
+        return 1
+    fi
+}
+
+function get_project_name()
+{
+    local thisP=$(pwd) && thisP=${thisP%/*} && thisP=${thisP##*/}
+    local project_name=($k26P $k86aP $k86mP $k86sP $k86smP $k86lP $k86lsP $k86ldP $k88cP)
+    local isroot=false
+
+    if [ "$thisP" ];then
+
+        for p in ${project_name[@]}
+        do
+            if [ "$thisP" == "${p}_root" ];then
+                isroot=true
+                echo $p
+            fi
+        done
+
+        if [ "$isroot" == "false" ];then
+            echo $thisP
+        fi
+    else
+        echo "it do not get project name !"
+        return 1
     fi
 }
 
