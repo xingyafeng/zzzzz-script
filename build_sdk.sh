@@ -1610,11 +1610,9 @@ function ant_app()
     local OLDP=`pwd`
     local app_path=~/yunovo_app/packages/apps
     local yunovo_app_file=$zz_script_path/yunovo_app.txt
-    local project_file=$zz_script_path/fs/project.txt
     local branch_file=$zz_script_path/fs/branch.txt
     local is_same_project=false
     local is_same_branch=false
-    local prj_name=""
     local branch_name=""
 
     if [ ! -d $zz_script_path/fs ];then
@@ -1623,27 +1621,11 @@ function ant_app()
 
     cd $app_path > /dev/null
 
-    if [ -f $project_file ];then
-        prj_name=`cat $project_file`
-    fi
-
     if [ -f $branch_file ];then
         branch_name=`cat $branch_file`
     fi
 
-    ##若为同一个项目,就不进行清除bin文件
-    if [ "$prj_name" ];then
-        if [ "$build_prj_name" == "$prj_name" ];then
-            is_same_project=true
-        else
-            is_same_project=false
-            echo $build_prj_name > $project_file
-        fi
-    else
-        is_same_project=false
-        echo $build_prj_name > $project_file
-    fi
-
+    ## 1,若为同个分支不进行clean bin/ 目录，2,若为不同分支则会rm bin/ -r
     if [ "$branch_name" ];then
         if [ "$branch_name" == "$build_branch" ];then
             is_same_branch=true
@@ -1656,7 +1638,6 @@ function ant_app()
         echo $build_branch > $branch_file
     fi
 
-    _echo "is same project = $is_same_project"
     _echo "is same branch  = $is_same_branch "
 
     while read appN
