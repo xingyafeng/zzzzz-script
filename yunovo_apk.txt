@@ -55,3 +55,4 @@ Dina_BLE_X
 Dina_vin
 CarConfig
 MapgooApp
+SohuVideo

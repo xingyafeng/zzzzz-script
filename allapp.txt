@@ -53,7 +53,9 @@ YidaoCar
 ShizhuanVideo
 Dina_BLE_X
 Dina_vin
+CarConfig
 MapgooApp
+SohuVideo
 CarBack
 CarDog
 CarEngine
@@ -61,6 +63,7 @@ CarHomeBtn
 CarPlatform
 CarRecord
 CarRecordDouble
+CarUpdateDFU
 CarRecordUsb
 FactoryTest
 FileCopyManager
@@ -78,6 +81,5 @@ BaiduVoice
 TxzVoice
 GoogleVoice
 AiosAdapterVoice
-CarConfig
 CarSystemUpdateAssistant
 CarBandMode
