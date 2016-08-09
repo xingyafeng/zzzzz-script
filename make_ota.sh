@@ -375,7 +375,8 @@ fi
 
     ### 4.清空 f1 服务器 otafs 下所有文件
     if [ "$is_sync" == "true" ];then
-        remove_f1_otafs
+        #remove_f1_otafs
+        :
     fi
 
     __echo "make inc end ..."
