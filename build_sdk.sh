@@ -1609,6 +1609,7 @@ function ant_app()
 {
     local OLDP=`pwd`
     local app_path=~/yunovo_app/packages/apps
+    local apk_path=~/android/packages/apps
     local yunovo_app_file=$zz_script_path/yunovo_app.txt
     local branch_file=$zz_script_path/fs/branch.txt
     local is_same_project=false
@@ -1623,6 +1624,13 @@ function ant_app()
 
     if [ -f $branch_file ];then
         branch_name=`cat $branch_file`
+    fi
+
+    ## 删除旧的版本apk
+    if [ -d $apk_path ];then
+        rm $apk_path/* -r
+
+        _echo "---- remvoe $apk_path successful ..."
     fi
 
     ## 1,若为同个分支不进行clean bin/ 目录，2,若为不同分支则会rm bin/ -r
