@@ -1135,7 +1135,7 @@ function deletefs()
 ## 批量删除out目录
 function rmoutfs()
 {
-    local project_name=`echo k26 k86a k86m k86s k86sm k86l k86ls k86ld k88c`
+    local project_name=`echo k26 k27 k86a k86m k86s k86sm k86l k86ls k86ld k88c`
     local project_path=""
     local tmp_path=/home/work5/jenkins/tmp
 
