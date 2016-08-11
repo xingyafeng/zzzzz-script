@@ -426,7 +426,7 @@ function is_long_project()
     local prjN=(k27 k86l k86ld k27_root k86l_root k86ld_root)
 
     ### jenkins project name
-    local projectN=(k26c)
+    local projectN=(k26c k26d)
 
     local OLDP=`pwd`
 
