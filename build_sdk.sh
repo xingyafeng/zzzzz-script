@@ -78,6 +78,7 @@ fota_version=
 
 ### project name for yunovo
 k26P=k26
+k27P=k27
 k86aP=k86a
 k86mP=k86m
 k86sP=k86s
@@ -88,6 +89,7 @@ k88cP=k88c
 k86ldP=k86ld
 
 k26PR=k26_root
+k27PR=k27_root
 k86aPR=k86a_root
 k86mPR=k86m_root
 k86sPR=k86s_root
@@ -163,6 +165,7 @@ function __echo()
         return 1
     fi
 }
+
 ### 检查是否有lunch
 function is_check_lunch()
 {
@@ -210,6 +213,12 @@ function is_yunovo_project
             echo true
 
             ;;
+
+        $k27P | $k27PR)
+            echo true
+
+            ;;
+
         $k86aP | $k86aPR)
             echo true
 
@@ -252,7 +261,7 @@ function is_yunovo_project
 function is_root_yunovo_project()
 {
     local thisP=$(pwd) && thisP=${thisP%/*} && thisP=${thisP##*/}
-    local project_name=($k26P $k86aP $k86mP $k86sP $k86smP $k86lP $k86lsP $k86ldP $k88cP)
+    local project_name=($k26P $k27P $k86aP $k86mP $k86sP $k86smP $k86lP $k86lsP $k86ldP $k88cP)
 
     if [ "$thisP" ];then
 
@@ -266,7 +275,6 @@ function is_root_yunovo_project()
         echo "it do not get project name !"
         return 1
     fi
-
 }
 
 function get_project_real_name()
@@ -284,7 +292,7 @@ function get_project_real_name()
 function get_project_name()
 {
     local thisP=$(pwd) && thisP=${thisP%/*} && thisP=${thisP##*/}
-    local project_name=($k26P $k86aP $k86mP $k86sP $k86smP $k86lP $k86lsP $k86ldP $k88cP)
+    local project_name=($k26P $k27P $k86aP $k86mP $k86sP $k86smP $k86lP $k86lsP $k86ldP $k88cP)
     local isroot=false
 
     if [ "$thisP" ];then
@@ -415,7 +423,7 @@ function is_long_branch_app()
 function is_long_project()
 {
     ### jenkins path name
-    local prjN=(k86l k86ld k86l_root k86ld_root)
+    local prjN=(k27 k86l k86ld k27_root k86l_root k86ld_root)
 
     ### jenkins project name
     local projectN=(k26c)
@@ -1887,6 +1895,8 @@ function download_sdk()
             defalut=k88
         elif [ $project_name == "k26" ];then
             defalut=K26
+        elif [ $project_name == "k27" ];then
+            defalut=k27
         else
             echo "project do not match it !"
             return 1
@@ -1896,7 +1906,7 @@ function download_sdk()
         return 1
     fi
 
-    echo "defalut = $defalut"
+    _echo "defalut = $defalut"
 
 	if [ ! -d .repo ];then
 		if [ "$defalut" -a "$project_link" ];then
@@ -1927,12 +1937,11 @@ function download_sdk()
 
             ## 更新 android源代码 ...
 		    repo forall -c git fetch
-            echo "-----------------git fetch successful ."
-            echo
+            _echo "-----------------git fetch successful ."
 
 		    repo forall -c git pull
-            echo "-----------------git pull successful ."
-		    echo
+            echo
+            _echo "-----------------git pull successful ."
         fi
 	fi
 }
@@ -2041,8 +2050,8 @@ function sync_jenkins_server()
 function auto_update_yunovo_customs()
 {
 	local nowPwd=$(pwd)
-    local project_name=($k26P $k86aP $k86mP $k86sP $k86smP $k86lP $k86lsP $k86ldP $k88cP)
-    local sz_project_name=`echo k26 k86a k86m k86s k86sm k86l k86ls k86ld k88c k26_root k86a_root k86m_root k86s_root k86sm_root k86l_root k86ls_root k86ld_root k88c_root`
+    local project_name=($k26P $k27P $k86aP $k86mP $k86sP $k86smP $k86lP $k86lsP $k86ldP $k88cP)
+    local sz_project_name=`echo k26 k27 k86a k86m k86s k86sm k86l k86ls k86ld k88c k26_root k27_root k86a_root k86m_root k86s_root k86sm_root k86l_root k86ls_root k86ld_root k88c_root`
     local sz_base_path=~/jobs
 
     for sz_custom in $sz_project_name
@@ -2082,9 +2091,7 @@ function auto_update_yunovo_customs()
 
             if [ `hostname` == "s4" ];then
                 if [ "$sz_yunovo_customs_link" ];then
-                    echo
-                    echo "custom link = $sz_yunovo_customs_link"
-                    echo
+                    _echo "custom link = $sz_yunovo_customs_link"
 
                     git clone $sz_yunovo_customs_link
                     echo
@@ -2093,9 +2100,7 @@ function auto_update_yunovo_customs()
                 fi
             else
                 if [ "$sz_yunovo_customs_link_server" ];then
-                    echo
-                    echo "custom link = $sz_yunovo_customs_link_server"
-                    echo
+                    _echo "custom link = $sz_yunovo_customs_link_server"
 
                     git clone $sz_yunovo_customs_link_server
                     echo
