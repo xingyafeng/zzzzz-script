@@ -1639,7 +1639,7 @@ function ant_app()
     if [ -d $apk_path ];then
         rm $apk_path/* -r
 
-        _echo "---- remvoe $apk_path successful ..."
+        _echo "---- remove $apk_path successful ..."
     fi
 
     ## 1,若为同个分支不进行clean bin/ 目录，2,若为不同分支则会rm bin/ -r
