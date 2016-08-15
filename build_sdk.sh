@@ -521,7 +521,7 @@ function handler_vairable()
     local sz_build_flag=$4
 
     ### 处理k86l系类工程
-    if [ $prj_name == "k86l" -o $prj_name == "k86ld" ];then
+    if [ $prj_name == "k86l" -o $prj_name == "k86ld" -o $prj_name == "k86ls" ];then
         prj_name=k86
     fi
 
