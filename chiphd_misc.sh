@@ -80,14 +80,26 @@ function is_yunovo_project
             echo true
 
             ;;
+        $k26sP | $k26sPR)
+            echo true
+
+            ;;
+        $k27P | $k27PR)
+            echo true
+
+            ;;
         $k86aP | $k86aPR)
             echo true
 
             ;;
         $k86mP | $k86mPR)
             echo true
-            ;;
 
+            ;;
+        $k86mx2P | $k86m2xPR)
+            echo true
+
+            ;;
         $k86sP | $k86sPR)
             echo true
 

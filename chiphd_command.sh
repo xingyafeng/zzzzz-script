@@ -12,8 +12,11 @@ eastaeonP=eastaeon5.1-mt6735m
 
 ### project name for yunovo
 k26P=k26
+k26sP=k26s
+k27P=k27
 k86aP=k86a
 k86mP=k86m
+k86mx2P=k86mx2
 k86sP=k86s
 k86smP=k86sm
 k86lP=k86l
@@ -22,8 +25,11 @@ k88cP=k88c
 k86ldP=k86ld
 
 k26PR=k26_root
+k26sPR=k26s_root
+k27PR=k27_root
 k86aPR=k86a_root
 k86mPR=k86m_root
+k86mx2PR=k86mx2_root
 k86sPR=k86s_root
 k86smPR=k86sm_root
 k86lPR=k86l_root
