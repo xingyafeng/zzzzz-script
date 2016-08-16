@@ -56,3 +56,4 @@ Dina_vin
 CarConfig
 MapgooApp
 SohuVideo
+CheYueBao
