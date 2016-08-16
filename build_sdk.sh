@@ -29,7 +29,7 @@ build_test=
 build_update_api=
 ### readme.txt
 build_readme=
-### test master
+### test master develop for branch
 build_branch=
 
 ## system version  e.g. : S1.01
@@ -313,11 +313,11 @@ function get_project_name()
     fi
 }
 
-### 是否为master or test分支
+### 是否为master test develop分支
 function is_yunovo_branch()
 {
     local branch_name=$1
-    local branchN=(master test)
+    local branchN=(master develop test)
 
     if [ $# -eq 1 ];then
         :
@@ -1438,12 +1438,21 @@ function handler_branch_for_app()
     local default_branch=""
     local local_branch_name=""
     local remote_branch_name=""
+
+    ## 1.短屏分支
     local master_branch="master origin/master"
+    local develop_branch="develop origin/develop"
     local test_branch="test origin/test"
+
+    ## 2.长屏分支
     local long_branch="long origin/long"
+    local develop_long_branch="develop_long origin/develop_long"
     local test_long_branch="test_long origin/test_long"
+
+    ## 3.选择分支名称
     local branch_for_test="test"
     local branch_for_master="master"
+    local branch_for_develop="develop"
 
     if [ $# -eq 1 ];then
         :
@@ -1461,6 +1470,8 @@ function handler_branch_for_app()
 
             if [ $build_branch == $branch_for_test ];then
                 defalut_branch=$test_long_branch
+            elif [ $build_branch == $branch_for_develop ];then
+                defalut_branch=$develop_long_branch
             elif [ $build_branch == $branch_for_master ];then
                 defalut_branch=$long_branch
             else
@@ -1470,6 +1481,8 @@ function handler_branch_for_app()
         else
             if [ $build_branch == $branch_for_test ];then
                 defalut_branch=$test_branch
+            elif [ $build_branch == $branch_for_develop ];then
+                defalut_branch=$develop_branch
             elif [ $build_branch == $branch_for_master ];then
                 defalut_branch=$master_branch
             else
@@ -1481,6 +1494,8 @@ function handler_branch_for_app()
     else
         if [ $build_branch == $branch_for_test ];then
             defalut_branch=$test_branch
+        elif [ $build_branch == $branch_for_develop ];then
+            defalut_branch=$develop_branch
         elif [ $build_branch == $branch_for_master ];then
             defalut_branch=$master_branch
         else
@@ -1564,9 +1579,9 @@ function handler_branch_for_app()
         fi
     fi
 
-    if [ $local_branch_name == "long" -o $local_branch_name == "test_long" ];then
+    if [ $local_branch_name == "long" -o $local_branch_name == "develop_long" -o $local_branch_name == "test_long" ];then
         tag_name=L
-    elif [ $local_branch_name == $branch_for_master -o $local_branch_name == $branch_for_test ];then
+    elif [ $local_branch_name == $branch_for_master -o $local_branch_name == $branch_for_develop -o $local_branch_name == $branch_for_test ];then
         tag_name=M
     fi
 
@@ -1879,17 +1894,28 @@ function sync_jenkins_server()
     local share_path=/public/jenkins/jenkins_share_20T
     local jenkins_server=jenkins@f1.y
 
+    local root_version=userdebug
+    local branch_for_test=test
+    local branch_for_master=master
+    local branch_for_develop=develop
+
     if [ "`is_yunovo_server`" == "true" ];then
         if [ $build_test == "true" ];then
             rsync -av $firmware_path/ $jenkins_server:$share_path/Test
-        elif [ "$build_branch" == "test" ];then
-            if [ "`is_root_yunovo_project`" == "true" -a "$build_type" == "userdebug" ];then
-                rsync -av $firmware_path/ $jenkins_server:$share_path/test_root
+        elif [ "$build_branch" == $branch_for_test ];then
+            if [ "`is_root_yunovo_project`" == "true" -a "$build_type" == "$root_version" ];then
+                rsync -av $firmware_path/ $jenkins_server:$share_path/${branch_for_test}_root
             else
-                rsync -av $firmware_path/ $jenkins_server:$share_path/test
+                rsync -av $firmware_path/ $jenkins_server:$share_path/$branch_for_test
+            fi
+        elif [ "$build_branch" == $branch_for_develop ];then
+            if [ "`is_root_yunovo_project`" == "true" -a "$build_type" == "$root_version" ];then
+                rsync -av $firmware_path/ $jenkins_server:$share_path/${branch_for_develop}_root
+            else
+                rsync -av $firmware_path/ $jenkins_server:$share_path/$branch_for_develop
             fi
         else
-            if [ "`is_root_yunovo_project`" == "true" -a "$build_type" == "userdebug" ];then
+            if [ "`is_root_yunovo_project`" == "true" -a "$build_type" == "$root_version" ];then
                 rsync -av $firmware_path/ $jenkins_server:$share_path/debug_root
             else
                 rsync -av $firmware_path $jenkins_server:$share_path
