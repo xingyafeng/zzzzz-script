@@ -1630,10 +1630,10 @@ function clone_apk()
             if [ "$ssh_link" ];then
                 git clone $ssh_link/$apk_name
                 _echo "---- clone $apk_name"
+            else
+                _echo "$ssh_link is null. please check it !"
+                return 1
             fi
-
-            ## handler switch branch
-            handler_branch_for_apk $apk_name
         fi
     done < $yunovo_apk_file
 
@@ -1666,7 +1666,7 @@ function ant_app()
 
     ## 删除旧的版本apk
     if [ -d $apk_path ];then
-        rm $apk_path/* -r
+        rm $apk_path -r
 
         _echo "---- remove $apk_path successful ..."
     fi
