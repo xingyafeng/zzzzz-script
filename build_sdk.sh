@@ -535,7 +535,7 @@ function handler_vairable()
     if [ $prj_name == "k86l" -o $prj_name == "k86ld" -o $prj_name == "k86ls" ];then
         prj_name=k86
     elif [ $prj_name == "k26s" ];then
-        prj_name=k26
+        prj_name=k2*
     fi
 
     ### 1. project name
