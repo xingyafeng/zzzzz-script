@@ -31,6 +31,8 @@ build_update_api=
 build_readme=
 ### test master develop for branch
 build_branch=
+### is clean android source code
+build_clean=
 
 ## system version  e.g. : S1.01
 build_version=""
@@ -762,6 +764,13 @@ function handler_vairable()
         build_branch=master
     fi
 
+    ### 11. build clean
+    if [ "$yunovo_clean" ];then
+        build_clean=$yunovo_clean
+    else
+        build_clean=false
+    fi
+
     system_version=$custom_version\_$hw_versiom\_${first_version}.${project_name}.${second_version}
     fota_version="SPT_VERSION_NO=${system_version}"
 }
@@ -1069,7 +1078,8 @@ function print_variable()
 	echo '-----------------------------------------'
 	echo "build_device = $build_device"
 	echo "build_type = $build_type"
-    echo "build_branch= $build_branch"
+    echo "build_branch = $build_branch"
+    echo "build_clean= $build_clean"
 	echo "lunch_project = $lunch_project"
 	echo '-----------------------------------------'
     echo "flag_fota = $flag_fota"
@@ -1081,6 +1091,7 @@ function print_variable()
     echo "flag_cpcustom = $flag_cpcustom"
 	echo '-----------------------------------------'
     echo "yunovo_test = $yunovo_test"
+    echo "yunovo_clean = $yunovo_clean"
     echo "yunovo_branch = $yunovo_branch"
     echo "yunovo_update_api = $yunovo_update_api"
 	echo '-----------------------------------------'
@@ -1849,48 +1860,54 @@ function make-sdk()
         if [ -d .repo ];then
             source_init
         else
-            echo "The (.repo) not found ! please download sdk !"
+            _echo "The (.repo) not found ! please download android source code !"
             return 1
         fi
     fi
 
-	if make installclean;then
-		echo "--> make installclean end ..."
-		echo
-    else
-        echo "---> make installclean failed !"
-        return 1
-	fi
-
-	if [ -n "$(find . -maxdepth 1 -name "build*.log" -print0)" ];then
+    if [ -n "$(find . -maxdepth 1 -name "build*.log" -print0)" ];then
 		delete_log
     else
-        echo "log is not delete, please checkout it ! "
+        _echo "log is not delete, please check it ! "
 	fi
 
-    if make clean-lk;then
-		echo "--> make clean lk end ..."
-        echo
+    if [ $build_clean == "true" ];then
+
+        if make clean;then
+            _echo "--> make clean end ..."
+        else
+            _echo "--> make clean fail ..."
+            return 1
+        fi
     else
-		echo "--> make clean lk fail ..."
-        echo
-        return 1
+
+        if make installclean;then
+            _echo "--> make installclean end ..."
+        else
+            _echo "---> make installclean fail ..."
+            return 1
+        fi
+
+        if make clean-lk;then
+            _echo "--> make clean lk end ..."
+        else
+            _echo "--> make clean lk fail ..."
+            return 1
+        fi
     fi
 
     if [ "$cpu_num" -gt 0 ];then
         :
     else
-        echo "cpu_num in not number ..."
+        _echo "cpu_num is error ..."
         return 1
     fi
 
     make -j${cpu_num} ${fota_version} 2>&1 | tee build_$cur_time.log
     if [ $? -eq 0 ];then
-        echo "--> make project end ..."
-        echo
+        _echo "--> make project end ..."
     else
-        echo "make android failed !"
-        echo
+        _echo "make android failed !"
         return 1
     fi
 
@@ -1898,10 +1915,9 @@ function make-sdk()
         make -j${cpu_num} ${fota_version} otapackage 2>&1 | tee build_ota_$cur_time.log
 
         if [ $? -eq 0 ];then
-            echo "--> make otapackage end ..."
+            _echo "--> make otapackage end ..."
         else
-            echo "make otapackage failed !"
-            echo
+            _echo "make otapackage fail ..."
             return 1
         fi
     fi
