@@ -576,8 +576,9 @@ function handler_vairable()
         if [ -n "`echo $yunovo_version | sed -n '/^S/p'`" ];then
             build_version=$yunovo_version
 
-            first_version=${build_version%.*}
-            second_version=${build_version##*.}
+            first_version=${build_version%%.*}
+            second_version=${build_version#*.}
+
             if [ -z "$first_version" -o -z "$second_version" ];then
                 echo "first_version or second_version is null !"
                 return 1
