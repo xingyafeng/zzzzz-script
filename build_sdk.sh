@@ -89,6 +89,7 @@ k86smP=k86sm
 k86lP=k86l
 k86lsP=k86ls
 k88cP=k88c
+k88sP=k88s
 k86ldP=k86ld
 
 k26PR=k26_root
@@ -102,6 +103,7 @@ k86smPR=k86sm_root
 k86lPR=k86l_root
 k86lsPR=k86ls_root
 k88cPR=k88c_root
+k88sPR=k88s_root
 k86ldPR=k86ld_root
 
 ################################ system env
@@ -264,6 +266,10 @@ function is_yunovo_project
             echo true
 
             ;;
+        $k88sP | $k88sPR)
+            echo true
+
+            ;;
         *)
             echo false
 
@@ -274,7 +280,7 @@ function is_yunovo_project
 function is_root_yunovo_project()
 {
     local thisP=$(pwd) && thisP=${thisP%/*} && thisP=${thisP##*/}
-    local project_name=($k26P $k26sP $k27P $k86aP $k86mP $k86mx2P $k86sP $k86smP $k86lP $k86lsP $k86ldP $k88cP)
+    local project_name=($k26P $k26sP $k27P $k86aP $k86mP $k86mx2P $k86sP $k86smP $k86lP $k86lsP $k86ldP $k88cP $k88sP)
 
     if [ "$thisP" ];then
 
@@ -436,7 +442,7 @@ function is_long_branch_app()
 function is_long_project()
 {
     ### jenkins path name
-    local prjN=(k26s k27 k86l k86ld k26s_root k27_root k86l_root k86ld_root k86mx2_root)
+    local prjN=(k26s k27 k86l k86ld k86mx2 k88s k26s_root k27_root k86l_root k86ld_root k86mx2_root k88s_root)
 
     ### jenkins project name
     local projectN=(k26c k26d)
@@ -1796,6 +1802,8 @@ function download_sdk()
             defalut=k86_mx2
         elif [ $project_name == "k88c" ];then
             defalut=k88
+        elif [ $project_name == "k88s" ];then
+            defalut=k88_split
         elif [ $project_name == "k26" ];then
             defalut=K26
         elif [ $project_name == "k26s" ];then
@@ -1971,8 +1979,8 @@ function sync_jenkins_server()
 function auto_update_yunovo_customs()
 {
 	local nowPwd=$(pwd)
-    local project_name=($k26P $k26sP $k27P $k86aP $k86mP $k86mx2P $k86sP $k86smP $k86lP $k86lsP $k86ldP $k88cP)
-    local sz_project_name=`echo k26 k26s k27 k86a k86m k86mx2 k86s k86sm k86l k86ls k86ld k88c k26_root k26s_root k27_root k86a_root k86m_root k86mx2_root k86s_root k86sm_root k86l_root k86ls_root k86ld_root k88c_root`
+    local project_name=($k26P $k26sP $k27P $k86aP $k86mP $k86mx2P $k86sP $k86smP $k86lP $k86lsP $k86ldP $k88cP $k88sP)
+    local sz_project_name=`echo k26 k26s k27 k86a k86m k86mx2 k86s k86sm k86l k86ls k86ld k88c k88s k26_root k26s_root k27_root k86a_root k86m_root k86mx2_root k86s_root k86sm_root k86l_root k86ls_root k86ld_root k88c_root k88s_root`
     local sz_base_path=~/jobs
 
     for sz_custom in $sz_project_name
