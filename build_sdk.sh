@@ -442,10 +442,10 @@ function is_long_branch_app()
 function is_long_project()
 {
     ### jenkins path name
-    local prjN=(k26s k27 k86l k86ld k86mx2 k88s k26s_root k27_root k86l_root k86ld_root k86mx2_root k88s_root)
+    local prjN=(k26s k86l k86ld k86mx2 k88s k26s_root k86l_root k86ld_root k86mx2_root k88s_root)
 
     ### jenkins project name
-    local projectN=(k26c k26d)
+    local projectN=(k26c k26d k27l)
 
     local OLDP=`pwd`
 
