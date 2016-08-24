@@ -311,7 +311,7 @@ function get_project_real_name()
 function get_project_name()
 {
     local thisP=$(pwd) && thisP=${thisP%/*} && thisP=${thisP##*/}
-    local project_name=($k26P $k26sP $k27P $k86aP $k86mP $k86mx2P $k86sP $k86smP $k86lP $k86lsP $k86ldP $k88cP)
+    local project_name=($k26P $k26sP $k27P $k86aP $k86mP $k86mx2P $k86sP $k86smP $k86lP $k86lsP $k86ldP $k88cP $k88sP)
     local isroot=false
 
     if [ "$thisP" ];then
