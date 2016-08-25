@@ -35,7 +35,7 @@ YoukuApp
 DriverMonitor
 OpenCVManager
 IqiyiHD
-XiaowoDF
+XiaowoDF2
 SogoInput
 YiqiRelease
 CoDriver

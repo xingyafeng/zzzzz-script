@@ -17,6 +17,7 @@ YOcSettings
 YOcSplitScreen
 YOcTools
 YOcBTCall
+YOcBTCallGoc
 YOcRecord
 YOcFM
 BaiduVoice
