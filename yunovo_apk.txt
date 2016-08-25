@@ -57,3 +57,4 @@ CarConfig
 MapgooApp
 SohuVideo
 CheYueBao
+HBS_AOTA
