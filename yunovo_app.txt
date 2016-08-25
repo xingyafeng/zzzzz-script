@@ -25,3 +25,4 @@ GoogleVoice
 AiosAdapterVoice
 CarSystemUpdateAssistant
 CarBandMode
+YOcLauncherRes
