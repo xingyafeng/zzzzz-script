@@ -27,3 +27,4 @@ AiosAdapterVoice
 CarSystemUpdateAssistant
 CarBandMode
 YOcLauncherRes
+YOcMcu
