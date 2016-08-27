@@ -58,3 +58,4 @@ MapgooApp
 SohuVideo
 CheYueBao
 HBS_AOTA
+GooglePinyin
