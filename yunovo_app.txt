@@ -1,6 +1,9 @@
 CarBack
 CarDog
 YOcMcu
+YOcLauncherRes
+CarBandMode
+CarSystemUpdateAssistant
 CarEngine
 CarHomeBtn
 CarPlatform
@@ -25,6 +28,3 @@ BaiduVoice
 TxzVoice
 GoogleVoice
 AiosAdapterVoice
-CarSystemUpdateAssistant
-CarBandMode
-YOcLauncherRes
