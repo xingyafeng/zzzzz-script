@@ -88,4 +88,4 @@ GoogleVoice
 AiosAdapterVoice
 CarSystemUpdateAssistant
 CarBandMode
-YOcLauncherRes
+#YOcLauncherRes
