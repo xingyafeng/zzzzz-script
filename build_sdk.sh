@@ -1704,11 +1704,9 @@ function ant_app()
 
     _echo "is same branch  = $is_same_branch "
 
-    echo $yunovo_app_file
-    echo "\n"
-
     while read appN
     do
+        echo $appN
         cd $appN > /dev/null
 
         ###编译之前是否进行清理 bin/
