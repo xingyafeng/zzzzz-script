@@ -1704,6 +1704,9 @@ function ant_app()
 
     _echo "is same branch  = $is_same_branch "
 
+    echo $yunovo_app_file
+    echo "\n"
+
     while read appN
     do
         cd $appN > /dev/null
