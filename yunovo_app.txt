@@ -20,6 +20,7 @@ YOcBTCall
 YOcBTCallGoc
 YOcRecord
 YOcFM
+YOcMcu
 BaiduVoice
 TxzVoice
 GoogleVoice
@@ -27,4 +28,3 @@ AiosAdapterVoice
 CarSystemUpdateAssistant
 CarBandMode
 YOcLauncherRes
-YOcMcu

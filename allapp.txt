@@ -80,6 +80,7 @@ YOcTools
 YOcBTCall
 YOcBTCallGoc
 YOcRecord
+YOcMcu
 YOcFM
 BaiduVoice
 TxzVoice
@@ -88,4 +89,3 @@ AiosAdapterVoice
 CarSystemUpdateAssistant
 CarBandMode
 YOcLauncherRes
-YOcMcu
