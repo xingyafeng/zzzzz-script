@@ -1,7 +1,6 @@
 CarBack
 CarDog
 YOcMcu
-#YOcLauncherRes
 CarBandMode
 CarSystemUpdateAssistant
 CarEngine
