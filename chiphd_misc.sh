@@ -124,6 +124,11 @@ function is_yunovo_project
             echo true
 
             ;;
+        $k88sP | $k88sPR)
+            echo true
+
+            ;;
+
         *)
             echo false
 

@@ -22,6 +22,7 @@ k86smP=k86sm
 k86lP=k86l
 k86lsP=k86ls
 k88cP=k88c
+k88sP=k88s
 k86ldP=k86ld
 
 k26PR=k26_root
@@ -35,6 +36,7 @@ k86smPR=k86sm_root
 k86lPR=k86l_root
 k86lsPR=k86ls_root
 k88cPR=k88c_root
+k88sPR=k88s_root
 k86ldPR=k86ld_root
 sdate=$td
 
