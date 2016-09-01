@@ -13,3 +13,6 @@ alias grep='grep --color=auto'
 
 # install
 alias install='sudo apt-get install'
+
+# repo
+alias repo_sync_yunos='repo sync -c'
