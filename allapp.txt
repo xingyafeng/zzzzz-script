@@ -88,3 +88,5 @@ GoogleVoice
 AiosAdapterVoice
 CarSystemUpdateAssistant
 CarBandMode
+TxzXimlaya
+ECarVoip
