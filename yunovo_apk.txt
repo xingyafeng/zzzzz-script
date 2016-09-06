@@ -62,3 +62,11 @@ GooglePinyin
 AiosWechat
 ECarVoip
 TxzXimlaya
+BaoXianMarket
+CheDaiBao
+HumanService
+JiShiOnline
+KuaiXiuKuaiBao
+TeJiaMall
+WeiZhangSearch
+ZiXunChannel
