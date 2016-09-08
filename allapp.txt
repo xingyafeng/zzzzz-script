@@ -41,6 +41,7 @@ YiqiRelease
 CoDriver
 CmytCard
 CmytUpdate
+CheKongBaoQR
 AiosAdapter
 AiosDaemon
 AiosMusic
