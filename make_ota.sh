@@ -5,6 +5,7 @@ set -e
 
 ### project name for yunovo
 k26P=k26
+k26sP=k26s
 k86aP=k86a
 k86mP=k86m
 k86sP=k86s
@@ -13,17 +14,6 @@ k86lP=k86l
 k86lsP=k86ls
 k88cP=k88c
 k86ldP=k86ld
-
-k26PR=k26_root
-k86aPR=k86a_root
-k86mPR=k86m_root
-k86sPR=k86s_root
-k86smPR=k86sm_root
-k86lPR=k86l_root
-k86lsPR=k86ls_root
-k88cPR=k88c_root
-k86ldPR=k86ld_root
-
 
 ## ota from to version
 ota_from_version=$1
@@ -89,39 +79,43 @@ function is_yunovo_project
 
     case $thisP in
 
-        $k26P | $k26PR)
+        $k26P)
             echo true
 
             ;;
-        $k86aP | $k86aPR)
+        $k26sP)
             echo true
 
             ;;
-        $k86mP | $k86mPR)
-            echo true
-            ;;
-
-        $k86sP | $k86sPR)
+        $k86aP)
             echo true
 
             ;;
-        $k86smP | $k86smPR)
+        $k86mP)
+            echo true
+            ;;
+
+        $k86sP)
             echo true
 
             ;;
-        $k86lP | $k86lPR)
+        $k86smP)
             echo true
 
             ;;
-        $k86lsP | $k86lsPR)
+        $k86lP)
             echo true
 
             ;;
-        $k86ldP | $k86ldPR)
+        $k86lsP)
             echo true
 
             ;;
-        $k88cP | $k88cPR)
+        $k86ldP)
+            echo true
+
+            ;;
+        $k88cP)
             echo true
 
             ;;
