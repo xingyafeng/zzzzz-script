@@ -1164,3 +1164,61 @@ function rmoutfs()
         fi
     fi
 }
+
+function copy_image_to_folder()
+{
+    local PROJECT_NAME=$1
+    local PROJECT_VERSION=$2
+    local BASE_PATH=~/firmware/$PROJECT_VERSION
+    local DEST_PATH=$BASE_PATH/${PROJECT_NAME}
+    local OTA_PATH=$BASE_PATH/${PROJECT_NAME}_full_and_ota
+    local build_device=${OUT##*/}
+
+    if [ $# -ne 2 ]; then
+        echo "Usage : ./cp_image.sh project_name project_version"
+        return 1
+    else
+        echo
+        show_vir "----  cp image start ..."
+        echo
+    fi
+
+    if [ ! -d $BASE_PATH ];then
+        mkdir -p $BASE_PATH
+        if [ ! -d ${DEST_PATH}/database/ ];then
+            mkdir -p ${DEST_PATH}/database/ap
+            mkdir -p ${DEST_PATH}/database/moden
+        fi
+    fi
+
+    if [ ! -d $DEST_PATH ];then
+        mkdir -p $DEST_PATH
+    fi
+
+    if [ ! -d $OTA_PATH ];then
+        mkdir -p $OTA_PATH
+    fi
+
+    cp -f ${OUT}/MT*.txt  ${DEST_PATH}
+    cp -f ${OUT}/preloader_${build_device}.bin  ${DEST_PATH}
+    cp -f ${OUT}/lk.bin ${DEST_PATH}
+    cp -f ${OUT}/boot.img ${DEST_PATH}
+    cp -f ${OUT}/recovery.img ${DEST_PATH}
+    cp -f ${OUT}/secro.img ${DEST_PATH}
+    cp -f ${OUT}/logo.bin ${DEST_PATH}
+    cp -f ${OUT}/trustzone.bin ${DEST_PATH}
+    cp -f ${OUT}/trustzone.bin ${DEST_PATH}
+    cp -f ${OUT}/system.img ${DEST_PATH}
+    cp -f ${OUT}/cache.img ${DEST_PATH}
+    cp -f ${OUT}/userdata.img ${DEST_PATH}
+
+    cp -f ${OUT}/obj/CGEN/APDB_MT*W15*  ${DEST_PATH}/database/ap
+    cp -f ${OUT}/system/etc/mddb/BPLGUInfoCustomAppSrcP*  ${DEST_PATH}/database/moden
+
+    cp  ${OUT}/full_${build_device}-ota*.zip ${OTA_PATH}
+    cp  ${OUT}/obj/PACKAGING/target_files_intermediates/full_${build_device}-target_files*.zip ${OTA_PATH}
+
+    echo
+    show_vir "----  cp image end ..."
+    echo
+}
