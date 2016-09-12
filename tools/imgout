@@ -1,0 +1,252 @@
+#!/bin/bash
+
+### 若某一个命令返回非零值就退出
+set -e
+
+### color red
+function show_vir()
+{
+    if [ "$1"  ]
+    then
+        #   echo "---------------------"
+        for ret in "$@"; do
+            echo -e -n "\e[1;31m$ret \e[0m"
+        done
+        echo
+    fi
+}
+
+### color purple
+function show_vip()
+{
+    if [ "$1"  ]
+    then
+        #   echo "---------------------"
+        for ret in "$@"; do
+            echo -e -n "\e[1;35m$ret \e[0m"
+        done
+        echo
+    fi
+}
+
+function copy_otapackage()
+{
+    if [ $# != 2 ] || [ ! -d $1 ]; then
+        echo echo "usage: ${FUNCNAME[0]} <image out dir> <target name>"
+        retnru 255
+    fi
+    local imgout_dir=$1
+    local target_name=$2
+    local target_config=$(cat out/target/product/${target_name}/previous_build_config.mk | grep ^PREVIOUS_BUILD_CONFIG | awk '{print $3}' | awk -F '-' '{print $1}')
+    local otapackage_zip=$(ls -lt out/target/product/${target_name}/${target_config}-ota*.zip | head -1 | awk '{print $NF}')
+
+    if [ -f "${otapackage_zip}" ]; then
+        local build_version=$(cat out/target/product/${target_name}/system/build.prop | grep ^ro.yunos.build.version | awk -F '=' '{print $2}')
+        if [ -z ${build_version} ]; then
+            build_version=$(cat out/target/product/${target_name}/system/build.prop | grep ^ro.build.version.incremental | awk -F '=' '{print $2}')
+        fi
+        cp -f ${otapackage_zip} ${imgout_dir}/ota-${build_version}.zip
+    else
+        echo "copy otapackage failed"
+        return 1
+    fi
+}
+
+function copy_target_files()
+{
+    if [ $# != 2 ] || [ ! -d $1 ]; then
+        echo echo "usage: ${FUNCNAME[0]} <image out dir> <target name>"
+        retnru 255
+    fi
+    local imgout_dir=$1
+    local target_name=$2
+    local target_files_zip=$(ls -lt out/target/product/${target_name}/obj/PACKAGING/target_files_intermediates/*-target_files-*.zip | head -1 | awk '{print $NF}')
+
+    if [ -f "${target_files_zip}" ]; then
+        cp -f ${target_files_zip} ${imgout_dir}/target_files.zip
+        zip -q -d ${imgout_dir}/target_files.zip uboot.img SYSTEM/* RESIDENTFLASH/* /DATA* /IMAGES*
+    else
+        echo "copy ota target files failed"
+        return 1
+    fi
+}
+
+function copy_ota_tools()
+{
+    if [ $# != 1 ] || [ ! -d $1 ]; then
+        echo echo "usage: ${FUNCNAME[0]} <image out dir>"
+        retnru 255
+    fi
+    local imgout_dir=$1
+
+    cp -f aliyunos/build/tools/ota_from_images ${imgout_dir}/
+
+    local host_tools=${imgout_dir}/otatools/linux-x86
+    local release_tools=${imgout_dir}/otatools/releasetools
+    local extensions_tools=${imgout_dir}/otatools/tool_extensions
+
+    mkdir -p ${host_tools}/bin
+    mkdir -p ${host_tools}/framework
+    mkdir -p ${host_tools}/lib
+    mkdir -p ${release_tools}
+    mkdir -p ${extensions_tools}
+
+
+    cp -f out/host/linux-x86/bin/acp ${host_tools}/bin/
+    cp -f out/host/linux-x86/bin/bsdiff ${host_tools}/bin/
+    cp -f out/host/linux-x86/bin/e2fsck ${host_tools}/bin/
+    cp -f out/host/linux-x86/bin/imgdiff ${host_tools}/bin/
+    cp -f out/host/linux-x86/bin/make_ext4fs ${host_tools}/bin/
+    cp -f out/host/linux-x86/bin/minigzip ${host_tools}/bin/
+    cp -f out/host/linux-x86/bin/mkbootfs ${host_tools}/bin/
+    cp -f out/host/linux-x86/bin/mkbootimg ${host_tools}/bin/
+    cp -f out/host/linux-x86/bin/mkimage ${host_tools}/bin/
+    cp -f out/host/linux-x86/bin/mkuserimg.sh ${host_tools}/bin/
+    cp -f out/host/linux-x86/bin/simg2img ${host_tools}/bin/
+    cp -f out/host/linux-x86/lib/libext2*.so ${host_tools}/lib/
+    cp -f out/host/linux-x86/framework/signapk.jar ${host_tools}/framework/
+    cp -f out/host/linux-x86/framework/dumpkey.jar ${host_tools}/framework/
+
+    cp -f build/tools/releasetools/* ${release_tools}/
+
+    # if releasetools.py exist, copy it to tool_extensions
+#    if [ -f device/alibaba/common/releasetools.py ]; then
+#        cp -f device/alibaba/common/releasetools.py ${extensions_tools}/
+#    fi
+
+    cd ${imgout_dir}
+    zip -rq otatools.zip otatools/*
+    rm -rf otatools
+    cd -
+}
+
+function copy_images()
+{
+    if [ $# != 1 ]; then
+        echo "usage: ${FUNCNAME[0]} <target product name>"
+        return 1
+    fi
+
+    local target_product=$1
+    local images_dir=release-${target_product}
+
+    if [ ! -d out/target/product/${target_product} ]; then
+        echo "ERROR: out/target/product/${target_product} not exist."
+        return 1
+    fi
+
+    #mtk_platform=`awk -F '[ =]' '$1 == "MTK_PLATFORM"' device/alibaba/${target_product}/ProjectConfig.mk | awk -F '=' '{print $2}' | awk '{print $1}'`
+    #mtk_platform_lc=`echo ${mtk_platform} | tr A-Z a-z`
+
+    #base_project=`awk -F '[ =]' '$1 == "MTK_BASE_PROJECT"' device/alibaba/${target_product}/full_${target_product}.mk | awk -F '=' '{print $2}' | awk '{print $1}'`
+    #preloader_target_product=`awk -F '[ =]' '$1 == "PRELOADER_TARGET_PRODUCT"' device/alibaba/${target_product}/full_${target_product}.mk | awk -F '=' '{print $2}' | awk '{print $1}'`
+
+    if [ "${base_project}" = "" ]; then
+        base_project=${target_product}
+    fi
+
+    echo
+    show_vip "--> copy ${target_product} images to ${images_dir} ."
+    echo
+
+    if [ -d $images_dir ];then
+        rm -rf ${images_dir}
+        mkdir ${images_dir}
+    fi
+
+    # cp img and bin files
+    cp -vf out/target/product/${target_product}/*.bin ${images_dir}
+    cp -vf out/target/product/${target_product}/*.img ${images_dir}
+
+    # for 4.3 or higher
+    if [ -f out/target/product/${target_product}/root/file_contexts ]; then
+        cp -vf out/target/product/${target_product}/root/file_contexts ${images_dir}
+    fi
+
+    # for MTK secure boot unsigned image
+    if [ -f out/target/product/${target_product}/obj/PTGEN/partition_size.mk ]; then
+        cp -vf out/target/product/${target_product}/obj/PTGEN/partition_size.mk ${images_dir}
+    fi
+
+    ## 暂时未用到
+if true;then
+    if [ -f out/target/product/${target_product}/${mtk_platform_lc}_atf_raw.img ]; then
+        cp -vf out/target/product/${target_product}/${mtk_platform_lc}_atf_raw.img ${images_dir}/
+    fi
+    if [ -f  out/target/product/${target_product}/obj/PRELOADER_OBJ/bin/preloader_${preloader_target_product}_LINKED.bin ]; then
+        cp -vf out/target/product/${target_product}/obj/PRELOADER_OBJ/bin/preloader_${preloader_target_product}_LINKED.bin ${images_dir}/preloader_project_LINKED.bin
+    fi
+    if [ -f out/target/product/${target_product}/obj/PRELOADER_OBJ/bin/preloader_${preloader_target_product}.elf ]; then
+        cp -vf out/target/product/${target_product}/obj/PRELOADER_OBJ/bin/preloader_${preloader_target_product}.elf ${images_dir}/preloader_project.elf
+    fi
+fi
+    if [ -f vendor/mediatek/proprietary/trustzone/project/${base_project}.mk ]; then
+        cp -vf vendor/mediatek/proprietary/trustzone/project/${base_project}.mk ${images_dir}/project.mk
+    fi
+
+    # for MTK
+    if [ -n "`ls out/target/product/${target_product}/MT*.txt`" ]; then
+        cp -vf out/target/product/${target_product}/MT*.txt ${images_dir}
+    fi
+
+    if [ -f out/target/product/${target_product}/ota_scatter.txt ]; then
+        cp -vf out/target/product/${target_product}/ota_scatter.txt ${images_dir}
+    elif [ -vf mediatek/misc/ota_scatter.txt ]; then
+        cp -vf mediatek/misc/ota_scatter.txt ${images_dir}
+    fi
+
+    #if [ -n "`ls out/target/product/${target_product}/EBR*`" ]; then
+    #    cp -vf out/target/product/${target_product}/EBR* ${images_dir}
+    #fi
+
+    if [ -f out/target/product/${target_product}/MBR ]; then
+        cp -vf out/target/product/${target_product}/MBR ${images_dir}
+    fi
+
+    if [ -n "`ls out/target/product/${target_product}/obj/ETC/BPLGUInfoCustomApp*_intermediates/BPLGUInfoCustomApp*`" ]; then
+        cp -f out/target/product/${target_product}/obj/ETC/BPLGUInfoCustomApp*_intermediates/BPLGUInfoCustomApp* ${images_dir}
+    fi
+
+    if [ -n "`ls out/target/product/${target_product}/obj/CGEN/APDB*`" ]; then
+        cp -f out/target/product/${target_product}/obj/CGEN/APDB* ${images_dir}
+    fi
+
+    if [ -n "`ls device/eastaeon/aeon6735_65c_s_l1/fat.img`" ]; then
+        cp -vf device/eastaeon/aeon6735_65c_s_l1/fat.img ${images_dir}
+    fi
+
+    if [ -n "`ls device/eastaeon/aeon6735_65c_s_l1/mdas.img`" ]; then
+        cp -vf device/eastaeon/aeon6735_65c_s_l1/mdas.img ${images_dir}
+    fi
+
+    # for exynos
+    if [ -f out/target/product/${target_product}/zImage ]; then
+        cp -vf out/target/product/${target_product}/zImage ${images_dir}
+    fi
+
+    #copy_otapackage ${images_dir} ${target_product}
+    copy_target_files ${images_dir} ${target_product}
+    copy_ota_tools ${images_dir}
+
+    echo
+    show_vip "--> copy ${target_product} images to ${images_dir} ."
+    echo
+
+    return 0
+}
+
+if [ -n "$1" ]; then
+    PRODUCT_NAME=$1
+elif [ -f out/projectName.txt ]; then
+    PRODUCT_NAME=`cat out/projectName.txt`
+
+    if [ $PRODUCT_NAME == "6735" ];then
+        PRODUCT_NAME=aeon6735_65c_s_l1
+    fi
+else
+    show_vir "ERROR: out/platform.txt not exist, please input target product name"
+    show_vir "usage: $0 [target product name]"
+    exit 1
+fi
+
+copy_images ${PRODUCT_NAME}
