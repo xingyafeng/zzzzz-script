@@ -117,7 +117,7 @@ function copy_ota_tools()
     cd ${imgout_dir}
     zip -rq otatools.zip otatools/*
     rm -rf otatools
-    cd -
+    cd - > /dev/null
 }
 
 function copy_images()
