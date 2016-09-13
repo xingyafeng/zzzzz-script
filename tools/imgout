@@ -224,6 +224,17 @@ fi
         cp -vf out/target/product/${target_product}/zImage ${images_dir}
     fi
 
+    ## ota problem
+    ## del verified and img
+    if [ -n "`ls ${images_dir}/*verified.img`" ];then
+        rm -rf ${images_dir}/*verified.img
+    fi
+
+    ## del verified and img
+    if [ -n "`ls ${images_dir}/*verified.bin`" ];then
+        rm -rf ${images_dir}/*verified.bin
+    fi
+
     #copy_otapackage ${images_dir} ${target_product}
     copy_target_files ${images_dir} ${target_product}
     copy_ota_tools ${images_dir}
