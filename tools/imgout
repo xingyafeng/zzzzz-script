@@ -146,7 +146,7 @@ function copy_images()
     fi
 
     echo
-    show_vip "--> copy ${target_product} images to ${images_dir} ."
+    echo "--> copy ${target_product} images to ${images_dir} ."
     echo
 
     if [ -d $images_dir ];then
@@ -244,7 +244,7 @@ fi
     copy_ota_tools ${images_dir}
 
     echo
-    show_vip "--> copy ${target_product} images to ${images_dir} ."
+    echo "--> copy ${target_product} images to ${images_dir} ."
     echo
 
     return 0
