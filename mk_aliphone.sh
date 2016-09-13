@@ -1,5 +1,215 @@
 #!/bin/bash
 
+### add by yunovo for jenkins
+export LANGUAGE=en_US
+export LC_ALL=en_US.UTF-8
+
+### common
+build_project=
+build_verion=
+build_clean=
+
+## 6735
+YUNOS_PROJECT_NAME=6735
+## eng user userdebug
+TARGET_BUILD_VARIANT=
+## adb acb
+TERMINAL_MODE=adb
+## remake new
+MAKE_TYPE=remake
+
+## tmp variable
+t_project_name=
+t_custom_verion=
+
+CPUCORES=`cat /proc/cpuinfo | grep processor | wc -l`
+
+function __echo()
+{
+    local msg=$1
+
+    if [ "$msg" ];then
+        echo
+        echo "--> $msg"
+        echo
+    else
+        echo "msg is null! please check it."
+    fi
+}
+
+function _echo()
+{
+    local msg=$1
+
+    if [ "$msg" ];then
+        echo "$msg"
+        echo
+    else
+        echo "msg is null! please check it."
+    fi
+}
+
+function __msg()
+{
+    local dir=`pwd`
+
+    echo "---- dir: $dir"
+    echo
+}
+
+function handler_print()
+{
+    __echo "make android start ..."
+
+    echo "CPUCORES = $CPUCORES"
+    echo "---------------yunos---------------"
+    echo "YUNOS_PROJECT_NAME = $YUNOS_PROJECT_NAME"
+    echo "TARGET_BUILD_VARIANT = $TARGET_BUILD_VARIANT"
+    echo "TERMINAL_MODE = $TERMINAL_MODE"
+    echo "MAKE_TYPE = $MAKE_TYPE"
+    echo "--------------yunovo---------------"
+    echo "build_project = $build_project"
+    echo "build_verion = $build_verion"
+    echo "build_clean = $build_clean"
+    echo "-----------------------------------"
+    echo "build_project = $build_project"
+    echo "t_project_name = $t_project_name"
+    echo "t_custom_verion = $t_custom_verion"
+    echo "-----------------------------------"
+    echo
+}
+
+function handler_vairable()
+{
+    ## 1. project name
+    if [ "$yunovo_project" ];then
+        build_project=$yunovo_project
+
+        t_project_name=${build_project%%_*}
+        t_custom_verion=${build_project##*_}
+    else
+        _echo "yunovo_project_name is null, please check it !"
+        exit 1
+    fi
+
+    ## 2. build version
+    if [ "$yunovo_version" ];then
+        build_verion=$yunovo_version
+    else
+        _echo "yunovo_version is null, please check it !"
+        exit 1
+    fi
+
+    ## build type
+    if [ "$yunovo_type" ];then
+        TARGET_BUILD_VARIANT=$yunovo_type
+    else
+        TARGET_BUILD_VARIANT=user
+    fi
+
+    ## build clean
+    if [ "$yunovo_clean" ];then
+        build_clean=$yunovo_clean
+    else
+        build_clean=false
+    fi
+}
+
+
+function get_project_name()
+{
+    local thisP=$(pwd) && thisP=${thisP%/*} && thisP=${thisP##*/}
+
+    if [ "$thisP" ];then
+        echo $thisP
+    else
+        return 1
+    fi
+}
+
+function repo_sync_for_source_code()
+{
+    if repo sync -c -j8;then
+        __echo "repo sync successful ..."
+    else
+        if repo sync -c -j8;then
+            __echo "repo sync successful 2 ..."
+        else
+            repo sync -c -j8 && __echo "repo sync successful 3 ..."
+        fi
+    fi
+}
+
+function download_yunos_code()
+{
+    local prj_name=`get_project_name`
+    local link_name="init -u ssh://jenkins@gerrit.y:29419/manifest"
+    local branchN=
+
+    local projectN=${prj_name%%_*}
+    local customN=${prj_name#*_} && customN=${customN%%_*}
+    local modeN=${prj_name##*_}
+
+    branchN="yunos/$projectN/$customN/$modeN"
+
+    #_echo "branchN = $branchN"
+
+    if [ ! -d .repo  ];then
+        repo $link_name -b $branchN
+
+        repo_sync_for_source_code
+    else
+        repo_sync_for_source_code
+    fi
+}
+
+## 复制版本到阿里版本下 ~/yunos
+function copy_image_to_folder()
+{
+    local firmware_path=~/yunos
+    local server_name=`hostname`
+    local default_version_name=release-aeon6735_65c_s_l1
+    local BASE_PATH=$firmware_path/$t_project_name/${t_project_name}_${t_custom_verion}/$build_verion
+
+    if [ ! -d $firmware_path ];then
+        mkdir -p $firmware_path
+    fi
+
+    if [ ! -d $BASE_PATH ];then
+        mkdir -p $BASE_PATH
+    fi
+
+    if [ -d $default_version_name ];then
+        mv $default_version_name/* $BASE_PATH
+    fi
+}
+
+## 同步阿里版本到f1服务器上
+function rsync_version_to_f1_server()
+{
+    local firmware_path=~/yunos
+    local share_path=/public/jenkins/jenkins_share_20T
+    local jenkins_f1_server=jenkins@f1.y
+
+    if [ -d $firmware_path ];then
+        rsync -av $firmware_path $jenkins_f1_server:$share_path
+    fi
+
+    if [ -d $firmware_path  ];then
+        rm $firmware_path/* -rf
+    else
+        _echo "$firmware_path not found !"
+    fi
+
+    _echo "--> sync end ..."
+}
+
+handler_vairable
+handler_print
+### add by yunovo
+
+# ///////////////////////////////////////////////////////分界线 #
+
 #YUNOS_PROJECT add by BuildSystem
 
 #variable initialize
@@ -148,6 +358,7 @@ function config_unsign()
 moreArgs=
 #process begin
 _input_args=($*)
+if false;then
 #find project name first
 for _arg in ${_input_args[@]}
 do
@@ -161,13 +372,13 @@ do
             a800|eng|user|userdebug|adb|acb|remake|new|true|false)
             ;;
             yk628|eng|user|userdebug|adb|acb|remake|new|true|false)
-            ;;  
+            ;;
             6735m|aeon6735m_65c_s_l1|eng|user|userdebug|adb|acb|remake|new|true|false)
             ;;
             hyf9300|eng|user|userdebug|adb|acb|remake|new|true|false)
             ;;
 	    6735m_64|eng|user|userdebug|adb|acb|remake|new|true|false)
-            ;;  
+            ;;
             6735|aeon6735_65c_s_l1|eng|user|userdebug|adb|acb|remake|new|true|false)
             ;;
             zopo9520|eng|user|userdebug|adb|acb|remake|new|true|false)
@@ -233,18 +444,24 @@ do
         MI3_TYPE=$p2
     fi
 done
+fi
+
+if false;then
 #if can not find project name, input it
 if [ "$YUNOS_PROJECT_NAME" = "" ];then
     echo "target project name:"
     _inlist=(${YUNOS_PROJECT_NAME_LIST[@]})
     select_choice YUNOS_PROJECT_NAME
 fi
+fi
 
 project=$YUNOS_PROJECT_NAME
 echo "get project name: $YUNOS_PROJECT_NAME"
 
+if false;then
 if [ -n "$(echo $* | grep ' new')" ];then
      make clean
+fi
 fi
 
 #handle config file
@@ -262,22 +479,24 @@ cat $CUSTOM_CONFIG_FILE | grep " := " | grep -v "#" > $OUT_CFLAGS_FILE
 sed -i "s/ := /=/" $OUT_CFLAGS_FILE
 
 echo "replacing with custom config file: $CUSTOM_CONFIG_FILE"
-while read LINE 
+while read LINE
 do
     p1=`echo "$LINE" | awk -F "=" '{print $1}' | sed -e 's/^\s+|\s+$//g'`
     p2=`echo "$LINE" | awk -F "=" '{print $2}' | sed -e 's/^\s+|\s+$//g'`
     #skip empty or comment line
     if [ -z "$p1$p2" ]; then
         continue
-    fi  
+    fi
     if [ -n "`echo $p1 | grep -E '^\#'`" ]; then
         continue
-    fi  
+    fi
+
     #custom config overwrite default config
-    sed -i "s/^$p1=[^=]*/$p1=$p2/g" $OUT_CONFIG_FILE
+    sed -i "s/^$p1=[^=]*/$p1=$p2/g" $OUT_CONFIG_FILE 2> /dev/null
 done < "$OUT_CFLAGS_FILE"
 
 _input_args=($*)
+if false;then
 #process other input args
 for _arg in ${_input_args[@]}
 do
@@ -333,7 +552,7 @@ if [ "$MAKE_TYPE" = "" ];then
     _inlist=(${MAKE_TYPE_LIST[@]})
     select_choice MAKE_TYPE
 fi
-
+fi
 #variable reltionship process
 
 replace_auto_config YUNOS_PROJECT_NAME
@@ -408,17 +627,17 @@ echo "$OUT_CONFIG_FILE gen!"
 
 export "YUNOS_PROJECT=$YUNOS_PROJECT"
 export "TARGET_BUILD_VARIANT=$TARGET_BUILD_VARIANT"
-export "YUNOS_PROJECT_NAME=$YUNOS_PROJECT_NAME" 
+export "YUNOS_PROJECT_NAME=$YUNOS_PROJECT_NAME"
 OPTIONS="-o=YUNOS_PROJECT=$YUNOS_PROJECT"
 OPTIONS="$OPTIONS,TARGET_BUILD_VARIANT=$TARGET_BUILD_VARIANT"
-OPTIONS="$OPTIONS,YUNOS_PROJECT_NAME=$YUNOS_PROJECT_NAME" 
+OPTIONS="$OPTIONS,YUNOS_PROJECT_NAME=$YUNOS_PROJECT_NAME"
 if [ "$MAKEJOBS" != "" ];then
     OPTIONS="$OPTIONS,MAKEJOBS=$MAKEJOBS"
 fi
 
 #auto gen cflag file and OPTIONS by the way
 echo "#YUNOS_AUTO_GEN: YunOSCFlags.mk" > $OUT_CFLAGS_FILE
-while read LINE 
+while read LINE
 do
     p1=`echo "$LINE" | awk -F "=" '{print $1}' | sed -e 's/^\s+|\s+$//g'`
     p2=`echo "$LINE" | awk -F "=" '{print $2}' | sed -e 's/^\s+|\s+$//g'`
@@ -456,159 +675,77 @@ echo "Flag[YUNOS_SUPPORT_CTA]     for cta feature:           [$YUNOS_SUPPORT_CTA
 
 echo "OPTIONS:"
 echo "$OPTIONS"
-main(){
+
+function main()
+{
     export DATE=`date +%Y-%m-%d-%H%M`
     #get platform by project name
     echo "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&"
     echo "WEB_RUNTIME_ENABLE $WEB_RUNTIME_ENABLE"
+    echo
 
-    source ./aliyunos/prebuilts/apps/prebuilt_mk.sh $YUNOS_PROJECT_NAME $OPTIONS
+    ##下载并更新源码
+    download_yunos_code
+
+    ## 阿里脚本处理
+    source aliyunos/prebuilts/apps/prebuilt_mk.sh $YUNOS_PROJECT_NAME $OPTIONS
+    echo
 
     platform=""
     case $YUNOS_PROJECT_NAME in
-        a800)
-            echo "choose a800"
-            source build/envsetup.sh
-            choosecombo release full_a800 $TARGET_BUILD_VARIANT
-        ;;
-        yk628)
-            echo "choose yk628"
-            config_unsign
-            source build/envsetup.sh
-            choosecombo release full_yk628 $TARGET_BUILD_VARIANT
-        ;;
         6735m|aeon6735m_65c_s_l1)
             echo "choose 6735m"
             config_unsign
             source build/envsetup.sh
             lunch full_aeon6735m_65c_s_l1-$TARGET_BUILD_VARIANT
         ;;
-        hyf9300)
-            echo "choose hyf9300"
-            config_unsign
-            source build/envsetup.sh
-            choosecombo release full_hyf9300 $TARGET_BUILD_VARIANT
-        ;;
-        6735m_64)
-            echo "choose 6735m_64"
-            config_unsign
-            source build/envsetup.sh
-            choosecombo release full_6735m_64 $TARGET_BUILD_VARIANT
-        ;;
         6735|aeon6735_65c_s_l1)
             echo "choose 6735"
             source build/envsetup.sh
             lunch full_aeon6735_65c_s_l1-$TARGET_BUILD_VARIANT
         ;;
-        nexus5)
-            echo "choose nexus5"
-            source build/envsetup.sh
-            choosecombo release cm_hammerhead $TARGET_BUILD_VARIANT
-        ;;
-        nexus4)
-            echo "choose nexus4"
-            source build/envsetup.sh
-            choosecombo release cm_mako $TARGET_BUILD_VARIANT
-        ;;
-        i9300)
-            echo "choose i9300"
-            source build/envsetup.sh
-            choosecombo release cm_i9300 $TARGET_BUILD_VARIANT
-        ;;
-        i9500)
-            echo "choose i9500"
-            source build/envsetup.sh
-            choosecombo release cm_i9500 $TARGET_BUILD_VARIANT
-        ;;
-        i9508)
-            echo "choose i9508"
-            source build/envsetup.sh
-            choosecombo release cm_jflte $TARGET_BUILD_VARIANT
-        ;;
-        hlte)
-            echo "choose hlte"
-            source build/envsetup.sh
-            choosecombo release cm_hlte $TARGET_BUILD_VARIANT
-        ;;
-        find7)
-            echo "choose find7"
-            source build/envsetup.sh
-            choosecombo release cm_find7 $TARGET_BUILD_VARIANT
-        ;;
-        t6)
-            echo "choose t6"
-            source build/envsetup.sh
-            choosecombo release cm_t6 $TARGET_BUILD_VARIANT
-        ;;
-        falcon)
-            echo "choose falcon"
-            source build/envsetup.sh
-            choosecombo release cm_falcon $TARGET_BUILD_VARIANT
-        ;;
-        aries)
-            echo "choose aries"
-            source build/envsetup.sh
-            choosecombo release cm_aries $TARGET_BUILD_VARIANT
-        ;;
-        bacon)
-            echo "choose bacon"
-            source build/envsetup.sh
-            choosecombo release cm_bacon $TARGET_BUILD_VARIANT
-        ;;
-        honami)
-            echo "choose honami"
-            source build/envsetup.sh
-            choosecombo release cm_honami $TARGET_BUILD_VARIANT
-        ;;
-        nx403a)
-            echo "choose nx403a"
-            source build/envsetup.sh
-            choosecombo release cm_nx403a $TARGET_BUILD_VARIANT
-        ;;
-        nx507j)
-            echo "choose nx507j"
-            source build/envsetup.sh
-            choosecombo release cm_nx507j $TARGET_BUILD_VARIANT
-        ;;
-        klte)
-            echo "choose klte"
-            source build/envsetup.sh
-            choosecombo release cm_klte $TARGET_BUILD_VARIANT
-        ;;
-        kltezm)
-            echo "choose kltezm"
-            source build/envsetup.sh
-            choosecombo release cm_kltezm $TARGET_BUILD_VARIANT
-        ;;
-        cancro)
-            echo "chose cancro"
-            source build/envsetup.sh
-            choosecombo release cm_cancro $TARGET_BUILD_VARIANT
-        ;;
-        n7100)
-            echo "chose n7100"
-            source build/envsetup.sh
-            choosecombo release cm_n7100 $TARGET_BUILD_VARIANT
-        ;;
         *)
             echo "DON'T KNOW HOW TO MAKE!!!!!!!!!!!!!"
         ;;
     esac
-echo "$YUNOS_PROJECT_NAME" >out/projectName.txt
-echo "$TARGET_BUILD_VARIANT" >out/options.txt
-echo "MTK_BASE_PROJECT $MTK_BASE_PROJECT"
 
-env
-CPUCORES=`cat /proc/cpuinfo | grep processor | wc -l`
-echo "CPU CORES = $CPUCORES"
-echo "DEFAULT_CONFIG_FILE $DEFAULT_CONFIG_FILE"
-echo "BASE $BASE"
+    __echo "source end ..."
 
-#make -j${CPUCORES} bootimage
-#make -j${CPUCORES} systemimage >make.log 2>&1
-make update-api
-#make -j${CPUCORES} otapackage
-make otapackage -j${CPUCORES} -k $moreArgs 2>&1
-#make -j${CPUCORES}
+    echo "$YUNOS_PROJECT_NAME" > out/projectName.txt
+    echo "$TARGET_BUILD_VARIANT" > out/options.txt
+    echo "MTK_BASE_PROJECT $MTK_BASE_PROJECT"
+
+    echo "CPU CORES = $CPUCORES"
+    echo "DEFAULT_CONFIG_FILE $DEFAULT_CONFIG_FILE"
+    echo "BASE $BASE"
+    echo
+if false;then
+    if [ "$build_clean" == "true" ];then
+        make clean
+        _echo "--> make clean end."
+    else
+        make installclean
+        _echo "--> make installclean end."
+    fi
+
+    if [ "$yunovo_update_api" == "true" ];then
+        make update-api -j${CPUCORES}
+    fi
+
+    make otapackage -j${CPUCORES} -k $moreArgs 2>&1 | tee build.yunos.log
+
+    if [ -f imgout -a -x imgout ];then
+        ~/workspace/script/zzzzz-script/tools/imgout
+    fi
+
+    ## copye image to folder
+    if copy_image_to_folder;then
+
+        ## upolad f1.y server
+        rsync_version_to_f1_server
+    fi
+fi
+    __echo "make android start ..."
 }
+
 main
