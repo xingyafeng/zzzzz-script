@@ -151,8 +151,10 @@ function copy_images()
 
     if [ -d $images_dir ];then
         rm -rf ${images_dir}
-        mkdir ${images_dir}
     fi
+
+    ## create folder
+    mkdir ${images_dir}
 
     # cp img and bin files
     cp -vf out/target/product/${target_product}/*.bin ${images_dir}
