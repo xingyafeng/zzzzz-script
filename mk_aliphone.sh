@@ -719,7 +719,7 @@ function main()
     echo "DEFAULT_CONFIG_FILE $DEFAULT_CONFIG_FILE"
     echo "BASE $BASE"
     echo
-if false;then
+
     if [ "$build_clean" == "true" ];then
         make clean
         _echo "--> make clean end."
@@ -744,8 +744,8 @@ if false;then
         ## upolad f1.y server
         rsync_version_to_f1_server
     fi
-fi
-    __echo "make android start ..."
+
+    __echo "make android end ..."
 }
 
 main
