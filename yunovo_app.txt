@@ -27,3 +27,4 @@ BaiduVoice
 TxzVoice
 GoogleVoice
 AiosAdapterVoice
+CarScreenSaver
