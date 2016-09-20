@@ -91,6 +91,7 @@ k86lsP=k86ls
 k88cP=k88c
 k88sP=k88s
 k86ldP=k86ld
+k86lsdP=k86lsd
 
 k26PR=k26_root
 k26sPR=k26s_root
@@ -105,6 +106,7 @@ k86lsPR=k86ls_root
 k88cPR=k88c_root
 k88sPR=k88s_root
 k86ldPR=k86ld_root
+k86lsdPR=k86lsd_root
 
 ################################ system env
 DEVICE=
@@ -262,6 +264,11 @@ function is_yunovo_project
             echo true
 
             ;;
+        $k86lsdP | $k86lsdPR)
+            echo true
+
+            ;;
+
         $k88cP | $k88cPR)
             echo true
 
@@ -280,7 +287,7 @@ function is_yunovo_project
 function is_root_yunovo_project()
 {
     local thisP=$(pwd) && thisP=${thisP%/*} && thisP=${thisP##*/}
-    local project_name=($k26P $k26sP $k27P $k86aP $k86mP $k86mx2P $k86sP $k86smP $k86lP $k86lsP $k86ldP $k88cP $k88sP)
+    local project_name=($k26P $k26sP $k27P $k86aP $k86mP $k86mx2P $k86sP $k86smP $k86lP $k86lsP $k86ldP $k86lsdP $k88cP $k88sP)
 
     if [ "$thisP" ];then
 
@@ -311,7 +318,7 @@ function get_project_real_name()
 function get_project_name()
 {
     local thisP=$(pwd) && thisP=${thisP%/*} && thisP=${thisP##*/}
-    local project_name=($k26P $k26sP $k27P $k86aP $k86mP $k86mx2P $k86sP $k86smP $k86lP $k86lsP $k86ldP $k88cP $k88sP)
+    local project_name=($k26P $k26sP $k27P $k86aP $k86mP $k86mx2P $k86sP $k86smP $k86lP $k86lsP $k86ldP $k86lsdP $k88cP $k88sP)
     local isroot=false
 
     if [ "$thisP" ];then
@@ -442,7 +449,7 @@ function is_long_branch_app()
 function is_long_project()
 {
     ### jenkins path name
-    local prjN=(k26s k86l k86ld k86mx2 k88s k26s_root k86l_root k86ld_root k86mx2_root k88s_root)
+    local prjN=(k26s k86l k86ld k86lsd k86mx2 k88s k26s_root k86l_root k86ld_root k86lsd_root k86mx2_root k88s_root)
 
     ### jenkins project name
     local projectN=(k26c k26d k27l)
@@ -540,7 +547,7 @@ function handler_vairable()
     local sz_build_flag=$4
 
     ### 处理k86l系类工程
-    if [ $prj_name == "k86l" -o $prj_name == "k86ld" -o $prj_name == "k86ls" ];then
+    if [ $prj_name == "k86l" -o $prj_name == "k86ld" -o $prj_name == "k86ls" -o $prj_name == "k86lsd" ];then
         prj_name=k86
     elif [ $prj_name == "k26s" ];then
         prj_name=k2*
@@ -1797,7 +1804,7 @@ function download_sdk()
             defalut=k86s
         elif [ $project_name == "k86l" -o $project_name == "k86ld" ];then
             defalut=k86s_400x1280
-        elif [ $project_name == "k86ls" ];then
+        elif [ $project_name == "k86ls" -o $project_name == "k86lsd" ];then
             defalut=k86l_split
         elif [ $project_name == "k86mx2" ];then
             defalut=k86_mx2
@@ -1824,7 +1831,7 @@ function download_sdk()
 
 	if [ ! -d .repo ];then
 		if [ "$defalut" -a "$project_link" ];then
-            repo $project_link -m ${defalut}.xml
+            repo $project_link -m ${defalut}.xml -b yunovo
         fi
 		repo sync -j${cpu_num}
         ls -alF
@@ -1980,8 +1987,8 @@ function sync_jenkins_server()
 function auto_update_yunovo_customs()
 {
 	local nowPwd=$(pwd)
-    local project_name=($k26P $k26sP $k27P $k86aP $k86mP $k86mx2P $k86sP $k86smP $k86lP $k86lsP $k86ldP $k88cP $k88sP)
-    local sz_project_name=`echo k26 k26s k27 k86a k86m k86mx2 k86s k86sm k86l k86ls k86ld k88c k88s k26_root k26s_root k27_root k86a_root k86m_root k86mx2_root k86s_root k86sm_root k86l_root k86ls_root k86ld_root k88c_root k88s_root`
+    local project_name=($k26P $k26sP $k27P $k86aP $k86mP $k86mx2P $k86sP $k86smP $k86lP $k86lsP $k86ldP $k86lsdP $k88cP $k88sP)
+    local sz_project_name=`echo k26 k26s k27 k86a k86m k86mx2 k86s k86sm k86l k86ls k86ld k88c k88s k26_root k26s_root k27_root k86a_root k86m_root k86mx2_root k86s_root k86sm_root k86l_root k86ls_root k86ld_root k86lds_root k88c_root k88s_root`
     local sz_base_path=~/jobs
 
     for sz_custom in $sz_project_name
