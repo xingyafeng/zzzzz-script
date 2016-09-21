@@ -120,6 +120,10 @@ function is_yunovo_project
             echo true
 
             ;;
+        $k86lsdP | $k86lsdPR)
+            echo true
+
+            ;;
         $k88cP | $k88cPR)
             echo true
 

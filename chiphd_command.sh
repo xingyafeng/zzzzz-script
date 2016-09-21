@@ -24,6 +24,7 @@ k86lsP=k86ls
 k88cP=k88c
 k88sP=k88s
 k86ldP=k86ld
+k86lsdP=k86lsd
 
 k26PR=k26_root
 k26sPR=k26s_root
@@ -38,6 +39,7 @@ k86lsPR=k86ls_root
 k88cPR=k88c_root
 k88sPR=k88s_root
 k86ldPR=k86ld_root
+k86lsdPR=k86lsd_root
 sdate=$td
 
 yunovo_root=~/yunovocode
