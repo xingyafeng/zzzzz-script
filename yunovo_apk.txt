@@ -74,3 +74,4 @@ CmytBaseCard
 CmytFirewall
 CheKongBaoQR
 ZiXunChannel
+truckCar_NM
