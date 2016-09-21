@@ -1633,7 +1633,7 @@ function handler_branch_for_app()
     cd .. > /dev/null
 }
 
-function clone_apk()
+function down_load_apk_for_yunovo()
 {
     local OLDP=`pwd`
     local app_path=packages/apps
@@ -1662,7 +1662,7 @@ function clone_apk()
         fi
     done < $yunovo_apk_file
 
-    _echo "clone apk end !"
+    _echo "-------- clone apk end !"
 
     cd $OLDP
 }
@@ -1673,7 +1673,7 @@ function ant_app()
     local OLDP=`pwd`
     local app_path=~/yunovo_app/packages/apps
     local apk_path=~/android/packages/apps
-    local yunovo_app_file=$zz_script_path/yunovo_app.txt
+    local yunovo_ant_app_file=$zz_script_path/yunovo_ant_app.txt
     local branch_file=$zz_script_path/fs/branch.txt
     local is_same_project=false
     local is_same_branch=false
@@ -1743,52 +1743,82 @@ function ant_app()
 
         cd .. > /dev/null
 
-    done < $yunovo_app_file
+    done < $yunovo_ant_app_file
 
     cd $OLDP > /dev/null
 
     __echo "ant app end ..."
 }
 
+## clone app for yunovo
 function clone_app()
 {
-    local OLDP=`pwd`
-    local app_path=~/yunovo_app/packages/apps
-
-    local ssh_link=ssh://jenkins@gerrit2.y:29418
-    local yunovo_app_file=$zz_script_path/yunovo_app.txt
-
-    if [ ! -d $app_path ];then
-        mkdir -p $app_path
+    if [ $# -eq 1 ];then
+        :
+    else
+        _echo clone_app fail , eg: clone <app_name> ...
+        return 1
     fi
 
-    cd $app_path > /dev/null
+    local app_name=$1
 
+    if [ -d $app_name ];then
+
+        ## handler switch branch
+        handler_branch_for_app $app_name
+    else
+        ## clone apk
+        if [ "$ssh_link" ];then
+            git clone $ssh_link/$app_name
+            _echo "---- clone $app_name"
+        else
+            _echo "ssh_link is error, please check it !"
+            return 1
+        fi
+
+        ## handler switch branch
+        handler_branch_for_app $app_name
+    fi
+}
+
+
+## download all app
+function down_load_app_for_yunovo()
+{
+    local OLDP=`pwd`
+    local ant_app_path=~/yunovo_app/packages/apps
+    local android_app_path=packages/apps
+
+    local ssh_link=ssh://jenkins@gerrit2.y:29418
+    local yunovo_ant_app_file=$zz_script_path/yunovo_ant_app.txt
+    local yunovo_android_app_file=$zz_script_path/yunovo_app.txt
+
+    if [ ! -d $ant_app_path ];then
+        mkdir -p $ant_app_path
+    fi
+
+    cd $ant_app_path > /dev/null
+
+    ## clone ant app
     while read app_name
     do
-        if [ -d $app_name ];then
+        clone_app $app_name
+    done < $yunovo_ant_app_file
 
-            ## handler switch branch
-            handler_branch_for_app $app_name
-        else
+    _echo "-------- clone ant app end !"
 
-            ## clone apk
-            if [ "$ssh_link" ];then
-                git clone $ssh_link/$app_name
-                _echo "---- clone $app_name"
-            else
-                _echo "ssh_link is error, please check it !"
-                return 1
-            fi
+    cd $OLDP > /dev/null
+    cd $android_app_path > /dev/null
 
-            ## handler switch branch
-            handler_branch_for_app $app_name
-        fi
-    done < $yunovo_app_file
+    ## clone make app
+    while read app_name
+    do
+        clone_app $app_name
+    done < $yunovo_android_app_file
 
-    _echo "clone app end !"
+    _echo "-------- clone make app end !"
 
-    cd $OLDP
+    cd $OLDP > /dev/null
 }
 
 ## download sdk
@@ -2144,8 +2174,8 @@ function main()
     fi
 
     if [ $flag_clone_app -eq 1 ];then
-        clone_apk
-        clone_app
+        down_load_apk_for_yunovo
+        down_load_app_for_yunovo
         ant_app
         auto_copy_app_to_android
     else

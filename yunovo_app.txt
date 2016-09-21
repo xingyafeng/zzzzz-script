@@ -6,8 +6,6 @@ CarSystemUpdateAssistant
 CarEngine
 CarHomeBtn
 CarPlatform
-CarRecord
-CarRecordDouble
 CarUpdateDFU
 CarRecordUsb
 FactoryTest
@@ -21,7 +19,6 @@ YOcSplitScreen
 YOcTools
 YOcBTCall
 YOcBTCallGoc
-YOcRecord
 YOcFM
 BaiduVoice
 TxzVoice
