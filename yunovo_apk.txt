@@ -75,3 +75,4 @@ CmytFirewall
 CheKongBaoQR
 ZiXunChannel
 truckCar_NM
+Car_YZYLN
