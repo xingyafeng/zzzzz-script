@@ -20,6 +20,8 @@ UniSoundServiceAEC
 Ximalaya
 Ecar
 Ephone
+ECar
+ECarVoip
 iFlyIME
 WuliuRuyibao
 BaiduGou
@@ -60,7 +62,6 @@ CheYueBao
 HBS_AOTA
 GooglePinyin
 AiosWechat
-ECarVoip
 TxzXimlaya
 BaoXianMarket
 CheDaiBao
