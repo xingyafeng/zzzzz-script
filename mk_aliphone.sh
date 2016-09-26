@@ -140,6 +140,77 @@ function repo_sync_for_source_code()
     fi
 }
 
+function chiphd_get_repo_git_path_from_xml()
+{
+    local default_xml=.repo/manifest.xml
+    if [ -f $default_xml ]; then
+        grep '<project' $default_xml | sed 's%.*path="%%' | sed 's%".*%%'
+    fi
+}
+
+function chiphd_recover_project()
+{
+    local tDir=$1
+    if [ ! "$tDir" ]; then
+        tDir=.
+    fi
+
+    if [ -d $tDir/.git ]; then
+        local OldPWD=$(pwd)
+        cd $tDir > /dev/null
+        if [ "`git status -s`" ];then
+            echo "---- recover $tDir"
+        else
+            cd $OLDPWD
+            return 0
+        fi
+
+        thisFiles=`git diff --cached --name-only`
+        if [ "$thisFiles" ];then
+            git reset HEAD . ###recovery for cached files
+        fi
+
+        thisFiles=`git clean -dn`
+        if [ "$thisFiles" ]; then
+            git clean -df
+        fi
+
+        #thisFiles=`git diff --cached --name-only`
+        #if [ "$thisFiles" ]; then
+        #git checkout HEAD $thisFiles
+        #fi
+
+        thisFiles=`git diff --name-only`
+        if [ "$thisFiles" ]; then
+            git checkout HEAD $thisFiles
+        fi
+        cd $OldPWD
+    fi
+}
+
+function recover_standard_android_project()
+{
+    local tOldPwd=$OLDPWD
+    local tNowPwd=$PWD
+
+    cd $BASE > /dev/null
+    #echo "now get all project from repo..."
+
+    local AllRepoProj=`chiphd_get_repo_git_path_from_xml`
+    #echo $AllRepoProj
+    if [ "$AllRepoProj" ]; then
+        for ProjPath in $AllRepoProj
+        do
+            if [ -d $BASE/$ProjPath ];then
+                chiphd_recover_project $ProjPath
+            fi
+        done
+    fi
+
+    cd $tOldPwd
+    cd $tNowPwd
+}
+
 function download_yunos_code()
 {
     local prj_name=`get_project_name`
@@ -683,6 +754,9 @@ function main()
     echo "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&"
     echo "WEB_RUNTIME_ENABLE $WEB_RUNTIME_ENABLE"
     echo
+
+    ##恢复源码到干净状态
+    recover_standard_android_project
 
     ##下载并更新源码
     download_yunos_code
