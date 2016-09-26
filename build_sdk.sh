@@ -1903,13 +1903,21 @@ function download_sdk()
             ## 还原 androiud源代码 ...
             recover_standard_android_project
 
-            ## 更新 android源代码 ...
-		    repo forall -c git fetch
-            _echo "-----------------git fetch successful ."
+            if [ "`hostname`" == "happysongs" ];then
 
-		    repo forall -c git pull
-            echo
-            _echo "-----------------git pull successful ."
+                ## update android source code for yunovo project ...
+                if repo sync -c;then
+                    _echo "----------------- repo sync -c successful ..."
+                fi
+            else
+
+                ## 更新 android源代码 ...
+                repo forall -c git fetch
+                _echo "-----------------git fetch successful ."
+                repo forall -c git pull
+                echo
+                _echo "-----------------git pull successful ."
+            fi
         fi
 	fi
 }
