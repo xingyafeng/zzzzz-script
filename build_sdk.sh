@@ -33,6 +33,8 @@ build_readme=
 build_branch=
 ### is clean android source code
 build_clean=
+### is make ota or not
+build_make_ota=
 
 ## system version  e.g. : S1.01
 build_version=""
@@ -784,6 +786,13 @@ function handler_vairable()
         build_clean=false
     fi
 
+    ### 12. build ota
+    if [ "$yunovo_make_ota" ];then
+        build_make_ota=$yunovo_make_ota
+    else
+        build_make_ota=false
+    fi
+
     system_version=$custom_version\_$hw_versiom\_${first_version}.${project_name}.${second_version}
     fota_version="SPT_VERSION_NO=${system_version}"
 }
@@ -947,7 +956,7 @@ function cpimage()
         if [ ! -d $firmware_path ];then
             mkdir -p $firmware_path
         else
-            echo "---> create $firmware_path ..."
+            _echo "---> create $firmware_path ..."
         fi
 
 	    if [ ! -d $DEST_PATH ];then
@@ -957,16 +966,16 @@ function cpimage()
 			    mkdir -p ${DEST_PATH}/database/ap
 			    mkdir -p ${DEST_PATH}/database/moden
 		    else
-			    echo "---> created /database/ap or /database/moden ..."
+			    _echo "---> created /database/ap or /database/moden ..."
 		    fi
 	    else
-		    echo "---> created $DEST_PATH"
+		    _echo "---> created $DEST_PATH"
 	    fi
 
 	    if [ ! -d $OTA_PATH ];then
 		    mkdir -p $OTA_PATH
 	    else
-		    echo "---> created $OTA_PATH "
+		    _echo "---> created $OTA_PATH "
 	    fi
 
 	    cp -vf ${OUT}/MT*.txt ${DEST_PATH}
@@ -988,13 +997,20 @@ function cpimage()
 	    cp -vf ${OUT}/obj/CGEN/APDB_MT*W15* ${DEST_PATH}/database/ap
 	    cp -vf ${OUT}/system/etc/mddb/BPLGUInfoCustomAppSrcP* ${DEST_PATH}/database/moden
 
-        echo "---> cp image end ..."
-        echo
+        _echo "---> cp image end ..."
+
         if [ $flag_fota -eq 1 ];then
-            cp -v ${OUT}/full_${build_device}-ota*.zip ${OTA_PATH}/sdupdate.zip
-            cp -v ${OUT}/obj/PACKAGING/target_files_intermediates/full_${build_device}-target_files*.zip ${OTA_PATH}/${system_version}.zip
-            echo "cp ota end ..."
-            echo
+            if [ $build_make_ota == "true" ];then
+                if [ "`ls ${OUT}/full_${build_device}-ota*.zip`" ];then
+                    cp -v ${OUT}/full_${build_device}-ota*.zip ${OTA_PATH}/sdupdate.zip
+                    _echo "copy sdupdate.zip successful ..."
+                fi
+
+                if [ "`ls ${OUT}/obj/PACKAGING/target_files_intermediates/full_${build_device}-target_files*.zip`" ];then
+                    cp -v ${OUT}/obj/PACKAGING/target_files_intermediates/full_${build_device}-target_files*.zip ${OTA_PATH}/${system_version}.zip
+                    _echo "copy ota file successful ..."
+                fi
+            fi
         fi
 
         ### add readme.txt in version
@@ -1093,6 +1109,7 @@ function print_variable()
 	echo "build_type = $build_type"
     echo "build_branch = $build_branch"
     echo "build_clean= $build_clean"
+    echo "build_make_ota = $build_make_ota"
 	echo "lunch_project = $lunch_project"
 	echo '-----------------------------------------'
     echo "flag_fota = $flag_fota"
@@ -1897,8 +1914,8 @@ function download_sdk()
 	fi
 }
 
-## build sdk for yunovo project
-function make-sdk()
+## build android system for yunovo project
+function make_yunovo_android()
 {
 	if [ "$DEVICE" ];then
         :
@@ -1958,13 +1975,18 @@ function make-sdk()
     fi
 
     if [ $flag_fota -eq 1 ];then
-        make -j${cpu_num} ${fota_version} otapackage 2>&1 | tee build_ota_$cur_time.log
 
-        if [ $? -eq 0 ];then
-            _echo "--> make otapackage end ..."
+        if [ "$build_make_ota" == "true" ];then
+            make -j${cpu_num} ${fota_version} otapackage 2>&1 | tee build_ota_$cur_time.log
+
+            if [ $? -eq 0 ];then
+                _echo "--> make otapackage end ..."
+            else
+                _echo "make otapackage fail ..."
+                return 1
+            fi
         else
-            _echo "make otapackage fail ..."
-            return 1
+            _echo "build_make_ota = $build_make_ota"
         fi
     fi
 }
@@ -2208,7 +2230,7 @@ function main()
     fi
 
     if [ $flag_make_sdk -eq 1 ];then
-	    make-sdk
+        make_yunovo_android
     else
         echo "do not make sdk !"
     fi
