@@ -104,3 +104,4 @@ TxzVoice
 GoogleVoice
 AiosAdapterVoice
 CarScreenSaver
+CarBandMode
