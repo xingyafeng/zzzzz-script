@@ -13,6 +13,7 @@ FileCopyManager
 YOcRadPowerManager
 YOcVoice
 YOcLauncher
+YOcLauncherRes
 YOcMediaFolder
 YOcSettings
 YOcSplitScreen
