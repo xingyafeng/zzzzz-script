@@ -1486,6 +1486,72 @@ function handler_system_app()
     fi
 }
 
+function handler_branch_for_YOcLauncherRes()
+{
+    local sz_branch_name=
+
+    #_echo "build_prj_name = $build_prj_name"
+    case $build_prj_name in
+
+        k26s_LD-A107C)
+            sz_branch_name=S6_LD_V10
+
+            ;;
+        k27l_AJ-AJS-1)
+            sz_branch_name=S6_AJ_V10
+
+            ;;
+        k27l_HBS-T2)
+            sz_branch_name=S6_HBS_V10
+
+            ;;
+        k26s_KPS-ZX | k86ls_LS6-ZX | k86ls_S6-ZX | k88s_YT-YBT686)
+            sz_branch_name=S6_NXOS_V10
+
+            ;;
+        k86ls_LHZ)
+            sz_branch_name=S7_LHZ_V20
+
+            ;;
+        k27l_KPS-ZX | k86ls_K86-ZX | k86ls_LHZ-KPS | k86mx2_K86-ZX)
+            sz_branch_name=S7_NXOS_V10
+
+            ;;
+        k86mx1_GY-G2B)
+            sz_branch_name=S7_GY-G2B_V20
+            ;;
+
+        k86ls_K86-ZX2)
+            sz_branch_name=S7_NXOS_V20
+
+            ;;
+        *)
+            sz_branch_name=S6_NXOS_V20
+            ;;
+    esac
+
+    _echo "sz_branch_name = $sz_branch_name"
+
+    ##检查远程仓库是否存在
+    if [ "`git branch -r | grep $sz_branch_name`" ];then
+
+        ##检查本地是否存在
+        if [ "`git branch | grep $sz_branch_name`" ];then
+
+            ## 检查当前是否存在
+            if [ "`git branch | grep \* | cut -d ' ' -f2`" != $sz_branch_name ];then
+                git checkout $sz_branch_name
+            else
+                _echo "curr branch name: $sz_branch_name ..."
+            fi
+        else
+            git checkout -b $sz_branch_name origin/$sz_branch_name
+        fi
+    else
+        git checkout master
+    fi
+}
+
 function handler_branch_for_app()
 {
     local app_name=$1
@@ -1518,6 +1584,10 @@ function handler_branch_for_app()
     fi
 
     cd $app_name > /dev/null
+
+    if [ $app_name == "YOcLauncherRes" ];then
+        handler_branch_for_YOcLauncherRes
+    fi
 
     ## 长屏方案
     if [ "`is_long_project`" == "true" ];then
