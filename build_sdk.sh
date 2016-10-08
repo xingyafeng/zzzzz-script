@@ -1725,7 +1725,7 @@ function down_load_apk_for_yunovo()
     local OLDP=`pwd`
     local app_path=packages/apps
 
-    local ssh_link=ssh://jenkins@gerrit2.y:29418
+    local ssh_link=ssh://jenkins@gerrit.y:29419/yunovo_packages
     local yunovo_apk_file=$zz_script_path/yunovo_apk.txt
 
     cd $app_path > /dev/null
@@ -1876,7 +1876,7 @@ function down_load_app_for_yunovo()
     local ant_app_path=~/yunovo_app/packages/apps
     local android_app_path=packages/apps
 
-    local ssh_link=ssh://jenkins@gerrit2.y:29418
+    local ssh_link=ssh://jenkins@gerrit.y:29419/yunovo_packages
     local yunovo_ant_app_file=$zz_script_path/yunovo_ant_app.txt
     local yunovo_android_app_file=$zz_script_path/yunovo_app.txt
 
