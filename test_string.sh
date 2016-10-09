@@ -20,14 +20,29 @@ function is_root_yunovo_project()
 
 }
 
+### 函数中的变量会直接在新函数中直接使用和修改
+function handler_hat()
+{
+    echo "---------"
+
+    echo "hat = $hat"
+
+    ## 可以再次修改不用定义
+    hat=10
+
+    echo "hat = $hat"
+}
+
 function test_args()
 {
     local ret=$1
+    local hat=1000
 
     if [ $# -eq 1 ];then
         echo "-----"
         echo "$#"
 
+        handler_hat
     else
         echo "$#"
     fi
