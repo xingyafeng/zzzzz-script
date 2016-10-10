@@ -2189,6 +2189,26 @@ function auto_update_yunovo_customs()
 	cd $nowPwd
 }
 
+function auto_create_branch_refs()
+{
+    local username=`whoami`
+    local remotename=origin
+    local refsname=${build_prj_name}_${build_version}
+
+    if [ "`is_yunovo_project`" == "true" ];then
+
+        if [ "`git ls-remote --refs $remotename | grep $refsname`" ];then
+            repo forall -c git push yunos HEAD:refs/build/$username/$refsname
+            _echo "------ create branch refs successful ..."
+        else
+            _echo "--> $refsname is exist ..."
+        fi
+    else
+        _echo "current directory is not android !"
+        return 1
+    fi
+}
+
 ### 打印系统环境变量
 function print_env()
 {
