@@ -253,6 +253,11 @@ function copy_image_to_folder()
     if [ -d $default_version_name ];then
         mv $default_version_name/* $BASE_PATH
     fi
+
+    if [ "`ls ${OUT}/full_aeon6735_65c_s_l1-ota*.zip`" ];then
+        cp ${OUT}/full_aeon6735_65c_s_l1-ota*.zip $BASE_PATH/../${build_verion}_sdupdate.zip
+        _echo "--> copy sdupdate.zip sucessful ..."
+    fi
 }
 
 ## 同步阿里版本到f1服务器上
