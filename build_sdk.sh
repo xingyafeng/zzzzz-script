@@ -35,6 +35,8 @@ build_branch=
 build_clean=
 ### is make ota or not
 build_make_ota=
+### is create refs
+build_refs=
 
 ## system version  e.g. : S1.01
 build_version=""
@@ -797,6 +799,12 @@ function handler_vairable()
         build_make_ota=false
     fi
 
+    ## 13. build refs
+    if [ "$yunovo_refs" ];then
+        build_refs=$yunovo_refs
+    else
+        build_refs=false
+    fi
     system_version=$custom_version\_$hw_versiom\_${first_version}.${project_name}.${second_version}
     fota_version="SPT_VERSION_NO=${system_version}"
 }
@@ -1114,6 +1122,7 @@ function print_variable()
     echo "build_branch = $build_branch"
     echo "build_clean= $build_clean"
     echo "build_make_ota = $build_make_ota"
+    echo "build_refs = $build_refs"
 	echo "lunch_project = $lunch_project"
 	echo '-----------------------------------------'
     echo "flag_fota = $flag_fota"
@@ -2193,15 +2202,29 @@ function auto_create_branch_refs()
 {
     local username=`whoami`
     local remotename=origin
-    local refsname=${build_prj_name}_${build_version}
+    local datetime=`date +'%Y.%m.%d_%H.%M.%S'`
+    local refsname=${build_project}_${build_version}_${datetime}
+    local ls_remote_p=frameworks
+    local is_create_refs=
 
     if [ "`is_yunovo_project`" == "true" ];then
 
+        cd $ls_remote_p > /dev/null
+
         if [ "`git ls-remote --refs $remotename | grep $refsname`" ];then
-            repo forall -c git push yunos HEAD:refs/build/$username/$refsname
-            _echo "------ create branch refs successful ..."
+            is_create_refs=true
         else
+            is_create_refs=false
+        fi
+
+        cd - > /dev/null
+
+        if [ "$is_create_refs" == "true" ];then
             _echo "--> $refsname is exist ..."
+        else
+            repo forall -c git push $remotename HEAD:refs/build/$username/$refsname
+
+            __echo "create branch refs successful ..."
         fi
     else
         _echo "current directory is not android !"
@@ -2337,6 +2360,15 @@ function main()
         make_yunovo_android
     else
         echo "do not make sdk !"
+    fi
+
+    if [ "$build_refs" == "true" ];then
+
+        auto_create_branch_refs
+
+        __echo "auto create branch refs successful ..."
+    else
+        __echo "auto create branch refs fail ..."
     fi
 
     if [ $flag_cpimage -eq 1 ];then
