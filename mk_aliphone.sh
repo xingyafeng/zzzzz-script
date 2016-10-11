@@ -6,8 +6,9 @@ export LC_ALL=en_US.UTF-8
 
 ### common
 build_project=
-build_verion=
+build_version=
 build_clean=
+build_refs=
 
 ## 6735
 YUNOS_PROJECT_NAME=6735
@@ -23,6 +24,17 @@ t_project_name=
 t_custom_verion=
 
 CPUCORES=`cat /proc/cpuinfo | grep processor | wc -l`
+
+## yunos project name
+mx1_kkxl_v9_p=mx1_kkxl_v9
+mx1_teyes_t8_p=mx1_teyes_t8
+mx1_anytek_m960_p=mx1_anytek_m960
+
+mx2_teyes_t8_p=mx2_teyes_t8
+
+k88c_lufeng_f100_p=k88c_lufeng_f100
+
+################
 
 function __echo()
 {
@@ -69,8 +81,9 @@ function handler_print()
     echo "MAKE_TYPE = $MAKE_TYPE"
     echo "--------------yunovo---------------"
     echo "build_project = $build_project"
-    echo "build_verion = $build_verion"
+    echo "build_version = $build_version"
     echo "build_clean = $build_clean"
+    echo "build_refs = $build_refs"
     echo "-----------------------------------"
     echo "build_project = $build_project"
     echo "t_project_name = $t_project_name"
@@ -94,7 +107,7 @@ function handler_vairable()
 
     ## 2. build version
     if [ "$yunovo_version" ];then
-        build_verion=$yunovo_version
+        build_version=$yunovo_version
     else
         _echo "yunovo_version is null, please check it !"
         exit 1
@@ -113,8 +126,76 @@ function handler_vairable()
     else
         build_clean=false
     fi
+
+    ## build refs
+    if [ "$yunovo_refs" ];then
+        build_refs=$yunovo_refs
+    else
+        build_refs=false
+    fi
 }
 
+### 是否为阿里的项目
+function is_yunos_project
+{
+    local thisP=$(pwd) && thisP=${thisP%/*} && thisP=${thisP##*/}
+
+    case $thisP in
+
+        $mx1_kkxl_v9_p | $mx1_teyes_t8_p | $mx1_anytek_m960_p)
+            echo true
+
+            ;;
+
+        $mx2_teyes_t8_p)
+            echo true
+
+            ;;
+
+        $k88c_lufeng_f100_p)
+            echo true
+
+            ;;
+        *)
+            echo false
+
+            ;;
+    esac
+}
+
+function auto_create_branch_refs()
+{
+    local username=`whoami`
+    local remotename=yunos
+    local datetime=`date +'%Y.%m.%d_%H.%M.%S'`
+    local refsname=${build_project}_${build_version}_${datetime}
+    local ls_remote_p=frameworks/base
+    local is_create_refs=
+
+    if [ "`is_yunos_project`" == "true" ];then
+
+        cd $ls_remote_p > /dev/null
+
+        if [ "`git ls-remote --refs $remotename | grep $refsname`" ];then
+            is_create_refs=true
+        else
+            is_create_refs=false
+        fi
+
+        cd - > /dev/null
+
+        if [ "$is_create_refs" == "true" ];then
+            _echo "--> $refsname is exist ..."
+        else
+            repo forall -c git push yunos HEAD:refs/build/$username/$refsname
+
+            __echo "create branch refs successful ..."
+        fi
+    else
+        _echo "current directory is not android !"
+        return 1
+    fi
+}
 
 function get_project_name()
 {
@@ -240,7 +321,7 @@ function copy_image_to_folder()
     local firmware_path=~/yunos
     local server_name=`hostname`
     local default_version_name=release-aeon6735_65c_s_l1
-    local BASE_PATH=$firmware_path/$t_project_name/${t_project_name}_${t_custom_verion}/$build_verion
+    local BASE_PATH=$firmware_path/$t_project_name/${t_project_name}_${t_custom_verion}/$build_version
 
     if [ ! -d $firmware_path ];then
         mkdir -p $firmware_path
@@ -255,7 +336,7 @@ function copy_image_to_folder()
     fi
 
     if [ "`ls ${OUT}/full_aeon6735_65c_s_l1-ota*.zip`" ];then
-        cp ${OUT}/full_aeon6735_65c_s_l1-ota*.zip $BASE_PATH/../${build_verion}_sdupdate.zip
+        cp ${OUT}/full_aeon6735_65c_s_l1-ota*.zip $BASE_PATH/../${build_version}_sdupdate.zip
         _echo "--> copy sdupdate.zip sucessful ..."
     fi
 }
@@ -760,6 +841,13 @@ function main()
     echo "WEB_RUNTIME_ENABLE $WEB_RUNTIME_ENABLE"
     echo
 
+    if [ "`is_yunos_project`" == "true" ];then
+        :
+    else
+        _echo "current directory is not android !"
+        exit 1
+    fi
+
     ##恢复源码到干净状态
     recover_standard_android_project
 
@@ -812,6 +900,14 @@ function main()
     fi
 
     make otapackage -j${CPUCORES} -k $moreArgs 2>&1 | tee build.yunos.log
+
+    ## create branch refs
+    if [ "`is_yunos_project`" == "true" ];then
+        auto_create_branch_refs
+    else
+        _echo "current directory is not android !"
+        exit 1
+    fi
 
     if [ -f imgout -a -x imgout ];then
         ~/workspace/script/zzzzz-script/tools/imgout
