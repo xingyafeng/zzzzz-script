@@ -878,6 +878,14 @@ function main()
 
     __echo "source end ..."
 
+    if [ "$build_clean" == "true" ];then
+        make clean
+        _echo "--> make clean end."
+    else
+        make installclean
+        _echo "--> make installclean end."
+    fi
+
     echo "$YUNOS_PROJECT_NAME" > out/projectName.txt
     echo "$TARGET_BUILD_VARIANT" > out/options.txt
     echo "MTK_BASE_PROJECT $MTK_BASE_PROJECT"
@@ -886,14 +894,6 @@ function main()
     echo "DEFAULT_CONFIG_FILE $DEFAULT_CONFIG_FILE"
     echo "BASE $BASE"
     echo
-
-    if [ "$build_clean" == "true" ];then
-        make clean
-        _echo "--> make clean end."
-    else
-        make installclean
-        _echo "--> make installclean end."
-    fi
 
     if [ "$yunovo_update_api" == "true" ];then
         make update-api -j${CPUCORES}
