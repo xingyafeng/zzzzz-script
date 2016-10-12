@@ -1565,6 +1565,47 @@ function handler_branch_for_YOcLauncherRes()
     fi
 }
 
+function handler_checkout_branch()
+{
+    local branch_name=$1
+
+    ##检查远程仓库是否存在
+    if [ "`git branch -r | grep $branch_name`" ];then
+
+        ##检查本地是否存在
+        if [ "`git branch | grep $branch_name`" ];then
+
+            ## 检查当前是否存在
+            if [ "`git branch | grep \* | cut -d ' ' -f2`" != $branch_name ];then
+                git checkout $branch_name
+            else
+                _echo "curr branch name: $branch_name ..."
+            fi
+        else
+            git checkout -b $branch_name origin/$branch_name
+        fi
+    else
+        git checkout master
+    fi
+}
+
+function handler_branch_for_YOcRecord()
+{
+    local ld_branch=yunovo/k26s/lingdu/common
+
+    if [ $build_prj_name == "k26s_LD-A107C" ];then
+        handler_checkout_branch $ld_branch
+    else
+        if [ "`git branch -r | grep test`" -o "`git branch -r | grep develop`" ];then
+            :
+        else
+            git checkout master
+        fi
+
+        _echo "$build_prj_name is not k26s_LD-A107C, do not handler it."
+    fi
+}
+
 function handler_branch_for_app()
 {
     local app_name=$1
@@ -1597,10 +1638,6 @@ function handler_branch_for_app()
     fi
 
     cd $app_name > /dev/null
-
-    if [ $app_name == "YOcLauncherRes" ];then
-        handler_branch_for_YOcLauncherRes
-    fi
 
     ## 长屏方案
     if [ "`is_long_project`" == "true" ];then
@@ -1716,6 +1753,16 @@ function handler_branch_for_app()
                 :
             fi
         fi
+    fi
+
+    ## handler YOcLauncherRes branchs
+    if [ $app_name == "YOcLauncherRes" ];then
+        handler_branch_for_YOcLauncherRes
+    fi
+
+    ## handler k26s_LD-A107C branch
+    if [ $app_name == "YOcRecord" ];then
+        handler_branch_for_YOcRecord
     fi
 
     if [ $local_branch_name == "long" -o $local_branch_name == "develop_long" -o $local_branch_name == "test_long" ];then
