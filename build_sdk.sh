@@ -1594,10 +1594,12 @@ function handler_checkout_branch()
 
 function handler_branch_for_YOcRecord()
 {
-    local ld_branch=yunovo/k26s/lingdu/common
+    local YOcRecord_branch=
 
     if [ $build_prj_name == "k26s_LD-A107C" ];then
-        handler_checkout_branch $ld_branch
+        recodrd_branch=yunovo/k26s/lingdu/common
+    elif [ $build_prj_name == "k27l_HBS-T2" ];then
+        YOcRecord_branch=yunovo/k27l/hbs/common
     else
         if [ "`git branch -r | grep test`" -o "`git branch -r | grep develop`" ];then
             :
@@ -1607,6 +1609,8 @@ function handler_branch_for_YOcRecord()
 
         _echo "$build_prj_name is not k26s_LD-A107C, do not handler it."
     fi
+
+    handler_checkout_branch $YOcRecord_branch
 }
 
 function handler_branch_for_app()
