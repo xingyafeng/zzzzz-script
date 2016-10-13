@@ -1124,6 +1124,7 @@ function print_variable()
     echo "build_make_ota = $build_make_ota"
     echo "build_refs = $build_refs"
 	echo "lunch_project = $lunch_project"
+	echo "fota_version = $fota_version"
 	echo '-----------------------------------------'
     echo "flag_fota = $flag_fota"
     echo "flag_print = $flag_print"
@@ -2344,6 +2345,8 @@ function source_init()
 
 function main()
 {
+    local curr_time=`date +'%Y-%m-%d.%H-%M-%S'`
+
     if [ "`is_yunovo_project`" == "true" ];then
         :
     else
@@ -2452,6 +2455,9 @@ function main()
     fi
 
     if [ "`is_yunovo_server`" == "true" ];then
+
+        _echo "#### make completed successfully $curr_time ####"
+
         echo
         echo "---> make android end ."
         echo
