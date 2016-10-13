@@ -1460,6 +1460,9 @@ function handler_branch_for_apk()
 
     fi
 
+    ## apk reate refs
+    auto_git_create_branch_refs
+
     cd .. > /dev/null
 }
 
@@ -1764,6 +1767,9 @@ function handler_branch_for_app()
     if [ $app_name == "YOcRecord" ];then
         handler_branch_for_YOcRecord
     fi
+
+    ## app create refs
+    auto_git_create_branch_refs
 
     if [ $local_branch_name == "long" -o $local_branch_name == "develop_long" -o $local_branch_name == "test_long" ];then
         tag_name=L
@@ -2245,12 +2251,26 @@ function auto_update_yunovo_customs()
 	cd $nowPwd
 }
 
+function auto_git_create_branch_refs()
+{
+    local username=`whoami`
+    local remotename=origin
+    local datetime=`date +'%Y.%m.%d_%H.%M.%S'`
+    local refsname=${build_prj_name}_${build_version}_${datetime}
+
+    if [ "`git ls-remote --refs $remotename | grep $refsname`" ];then
+        _echo "--> $refsname is exist ."
+    else
+        git push $remotename HEAD:refs/build/$username/$refsname
+    fi
+}
+
 function auto_create_branch_refs()
 {
     local username=`whoami`
     local remotename=origin
     local datetime=`date +'%Y.%m.%d_%H.%M.%S'`
-    local refsname=${build_project}_${build_version}_${datetime}
+    local refsname=${build_prj_name}_${build_version}_${datetime}
     local ls_remote_p=frameworks
     local is_create_refs=
 
@@ -2409,8 +2429,9 @@ function main()
         echo "do not make sdk !"
     fi
 
-    if [ "$build_refs" == "true" ];then
+    if [ "$build_refs" == "false" ];then
 
+        ### create refs for source code
         auto_create_branch_refs
 
         __echo "auto create branch refs successful ..."
