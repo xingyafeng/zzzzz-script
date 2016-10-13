@@ -1461,9 +1461,6 @@ function handler_branch_for_apk()
 
     fi
 
-    ## apk reate refs
-    auto_git_create_branch_refs
-
     cd .. > /dev/null
 }
 
@@ -1772,9 +1769,6 @@ function handler_branch_for_app()
     if [ $app_name == "YOcRecord" ];then
         handler_branch_for_YOcRecord
     fi
-
-    ## app create refs
-    auto_git_create_branch_refs
 
     if [ $local_branch_name == "long" -o $local_branch_name == "develop_long" -o $local_branch_name == "test_long" ];then
         tag_name=L
@@ -2436,7 +2430,7 @@ function main()
         echo "do not make sdk !"
     fi
 
-    if [ "$build_refs" == "false" ];then
+    if [ "$build_refs" == "true" ];then
 
         ### create refs for source code
         auto_create_branch_refs
