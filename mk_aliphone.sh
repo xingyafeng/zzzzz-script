@@ -967,11 +967,10 @@ function main()
     auto_create_manifest
 
     ## create branch refs
-    if [ "`is_yunos_project`" == "true" -a $build_refs == "true" ];then
+    if [ $build_refs == "true" ];then
         auto_create_branch_refs
     else
-        _echo "current directory is not android !"
-        exit 1
+        _echo "build refs is $build_refs ."
     fi
 
     if [ -f imgout -a -x imgout ];then
