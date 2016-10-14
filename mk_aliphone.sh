@@ -163,6 +163,65 @@ function is_yunos_project
     esac
 }
 
+function auto_create_manifest()
+{
+    local remotename=
+    local username=`whoami`
+    local datetime=`date +'%Y.%m.%d_%H.%M.%S'`
+    local refsname=${build_project}_${build_version}_${datetime}
+    local prj_name=`get_project_name`
+
+    local manifest_path=.repo/manifests
+    local manifest_default=default.xml
+    local manifest_name=tmp.xml
+    local manifest_branch=
+
+    local projectN=${prj_name%%_*}
+    local customN=${prj_name#*_} && customN=${customN%%_*}
+    local modeN=${prj_name##*_}
+
+    if [ $customN == "kkxl" ];then
+        customN=cocolife
+    fi
+
+    manifest_branch="yunos/$projectN/$customN/$modeN"
+
+    _echo "manifest_branch = $manifest_branch"
+
+    if [ "`is_yunos_project`" == "true" ];then
+
+
+        ## create tmp.xml
+        repo manifest -r -o $manifest_path/$manifest_name
+
+        cd $manifest_path > /dev/null
+
+        remotename=`git remote`
+
+        if [ -f $manifest_name ];then
+            mv $manifest_name $manifest_default
+            if [ "`git status -s`" ];then
+                git add $manifest_default
+                git commit -m "add manifest for $refsname"
+                git push $remotename HEAD:refs/build/$username/$refsname
+            else
+                _echo "$manifest_default is not change ."
+                exit 1
+            fi
+        else
+            _echo "$manifest_name is not exist ."
+            exit 1
+        fi
+
+        cd - > /dev/null
+
+        repo init -b $manifest_branch
+    else
+        _echo "current directory is not android !"
+        exit 1
+    fi
+}
+
 function auto_create_branch_refs()
 {
     local username=`whoami`
@@ -904,6 +963,8 @@ function main()
     fi
 
     make otapackage -j${CPUCORES} -k $moreArgs 2>&1 | tee build.yunos.log
+
+    auto_create_manifest
 
     ## create branch refs
     if [ "`is_yunos_project`" == "true" -a $build_refs == "true" ];then
