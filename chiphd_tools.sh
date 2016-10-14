@@ -1165,6 +1165,53 @@ function rmoutfs()
     fi
 }
 
+###批量删除customs
+function rmcustomsfs()
+{
+    local sz_base_path=~/jobs
+    local customs_path=
+    local sz_project_name=
+
+    case `hostname` in
+
+        s4)
+            sz_project_name=`echo k86l k86ld k86l_root k86ls k86lsd k86ls_root k88c`
+            ;;
+
+        s3)
+            sz_project_name=`echo k26 k27 k86l k86ls k86m_root k86s k88c k26s k86a k86a_root k86m k86mx2 k86sm`
+            ;;
+
+        s2)
+            sz_project_name=`echo k86s k86sm k86s_root k88c k88c_21 k88c_root k88s k88s_root`
+            ;;
+
+        s1)
+            sz_project_name=`echo k26 k26s k27 k86a k86l k86ls k86m k86s k86sm k88c`
+            ;;
+
+        *)
+            _echo "it not project name"
+            ;;
+    esac
+
+    for p in $sz_project_name
+    do
+        customs_path=$sz_base_path/$p/yunovo_customs
+
+        if [ -d $customs_path ];then
+            rm -rf $customs_path
+
+            if [ $? -eq 0 ];then
+                echo "--> customs path = $customs_path, rm successful ..."
+            fi
+
+        else
+            echo "$customs_path is not exsit ..."
+        fi
+    done
+}
+
 function copy_image_to_folder()
 {
     local PROJECT_NAME=$1
