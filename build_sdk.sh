@@ -371,7 +371,7 @@ function is_yunovo_branch()
 function is_yunovo_server()
 {
     local hostN=`hostname`
-    local serverN=(s1 s2 s3 s4 happysongs ww)
+    local serverN=(s1 s2 s3 s4 happysongs ww he-All-Series.)
     local isServer=false
 
     for n in ${serverN[@]}
