@@ -302,6 +302,10 @@ function download_yunos_code()
     local customN=${prj_name#*_} && customN=${customN%%_*}
     local modeN=${prj_name##*_}
 
+    if [ $customN == "kkxl" ];then
+        customN=cocolife
+    fi
+
     branchN="yunos/$projectN/$customN/$modeN"
 
     #_echo "branchN = $branchN"
