@@ -2181,7 +2181,7 @@ function sync_jenkins_server()
     fi
 }
 
-function auto_update_yunovo_customs()
+function auto_update_yunovo_customs_old()
 {
 	local nowPwd=$(pwd)
     local project_name=($k26P $k26sP $k27P $k86aP $k86mP $k86mx2P $k86sP $k86smP $k86lP $k86lsP $k86ldP $k86lsdP $k88cP $k88c21P $k88sP)
@@ -2241,6 +2241,69 @@ function auto_update_yunovo_customs()
                 else
                     echo "$sz_yunovo_customs_link_server not found !"
                 fi
+            fi
+
+            cd - > /dev/null
+        fi
+    done
+
+	cd $nowPwd
+}
+
+function auto_update_yunovo_customs()
+{
+	local nowPwd=$(pwd)
+    local project_name=($k26P $k26sP $k27P $k86aP $k86mP $k86mx2P $k86sP $k86smP $k86lP $k86lsP $k86ldP $k86lsdP $k88cP $k88c21P $k88sP)
+    local sz_project_name=`echo k26 k26s k27 k86a k86m k86mx2 k86s k86sm k86l k86ls k86ld k88c k88c_21 k88s k26_root k26s_root k27_root k86a_root k86m_root k86mx2_root k86s_root k86sm_root k86l_root k86ls_root k86ld_root k86lds_root k88c_root k88c_21_root k88s_root`
+    local sz_base_path=~/jobs
+    local jenkins_username=""
+    local hostN=`hostname`
+
+    if [ $hostN == "happysongs" ];then
+        jenkins_username=xingyafeng
+    elif [ $hostN == "s1" -o $hostN == "s2" -o $hostN == "s3" -o $hostN == "s4" ];then
+        jenkins_username=jenkins
+    fi
+
+    for sz_custom in $sz_project_name
+    do
+        if [ "`get_project_real_name`" == "$sz_custom" ];then
+            local sz_yunovo_customs_path=$sz_base_path/$sz_custom/yunovo_customs
+            local sz_yunovo_customs_link_server=`echo ssh://${jenkins_username}@gerrit.y:29419/xyf/${sz_custom}/yunovo_customs`
+            local sz_yunovo_path=$sz_base_path/$sz_custom
+        else
+            continue
+        fi
+
+        if [ -d $sz_yunovo_customs_path/.git ];then
+
+            cd $sz_yunovo_customs_path > /dev/null
+            git pull && echo "-------- $sz_custom yunovo_customs update successful ..."
+            echo
+
+            cd - > /dev/null
+        else
+            if [ ! -d $sz_yunovo_path ];then
+                mkdir -p $sz_yunovo_path
+            fi
+
+            for p in ${project_name[@]}
+            do
+                if [ $sz_custom == "${p}_root" ];then
+                    sz_custom=`get_project_name`
+                    sz_yunovo_customs_link_server=`echo ssh://${jenkins_username}@gerrit.y:29419/xyf/${sz_custom}/yunovo_customs`
+                fi
+            done
+
+            cd $sz_yunovo_path > /dev/null
+
+            if [ "$sz_yunovo_customs_link_server" ];then
+                _echo "custom link = $sz_yunovo_customs_link_server"
+
+                git clone $sz_yunovo_customs_link_server
+                echo
+            else
+                echo "$sz_yunovo_customs_link_server not found !"
             fi
 
             cd - > /dev/null
