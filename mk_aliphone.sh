@@ -906,7 +906,7 @@ function main()
     make otapackage -j${CPUCORES} -k $moreArgs 2>&1 | tee build.yunos.log
 
     ## create branch refs
-    if [ "`is_yunos_project`" == "true" ];then
+    if [ "`is_yunos_project`" == "true" -a $build_refs == "true" ];then
         auto_create_branch_refs
     else
         _echo "current directory is not android !"
