@@ -94,6 +94,26 @@ test-let()
 	echo $result
 	echo $result_expr
 
+    echo "--------------------------expr make compile whole time------------------------------"
+    startT=`date +'%Y-%m-%d %H:%M:%S'`
+    #sleep 4
+    endT=`date +'%Y-%m-%d %H:%M:%S'`
+    hh=
+    mm=
+    ss=
+
+    #userT=$(($(date +%s -d "$endT") - $(date +%s -d "$startT")))
+    userT=$(($(date +%s -d '2010-01-01 11:11:11') - $(date +%s -d '2010-01-01')))
+
+    echo $userT
+
+    hh=$((userT/3600))
+    mm=$(((userT - hh*3600) / 60))
+    ss=$((userT - hh*3600 - mm*60))
+    echo "hh = $hh"
+    echo "mm = $mm"
+    echo "ss = $ss"
+
 	echo "----------------------------bc----------------------------------"
 	no=54
 	echo "4 * 0.56" | bc
