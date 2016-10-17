@@ -540,6 +540,25 @@ function get_debug_info()
     done
 }
 
+function print_make_completed_time()
+{
+    local startT=$1
+    local endT=`date +'%Y-%m-%d %H:%M:%S'`
+    local useT=
+
+    local hh=
+    local mm=
+    local ss=
+
+    useT=$(($(date +%s -d "$endT") - $(date +%s -d "$startT")))
+
+    hh=$((useT / 3600))
+    mm=$(((useT - hh * 3600) / 60))
+    ss=$((useT - hh * 3600 - mm * 60))
+
+    echo "#### make completed successfully ($hh:$mm:$ss (hh:mm:ss)) ###"
+}
+
 ### handler vairable for jenkins
 function handler_vairable()
 {
@@ -2402,7 +2421,7 @@ function source_init()
 
 function main()
 {
-    local curr_time=`date +'%Y-%m-%d.%H-%M-%S'`
+    local start_curr_time=`date +'%Y-%m-%d %H:%M:%S'`
 
     if [ "`is_yunovo_project`" == "true" ];then
         :
@@ -2513,7 +2532,7 @@ function main()
 
     if [ "`is_yunovo_server`" == "true" ];then
 
-        _echo "#### make completed successfully $curr_time ####"
+        print_make_completed_time "$start_curr_time"
 
         echo
         echo "---> make android end ."
