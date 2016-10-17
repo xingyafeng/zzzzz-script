@@ -896,9 +896,30 @@ echo "Flag[YUNOS_SUPPORT_CTA]     for cta feature:           [$YUNOS_SUPPORT_CTA
 echo "OPTIONS:"
 echo "$OPTIONS"
 
+function print_make_completed_time()
+{
+    local startT=$1
+    local endT=`date +'%Y-%m-%d %H:%M:%S'`
+    local useT=
+
+    local hh=
+    local mm=
+    local ss=
+
+    useT=$(($(date +%s -d "$endT") - $(date +%s -d "$startT")))
+
+    hh=$((useT / 3600))
+    mm=$(((useT - hh * 3600) / 60))
+    ss=$((useT - hh * 3600 - mm * 60))
+
+    echo "#### make completed successfully ($hh:$mm:$ss (hh:mm:ss)) ###"
+}
+
 function main()
 {
     export DATE=`date +%Y-%m-%d-%H%M`
+    local start_curr_time=`date +'%Y-%m-%d %H:%M:%S'`
+    local end_curr_time=
     #get platform by project name
     echo "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&"
     echo "WEB_RUNTIME_ENABLE $WEB_RUNTIME_ENABLE"
@@ -984,7 +1005,15 @@ function main()
         rsync_version_to_f1_server
     fi
 
-    __echo "make android end ..."
+    if [ "`is_yunos_project`" == "true" ];then
+
+        print_make_completed_time "$start_curr_time"
+
+        __echo "make android end ..."
+    else
+        _echo "current directory is not android !"
+        exit 1
+    fi
 }
 
 main
