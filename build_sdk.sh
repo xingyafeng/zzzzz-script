@@ -1469,7 +1469,15 @@ function handler_branch_for_apk()
 
         ## 若不存在,则默认master分支
         else
-            git checkout -b $master_branch
+            if [ "`git branch | grep master`" ];then
+                git checkout master
+            else
+                if [ "`git branch -r | grep master`" ];then
+                    git checkout -b $master_branch
+                else
+                    :
+                fi
+            fi
 
             if git pull;then
                 _echo "---- pull $master_branch $apk_name successful ..."
@@ -1764,6 +1772,18 @@ function handler_branch_for_app()
         ## 若不存在，则默认
         else
             if [ $first_tag_version == "9" -a $second_tag_version == "99"  ];then
+
+                if [ "`git branch | grep master`" ];then
+                    git checkout master
+                    _echo "---- checkout master successful ..."
+                else
+                    if [ "`git branch -r | grep master`" ];then
+                        git checkout -b $master_branch
+                    else
+                        :
+                    fi
+                fi
+
                 ## update apk
                 if git pull;then
                     _echo "---- pull $local_branch_name $app_name successful ..."
