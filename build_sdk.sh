@@ -1519,6 +1519,19 @@ function handler_system_app()
     fi
 }
 
+function handler_update_source_code()
+{
+    local app_name=$1
+    local branch_name=$2
+
+    if git pull;then
+        _echo "---- pull $branch_name $app_name successful ..."
+    else
+        _echo "---- pull $branch_name $app_name fail ... "
+        return 1
+    fi
+}
+
 function handler_branch_for_YOcLauncherRes()
 {
     local sz_branch_name=
@@ -1565,24 +1578,8 @@ function handler_branch_for_YOcLauncherRes()
 
     _echo "sz_branch_name = $sz_branch_name"
 
-    ##检查远程仓库是否存在
-    if [ "`git branch -r | grep $sz_branch_name`" ];then
-
-        ##检查本地是否存在
-        if [ "`git branch | grep $sz_branch_name`" ];then
-
-            ## 检查当前是否存在
-            if [ "`git branch | grep \* | cut -d ' ' -f2`" != $sz_branch_name ];then
-                git checkout $sz_branch_name
-            else
-                _echo "curr branch name: $sz_branch_name ..."
-            fi
-        else
-            git checkout -b $sz_branch_name origin/$sz_branch_name
-        fi
-    else
-        git checkout master
-    fi
+    handler_checkout_branch $sz_branch_name
+    handler_update_source_code YOcLauncherRes $sz_branch_name
 }
 
 function handler_checkout_branch()
@@ -1628,6 +1625,7 @@ function handler_branch_for_YOcRecord()
     fi
 
     handler_checkout_branch $YOcRecord_branch
+    handler_update_source_code YOcRecord $YOcRecord_branch
 }
 
 function handler_branch_for_app()
