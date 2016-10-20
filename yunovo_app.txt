@@ -26,3 +26,4 @@ TxzVoice
 GoogleVoice
 CarScreenSaver
 AiosAdapterVoice
+YOcVoiceAssistant
