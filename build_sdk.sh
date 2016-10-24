@@ -2383,8 +2383,7 @@ function auto_create_branch_refs()
 {
     local username=`whoami`
     local remotename=origin
-    local datetime=`date +'%Y.%m.%d_%H.%M.%S'`
-    local refsname=${build_prj_name}_${build_version}_${datetime}
+    local refsname=${build_prj_name}_${build_version}_${time_for_refs}
     local ls_remote_p=frameworks
     local is_create_refs=
 
