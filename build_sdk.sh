@@ -1630,7 +1630,7 @@ function handler_branch_for_YOcRecord()
 {
     local YOcRecord_branch=
 
-    if [ $build_prj_name == "k26s_LD-A107C" ];then
+    if [ $build_prj_name == "k26s_LD-A107C" -o $build_prj_name == "k26s_LD-HS810A" ];then
         YOcRecord_branch=yunovo/k26s/lingdu/common
     elif [ $build_prj_name == "k27l_HBS-T2" ];then
         YOcRecord_branch=yunovo/k27l/hbs/common
