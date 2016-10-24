@@ -71,6 +71,7 @@ flag_jenkins_tag=
 hw_versiom=H3.1
 debug_path=~/debug
 cur_time=`date +%m%d_%H%M`
+time_for_refs=`date +'%Y.%m.%d_%H.%M.%S'`
 zz_script_path=/home/jenkins/workspace/script/zzzzz-script
 cpu_num=`cat /proc/cpuinfo  | egrep 'processor' | wc -l`
 project_link="init -u ssh://jenkins@gerrit.y:29419/manifest"
@@ -135,7 +136,12 @@ function show_vip
 function __msg()
 {
     local pwd=`pwd`
-    echo "currect dir is : $pwd"
+
+    if [ "$1" ];then
+        echo "currect dir is : $pwd $1"
+    else
+        echo "currect dir is : $pwd"
+    fi
 }
 
 function _echo()
@@ -1590,8 +1596,10 @@ function handler_branch_for_YOcLauncherRes()
 
     _echo "sz_branch_name = $sz_branch_name"
 
-    handler_checkout_branch $sz_branch_name
-    handler_update_source_code YOcLauncherRes $sz_branch_name
+    if [ "$sz_branch_name" ];then
+        handler_checkout_branch $sz_branch_name
+        handler_update_source_code YOcLauncherRes $sz_branch_name
+    fi
 }
 
 function handler_checkout_branch()
@@ -1599,13 +1607,13 @@ function handler_checkout_branch()
     local branch_name=$1
 
     ##检查远程仓库是否存在
-    if [ "`git branch -r | grep $branch_name`" ];then
+    if [ "`git branch -r | grep \"$branch_name\"`" ];then
 
         ##检查本地是否存在
-        if [ "`git branch | grep $branch_name`" ];then
+        if [ "`git branch | grep \"$branch_name\"`" ];then
 
             ## 检查当前是否存在
-            if [ "`git branch | grep \* | cut -d ' ' -f2`" != $branch_name ];then
+            if [ "`git branch | grep \* | cut -d ' ' -f2`" != "$branch_name" ];then
                 git checkout $branch_name
             else
                 _echo "curr branch name: $branch_name ..."
@@ -1627,17 +1635,19 @@ function handler_branch_for_YOcRecord()
     elif [ $build_prj_name == "k27l_HBS-T2" ];then
         YOcRecord_branch=yunovo/k27l/hbs/common
     else
-        if [ "`git branch -r | grep test`" -o "`git branch -r | grep develop`" ];then
+        if [ "`git branch -r | grep 'test'`" -o "`git branch -r | grep develop`" ];then
             :
         else
             git checkout master
         fi
 
-        _echo "$build_prj_name is not k26s_LD-A107C, do not handler it."
+        _echo "checkout master branch on YOcRecord"
     fi
 
-    handler_checkout_branch $YOcRecord_branch
-    handler_update_source_code YOcRecord $YOcRecord_branch
+    if [ "$YOcRecord_branch" ];then
+        handler_checkout_branch $YOcRecord_branch
+        handler_update_source_code YOcRecord $YOcRecord_branch
+    fi
 }
 
 function handler_branch_for_app()
@@ -1822,6 +1832,8 @@ function handler_branch_for_app()
         ### 处理不同分支tag
         handler_tag_branch $local_branch_name $tag_name $app_name
     fi
+
+    auto_git_create_branch_refs
 
     cd .. > /dev/null
 }
@@ -2358,8 +2370,7 @@ function auto_git_create_branch_refs()
 {
     local username=`whoami`
     local remotename=origin
-    local datetime=`date +'%Y.%m.%d_%H.%M.%S'`
-    local refsname=${build_prj_name}_${build_version}_${datetime}
+    local refsname=${build_prj_name}_${build_version}_${time_for_refs}
 
     if [ "`git ls-remote --refs $remotename | grep $refsname`" ];then
         _echo "--> $refsname is exist ."
@@ -2534,7 +2545,7 @@ function main()
         echo "do not make sdk !"
     fi
 
-    if [ "$build_refs" == "true" ];then
+    if [ "$build_refs" == "false" ];then
 
         ### create refs for source code
         auto_create_branch_refs
