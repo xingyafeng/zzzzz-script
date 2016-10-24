@@ -1494,6 +1494,8 @@ function handler_branch_for_apk()
 
     fi
 
+    auto_git_create_branch_refs
+
     cd .. > /dev/null
 }
 
