@@ -33,6 +33,7 @@ mx1_anytek_m960_p=mx1_anytek_m960
 mx2_teyes_t8_p=mx2_teyes_t8
 
 k88c_lufeng_f100_p=k88c_lufeng_f100
+k88c_cocolife_v6_p=k88c_cocolife_v6
 
 ################
 
@@ -152,7 +153,7 @@ function is_yunos_project
 
             ;;
 
-        $k88c_lufeng_f100_p)
+        $k88c_lufeng_f100_p | "${k88c_cocolife_v6_p}-k")
             echo true
 
             ;;
