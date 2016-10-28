@@ -178,6 +178,38 @@ function get_project_name()
     fi
 }
 
+function get_system_app_type()
+{
+    local zzz_path=~/workspace/script/zzzzz-script
+    local app_path=$zzz_path/yunovo_app.txt
+    local apk_path=$zzz_path/yunovo_apk.txt
+    local allapps_path=$zzz_path/fs/allapp.txt
+    local findfs=out/target/product/aeon6735_65c_s_l1/system/
+
+    find $findfs -name "*.apk" | grep app | sed 's/.*app\/\([^\/]*\).*/\1/g' | sort > $allapps_path
+
+    echo
+    show_vir "-----------------------------------apk"
+    while read p;do
+        while read apk;do
+            if [ $p == $apk ];then
+                show_vip "-- $apk"
+            fi
+        done < $apk_path
+    done < $allapps_path
+
+    echo
+    show_vir "----------------------------------app"
+
+    while read p;do
+        while read app;do
+            if [ $p == $app ];then
+                show_vip "---- $app"
+            fi
+        done < $app_path
+    done < $allapps_path
+}
+
 function remove_space_for_vairable()
 {
     ## 去掉空格后的变量
