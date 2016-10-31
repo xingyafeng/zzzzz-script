@@ -1628,6 +1628,26 @@ function handler_checkout_branch()
     fi
 }
 
+function handler_branch_for_YOcMediaFolder()
+{
+    local YOcMediaFolder_branch=
+
+    if [ $build_prj_name == "k26s_LD-A107C" ];then
+        YOcMediaFolder_branch=yunovo/k26s/lingdu/common
+    else
+         if [ "`git branch -r | grep 'test'`" -o "`git branch -r | grep develop`" ];then
+            :
+        else
+            git checkout master
+        fi
+    fi
+
+    if [ "$YOcMediaFolder_branch" ];then
+        handler_checkout_branch $YOcMediaFolder_branch
+        handler_update_source_code YOcMediaFolder $YOcMediaFolder_branch
+    fi
+}
+
 function handler_branch_for_YOcRecord()
 {
     local YOcRecord_branch=
@@ -1821,6 +1841,10 @@ function handler_branch_for_app()
     ## handler k26s_LD-A107C branch
     if [ $app_name == "YOcRecord" ];then
         handler_branch_for_YOcRecord
+    fi
+
+    if [ $app_name == "YOcMediaFolder" ];then
+        handler_branch_for_YOcMediaFolder
     fi
 
     if [ $local_branch_name == "long" -o $local_branch_name == "develop_long" -o $local_branch_name == "test_long" ];then
