@@ -15,6 +15,8 @@ k86lsP=k86ls
 k88cP=k88c
 k86ldP=k86ld
 
+k88c_jm_cm01_p=k88c_jm_cm01
+
 ## ota from to version
 ota_from_version=$1
 ota_to_version=$2
@@ -116,6 +118,10 @@ function is_yunovo_project
 
             ;;
         $k88cP)
+            echo true
+
+            ;;
+        $k88c_jm_cm01_p)
             echo true
 
             ;;
