@@ -63,7 +63,7 @@ fota_version=
 
 ### project name for yunovo
 mx1_teyes_t7_p=mx1_teyes_t7
-k88c_jm_cm01_p=k88c_JM_CM01
+k88c_jm_cm01_p=k88c_jm_cm01
 
 ################################ system env
 DEVICE=
