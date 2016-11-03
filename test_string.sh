@@ -1,5 +1,12 @@
 #!/bin/bash
 
+function test_read()
+{
+    read -p "Enter your name : " name
+
+    echo $name
+}
+
 function is_root_yunovo_project()
 {
     local thisP=$(pwd) && thisP=${thisP%/*} && thisP=${thisP##*/}

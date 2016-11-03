@@ -1,5 +1,48 @@
 #!/bin/bash
 
+TARGET_BUILD_VARIANT_LIST=("eng" "user" "userdebug")
+
+#function declaring
+declare -a _inlist
+function select_choice()
+{
+    _target_arg=$1
+    _arg_list=(${_inlist[@]})
+    _outc=""
+
+    select _c in ${_arg_list[@]}
+    do
+        if [ -n "$_c" ]; then
+            _outc=$_c
+            break
+        else
+            for _i in ${_arg_list[@]}
+            do
+                _t=`echo $_i | grep -E "^$REPLY"`
+                if [ -n "$_t" ]; then
+                    _outc=$_i
+                    break
+                fi
+            done
+
+            if [ -n "$_outc" ]; then
+                break
+            fi
+        fi
+    done
+
+    if [ -n "$_outc" ]; then
+        eval "$_target_arg=$_outc"
+        export "$_target_arg=$_outc"
+    fi
+}
+
+function main()
+{
+    _inlist=(${TARGET_BUILD_VARIANT_LIST[@]})
+    select_choice TARGET_BUILD_VARIANT
+}
+
 #测试 pwd
 function test-pwd
 {
