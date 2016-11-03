@@ -193,7 +193,7 @@ function get_system_app_type()
     while read p;do
         while read apk;do
             if [ $p == $apk ];then
-                show_vip "-- $apk"
+                show_vip "$apk"
             fi
         done < $apk_path
     done < $allapps_path
@@ -204,7 +204,7 @@ function get_system_app_type()
     while read p;do
         while read app;do
             if [ $p == $app ];then
-                show_vip "---- $app"
+                show_vip "$app"
             fi
         done < $app_path
     done < $allapps_path
