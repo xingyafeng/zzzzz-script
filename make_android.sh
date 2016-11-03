@@ -193,7 +193,7 @@ function is_yunovo_project
 
             ;;
 
-        $k86l_xianzhi_t80c)
+        $k86l_xianzhi_t80c_p)
             echo true
 
             ;;
