@@ -1567,7 +1567,7 @@ function handler_branch_for_YOcLauncherRes()
             sz_branch_name=S6_HBS_V10
 
             ;;
-        k26s_KPS-ZX | k86ls_LS6-ZX | k86ls_S6-ZX | k88s_YT-YBT686 | k27s6_k27-ZX | k88s_S6-ZX)
+        k86ls_LS6-ZX | k86ls_S6-ZX | k88s_YT-YBT686 | k27s6_k27-ZX | k88s_S6-ZX | k26s_S6-ZX)
             sz_branch_name=S6_NXOS_V10
 
             ;;
@@ -1575,7 +1575,7 @@ function handler_branch_for_YOcLauncherRes()
             sz_branch_name=S7_LHZ_V20
 
             ;;
-        k27l_KPS-ZX | k86ls_K86-ZX | k86ls_LHZ-KPS | k86mx2_K86-ZX)
+        k27l_KPS-ZX | k86ls_K86-ZX | k86ls_LHZ-KPS | k86mx2_K86-ZX | k26s_S7-ZX)
             sz_branch_name=S7_NXOS_V10
 
             ;;
