@@ -31,7 +31,6 @@ function auto_create_android_mk()
     local curr_apk_name=$1
 
     local jni_lib="LOCAL_PREBUILT_JNI_LIBS := \\"
-    local privileged_module="LOCAL_PRIVILEGED_MODULE := true"
     local build_prebuild="include \$(BUILD_PREBUILT)"
 
     if [ $# -eq 1 ];then
@@ -71,7 +70,6 @@ EOF
     elif [ "`unzip -l ${curr_apk_name}.apk | awk '$(NF) ~ /armeabi\/.*.so$/ {print $(NF)}'`" ];then
         unzip -l ${curr_apk_name}.apk | awk '$(NF) ~ /armeabi\/.*.so$/ {print $(NF)}' > $td/${armeabi_so}.txt
     else
-        echo $privileged_module >> ./$android_mk_file_name
         echo $build_prebuild >> ./$android_mk_file_name
     fi
 
@@ -83,7 +81,6 @@ EOF
         done < $td/${armeabi_v7a_so}.txt
 
         echo >> ./$android_mk_file_name
-        echo $privileged_module >> ./$android_mk_file_name
         echo $build_prebuild >> ./$android_mk_file_name
 
         rm $td/${armeabi_v7a_so}.txt
@@ -97,7 +94,6 @@ EOF
         done < $td/${armeabi_so}.txt
 
         echo >> ./$android_mk_file_name
-        echo $privileged_module >> ./$android_mk_file_name
         echo $build_prebuild >> ./$android_mk_file_name
 
         rm $td/${armeabi_so}.txt
