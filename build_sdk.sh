@@ -565,6 +565,43 @@ function print_make_completed_time()
     echo "#### make completed successfully ($hh:$mm:$ss (hh:mm:ss)) ###"
 }
 
+function print_system_app_and_apk()
+{
+    local zzz_path=~/workspace/script/zzzzz-script
+    local app_path=$zzz_path/yunovo_app.txt
+    local apk_path=$zzz_path/yunovo_apk.txt
+    local allapps_path=$zzz_path/fs/allapp.txt
+    local findfs=out/target/product/$DEVICE_PROJECT/system/
+
+    if [ "`is_yunovo_project`" ];then
+        find $findfs -name "*.apk" | grep app | sed 's/.*app\/\([^\/]*\).*/\1/g' | sort > $allapps_path
+    else
+        _echo "current directory is not android !"
+        return 1
+    fi
+
+    echo "-----------------------"
+    while read p;do
+        while read apk;do
+            if [ $p == $apk ];then
+                echo "$apk"
+            fi
+        done < $apk_path
+    done < $allapps_path
+
+    echo
+
+    while read p;do
+        while read app;do
+            if [ $p == $app ];then
+                echo "$app"
+            fi
+        done < $app_path
+    done < $allapps_path
+    echo "-----------------------"
+    echo
+}
+
 ### handler vairable for jenkins
 function handler_vairable()
 {
@@ -2574,6 +2611,7 @@ function main()
 
         ### create refs for source code
         auto_create_branch_refs
+        print_system_app_and_apk
 
         __echo "auto create branch refs successful ..."
     else
