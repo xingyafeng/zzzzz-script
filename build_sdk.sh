@@ -2265,7 +2265,7 @@ function sync_jenkins_server()
 
     if [ "`is_yunovo_server`" == "true" ];then
         if [ $build_test == "true" ];then
-            rsync -av $firmware_path/ $jenkins_server:$share_path/Test
+            rsync -av $firmware_path/ $jenkins_server:$share_path/happysongs
         elif [ "$build_branch" == $branch_for_test ];then
             if [ "`is_root_yunovo_project`" == "true" -a "$build_type" == "$root_version" ];then
                 rsync -av $firmware_path/ $jenkins_server:$share_path/${branch_for_test}_root
