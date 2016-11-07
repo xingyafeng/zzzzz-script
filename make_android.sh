@@ -989,14 +989,14 @@ function down_load_yunovo_source_code()
     local customN=${prj_name#*_} && customN=${customN%%_*}
     local modeN=${prj_name##*_}
 
-    branchN="refs/build/xingyafeng/$projectN/$customN/$modeN"
+    branchN="$projectN/$customN/$modeN"
 
     _echo "branchN = $branchN"
 
 	if [ ! -d .repo ];then
 		if [ "$project_link" -a "$branchN" ];then
             repo $project_link -b ${branchN}
-            repo sync -j${cpu_num}
+            repo sync -j${cpu_num} -c -d --no-tags
         fi
 
         ## 第一次下载完成后，需要初始化环境变量
@@ -1012,7 +1012,7 @@ function down_load_yunovo_source_code()
             recover_standard_android_project
 
             ## update android source code for yunovo project ...
-            if repo sync -c -j${cpu_num};then
+            if repo sync -j${cpu_num} -c -d --no-tags;then
                 __echo "repo sync -c successful ..."
             fi
         fi
