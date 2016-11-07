@@ -1087,7 +1087,7 @@ function make_yunovo_android()
 
 function sync_image_to_server()
 {
-    local firmware_path=~/debug
+    local firmware_path=~/.jenkins_make_version
     local share_path=/public/jenkins/jenkins_share_20T
     local jenkins_server=jenkins@f1.y
 
@@ -1101,6 +1101,7 @@ function sync_image_to_server()
     fi
 
     if [ "`is_yunovo_server`" == "true" ];then
+
         if [ $build_test == "true" ];then
             rsync -av $firmware_path/ $jenkins_server:$share_path/Test
         elif [ "$build_branch" == $branch_for_test ];then
