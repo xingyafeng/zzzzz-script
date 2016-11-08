@@ -382,7 +382,7 @@ function download_yunos_code()
 ## 复制版本到阿里版本下 ~/yunos
 function copy_image_to_folder()
 {
-    local firmware_path=~/yunos
+    local firmware_path=~/.yunos
     local server_name=`hostname`
     local default_version_name=release-aeon6735_65c_s_l1
     local BASE_PATH=$firmware_path/$t_project_name/${t_project_name}_${t_custom_verion}/$build_version
@@ -408,7 +408,7 @@ function copy_image_to_folder()
 ## 同步阿里版本到f1服务器上
 function rsync_version_to_f1_server()
 {
-    local firmware_path=~/yunos
+    local firmware_path=~/.yunos
     local share_path=/public/jenkins/jenkins_share_20T
     local jenkins_f1_server=jenkins@f1.y
 
