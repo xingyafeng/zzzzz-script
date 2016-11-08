@@ -63,9 +63,10 @@ fota_version=
 
 ### project name for yunovo
 mx1_teyes_t7_p=mx1_teyes_t7
+mx1_xianzhi_t80c_p=mx1_xianzhi_t80c
+
 k88c_jm_cm01_p=k88c_jm_cm01
 k88c_bt_bt188_p=k88c_bt_bt188
-k86l_xianzhi_t80c_p=k86l_xianzhi_t80c
 
 ################################ system env
 DEVICE=
@@ -193,7 +194,7 @@ function is_yunovo_project
 
             ;;
 
-        $k86l_xianzhi_t80c_p)
+        $mx1_xianzhi_t80c_p)
             echo true
 
             ;;
