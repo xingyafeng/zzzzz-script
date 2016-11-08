@@ -1104,14 +1104,17 @@ function sync_image_to_server()
     if [ "`is_yunovo_server`" == "true" ];then
 
         if [ $build_test == "true" ];then
-            rsync -av $firmware_path/ $jenkins_server:$share_path/Test
+
+            rsync -av $firmware_path/ $jenkins_server:$share_path/happysongs
         elif [ "$build_branch" == $branch_for_test ];then
+
             if [ "$build_type" == "$root_version" ];then
                 rsync -av $firmware_path/ $jenkins_server:$share_path/${branch_for_test}_root
             else
                 rsync -av $firmware_path/ $jenkins_server:$share_path/$branch_for_test
             fi
         elif [ "$build_branch" == $branch_for_develop ];then
+
             if [ "$build_type" == "$root_version" ];then
                 rsync -av $firmware_path/ $jenkins_server:$share_path/${branch_for_develop}_root
             else
