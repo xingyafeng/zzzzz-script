@@ -693,7 +693,7 @@ function copy_out_image()
 
     ### k86m_H520/S1
 	#local BASE_PATH=/home/work5/public/k86A_Test/${prj_name}/${ver_name}
-    local firmware_path=~/debug
+    local firmware_path=~/.jenkins_make_version
 	local BASE_PATH=$firmware_path/${project_name}/${prj_name}/${ver_name}
 	local DEST_PATH=$BASE_PATH/$system_version
 	local OTA_PATH=$BASE_PATH/${system_version}_full_and_ota
@@ -1087,7 +1087,7 @@ function make_yunovo_android()
 
 function sync_image_to_server()
 {
-    local firmware_path=~/jenkins_make_version
+    local firmware_path=~/.jenkins_make_version
     local share_path=/public/jenkins/jenkins_share_20T
     local jenkins_server=jenkins@f1.y
 
