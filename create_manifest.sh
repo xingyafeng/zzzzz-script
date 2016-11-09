@@ -8,7 +8,7 @@ function auto_create_manifest_xml()
 
     local main_xml=tools/main.xml
     local default_xml=fs/default.xml
-    local string="    <project name=\"yunovo_packages/CarEngine\" path=\"yunovo_packages/apps/CarEngine\" />"
+    local string="    <project name=\"yunovo_packages/CarEngine\" path=\"yunovo/apps/CarEngine\" />"
     local project_end="</manifest>"
 
     if [ "$count" ];then
