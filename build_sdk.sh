@@ -1604,7 +1604,7 @@ function handler_branch_for_YOcLauncherRes()
             sz_branch_name=S6_HBS_V10
 
             ;;
-        k86ls_LS6-ZX | k86ls_S6-ZX | k88s_YT-YBT686 | k27s6_k27-ZX | k88s_S6-ZX | k26s_S6-ZX)
+        k86ls_LS6-ZX | k86ls_S6-ZX | k88s_YT-YBT686 | k27s6_k27-ZX | k88s_S6-ZX | k26s_S6-ZX | k26s_K26-ZX)
             sz_branch_name=S6_NXOS_V10
 
             ;;
