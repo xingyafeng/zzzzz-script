@@ -413,7 +413,7 @@ function rsync_version_to_f1_server()
     local jenkins_f1_server=jenkins@f1.y
 
     if [ -d $firmware_path ];then
-        rsync -av $firmware_path $jenkins_f1_server:$share_path
+        rsync -av $firmware_path/ $jenkins_f1_server:$share_path/yunos
     fi
 
     if [ -d $firmware_path  ];then
