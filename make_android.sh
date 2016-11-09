@@ -327,7 +327,7 @@ function auto_create_manifest()
     local customN=${prj_name#*_} && customN=${customN%%_*}
     local modeN=${prj_name##*_}
 
-    manifest_branch="refs/build/xingyafeng/$projectN/$customN/$modeN"
+    manifest_branch="$projectN/$customN/$modeN"
 
     _echo "manifest_branch = $manifest_branch"
 
