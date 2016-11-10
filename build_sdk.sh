@@ -571,10 +571,15 @@ function print_system_app_and_apk()
     local app_path=$zzz_path/yunovo_app.txt
     local apk_path=$zzz_path/yunovo_apk.txt
     local allapps_path=$zzz_path/fs/allapp.txt
+    local allapps_tmp=$zzz_path/fs/apps_tmp.txt
     local findfs=out/target/product/$DEVICE_PROJECT/system/
 
     if [ "`is_yunovo_project`" ];then
-        find $findfs -name "*.apk" | grep app | sed 's/.*app\/\([^\/]*\).*/\1/g' | sort > $allapps_path
+        find $findfs -name "*.apk" | grep app | sed 's/.*app\/\([^\/]*\).*/\1/g' | sort > $allapps_tmp
+        find $findfs -name "*.apk" | grep preinstall | sed 's/.*all\/\([^.]*\).*/\1/g' >> $allapps_tmp
+
+        cat $allapps_tmp | sort > $allapps_path
+
     else
         _echo "current directory is not android !"
         return 1
