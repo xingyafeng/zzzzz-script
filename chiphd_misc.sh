@@ -180,11 +180,15 @@ function get_project_name()
 
 function get_system_app_type()
 {
+    if [ "$OUT" ];then
+        DEVICE_PROJECT=`get_build_var TARGET_DEVICE`
+    fi
+
     local zzz_path=~/workspace/script/zzzzz-script
     local app_path=$zzz_path/yunovo_app.txt
     local apk_path=$zzz_path/yunovo_apk.txt
     local allapps_path=$zzz_path/fs/allapp.txt
-    local findfs=out/target/product/aeon6735_65c_s_l1/system/
+    local findfs=out/target/product/${DEVICE_PROJECT}/system/
 
     find $findfs -name "*.apk" | grep app | sed 's/.*app\/\([^\/]*\).*/\1/g' | sort > $allapps_path
 
