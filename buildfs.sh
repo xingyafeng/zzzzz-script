@@ -343,7 +343,7 @@ function is_yunovo_project
             ;;
 
         *)
-            echo false
+            echo true
 
             ;;
     esac
