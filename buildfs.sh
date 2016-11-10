@@ -361,32 +361,11 @@ function get_project_name()
     fi
 }
 
-### 是否为master test develop分支
-function is_yunovo_branch()
-{
-    local branch_name=$1
-    local branchN=(master develop test)
-
-    if [ $# -eq 1 ];then
-        :
-    else
-        _echo "$# is error, please check args !"
-        return 1
-    fi
-
-    for b in ${branchN[@]}
-    do
-        if [ $b == $branch_name ];then
-            echo true
-        fi
-    done
-}
-
 ### 是否为编译服务器
 function is_yunovo_server()
 {
     local hostN=`hostname`
-    local serverN=(s1 s2 s3 s4 happysongs ww he-All-Series.)
+    local serverN=(s1 s2 s3 s4 happysongs)
     local isServer=false
 
     for n in ${serverN[@]}
@@ -398,8 +377,7 @@ function is_yunovo_server()
     done
 
     if [ $isServer == "false" ];then
-        show_vir "Do not compile on yunovo server !"
-        return 1
+        echo true
     fi
 }
 
