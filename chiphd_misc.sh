@@ -187,10 +187,17 @@ function get_system_app_type()
     local zzz_path=~/workspace/script/zzzzz-script
     local app_path=$zzz_path/yunovo_app.txt
     local apk_path=$zzz_path/yunovo_apk.txt
-    local allapps_path=$zzz_path/fs/allapp.txt
+    local allappsfs=$zzz_path/fs/allapp.txt
+    local allappsfs_tmp=$zzz_path/fs/apps_tmp.txt
     local findfs=out/target/product/${DEVICE_PROJECT}/system/
 
-    find $findfs -name "*.apk" | grep app | sed 's/.*app\/\([^\/]*\).*/\1/g' | sort > $allapps_path
+    find $findfs -name "*.apk" | grep app | sed 's/.*app\/\([^\/]*\).*/\1/g' | sort > $allappsfs_tmp
+    find $findfs -name "*.apk" | grep preinstall | sed 's/.*all\/\([^.]*\).*/\1/g' >> $allappsfs_tmp
+
+    if [ -f $allappsfs_tmp ];then
+
+        cat $allappsfs_tmp | sort > $allappsfs
+    fi
 
     echo
     show_vir "-----------------------------------apk"
@@ -200,7 +207,7 @@ function get_system_app_type()
                 show_vip "$apk"
             fi
         done < $apk_path
-    done < $allapps_path
+    done < $allappsfs
 
     echo
     show_vir "----------------------------------app"
@@ -211,7 +218,7 @@ function get_system_app_type()
                 show_vip "$app"
             fi
         done < $app_path
-    done < $allapps_path
+    done < $allappsfs
 }
 
 function remove_space_for_vairable()
