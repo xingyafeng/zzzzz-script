@@ -2070,6 +2070,7 @@ function down_load_app_for_yunovo()
         mkdir -p $ant_app_path
     fi
 
+if false;then
     cd $ant_app_path > /dev/null
 
     ## clone ant app
@@ -2081,6 +2082,7 @@ function down_load_app_for_yunovo()
     _echo "-------- clone ant app end !"
 
     cd $OLDP > /dev/null
+fi
     cd $android_app_path > /dev/null
 
     ## clone make app
@@ -2575,8 +2577,8 @@ function main()
     if [ $flag_clone_app -eq 1 ];then
         down_load_apk_for_yunovo
         down_load_app_for_yunovo
-        ant_app
-        auto_copy_app_to_android
+        #ant_app
+        #auto_copy_app_to_android
     else
         echo "do not clone app !"
     fi
