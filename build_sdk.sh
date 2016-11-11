@@ -635,8 +635,7 @@ function handler_vairable()
         echo "$sz_build_project" > $tmp_file
         sz_build_project=`remove_space_for_vairable $sz_build_project`
 
-        ## 检查是否是要进行编译的工程
-        if [ -n "`echo $sz_build_project | grep $prj_name`" ];then
+        if [ -n "$sz_build_project" ];then
             build_prj_name=$sz_build_project
 
             project_name=${build_prj_name%%_*}
@@ -761,7 +760,7 @@ function handler_vairable()
         echo "$sz_build_file" > $tmp_file
         sz_build_file=`remove_space_for_vairable $sz_build_file`
 
-        if [ `echo $sz_build_file | grep $prj_name | egrep /` ];then
+        if [ "`echo $sz_build_file | egrep /`" ];then
             prefect_name=$sz_build_file
         else
             echo "build_file is error, please checkout it !"
