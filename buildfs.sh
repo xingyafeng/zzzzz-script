@@ -835,7 +835,7 @@ function copy_out_image()
 
     ### k86m_H520/S1
 	#local BASE_PATH=/home/work5/public/k86A_Test/${prj_name}/${ver_name}
-    local firmware_path=${ROOT}/../
+    local firmware_path=${ROOT}/release
 	local BASE_PATH=$firmware_path/${project_name}/${prj_name}/${ver_name}
 	local DEST_PATH=$BASE_PATH/$system_version
 	local OTA_PATH=$BASE_PATH/${system_version}_full_and_ota
@@ -855,8 +855,7 @@ function copy_out_image()
 
     if [ "`is_yunovo_server`" == "true" ];then
         if [ ! -d $firmware_path ];then
-            _echo "firmware path not exist @@@"
-            return 1
+            mkdir -p $firmware_path
         fi
 
 	    if [ ! -d $DEST_PATH ];then
