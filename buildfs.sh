@@ -25,6 +25,8 @@ build_readme=
 build_clean=
 ### is make ota or not
 build_make_ota=
+## is build update source code
+build_update_code=
 
 ## system version  e.g. : S1.01
 build_version=""
@@ -43,8 +45,7 @@ cur_time=`date +%m%d_%H%M`
 zz_script_path=/home/jenkins/workspace/script/zzzzz-script
 cpu_num=`cat /proc/cpuinfo  | egrep 'processor' | wc -l`
 project_link="init -u ssh://jenkins@gerrit.y:29419/manifest"
-tmp_file=$zz_script_path/fs/tmp.txt
-readme_file=$zz_script_path/fs/readme.txt
+tmp_file=~/.tmp.txt
 lunch_project=
 prefect_name=
 system_version=
@@ -64,6 +65,7 @@ yunovo_project_list=(
     mx1_teyes-t7
     k88c_BT-BT188
     k88c_JM-CM01
+    k28s_LD-A107C
 )
 
 _yunovo_project_list=(
@@ -535,7 +537,6 @@ function print_make_completed_time()
 ## handler input vairable
 function handler_input_vairable()
 {
-    local start_curr_time=`date +'%Y-%m-%d %H:%M:%S'`
     local cpu_type_list=("aeon6735_65c_s_l1" "aeon6735m_65c_s_l1" "magc6580_we_l")
     local build_type_list=("eng" "user" "userdebug")
     local is_list=("false" "true")
@@ -568,6 +569,12 @@ function handler_input_vairable()
     _inlist=(${is_list[@]})
     show_vir "are you sure make ota ?"
     select_choice yunovo_make_ota
+
+    ## is update source code
+    _inlist=(${is_list[@]})
+    show_vir "are you sure update source code ?"
+    select_choice yunovo_update_code
+
 }
 
 ### handler vairable for jenkins
@@ -674,26 +681,11 @@ function handler_vairable()
         build_make_ota=false
     fi
 
-    ### 9. build readme.txt
-    if [ "$yunovo_readme" ];then
-        build_readme="$yunovo_readme"
-
-        if [ "$build_readme" ];then
-
-            echo -e "$build_prj_name ${build_version} 修改点:" > $readme_file
-            echo >> $readme_file
-
-            for r in ${yunovo_readme[@]}
-            do
-                echo -e "$r" >> "$readme_file"
-            done
-        fi
+    ### 8. 是否需要更新源码
+    if [ "$yunovo_update_code" ];then
+        build_update_code=$yunovo_update_code
     else
-        echo -e "$build_prj_name ${build_version} 修改点:" > $readme_file
-        echo >> $readme_file
-
-        build_readme="未填写，请与出版本的同学联系，并让其补全修改点."
-        echo "$build_readme" >> $readme_file
+        build_update_code=false
     fi
 
     ### 11. build clean
@@ -833,8 +825,6 @@ function copy_out_image()
 	local prj_name=$project_name\_$custom_version
 	local ver_name=${first_version}.${second_version}
 
-    ### k86m_H520/S1
-	#local BASE_PATH=/home/work5/public/k86A_Test/${prj_name}/${ver_name}
     local firmware_path=${ROOT}/release
 	local BASE_PATH=$firmware_path/${project_name}/${prj_name}/${ver_name}
 	local DEST_PATH=$BASE_PATH/$system_version
@@ -852,6 +842,7 @@ function copy_out_image()
     fi
 
 	show_vig "prj_name = $prj_name"
+    echo
 
     if [ "`is_yunovo_server`" == "true" ];then
         if [ ! -d $firmware_path ];then
@@ -890,30 +881,16 @@ function copy_out_image()
 	    cp -vf ${OUT}/obj/CGEN/APDB_MT*W15* ${DEST_PATH}/database/ap
 	    cp -vf ${OUT}/system/etc/mddb/BPLGUInfoCustomAppSrcP* ${DEST_PATH}/database/moden
 
-        __echo "---> copy out image end ..."
-
         if [ $build_make_ota == "true" ];then
             if [ "`ls ${OUT}/full_${build_device}-ota*.zip`" ];then
                 cp -v ${OUT}/full_${build_device}-ota*.zip ${OTA_PATH}/sdupdate.zip
-                _echo "copy sdupdate.zip successful ..."
             fi
 
             if [ "`ls ${OUT}/obj/PACKAGING/target_files_intermediates/full_${build_device}-target_files*.zip`" ];then
                 cp -v ${OUT}/obj/PACKAGING/target_files_intermediates/full_${build_device}-target_files*.zip ${OTA_PATH}/${system_version}.zip
-                _echo "copy ota file successful ..."
-            fi
-        fi
-
-        ### add readme.txt in version
-        if [ -f $readme_file ];then
-            cp -vf $readme_file ${BASE_PATH}
-            if [ $? -eq 0 ];then
-                rm $readme_file -r
             fi
         fi
     fi
-
-    __echo "copy image finish ."
 }
 
 ## print variable
@@ -934,6 +911,7 @@ function print_variable()
 	echo "build_type = $build_type"
     echo "build_clean= $build_clean"
     echo "build_make_ota = $build_make_ota"
+    echo "build_update_code = $build_update_code"
 	echo '-----------------------------------------'
 	echo "lunch_project = $lunch_project"
 	echo "fota_version = $fota_version"
@@ -1153,7 +1131,7 @@ function make_yunovo_android()
         if [ -d .repo ];then
             source_init
         else
-            _echo "The (.repo) not found ! please download android source code !"
+            __err "The (.repo) not found ! please download android source code !"
             return 1
         fi
     fi
@@ -1161,23 +1139,23 @@ function make_yunovo_android()
     if [ -n "$(find . -maxdepth 1 -name "build*.log" -print0)" ];then
 		delete_log
     else
-        _echo "log is not delete, please check it ! "
+        __err "log is not delete, please check it ! "
 	fi
 
     if [ $build_clean == "true" ];then
 
         if make clean;then
-            _echo "--> make clean end ..."
+            __echo "make clean end ..."
         else
-            _echo "--> make clean fail ..."
+            __err "make clean fail ..."
             return 1
         fi
     else
 
         if make installclean;then
-            _echo "--> make installclean end ..."
+            __echo "make installclean end ..."
         else
-            _echo "---> make installclean fail ..."
+            __err "make installclean fail ..."
             return 1
         fi
     fi
@@ -1185,28 +1163,28 @@ function make_yunovo_android()
     if [ "$cpu_num" -gt 0 ];then
         :
     else
-        _echo "cpu_num is error ..."
+        __err "cpu_num is error ..."
         return 1
     fi
 
     make -j${cpu_num} ${fota_version} 2>&1 | tee build_$cur_time.log
     if [ $? -eq 0 ];then
-        _echo "--> make project end ..."
+        __echo "make project end ..."
     else
-        _echo "make android failed !"
+        __err "make android failed !"
         return 1
     fi
 
     if [ "$build_make_ota" == "true" ];then
         make -j${cpu_num} ${fota_version} otapackage 2>&1 | tee build_ota_$cur_time.log
         if [ $? -eq 0 ];then
-            _echo "--> make otapackage end ..."
+            __echo "make otapackage end ..."
         else
-            _echo "make otapackage fail ..."
+            __err "make otapackage fail ..."
             return 1
         fi
     else
-        _echo "build_make_ota = $build_make_ota"
+        __wrn "build_make_ota = $build_make_ota"
     fi
 }
 
@@ -1297,6 +1275,8 @@ function source_init()
 
 function main()
 {
+    local start_curr_time=`date +'%Y-%m-%d %H:%M:%S'`
+
     if [ "`is_yunovo_project`" == "true" ];then
 
         __echo "make android start ."
@@ -1334,26 +1314,28 @@ function main()
         fi
     fi
 
-    ## 下载，更新源码
-    update_yunovo_source_code
+    if [ "$build_update_code" == "true" ];then
+        ## 下载，更新源码
+        update_yunovo_source_code
+    fi
 
     if [ "`is_check_lunch`" != "no lunch" ];then
         copy_customs_to_android
         handler_custom_config
     else
-        _echo "current directory is not android ! gettop is null !"
+        show_vir "current directory is not android ! gettop is null !"
         return 1
     fi
 
     if [ "$build_update_api" == "true" ];then
         if make update-api -j${cpu_num};then
-            _echo "---> make update-api end !"
+            __echo "make update-api end !"
         else
             show_vir "make update-api fail !"
             return 1
         fi
     else
-        _echo "Do not perform make update-api !"
+        __wrn "Do not perform make update-api !"
     fi
 
     ### 编译源码
