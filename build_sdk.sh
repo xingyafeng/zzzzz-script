@@ -2139,7 +2139,7 @@ function download_sdk()
 		if [ "$defalut" -a "$project_link" ];then
             repo $project_link -m ${defalut}.xml -b yunovo
         fi
-		repo sync -j${cpu_num}
+		repo sync -c -d --no-tags -j${cpu_num}
         ls -alF
 
         if [ "$defalut" == "K26" -o "$defalut" == "k86A" ];then
@@ -2165,8 +2165,8 @@ function download_sdk()
             if [ "`hostname`" == "happysongs" ];then
 
                 ## update android source code for yunovo project ...
-                if repo sync -c;then
-                    _echo "----------------- repo sync -c successful ..."
+                if repo sync -c -d --no-tags -j${cpu_num};then
+                    _echo "----------------- repo sync successful ..."
                 fi
             else
 
