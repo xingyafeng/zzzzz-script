@@ -1624,7 +1624,7 @@ function handler_branch_for_YOcLauncherRes()
             sz_branch_name=S7_GY-G2B_V20
             ;;
 
-        k86ls_K86-ZX2 | k88s_K88-ZX | k88s_S7-ZX | mx1_KKXL-C9)
+        k86ls_K86-ZX2 | k88s_K88-ZX | k88s_S7-ZX)
             sz_branch_name=S7_NXOS_V20
 
             ;;
@@ -1632,6 +1632,12 @@ function handler_branch_for_YOcLauncherRes()
             sz_branch_name=S7_LD_V10
 
             ;;
+
+        k86mx1_KKXL-C9)
+            sz_branch_name=S7_KKXL_V20
+
+            ;;
+
         *)
             sz_branch_name=S6_NXOS_V20
             ;;
