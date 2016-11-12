@@ -2168,20 +2168,12 @@ function download_sdk()
             ## 还原 androiud源代码 ...
             recover_standard_android_project
 
-            if [ "`hostname`" == "happysongs" ];then
+            ## 重新初始化manifest
+            repo init -m ${defalut}.xml -b yunovo
 
-                ## update android source code for yunovo project ...
-                if repo sync -c -d --no-tags -j${cpu_num};then
-                    _echo "----------------- repo sync successful ..."
-                fi
-            else
-
-                ## 更新 android源代码 ...
-                repo forall -c git fetch
-                _echo "-----------------git fetch successful ."
-                repo forall -c git pull
-                echo
-                _echo "-----------------git pull successful ."
+            ## update android source code for yunovo project ...
+            if repo sync -c -d --prune --no-tags -j${cpu_num};then
+                _echo "----------------- repo sync successful ..."
             fi
         fi
 	fi
