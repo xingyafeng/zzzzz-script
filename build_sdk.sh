@@ -808,6 +808,8 @@ function handler_vairable()
             fi
         fi
     else
+        tag_version=ALL
+
         first_tag_version=9
         second_tag_version=99
 
