@@ -1023,10 +1023,6 @@ function down_load_yunovo_source_code()
             ## start repo init
             repo init -b ${branchN}
 
-            if [ -d ~/.repoconfig ];then
-                rm -rf ~/.repoconfig
-            fi
-
             ## update android source code for yunovo project ...
             if repo sync -j${cpu_num} -c -d --no-tags;then
                 __echo "repo sync -c successful ..."

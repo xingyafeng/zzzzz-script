@@ -2171,10 +2171,6 @@ function download_sdk()
             ## 重新初始化manifest
             repo init -m ${defalut}.xml -b yunovo
 
-            if [ -d ~/.repoconfig ];then
-                rm -rf ~/.repoconfig
-            fi
-
             ## update android source code for yunovo project ...
             if repo sync -c -d --prune --no-tags -j${cpu_num};then
                 _echo "----------------- repo sync successful ..."
