@@ -793,7 +793,7 @@ function handler_vairable()
 
         tag_version=$yunovo_tag
 
-        if [ "$tag_version" == "all" -o "$tag_version" == "ALL" ];then
+        if [ "$tag_version" == "all" -o "$tag_version" == "ALL" -o "$tag_version" == "All" ];then
             ### tag version 1.00 1.02 ... 2.00 2.01 ...
             first_tag_version=9
             second_tag_version=99
@@ -808,11 +808,16 @@ function handler_vairable()
             fi
         fi
     else
+        first_tag_version=9
+        second_tag_version=99
+
+    if false;then
         while read apptag;do
             tag_version=${apptag##*=}
             first_tag_version=${tag_version%.*}
             second_tag_version=${tag_version##*.}
         done < $tag_file
+    fi
     fi
 
     ### 9. build readme.txt
