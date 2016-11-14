@@ -28,9 +28,11 @@ CPUCORES=`cat /proc/cpuinfo | grep processor | wc -l`
 ## yunos project name
 mx1_kkxl_v9_p=mx1_kkxl_v9
 mx1_teyes_t8_p=mx1_teyes_t8
+mx1_teyes_t8_new_p=mx1_teyes_t8_new
 mx1_anytek_m960_p=mx1_anytek_m960
 
 mx2_teyes_t8_p=mx2_teyes_t8
+mx2_teyes_t8_new_p=mx2_teyes_t8_new
 
 k88c_lufeng_f100_p=k88c_lufeng_f100
 k88c_cocolife_v6_p=k88c_cocolife_v6
@@ -143,12 +145,12 @@ function is_yunos_project
 
     case $thisP in
 
-        $mx1_kkxl_v9_p | $mx1_teyes_t8_p | $mx1_anytek_m960_p)
+        $mx1_kkxl_v9_p | $mx1_teyes_t8_p | $mx1_teyes_t8_new_p | $mx1_anytek_m960_p)
             echo true
 
             ;;
 
-        $mx2_teyes_t8_p)
+        $mx2_teyes_t8_p | $mx2_teyes_t8_new_p)
             echo true
 
             ;;
@@ -185,12 +187,15 @@ function auto_create_manifest()
         customN=cocolife
     fi
 
+    if [ "$modeN" == "new" ];then
+        modeN=t8_new
+    fi
+
     manifest_branch="yunos/$projectN/$customN/$modeN"
 
     _echo "manifest_branch = $manifest_branch"
 
     if [ "`is_yunos_project`" == "true" ];then
-
 
         ## create tmp.xml
         repo manifest -r -o $manifest_path/$manifest_name
@@ -366,9 +371,13 @@ function download_yunos_code()
         customN=cocolife
     fi
 
+    if [ "$modeN" == "new" ];then
+        modeN=t8_new
+    fi
+
     branchN="yunos/$projectN/$customN/$modeN"
 
-    #_echo "branchN = $branchN"
+    _echo "branchN = $branchN"
 
     if [ ! -d .repo  ];then
         repo $link_name -b $branchN
