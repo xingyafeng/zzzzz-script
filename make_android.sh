@@ -65,6 +65,8 @@ fota_version=
 mx1_teyes_t7_p=mx1_teyes_t7
 mx1_xianzhi_t80c_p=mx1_xianzhi_t80c
 
+k26s_ld_a107c_p=k26s_ld_a107c
+
 k28s_ld_a107c_p=k28s_ld_a107c
 
 k88c_jm_cm01_p=k88c_jm_cm01
@@ -190,6 +192,12 @@ function is_yunovo_project
             echo true
 
             ;;
+
+        $k26s_ld_a107c_p)
+            echo true
+
+            ;;
+
 
         $k28s_ld_a107c_p)
             echo true
