@@ -1,23 +1,39 @@
 #!/usr/bin/env bash
 
 apps_xml=fs/apps.xml
+appfs=fs/apps.txt
 
 function auto_create_manifest_xml()
 {
-    local count=$1
+    if [ $# -eq 1 ];then
+        echo
+        show_vip "    creat manifest start ..."
+        echo
 
-    local main_xml=tools/main.xml
+    else
+        echo "# is error ! please check it !"
+        return 1
+    fi
+
+    local manifest_type=$1
+    local count=`cat $appfs |wc -l`
+
+    local main_xml=
     local default_xml=fs/default.xml
     local string="    <project name=\"yunovo_packages/CarEngine\" path=\"yunovo/packages/apps/CarEngine\" />"
     local project_end="</manifest>"
 
     if [ "$count" ];then
-        echo
-        show_vip "    creat manifest start ..."
-        echo
+        :
     else
         echo "count is null ! e.g. auto_create_manifest_xml count ..."
         return 1
+    fi
+
+    if [ "$manifest_type" == "k26" ];then
+        main_xml=tools/k26_main.xml
+    elif [ "$manifest_type" == "k86A" ];then
+        main_xml=tools/k86A_main.xml
     fi
 
     if [ ! -d fs ];then
@@ -41,7 +57,7 @@ function auto_create_manifest_xml()
         modify_packages_name
     fi
 
-    if [ -f $default_path ];then
+    if [ -f $main_xml ];then
         cat $main_xml > $default_xml
 
         while read line;do
@@ -61,7 +77,6 @@ function auto_create_manifest_xml()
 function modify_packages_name()
 {
     local count=1
-    local appfs=fs/apps.txt
 
     if [ -f $appfs ];then
         :
