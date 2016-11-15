@@ -2152,9 +2152,10 @@ function download_sdk()
 		if [ "$defalut" -a "$project_link" ];then
             repo $project_link -m ${defalut}.xml -b yunovo
         fi
-		repo sync -c -d --no-tags -j${cpu_num}
+		repo sync -c -d --prune --no-tags -j${cpu_num}
         ls -alF
 
+    if flase;then
         if [ "$defalut" == "K26" -o "$defalut" == "k86A" ];then
             defalut=master
         fi
@@ -2162,7 +2163,7 @@ function download_sdk()
         if [ $defalut ];then
             repo start $defalut --all
         fi
-
+    fi
         ## 第一次下载完成后，需要初始化环境变量
         if [ -d .repo ];then
             source_init
@@ -2223,12 +2224,15 @@ function make_yunovo_android()
             return 1
         fi
 
+    if false;then
         if make clean-lk;then
             _echo "--> make clean lk end ..."
         else
             _echo "--> make clean lk fail ..."
             return 1
         fi
+    fi
+
     fi
 
     if [ "$cpu_num" -gt 0 ];then
