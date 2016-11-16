@@ -1013,7 +1013,7 @@ function down_load_yunovo_source_code()
 	if [ ! -d .repo ];then
 		if [ "$project_link" -a "$branchN" ];then
             repo $project_link -b ${branchN}
-            repo sync -j${cpu_num} -c -d --no-tags
+            repo sync -j${cpu_num} -c -d --no-tags --prune
         fi
 
         ## 第一次下载完成后，需要初始化环境变量
@@ -1032,8 +1032,8 @@ function down_load_yunovo_source_code()
             repo init -b ${branchN}
 
             ## update android source code for yunovo project ...
-            if repo sync -j${cpu_num} -c -d --no-tags;then
-                __echo "repo sync -c successful ..."
+            if repo sync -j${cpu_num} -c -d --no-tags --prune;then
+                __echo "repo sync successful ..."
             fi
         fi
 	fi
