@@ -318,6 +318,29 @@ function is_build_type()
     done
 }
 
+function repo_diffmanifests_to_jenkins()
+{
+    local old_manifest_version=yunovo/diffmanifests/default.xml
+    local manifest_path=.repo/manifests
+    local diff_manifest_xml=diff.xml
+    local OLDPWD=`pwd`
+
+    if [ -f $old_manifest_version ];then
+        cp $old_manifest_version $manifest_path/$diff_manifest_xml
+    fi
+
+    if [ -f $manifest_path/$diff_manifest_xml ];then
+
+        repo diffmanifests --no-color $diff_manifest_xml
+
+        if [ $? -eq 0 ];then
+            rm $manifest_path/$diff_manifest_xml
+        fi
+    else
+        _echo "yunovo/diffmanifests/default.xml not found !"
+    fi
+}
+
 function auto_create_manifest()
 {
     local remotename=
@@ -1261,6 +1284,9 @@ function main()
 
     ### 回写当前manifest
     auto_create_manifest
+
+    ### repo diffmainifests
+    repo_diffmanifests_to_jenkins
 
     ### 版本上传至服务器
     if copy_out_image;then
