@@ -35,6 +35,8 @@ build_clean=
 build_make_ota=
 ### is create refs
 build_refs=
+### is update source code
+build_update_code=
 
 ## system version  e.g. : S1.01
 build_version=""
@@ -600,6 +602,14 @@ function handler_vairable()
     else
         build_refs=false
     fi
+
+    ## 13. build update source code
+    if [ "$yunovo_update_code" ];then
+        build_update_code=$yunovo_update_code
+    else
+        build_update_code=true
+    fi
+
     system_version=$custom_version\_$hw_versiom\_${first_version}.${project_name}.${second_version}
     fota_version="SPT_VERSION_NO=${system_version}"
 }
@@ -1258,7 +1268,9 @@ function main()
     fi
 
     ## 下载，更新源码
-    down_load_yunovo_source_code
+    if [ "build_update_code" == "true" ];then
+        down_load_yunovo_source_code
+    fi
 
     if [ "`is_check_lunch`" != "no lunch" ];then
         copy_customs_to_android
