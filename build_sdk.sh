@@ -37,6 +37,8 @@ build_clean=
 build_make_ota=
 ### is create refs
 build_refs=
+### is update source code
+build_update_code=
 
 ## system version  e.g. : S1.01
 build_version=""
@@ -878,6 +880,14 @@ function handler_vairable()
     else
         build_refs=false
     fi
+
+    ## 14. build update source code
+    if [ "$yunovo_update_code" ];then
+        build_update_code=$yunovo_update_code
+    else
+        build_update_code=true
+    fi
+
     system_version=$custom_version\_$hw_versiom\_${first_version}.${project_name}.${second_version}
     fota_version="SPT_VERSION_NO=${system_version}"
 }
@@ -2506,7 +2516,7 @@ function main()
     ## auto update customs
     auto_update_yunovo_customs
 
-    if [ $flag_download_sdk -eq 1 ];then
+    if [ $flag_download_sdk -eq 1 -a "$build_update_code" == "true" ];then
         ### download source code
         download_sdk
     else
