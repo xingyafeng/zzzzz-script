@@ -384,6 +384,7 @@ function download_yunos_code()
 
         repo_sync_for_source_code
     else
+        repo init -b $branchN
         repo_sync_for_source_code
     fi
 }
