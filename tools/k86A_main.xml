@@ -41,6 +41,7 @@
     <project name="k86A/vendor" path="vendor" />
 
     <project name="yunovo/customs" path="yunovo/customs" revision="master" />
+    <project name="yunovo/diffmanifests" path="yunovo/diffmanifests" revision="master" />
     <project name="yunovo/build" path="yunovo/build" revision="master" >
         <copyfile dest="buildfs.sh" src="buildfs.sh" />
     </project>

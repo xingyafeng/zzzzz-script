@@ -5,7 +5,7 @@ appfs=fs/apps.txt
 
 function auto_create_manifest_xml()
 {
-    if [ $# -eq 1 ];then
+    if [ $# -lt 3 ];then
         echo
         show_vip "    creat manifest start ..."
         echo
@@ -20,7 +20,9 @@ function auto_create_manifest_xml()
 
     local main_xml=
     local default_xml=fs/default.xml
-    local string="    <project name=\"yunovo_packages/CarEngine\" path=\"yunovo/packages/apps/CarEngine\" />"
+    local string="    <project name=\"yunovo_packages/CarEngine\" path=\"yunovo/packages/apps/CarEngine\" "
+    local appstring="revision=\"master\" "
+    local endstring="/>"
     local project_end="</manifest>"
 
     if [ "$count" ];then
@@ -49,7 +51,13 @@ function auto_create_manifest_xml()
     for ((i=1; i<=$count; i++))
     do
         if [ -f $apps_xml ];then
-            echo $string >> $apps_xml
+
+            if [ -n "$2" ];then
+                echo $string$appstring$endstring >> $apps_xml
+            else
+                echo $string$endstring >> $apps_xml
+            fi
+
         fi
     done
 
