@@ -849,6 +849,8 @@ function print_variable()
     echo "build_branch = $build_branch"
     echo "build_clean= $build_clean"
     echo "build_make_ota = $build_make_ota"
+    echo "build_update_api = $build_update_api"
+    echo "build_update_code = $build_update_code"
     echo "build_refs = $build_refs"
 	echo "lunch_project = $lunch_project"
 	echo "fota_version = $fota_version"
@@ -857,6 +859,7 @@ function print_variable()
     echo "yunovo_clean = $yunovo_clean"
     echo "yunovo_branch = $yunovo_branch"
     echo "yunovo_update_api = $yunovo_update_api"
+    echo "yunovo_update_code = $yunovo_update_code"
 	echo '-----------------------------------------'
 
 	echo "\$1 = $1"
