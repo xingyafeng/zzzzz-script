@@ -325,6 +325,7 @@ function repo_diffmanifests_to_jenkins()
     local old_manifest_version=yunovo/diffmanifests/default.xml
     local manifest_path=.repo/manifests
     local diff_manifest_xml=diff.xml
+    local diff_manifest_log=~/.jenkins_make_version/diff.log
     local OLDPWD=`pwd`
 
     if [ -f $old_manifest_version ];then
@@ -333,7 +334,14 @@ function repo_diffmanifests_to_jenkins()
 
     if [ -f $manifest_path/$diff_manifest_xml ];then
 
-        repo diffmanifests --no-color $diff_manifest_xml
+        repo diffmanifests --no-color $diff_manifest_xml > $diff_manifest_log
+
+        if [ -f $diff_manifest_log ];then
+            sed -i 's/\[m//g' $diff_manifest_log
+            if [ $? -eq 0 ];then
+                cat $diff_manifest_log
+            fi
+        fi
 
         if [ $? -eq 0 ];then
             rm $manifest_path/$diff_manifest_xml
