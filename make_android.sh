@@ -1268,7 +1268,7 @@ function main()
     fi
 
     ## 下载，更新源码
-    if [ "build_update_code" == "true" ];then
+    if [ "$build_update_code" == "true" ];then
         down_load_yunovo_source_code
     fi
 
