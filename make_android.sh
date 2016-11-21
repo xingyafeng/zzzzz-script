@@ -202,7 +202,7 @@ function is_yunovo_project
 
             ;;
 
-        $k27l_hbs_t2_p)
+        $k27_hbs_t2_p)
             echo true
 
             ;;
