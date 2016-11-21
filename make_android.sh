@@ -69,7 +69,7 @@ mx1_xianzhi_t80c_p=mx1_xianzhi_t80c
 
 k26s_ld_a107c_p=k26s_ld_a107c
 
-k27l_hbs_t2_p=k27l_hbs_t2
+k27_hbs_t2_p=k27_hbs_t2
 
 k28s_ld_a107c_p=k28s_ld_a107c
 
