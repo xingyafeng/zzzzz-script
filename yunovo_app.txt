@@ -25,6 +25,7 @@ YOcMcu
 YOcMediaFolder
 YOcRadPowerManager
 YOcRecord
+YOcScreenSaver
 YOcSettings
 YOcSplitScreen
 YOcTools
