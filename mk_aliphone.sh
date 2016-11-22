@@ -27,6 +27,7 @@ CPUCORES=`cat /proc/cpuinfo | grep processor | wc -l`
 
 ## yunos project name
 mx1_kkxl_v9_p=mx1_kkxl_v9
+mx1_kkxl_v9_ts_p=mx1_kkxl_v9_ts
 mx1_teyes_t8_p=mx1_teyes_t8
 mx1_teyes_t8_new_p=mx1_teyes_t8_new
 mx1_anytek_m960_p=mx1_anytek_m960
@@ -145,7 +146,7 @@ function is_yunos_project
 
     case $thisP in
 
-        $mx1_kkxl_v9_p | $mx1_teyes_t8_p | $mx1_teyes_t8_new_p | $mx1_anytek_m960_p)
+        $mx1_kkxl_v9_p | $mx1_kkxl_v9_ts_p | $mx1_teyes_t8_p | $mx1_teyes_t8_new_p | $mx1_anytek_m960_p)
             echo true
 
             ;;
@@ -189,6 +190,10 @@ function auto_create_manifest()
 
     if [ "$modeN" == "new" ];then
         modeN=t8_new
+    fi
+
+    if [ "$modeN" == "ts" ];then
+        modeN=v9-ts
     fi
 
     manifest_branch="yunos/$projectN/$customN/$modeN"
@@ -373,6 +378,10 @@ function download_yunos_code()
 
     if [ "$modeN" == "new" ];then
         modeN=t8_new
+    fi
+
+    if [ "$modeN" == "ts" ];then
+        modeN=v9-ts
     fi
 
     branchN="yunos/$projectN/$customN/$modeN"
