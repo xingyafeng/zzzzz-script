@@ -2062,13 +2062,20 @@ function clone_app()
         ## handler switch branch
         handler_branch_for_app $app_name
     else
+
         ## clone apk
-        if [ "$ssh_link" ];then
-            git clone $ssh_link/$app_name
-            _echo "---- clone $app_name"
+        if [ "$app_name" == "YOcScreenSaver" ];then
+
+            if [ "$ssh_link_yunovo" ];then
+                git clone $ssh_link_yunovo/$app_name
+                _echo "---- clone $app_name"
+            fi
         else
-            _echo "ssh_link is error, please check it !"
-            return 1
+
+            if [ "$ssh_link" ];then
+                git clone $ssh_link/$app_name
+                _echo "---- clone $app_name"
+            fi
         fi
 
         ## handler switch branch
@@ -2085,6 +2092,7 @@ function down_load_app_for_yunovo()
     local android_app_path=packages/apps
 
     local ssh_link=ssh://jenkins@gerrit.y:29419/yunovo_packages
+    local ssh_link_yunovo=ssh://jenkins@gerrit.y:29419/yunovo/packages/apps
     local yunovo_ant_app_file=$zz_script_path/yunovo_ant_app.txt
     local yunovo_android_app_file=$zz_script_path/yunovo_app.txt
 
