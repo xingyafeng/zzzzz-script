@@ -117,6 +117,8 @@ k88sPR=k88s_root
 k86ldPR=k86ld_root
 k86lsdPR=k86lsd_root
 
+k27_xinke_ds50_p=k27_xinke_ds50
+
 ################################ system env
 DEVICE=
 ROOT=
@@ -291,6 +293,12 @@ function is_yunovo_project
             echo true
 
             ;;
+
+        $k27_xinke_ds50_p)
+            echo true
+
+            ;;
+
         *)
             echo false
 
@@ -2156,8 +2164,8 @@ function download_sdk()
         elif [ $project_name == "k27" ];then
             defalut=k27
         else
+            __echo "project_name = $project_name"
             echo "project do not match it !"
-            return 1
         fi
     else
         echo "project path do not found !"
@@ -2195,7 +2203,9 @@ function download_sdk()
             recover_standard_android_project
 
             ## 重新初始化manifest
-            repo init -m ${defalut}.xml -b yunovo
+            if [ "$defalut" ];then
+                repo init -m ${defalut}.xml -b yunovo
+            fi
 
             ## update android source code for yunovo project ...
             if repo sync -c -d --prune --no-tags -j${cpu_num};then
