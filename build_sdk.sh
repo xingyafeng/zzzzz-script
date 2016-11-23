@@ -118,6 +118,7 @@ k86ldPR=k86ld_root
 k86lsdPR=k86lsd_root
 
 k27_xinke_ds50_p=k27_xinke_ds50
+k86sa1_mazda_p=k86sa1_mazda
 
 ################################ system env
 DEVICE=
@@ -294,7 +295,7 @@ function is_yunovo_project
 
             ;;
 
-        $k27_xinke_ds50_p)
+        $k27_xinke_ds50_p | $k86sa1_mazda_p)
             echo true
 
             ;;
