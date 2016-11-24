@@ -1300,9 +1300,13 @@ function main()
         fi
     fi
 
-    ## 下载，更新源码
     if [ "$build_update_code" == "true" ];then
+
+        ## 下载，更新源码
         down_load_yunovo_source_code
+
+        ### send email
+        send_diffmanifest_to_software
     fi
 
     if [ "`is_check_lunch`" != "no lunch" ];then
@@ -1332,9 +1336,6 @@ function main()
 
     ### repo diffmainifests
     repo_diffmanifests_to_jenkins
-
-    ### send email
-    send_diffmanifest_to_software
 
     ### 版本上传至服务器
     if copy_out_image;then
