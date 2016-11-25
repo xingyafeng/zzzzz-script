@@ -336,15 +336,16 @@ function is_build_type()
 function send_diffmanifest_to_software()
 {
     local diff_manifest_log=~/.jenkins_make_version/diff.log
-    local sender=notify@yunovo.cn
-    local receiver=android@yunovo.cn
+    local user="notify@yunovo.cn"
+    local sender="jenkins<$user>"
+    local receiver=android_software@yunovo.cn
     local title="${build_prj_name} project diff message !"
     local key=n123456
     local server_name=smtp.exmail.qq.com
-    local charset="message-charset=utf8"
+    local charset="message-charset=utf-8"
 
     if [ -f $diff_manifest_log ];then
-        sendEmail -f $sender -s $server_name -u $title -o $charset -xu $sender -xp $key -t $receiver -o message-file=$diff_manifest_log
+        sendEmail -f $sender -s $server_name -u $title -o $charset -xu $user -xp $key -t $receiver -o message-file=$diff_manifest_log
     fi
 
 }
@@ -1312,6 +1313,9 @@ function main()
         ## 下载，更新源码
         down_load_yunovo_source_code
 
+        ### repo diffmainifests
+        repo_diffmanifests_to_jenkins
+
         ### send email
         send_diffmanifest_to_software
     fi
@@ -1340,9 +1344,6 @@ function main()
 
     ### 回写当前manifest
     auto_create_manifest
-
-    ### repo diffmainifests
-    repo_diffmanifests_to_jenkins
 
     ### 版本上传至服务器
     if copy_out_image;then
