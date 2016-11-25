@@ -66,6 +66,7 @@ fota_version=
 ### project name for yunovo
 mx1_teyes_t7_p=mx1_teyes_t7
 mx1_xianzhi_t80c_p=mx1_xianzhi_t80c
+mx1_xianzhi_t80_p=mx1_xianzhi_t80
 
 k26s_ld_a107c_p=k26s_ld_a107c
 
@@ -214,13 +215,12 @@ function is_yunovo_project
 
             ;;
 
-
         $k88c_jm_cm01_p | $k88c_bt_bt188_p)
             echo true
 
             ;;
 
-        $mx1_xianzhi_t80c_p)
+        $mx1_xianzhi_t80c_p | $mx1_xianzhi_t80_p)
             echo true
 
             ;;
