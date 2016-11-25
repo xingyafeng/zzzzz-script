@@ -14,6 +14,7 @@ k86lP=k86l
 k86lsP=k86ls
 k88cP=k88c
 k86ldP=k86ld
+k86lsdP=k86lsd
 
 k88c_jm_cm01_p=k88c_jm_cm01
 
@@ -113,7 +114,7 @@ function is_yunovo_project
             echo true
 
             ;;
-        $k86ldP)
+        $k86ldP | $k86lsdP)
             echo true
 
             ;;
