@@ -307,6 +307,24 @@ function is_yunovo_project
     esac
 }
 
+function is_branch_project()
+{
+    local thisP=$(pwd) && thisP=${thisP%/*} && thisP=${thisP##*/}
+
+     case $thisP in
+        $k27_xinke_ds50_p | $k86sa1_mazda_p)
+            echo true
+
+            ;;
+
+        *)
+            echo false
+
+            ;;
+    esac
+
+}
+
 function is_root_yunovo_project()
 {
     local thisP=$(pwd) && thisP=${thisP%/*} && thisP=${thisP##*/}
@@ -1261,6 +1279,11 @@ function cpcustoms()
 	local ConfigsFName=proj_help.sh
 	local ProductSetTop=${ConfigsPath}/custom
 
+    if [ "`is_branch_project`" == "true" ];then
+        ConfigsPath=${thisSDKTop}/yunovo/customs
+    fi
+
+    #_echo " config path = $ConfigsPath"
     ##遍历所有客户方案配置
 	local ProductSetShort=`find $ProductSetTop -name $ConfigsFName | awk -F/ '{print $(NF-3) "/" $(NF-2) "/" $(NF-1)}' | sort`
     local MySEL=
