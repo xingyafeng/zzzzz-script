@@ -1267,7 +1267,13 @@ function cpcustoms()
 {
     local select_project=$prefect_name
 	local thisSDKTop=$(gettop)
-	local ConfigsPath=${thisSDKTop}/../yunovo_customs
+	local ConfigsPath=
+
+    if [ "`is_branch_project`" == "true" ];then
+        ConfigsPath=${thisSDKTop}/yunovo/customs
+    else
+        ConfigsPath=${thisSDKTop}/../yunovo_customs
+    fi
 
 	if [ -d "$ConfigsPath" ]; then
 		ConfigsPath=$(cd $ConfigsPath && pwd)
@@ -1279,9 +1285,6 @@ function cpcustoms()
 	local ConfigsFName=proj_help.sh
 	local ProductSetTop=${ConfigsPath}/custom
 
-    if [ "`is_branch_project`" == "true" ];then
-        ConfigsPath=${thisSDKTop}/yunovo/customs
-    fi
 
     #_echo " config path = $ConfigsPath"
     ##遍历所有客户方案配置
