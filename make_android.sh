@@ -335,20 +335,22 @@ function is_build_type()
 
 function send_diffmanifest_to_software()
 {
-    local diff_manifest_log=~/.jenkins_make_version/diff.log
+    local diff_manifest_log=~/.jenkins_make_version/diff.html
     local user="notify@yunovo.cn"
     local sender="jenkins<$user>"
     local receiver=android_software@yunovo.cn
     local title="${build_prj_name} project diff message !"
     local key=n123456
     local server_name=smtp.exmail.qq.com
+    local content_type="message-content-type=html"
     local charset="message-charset=utf-8"
 
     if [ -f $diff_manifest_log ];then
-        sendEmail -f $sender -s $server_name -u $title -o $charset -xu $user -xp $key -t $receiver -o message-file=$diff_manifest_log
+        sendEmail -f $sender -s $server_name -u $title -o $charset -o $content_type -xu $user -xp $key -t $receiver -o message-file=$diff_manifest_log
     fi
 
 }
+
 
 function repo_diffmanifests_to_jenkins()
 {
@@ -364,14 +366,7 @@ function repo_diffmanifests_to_jenkins()
 
     if [ -f $manifest_path/$diff_manifest_xml ];then
 
-        repo diffmanifests --no-color $diff_manifest_xml > $diff_manifest_log
-
-        if [ -f $diff_manifest_log ];then
-            sed -i 's/\[m//g' $diff_manifest_log
-            if [ $? -eq 0 ];then
-                cat $diff_manifest_log
-            fi
-        fi
+        repo diffmanifests $diff_manifest_xml > $diff_manifest_log
 
         if [ $? -eq 0 ];then
             rm $manifest_path/$diff_manifest_xml
@@ -1316,6 +1311,9 @@ function main()
         ### repo diffmainifests
         repo_diffmanifests_to_jenkins
 
+        ### input content diff has colors
+        repo_diffmanifests_has_colors
+
         ### send email
         send_diffmanifest_to_software
     fi
@@ -1360,6 +1358,44 @@ function main()
         echo "server name is not s1 s2 s3 s4 happysongs ww !"
         return 1
     fi
+}
+
+function repo_diffmanifests_has_colors()
+{
+    local diff_manifest_log=~/.jenkins_make_version/diff.log
+    local diff_manifest_html=~/.jenkins_make_version/diff.html
+
+    if [ -f $diff_manifest_html ];then
+
+        rm $diff_manifest_html
+    fi
+
+    cat >>  $diff_manifest_html << EOF
+
+    <html>
+        <head>
+            <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        </head>
+        <body>
+        <pre>
+EOF
+
+    cat $diff_manifest_log >> $diff_manifest_html
+
+    sed -i 's/'`echo -e "\033"`'//g' $diff_manifest_html
+    sed -i 's#\[1\;32m\(.*\)\[m\[#<font color="\#32CD32">\1</font> #g' $diff_manifest_html
+    sed -i  's#\[m\[33m\(.*\)\[m #<font color="\#00CED1">\1</font> #g' $diff_manifest_html
+    sed -i  's#\[m\[33m\(.*\)\[m#<font color="\#00CED1">\1</font> #g' $diff_manifest_html
+    sed -i  's#33m\(.*\)\[m #<font color="\#A0522D">\1</font> #g' $diff_manifest_html
+    sed -i  's#\[1m\(.*\)\[m #<font color="\#EE3A8C">\1</font> #g' $diff_manifest_html
+    sed -i 's#\[m##g' $diff_manifest_html
+
+    cat >> $diff_manifest_html << EOF
+    </pre>
+    </body>
+    </html>
+EOF
+
 }
 
 main
