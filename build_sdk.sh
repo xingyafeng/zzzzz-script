@@ -1727,6 +1727,38 @@ function handler_checkout_branch()
     fi
 }
 
+function handler_branch_for_YOcSettings()
+{
+    local YOcSettings_branch=
+
+    case $build_prj_name in
+        k88s_S6-ZX | k88s_S7-ZX)
+
+            YOcSettings_branch=new_2.0
+            ;;
+
+        k26s_S6-ZX | k26s_S7-ZX)
+
+            YOcSettings_branch=new_2.0
+            ;;
+
+        k27l_S6-ZX | k27l_S7-ZX)
+
+            YOcSettings_branch=new_2.0
+            ;;
+
+        *)
+            __echo "YOcSettings_branch is null !"
+            ;;
+    esac
+
+    if [ "$YOcSettings_branch" ];then
+        handler_checkout_branch $YOcSettings_branch
+        handler_update_source_code YOcMediaFolder $YOcSettings_branch
+    fi
+}
+
+
 function handler_branch_for_YOcMediaFolder()
 {
     local YOcMediaFolder_branch=
@@ -1944,6 +1976,10 @@ function handler_branch_for_app()
 
     if [ $app_name == "YOcMediaFolder" ];then
         handler_branch_for_YOcMediaFolder
+    fi
+
+    if [ $app_name == "YOcSettings" ];then
+        handler_branch_for_YOcSettings
     fi
 
     if [ $local_branch_name == "long" -o $local_branch_name == "develop_long" -o $local_branch_name == "test_long" ];then
