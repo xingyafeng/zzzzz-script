@@ -1370,6 +1370,8 @@ function repo_diffmanifests_has_colors()
         rm $diff_manifest_html
     fi
 
+    if [ -f $diff_manifest_log ];then
+
     cat >>  $diff_manifest_html << EOF
 
     <html>
@@ -1396,6 +1398,7 @@ EOF
     </html>
 EOF
 
+    fi
 }
 
 main
