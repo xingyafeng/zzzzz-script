@@ -1754,7 +1754,7 @@ function handler_branch_for_YOcSettings()
 
     if [ "$YOcSettings_branch" ];then
         handler_checkout_branch $YOcSettings_branch
-        handler_update_source_code YOcMediaFolder $YOcSettings_branch
+        handler_update_source_code YOcSettings $YOcSettings_branch
     fi
 }
 
