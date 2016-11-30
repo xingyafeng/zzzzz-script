@@ -65,6 +65,8 @@ fota_version=
 
 ### project name for yunovo
 mx1_teyes_t7_p=mx1_teyes_t7
+mx1_yunovo_zx_p=mx1_yunovo_zx
+
 mx1_xianzhi_t80c_p=mx1_xianzhi_t80c
 mx1_xianzhi_t80_p=mx1_xianzhi_t80
 
@@ -195,7 +197,7 @@ function is_yunovo_project
 
     case $thisP in
 
-        $mx1_teyes_t7_p)
+        $mx1_teyes_t7_p | $mx1_yunovo_zx)
             echo true
 
             ;;
