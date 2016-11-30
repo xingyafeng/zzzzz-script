@@ -197,7 +197,7 @@ function is_yunovo_project
 
     case $thisP in
 
-        $mx1_teyes_t7_p | $mx1_yunovo_zx)
+        $mx1_teyes_t7_p | $mx1_yunovo_zx_p)
             echo true
 
             ;;
