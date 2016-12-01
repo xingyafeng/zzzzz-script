@@ -1804,6 +1804,37 @@ function handler_branch_for_YOcRecord()
     fi
 }
 
+function handler_branch_for_YOcBTCall()
+{
+    local YOcBTCall_branch=
+
+    case $build_prj_name in
+        k88s_S6-ZX | k88s_S7-ZX)
+
+            YOcBTCall_branch=new_2.0
+            ;;
+
+        k26s_S6-ZX | k26s_S7-ZX)
+
+            YOcBTCall_branch=new_2.0
+            ;;
+
+        k27l_S6-ZX | k27l_S7-ZX)
+
+            YOcBTCall_branch=new_2.0
+            ;;
+
+        *)
+            __echo "YOcBTCall_branch is null !"
+            ;;
+    esac
+
+    if [ "$YOcBTCall_branch" ];then
+        handler_checkout_branch $YOcBTCall_branch
+        handler_update_source_code YOcBTCall $YOcBTCall_branch
+    fi
+}
+
 function handler_branch_for_app()
 {
     local app_name=$1
@@ -1981,6 +2012,10 @@ function handler_branch_for_app()
 
     if [ $app_name == "YOcSettings" ];then
         handler_branch_for_YOcSettings
+    fi
+
+    if [ $app_name == "YOcBTCall" ];then
+        handler_branch_for_YOcBTCall
     fi
 
     if [ $local_branch_name == "long" -o $local_branch_name == "develop_long" -o $local_branch_name == "test_long" ];then
