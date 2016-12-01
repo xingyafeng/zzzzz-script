@@ -1387,11 +1387,12 @@ EOF
     cat $diff_manifest_log >> $diff_manifest_html
 
     sed -i 's/'`echo -e "\033"`'//g' $diff_manifest_html
+    sed -i 's#\[1\;31m\(.*\)\[m\[#<font color="\#32CD32">\1</font> #g' $diff_manifest_html
     sed -i 's#\[1\;32m\(.*\)\[m\[#<font color="\#32CD32">\1</font> #g' $diff_manifest_html
-    sed -i  's#\[m\[33m\(.*\)\[m #<font color="\#00CED1">\1</font> #g' $diff_manifest_html
-    sed -i  's#\[m\[33m\(.*\)\[m#<font color="\#00CED1">\1</font> #g' $diff_manifest_html
-    sed -i  's#33m\(.*\)\[m #<font color="\#A0522D">\1</font> #g' $diff_manifest_html
-    sed -i  's#\[1m\(.*\)\[m #<font color="\#EE3A8C">\1</font> #g' $diff_manifest_html
+    sed -i 's#\[m\[33m\(.*\)\[m #<font color="\#00CED1">\1</font> #g' $diff_manifest_html
+    sed -i 's#\[m\[33m\(.*\)\[m#<font color="\#00CED1">\1</font> #g' $diff_manifest_html
+    sed -i 's#33m\(.*\)\[m #<font color="\#A0522D">\1</font> #g' $diff_manifest_html
+    sed -i 's#\[1m\(.*\)\[m #<font color="\#EE3A8C">\1</font> #g' $diff_manifest_html
     sed -i 's#\[m##g' $diff_manifest_html
 
     cat >> $diff_manifest_html << EOF
