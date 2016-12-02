@@ -416,7 +416,6 @@ function auto_create_manifest()
                 git push $remotename HEAD:refs/build/$username/$refsname
             else
                 _echo "$manifest_default is not change ."
-                exit 1
             fi
         else
             _echo "$manifest_name is not exist ."
