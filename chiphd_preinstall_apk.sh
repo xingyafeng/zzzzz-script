@@ -28,6 +28,7 @@ function auto_create_android_mk()
     local android_mk_file_name=Android.mk
     local armeabi_so=armeabi
     local armeabi_v7a_so=armeabi-v7a
+    local tmp=~/.tmpfs
     local curr_apk_name=$1
 
     local jni_lib="LOCAL_PREBUILT_JNI_LIBS := \\"
@@ -44,6 +45,11 @@ function auto_create_android_mk()
         show_vir "Please e.g auto_create_android_mk  xxx.apk ..."
         return 1
     fi
+
+    if [ ! -d $tmp ];then
+        mkdir $tmp
+    fi
+
     (cat << EOF) > ./$android_mk_file_name
 LOCAL_PATH := \$(call my-dir)
 
@@ -66,37 +72,37 @@ LOCAL_MULTILIB := 32
 
 EOF
     if [ "`unzip -l ${curr_apk_name}.apk | awk '$(NF) ~ /armeabi-v7a\/.*.so$/ {print $(NF)}'`" ];then
-        unzip -l ${curr_apk_name}.apk | awk '$(NF) ~ /armeabi-v7a\/.*.so$/ {print $(NF)}' > $td/${armeabi_v7a_so}.txt
+        unzip -l ${curr_apk_name}.apk | awk '$(NF) ~ /armeabi-v7a\/.*.so$/ {print $(NF)}' > $tmp/${armeabi_v7a_so}.txt
     elif [ "`unzip -l ${curr_apk_name}.apk | awk '$(NF) ~ /armeabi\/.*.so$/ {print $(NF)}'`" ];then
-        unzip -l ${curr_apk_name}.apk | awk '$(NF) ~ /armeabi\/.*.so$/ {print $(NF)}' > $td/${armeabi_so}.txt
+        unzip -l ${curr_apk_name}.apk | awk '$(NF) ~ /armeabi\/.*.so$/ {print $(NF)}' > $tmp/${armeabi_so}.txt
     else
         echo $build_prebuild >> ./$android_mk_file_name
     fi
 
-    if [ -f $td/${armeabi_v7a_so}.txt ];then
+    if [ -f $tmp/${armeabi_v7a_so}.txt ];then
         echo $jni_lib >> ./$android_mk_file_name
         while read lib_path;do
             echo "    @$lib_path \\" >> ./$android_mk_file_name
             echo "$lib_path"
-        done < $td/${armeabi_v7a_so}.txt
+        done < $tmp/${armeabi_v7a_so}.txt
 
         echo >> ./$android_mk_file_name
         echo $build_prebuild >> ./$android_mk_file_name
 
-        rm $td/${armeabi_v7a_so}.txt
-    elif [ -f $td/${armeabi_so}.txt ];then
+        rm $tmp/${armeabi_v7a_so}.txt
+    elif [ -f $tmp/${armeabi_so}.txt ];then
 
         echo $jni_lib >> ./$android_mk_file_name
 
         while read lib_path;do
             echo "    @$lib_path \\" >> ./$android_mk_file_name
             echo "$lib_path"
-        done < $td/${armeabi_so}.txt
+        done < $tmp/${armeabi_so}.txt
 
         echo >> ./$android_mk_file_name
         echo $build_prebuild >> ./$android_mk_file_name
 
-        rm $td/${armeabi_so}.txt
+        rm $tmp/${armeabi_so}.txt
     else
         if [ -f $android_mk_file_name ];then
             sed -i '/LOCAL_MULTILIB := 32/d' $android_mk_file_name
