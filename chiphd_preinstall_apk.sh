@@ -71,10 +71,10 @@ LOCAL_MODULE_SUFFIX := \$(COMMON_ANDROID_PACKAGE_SUFFIX)
 LOCAL_MULTILIB := 32
 
 EOF
-    if [ "`unzip -l ${curr_apk_name}.apk | awk '$(NF) ~ /armeabi-v7a\/.*.so$/ {print $(NF)}'`" ];then
-        unzip -l ${curr_apk_name}.apk | awk '$(NF) ~ /armeabi-v7a\/.*.so$/ {print $(NF)}' > $tmp/${armeabi_v7a_so}.txt
-    elif [ "`unzip -l ${curr_apk_name}.apk | awk '$(NF) ~ /armeabi\/.*.so$/ {print $(NF)}'`" ];then
-        unzip -l ${curr_apk_name}.apk | awk '$(NF) ~ /armeabi\/.*.so$/ {print $(NF)}' > $tmp/${armeabi_so}.txt
+    if [ "`unzip -l ${curr_apk_name}.apk | awk '$(NF) ~ /lib\/armeabi-v7a\/.*.so$/ {print $(NF)}'`" ];then
+        unzip -l ${curr_apk_name}.apk | awk '$(NF) ~ /lib\/armeabi-v7a\/.*.so$/ {print $(NF)}' > $tmp/${armeabi_v7a_so}.txt
+    elif [ "`unzip -l ${curr_apk_name}.apk | awk '$(NF) ~ /lib\/armeabi\/.*.so$/ {print $(NF)}'`" ];then
+        unzip -l ${curr_apk_name}.apk | awk '$(NF) ~ /lib\/armeabi\/.*.so$/ {print $(NF)}' > $tmp/${armeabi_so}.txt
     else
         echo $build_prebuild >> ./$android_mk_file_name
     fi
