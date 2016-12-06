@@ -1691,6 +1691,11 @@ function handler_branch_for_YOcLauncherRes()
 
             ;;
 
+        k86s7_ZZ365-N810)
+            sz_branch_name=S7_NM-N810_V20
+
+            ;;
+
         *)
             sz_branch_name=S6_NXOS_V20
             ;;
