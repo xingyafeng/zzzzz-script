@@ -1743,11 +1743,21 @@ function handler_branch_for_YOcSettings()
             YOcSettings_branch=new_2.0
             ;;
 
-        k27l_S6-ZX | k27l_S7-ZX)
+        k27l_S6-ZX | k27l_S7-ZX | k27l_N91-ZX)
 
             YOcSettings_branch=new_2.0
             ;;
 
+        k86ls_K80)
+
+            YOcSettings_branch=new_2.0
+            ;;
+        *)
+
+        k86s7_NM-N801)
+
+            YOcSettings_branch=new_2.0
+            ;;
         *)
             __echo "YOcSettings_branch is null !"
             ;;
@@ -1809,6 +1819,7 @@ function handler_branch_for_YOcBTCall()
     local YOcBTCall_branch=
 
     case $build_prj_name in
+
         k88s_S6-ZX | k88s_S7-ZX)
 
             YOcBTCall_branch=new_2.0
@@ -1819,7 +1830,17 @@ function handler_branch_for_YOcBTCall()
             YOcBTCall_branch=new_2.0
             ;;
 
-        k27l_S6-ZX | k27l_S7-ZX)
+        k27l_S6-ZX | k27l_S7-ZX k27l_N91-ZX)
+
+            YOcBTCall_branch=new_2.0
+            ;;
+
+        k86ls_K80)
+
+            YOcBTCall_branch=new_2.0
+            ;;
+
+        k86s7_NM-N801)
 
             YOcBTCall_branch=new_2.0
             ;;
