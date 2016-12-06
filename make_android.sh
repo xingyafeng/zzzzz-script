@@ -73,6 +73,7 @@ mx1_xianzhi_t80_p=mx1_xianzhi_t80
 k26s_ld_a107c_p=k26s_ld_a107c
 
 k27_hbs_t2_p=k27_hbs_t2
+k27_xinke_ds50_p=k27_xinke_ds50
 
 k28s_ld_a107c_p=k28s_ld_a107c
 
@@ -207,7 +208,7 @@ function is_yunovo_project
 
             ;;
 
-        $k27_hbs_t2_p)
+        $k27_hbs_t2_p | $k27_xinke_ds50_p)
             echo true
 
             ;;
