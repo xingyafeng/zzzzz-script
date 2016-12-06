@@ -1834,7 +1834,7 @@ function handler_branch_for_YOcBTCall()
             YOcBTCall_branch=bt_new2.0
             ;;
 
-        k27l_S6-ZX | k27l_S7-ZX k27l_N91-ZX)
+        k27l_S6-ZX | k27l_S7-ZX | k27l_N91-ZX)
 
             YOcBTCall_branch=bt_new2.0
             ;;
