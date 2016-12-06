@@ -1757,7 +1757,6 @@ function handler_branch_for_YOcSettings()
 
             YOcSettings_branch=new_2.0
             ;;
-        *)
 
         k86s7_NM-N801)
 
