@@ -1822,27 +1822,27 @@ function handler_branch_for_YOcBTCall()
 
         k88s_S6-ZX | k88s_S7-ZX)
 
-            YOcBTCall_branch=new_2.0
+            YOcBTCall_branch=bt_new2.0
             ;;
 
         k26s_S6-ZX | k26s_S7-ZX)
 
-            YOcBTCall_branch=new_2.0
+            YOcBTCall_branch=bt_new2.0
             ;;
 
         k27l_S6-ZX | k27l_S7-ZX k27l_N91-ZX)
 
-            YOcBTCall_branch=new_2.0
+            YOcBTCall_branch=bt_new2.0
             ;;
 
         k86ls_K80)
 
-            YOcBTCall_branch=new_2.0
+            YOcBTCall_branch=bt_new2.0
             ;;
 
         k86s7_NM-N801)
 
-            YOcBTCall_branch=new_2.0
+            YOcBTCall_branch=bt_new2.0
             ;;
 
         *)
