@@ -363,6 +363,21 @@ function repo_diffmanifests_to_jenkins()
     local diff_manifest_xml=diff.xml
     local diff_manifest_log=~/.jenkins_make_version/diff.log
     local OLDPWD=`pwd`
+    local diff_manifests_git=yunovo/diffmanifests/.git
+    local tmp_version=$zz_script_path/fs/version.log
+    local diff_manifests_tmp=$zz_script_path/fs/diff.log
+
+    local startV=
+    local datetime=`date +'%Y.%m.%d_%H.%M.%S'`
+    local endV=${build_prj_name}_${build_version}_${datetime}
+
+    if [ -d $diff_manifests_git ];then
+        startV=`git --git-dir=$diff_manifests_git lg -1 | awk '{ print $7 }'`
+    fi
+
+    if [ ! -f $tmp_version ];then
+        echo $startV "->" $endV > $tmp_version
+    fi
 
     if [ -f $old_manifest_version ];then
         cp $old_manifest_version $manifest_path/$diff_manifest_xml
@@ -370,7 +385,12 @@ function repo_diffmanifests_to_jenkins()
 
     if [ -f $manifest_path/$diff_manifest_xml ];then
 
-        repo diffmanifests $diff_manifest_xml > $diff_manifest_log
+        repo diffmanifests $diff_manifest_xml > $diff_manifests_tmp
+
+        if [ -f $tmp_version ];then
+            cat $tmp_version $diff_manifests_tmp > $diff_manifest_log
+            rm -r $tmp_version
+        fi
 
         if [ $? -eq 0 ];then
             rm $manifest_path/$diff_manifest_xml
