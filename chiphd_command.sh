@@ -45,6 +45,10 @@ sdate=$td
 yunovo_root=~/yunovocode
 sz_eastaeon=$yunovo_root/$eastaeon51/android
 jenkins_path=/home/work5/jenkins
+jobs_path=~/jobs
+manifest_path=$workspace/app/manifest
+project_path=$workspace/app/project
+apps_path=$workspace/app/apps
 
 ### share for server path
 s1_share_path=/home/jenkins/workspace/share
@@ -108,15 +112,44 @@ function cworkspace
     fi
 }
 
-function cjenkins
+function cjobs
 {
-    if [ -d $jenkins_paths ];then
-	    cd $jenkins_path
+    if [ -d $jobs_path ];then
+	    cd $jobs_path
     else
-        show_vir " $jenkins_path not found !"
+        show_vir " $jobs_path not found !"
         return 1
     fi
+}
 
+function capps
+{
+    if [ -d $apps_path ];then
+	    cd $apps_path
+    else
+        show_vir " $apps_path not found !"
+        return 1
+    fi
+}
+
+function cmanifest
+{
+    if [ -d $manifest_path ];then
+	    cd $manifest_path
+    else
+        show_vir " $manifest_path not found !"
+        return 1
+    fi
+}
+
+function cproject
+{
+    if [ -d $project_path ];then
+	    cd $project_path
+    else
+        show_vir " $project_path not found !"
+        return 1
+    fi
 }
 
 function cshare
