@@ -48,7 +48,7 @@ jenkins_path=/home/work5/jenkins
 jobs_path=~/jobs
 manifest_path=$workspace/app/manifest
 project_path=$workspace/app/project
-apps_path=$workspace/app/apps
+app_path=$workspace/app
 
 ### share for server path
 s1_share_path=/home/jenkins/workspace/share
@@ -122,12 +122,12 @@ function cjobs
     fi
 }
 
-function capps
+function capp
 {
-    if [ -d $apps_path ];then
-	    cd $apps_path
+    if [ -d $app_path ];then
+	    cd $app_path
     else
-        show_vir " $apps_path not found !"
+        show_vir " $app_path not found !"
         return 1
     fi
 }
