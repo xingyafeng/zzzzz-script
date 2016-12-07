@@ -120,6 +120,7 @@ k86lsdPR=k86lsd_root
 k27_xinke_ds50_p=k27_xinke_ds50
 k86sa1_mazda_p=k86sa1_mazda
 mx1_xianzhi_k80_p=mx1_xianzhi_k80
+k89_master_p=k89_master
 
 ################################ system env
 DEVICE=
@@ -296,7 +297,7 @@ function is_yunovo_project
 
             ;;
 
-        $k27_xinke_ds50_p | $k86sa1_mazda_p | $mx1_xianzhi_k80_p)
+        $k27_xinke_ds50_p | $k86sa1_mazda_p | $mx1_xianzhi_k80_p | $k89_master_p)
             echo true
 
             ;;
@@ -313,7 +314,7 @@ function is_branch_project()
     local thisP=$(pwd) && thisP=${thisP%/*} && thisP=${thisP##*/}
 
      case $thisP in
-        $k27_xinke_ds50_p | $k86sa1_mazda_p)
+        $k27_xinke_ds50_p | $k86sa1_mazda_p | $k89_master_p)
             echo true
 
             ;;
