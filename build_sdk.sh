@@ -318,6 +318,11 @@ function is_branch_project()
             echo true
 
             ;;
+        $mx1_xianzhi_k80_p)
+            echo true
+
+            ;;
+
 
         *)
             echo false
