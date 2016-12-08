@@ -1835,7 +1835,7 @@ function handler_branch_for_YOcBTCall()
 
     case $build_prj_name in
 
-        k88s_S6-ZX | k88s_S7-ZX)
+        k88s_S6-ZX | k88s_S7-ZX | k88s_NM-D200)
 
             YOcBTCall_branch=bt_new2.0
             ;;
