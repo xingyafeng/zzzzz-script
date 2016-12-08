@@ -1749,7 +1749,7 @@ function handler_branch_for_YOcSettings()
     local YOcSettings_branch=
 
     case $build_prj_name in
-        k88s_S6-ZX | k88s_S7-ZX)
+        k88s_S6-ZX | k88s_S7-ZX | k88s_NM-D200)
 
             YOcSettings_branch=new_2.0
             ;;
