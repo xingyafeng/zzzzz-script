@@ -1697,7 +1697,7 @@ function handler_branch_for_YOcLauncherRes()
 
             ;;
 
-        k86s7_ZZ365-N810 | k88s_NM-D200)
+        k86s7_NM-N810 | k88s_NM-D200)
             sz_branch_name=S7_NM-N810_V20
 
             ;;
@@ -1769,7 +1769,7 @@ function handler_branch_for_YOcSettings()
             YOcSettings_branch=new_2.0
             ;;
 
-        k86s7_NM-N801)
+        k86s7_NM-N801 | k86s7_NM-N810)
 
             YOcSettings_branch=new_2.0
             ;;
@@ -1855,7 +1855,7 @@ function handler_branch_for_YOcBTCall()
             YOcBTCall_branch=bt_new2.0
             ;;
 
-        k86s7_NM-N801)
+        k86s7_NM-N801 | k86s7_NM-N810)
 
             YOcBTCall_branch=bt_new2.0
             ;;
