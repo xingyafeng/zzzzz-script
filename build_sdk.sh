@@ -1871,6 +1871,54 @@ function handler_branch_for_YOcBTCall()
     fi
 }
 
+function handler_branch_for_TxzCore()
+{
+    local TxzCore_branch=
+
+    case $build_prj_name in
+
+        k86s7_NM-N810 | k88s_NM-D200 | k88s_NM-D210)
+
+            TxzCore_branch=txzing2.0
+            ;;
+
+        *)
+
+           __echo "TxzCore_branch is null !"
+            ;;
+
+    esac
+
+    if [ "$TxzCore_branch" ];then
+        handler_checkout_branch $TxzCore_branch
+        handler_update_source_code TxzCore $TxzCore_branch
+    fi
+}
+
+function handler_branch_for_TxzWebchat()
+{
+    local TxzWebchat_branch=
+
+    case $build_prj_name in
+
+        k86s7_NM-N810 | k88s_NM-D200 | k88s_NM-D210)
+
+            TxzWebchat_branch=txzing2.0
+            ;;
+
+        *)
+
+           __echo "TxzWebchat_branch is null !"
+            ;;
+
+    esac
+
+    if [ "$TxzWebchat_branch" ];then
+        handler_checkout_branch $TxzWebchat_branch
+        handler_update_source_code TxzWebchat $TxzWebchat_branch
+    fi
+}
+
 function handler_branch_for_app()
 {
     local app_name=$1
@@ -2052,6 +2100,14 @@ function handler_branch_for_app()
 
     if [ $app_name == "YOcBTCall" ];then
         handler_branch_for_YOcBTCall
+    fi
+
+    if [ $app_name == "TxzCore" ];then
+        handler_branch_for_TxzCore
+    fi
+
+    if [ $app_name == "TxzWebchat" ];then
+        handler_branch_for_TxzWebchat
     fi
 
     if [ $local_branch_name == "long" -o $local_branch_name == "develop_long" -o $local_branch_name == "test_long" ];then
