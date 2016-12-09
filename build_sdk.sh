@@ -1594,6 +1594,14 @@ function handler_branch_for_apk()
 
     fi
 
+    if [ $apk_name == "TxzCore" ];then
+        handler_branch_for_TxzCore
+    fi
+
+    if [ $apk_name == "TxzWebchat" ];then
+        handler_branch_for_TxzWebchat
+    fi
+
     auto_git_create_branch_refs
 
     cd .. > /dev/null
@@ -2102,13 +2110,6 @@ function handler_branch_for_app()
         handler_branch_for_YOcBTCall
     fi
 
-    if [ $app_name == "TxzCore" ];then
-        handler_branch_for_TxzCore
-    fi
-
-    if [ $app_name == "TxzWebchat" ];then
-        handler_branch_for_TxzWebchat
-    fi
 
     if [ $local_branch_name == "long" -o $local_branch_name == "develop_long" -o $local_branch_name == "test_long" ];then
         tag_name=L
