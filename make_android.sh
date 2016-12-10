@@ -52,6 +52,7 @@ second_version=""
 ################################# common variate
 hw_versiom=H3.1
 debug_path=~/debug
+version_p=~/.jenkins_make_version
 cur_time=`date +%m%d_%H%M`
 zz_script_path=/home/jenkins/workspace/script/zzzzz-script
 cpu_num=`cat /proc/cpuinfo  | egrep 'processor' | wc -l`
@@ -340,7 +341,7 @@ function is_build_type()
 
 function send_diffmanifest_to_software()
 {
-    local diff_manifest_log=~/.jenkins_make_version/diff.html
+    local diff_manifest_log=$version_p/diff.html
     local user="notify@yunovo.cn"
     local sender="jenkins<$user>"
     local receiver=android_software@yunovo.cn
@@ -362,7 +363,7 @@ function repo_diffmanifests_to_jenkins()
     local old_manifest_version=yunovo/diffmanifests/default.xml
     local manifest_path=.repo/manifests
     local diff_manifest_xml=diff.xml
-    local diff_manifest_log=~/.jenkins_make_version/diff.log
+    local diff_manifest_log=$version_p/diff.log
     local OLDPWD=`pwd`
     local diff_manifests_git=yunovo/diffmanifests/.git
     local tmp_version=$zz_script_path/fs/version.log
@@ -800,7 +801,7 @@ function copy_out_image()
 
     ### k86m_H520/S1
 	#local BASE_PATH=/home/work5/public/k86A_Test/${prj_name}/${ver_name}
-    local firmware_path=~/.jenkins_make_version
+    local firmware_path=$version_p
 	local BASE_PATH=$firmware_path/${project_name}/${prj_name}/${ver_name}
 	local DEST_PATH=$BASE_PATH/$system_version
 	local OTA_PATH=$BASE_PATH/${system_version}_full_and_ota
@@ -1200,7 +1201,7 @@ function make_yunovo_android()
 
 function sync_image_to_server()
 {
-    local firmware_path=~/.jenkins_make_version
+    local firmware_path=$version_p
     local share_path=/public/jenkins/jenkins_share_20T
     local jenkins_server=jenkins@f1.y
 
@@ -1295,6 +1296,10 @@ function main()
         if [ ! -d $debug_path ];then
             mkdir $debug_path -p
         fi
+
+        if [ ! -d $version_p ];then
+            mkdir -p $version_p
+        fi
     else
         _echo "current directory is not android !"
         return 1
@@ -1388,8 +1393,8 @@ function main()
 
 function repo_diffmanifests_has_colors()
 {
-    local diff_manifest_log=~/.jenkins_make_version/diff.log
-    local diff_manifest_html=~/.jenkins_make_version/diff.html
+    local diff_manifest_log=$version_p/diff.log
+    local diff_manifest_html=$version_p/diff.html
 
     if [ -f $diff_manifest_html ];then
 
