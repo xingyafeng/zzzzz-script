@@ -1292,7 +1292,9 @@ function main()
     local start_curr_time=`date +'%Y-%m-%d %H:%M:%S'`
 
     if [ "`is_yunovo_project`" == "true" ];then
-        :
+        if [ ! -d $debug_path ];then
+            mkdir $debug_path -p
+        fi
     else
         _echo "current directory is not android !"
         return 1
