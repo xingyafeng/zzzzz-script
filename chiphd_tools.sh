@@ -869,7 +869,7 @@ function rmappfs()
 
 function ssh-update-script()
 {
-    local server_ip=`echo s1.y s2.y s3.y s4.y happysongs f1.y`
+    local server_ip=`echo s1.y s2.y s3.y s4.y s5.y happysongs f1.y`
     local portN=22
     local server_name=jenkins
     local init_script=/home/jenkins/workspace/script/zzzzz-script/init_script.sh
