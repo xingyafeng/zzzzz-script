@@ -16,6 +16,10 @@ workspace=~/workspace
 script_path=$workspace/script/zzzzz-script
 hostN=`hostname`
 
+if [ ! -d $script_path/fs ];then
+    mkdir -p $script_path/fs
+fi
+
 if [ -d $script_path ];then
 	source $script_path/vendorsetup.sh
 fi
