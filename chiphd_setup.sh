@@ -12,3 +12,4 @@ source $CHIPHD_ANDROID_SCRIPT_PATH/chiphdhelp.sh
 source $CHIPHD_ANDROID_SCRIPT_PATH/clone_project.sh
 source $CHIPHD_ANDROID_SCRIPT_PATH/chiphd_preinstall_apk.sh
 source $CHIPHD_ANDROID_SCRIPT_PATH/create_manifest.sh
+source $CHIPHD_ANDROID_SCRIPT_PATH/check_android_folder.sh
