@@ -9,6 +9,7 @@ build_project=
 build_version=
 build_clean=
 build_refs=
+build_update_code=
 
 ## 6735
 YUNOS_PROJECT_NAME=6735
@@ -88,6 +89,8 @@ function handler_print()
     echo "build_version = $build_version"
     echo "build_clean = $build_clean"
     echo "build_refs = $build_refs"
+    echo "build_update_code = $build_update_code"
+
     echo "-----------------------------------"
     echo "build_project = $build_project"
     echo "t_project_name = $t_project_name"
@@ -117,25 +120,32 @@ function handler_vairable()
         exit 1
     fi
 
-    ## build type
+    ## 3. build type
     if [ "$yunovo_type" ];then
         TARGET_BUILD_VARIANT=$yunovo_type
     else
         TARGET_BUILD_VARIANT=user
     fi
 
-    ## build clean
+    ## 4. build clean
     if [ "$yunovo_clean" ];then
         build_clean=$yunovo_clean
     else
         build_clean=false
     fi
 
-    ## build refs
+    ## 5. build refs
     if [ "$yunovo_refs" ];then
         build_refs=$yunovo_refs
     else
         build_refs=false
+    fi
+
+    ## 6. build update code
+    if [ "$yunovo_update_code" ];then
+        build_update_code=$yunovo_update_code
+    else
+        build_update_code=true
     fi
 }
 
@@ -952,12 +962,17 @@ function main()
         exit 1
     fi
 
-    ##恢复源码到干净状态
-    recover_standard_android_project
+    if [ "$build_update_code" == "true" ];then
 
-    ##下载并更新源码
-    download_yunos_code
+        ##恢复源码到干净状态
+        recover_standard_android_project
 
+        ##下载并更新源码
+        download_yunos_code
+
+    else
+        _echo "build_update_code = false"
+    fi
     ## 阿里脚本处理
     source aliyunos/prebuilts/apps/prebuilt_mk.sh $YUNOS_PROJECT_NAME $OPTIONS
     echo
