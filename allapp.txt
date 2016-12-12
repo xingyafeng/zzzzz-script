@@ -86,6 +86,13 @@ CarService
 CloudSafe
 CarCheck
 shepherd
+DCloudCoreApp
+DriveLive
+DriveYes
+QQMusic
+TencentMap
+TencentVedioHD
+XmlyFM
 AiosAdapterVoice
 BaiduVoice
 CarBack
