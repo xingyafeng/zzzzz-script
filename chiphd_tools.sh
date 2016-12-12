@@ -722,6 +722,11 @@ function yunovo
 
 function jenkins5()
 {
+    ssh jenkins@s5.y
+}
+
+function jenkinsf1()
+{
     ssh jenkins@f1.y
 }
 
