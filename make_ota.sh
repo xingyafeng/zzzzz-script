@@ -17,6 +17,8 @@ k86ldP=k86ld
 k86lsdP=k86lsd
 
 k88c_jm_cm01_p=k88c_jm_cm01
+k88c_jm_cm01_p=k88c_jm_cm01
+k27_aj_ajs_p=k27_aj_ajs
 
 ## ota from to version
 ota_from_version=$1
@@ -122,7 +124,7 @@ function is_yunovo_project
             echo true
 
             ;;
-        $k88c_jm_cm01_p)
+        $k88c_jm_cm01_p | ${k27_aj_ajs_p}-1)
             echo true
 
             ;;
@@ -395,7 +397,7 @@ function main()
     if [ "`is_yunovo_project`" == "true" ];then
         :
     else
-        _echo "currect server is not on yunovo server, please check it !"
+        _echo "currect project is not on yunovo project, please check it !"
         return 1
     fi
 
