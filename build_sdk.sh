@@ -413,7 +413,7 @@ function is_yunovo_branch()
 function is_yunovo_server()
 {
     local hostN=`hostname`
-    local serverN=(s1 s2 s3 s4 happysongs ww he-All-Series. yangmingming)
+    local serverN=(s1 s2 s3 s4 s5 happysongs ww he-All-Series. yangmingming)
     local isServer=false
 
     for n in ${serverN[@]}
@@ -2543,7 +2543,7 @@ function auto_update_yunovo_customs()
 
     if [ $hostN == "happysongs" ];then
         jenkins_username=xingyafeng
-    elif [ $hostN == "s1" -o $hostN == "s2" -o $hostN == "s3" -o $hostN == "s4" ];then
+    elif [ $hostN == "s1" -o $hostN == "s2" -o $hostN == "s3" -o $hostN == "s4" -o $hostN == "s5" ];then
         jenkins_username=jenkins
     fi
 
