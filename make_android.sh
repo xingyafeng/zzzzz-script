@@ -85,6 +85,8 @@ k28s_ld_a107c_p=k28s_ld_a107c
 k88c_jm_cm01_p=k88c_jm_cm01
 k88c_bt_bt188_p=k88c_bt_bt188
 
+6735_VoLTE_develop_p=6735_VoLTE_develop
+
 k86sa1_tpl_tpl86s_hd_p="k86sa1_tpl_tpl86s-hd"
 
 ################################ system env
@@ -243,6 +245,12 @@ function is_yunovo_project
             echo true
 
             ;;
+
+        $6735_VoLTE_develop_p)
+            echo true
+
+            ;;
+
 
         *)
             echo false
