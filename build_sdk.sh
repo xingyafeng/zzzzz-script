@@ -1705,6 +1705,12 @@ function handler_branch_for_YOcLauncherRes()
 
             ;;
 
+        k86mx1_QC-M78)
+            sz_branch_name=S7_QC-M78_V21
+
+            ;;
+
+
         k86s7_NM-N810 | k88s_NM-D200)
             sz_branch_name=S7_NM-N810_V20
 
