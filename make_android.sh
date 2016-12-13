@@ -72,6 +72,8 @@ mx1_yunovo_zx_p=mx1_yunovo_zx
 mx1_xianzhi_t80c_p=mx1_xianzhi_t80c
 mx1_xianzhi_t80_p=mx1_xianzhi_t80
 
+k26b_vst_s2_p=k26b_vst_s2
+
 k26s_ld_a107c_p=k26s_ld_a107c
 
 k27_hbs_t2_p=k27_hbs_t2
@@ -205,6 +207,12 @@ function is_yunovo_project
             echo true
 
             ;;
+
+        $k26b_vst_s2_p)
+            echo true
+
+            ;;
+
 
         $k26s_ld_a107c_p)
             echo true
