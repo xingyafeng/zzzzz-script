@@ -1710,6 +1710,10 @@ function handler_branch_for_YOcLauncherRes()
 
             ;;
 
+        k89_HP-S760)
+            sz_branch_name=S7_HP-S760_V21
+
+            ;;
 
         k86s7_NM-N810 | k88s_NM-D200)
             sz_branch_name=S7_NM-N810_V20
