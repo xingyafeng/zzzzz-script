@@ -93,3 +93,11 @@ QQMusic
 TencentMap
 TencentVedioHD
 XmlyFM
+VstCore
+VstEdog
+VstFm
+VstKwPlayerHD
+VstLauncher
+VstMap
+VstScreen
+VstSimCard
