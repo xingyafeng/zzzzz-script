@@ -1777,6 +1777,12 @@ function handler_branch_for_YOcSettings()
             YOcSettings_branch=new_2.0
             ;;
 
+        k86mx1_QC-M78)
+
+            YOcSettings_branch=new_2.0
+            ;;
+
+
         k86s7_NM-N801 | k86s7_NM-N810)
 
             YOcSettings_branch=new_2.0
@@ -1857,6 +1863,12 @@ function handler_branch_for_YOcBTCall()
 
             YOcBTCall_branch=bt_new2.0
             ;;
+
+        k86mx1_QC-M78)
+
+            YOcBTCall_branch=bt_new2.0
+            ;;
+
 
         k86ls_K80)
 
