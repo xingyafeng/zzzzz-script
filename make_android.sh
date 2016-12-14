@@ -316,7 +316,7 @@ function is_yunovo_server()
 ### 是否为使用的芯片类型
 function is_build_device()
 {
-    local cpu_type_more=(aeon6735_65c_s_l1 aeon6735m_65c_s_l1 magc6580_we_l)
+    local cpu_type_more=(aeon6735_65c_s_l1 aeon6735m_65c_s_l1 magc6580_we_l ea6735_65c_a_l1)
     local cpu_type=$1
 
     if [ $# -eq 1 ];then
