@@ -1901,6 +1901,28 @@ function handler_branch_for_YOcBTCall()
     fi
 }
 
+function handler_branch_for_YOcBTCallGoc()
+{
+    local YOcBTCallGoc_branch=
+
+    case $build_prj_name in
+
+        k86ls_K80)
+
+            YOcBTCall_branch="mx1/xianzhi/k80"
+            ;;
+
+        *)
+            __echo "YOcBTCallGoc_branch is null !"
+            ;;
+    esac
+
+    if [ "$YOcBTCallGoc_branch" ];then
+        handler_checkout_branch $YOcBTCallGoc_branch
+        handler_update_source_code YOcBTCallGoc $YOcBTCallGoc_branch
+    fi
+}
+
 function handler_branch_for_TxzCore()
 {
     local TxzCore_branch=
@@ -2132,6 +2154,9 @@ function handler_branch_for_app()
         handler_branch_for_YOcBTCall
     fi
 
+    if [ $app_name == "YOcBTCallGoc" ];then
+        handler_branch_for_YOcBTCallGoc
+    fi
 
     if [ $local_branch_name == "long" -o $local_branch_name == "develop_long" -o $local_branch_name == "test_long" ];then
         tag_name=L
