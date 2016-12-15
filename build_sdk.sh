@@ -498,7 +498,7 @@ function is_long_branch_app()
 function is_long_project()
 {
     ### jenkins path name
-    local prjN=(k26s k26sd k86l k86ld k86lsd k86mx2 k88s k26s_root k86l_root k86ld_root k86lsd_root k86mx2_root k88s_root)
+    local prjN=(k26s k26sd k86l k86ld k86lsd k86mx2 k88s)
 
     ### jenkins project name
     local projectN=(k26c k26d k27l)
@@ -2584,7 +2584,7 @@ function auto_update_yunovo_customs()
 {
 	local nowPwd=$(pwd)
     local project_name=($k26P $k26sP $k26sdP $k27P $k86aP $k86mP $k86mx2P $k86sP $k86smP $k86lP $k86lsP $k86ldP $k86lsdP $k88cP $k88c21P $k88sP)
-    local sz_project_name=`echo k26 k26s k26sd k27 k86a k86m k86mx2 k86s k86sm k86l k86ls k86ld k86lsd k88c k88c_21 k88s k26_root k26s_root k27_root k86a_root k86m_root k86mx2_root k86s_root k86sm_root k86l_root k86ls_root k86ld_root k86lsd_root k88c_root k88c_21_root k88s_root`
+    local sz_project_name=`echo k26 k26s k26sd k27 k86a k86m k86mx2 k86s k86sm k86l k86ls k86ld k86lsd k88c k88c_21 k88s`
     local sz_base_path=~/jobs
     local jenkins_username=""
     local hostN=`hostname`
