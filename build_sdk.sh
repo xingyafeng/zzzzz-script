@@ -1907,6 +1907,11 @@ function handler_branch_for_YOcBTCall()
             YOcBTCall_branch=bt_new2.0
             ;;
 
+        k26s_RWY-CS85)
+
+            YOcBTCall_branch=bt_new2.0
+            ;;
+
         *)
             __echo "YOcBTCall_branch is null !"
             ;;
