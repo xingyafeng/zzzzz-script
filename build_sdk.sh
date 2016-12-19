@@ -2798,7 +2798,7 @@ function main()
         echo "do not clone app !"
     fi
 
-    if [ $flag_cpcustom -eq 1 ];then
+    if [ $flag_cpcustom -eq 1 -a "$build_update_code" == "true" ];then
 
         if [ "`is_check_lunch`" == "no lunch" ];then
             echo "current directory is not android ! gettop is null !"

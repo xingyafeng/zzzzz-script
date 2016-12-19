@@ -1368,7 +1368,7 @@ function main()
         send_diffmanifest_to_software
     fi
 
-    if [ "`is_check_lunch`" != "no lunch" ];then
+    if [ "`is_check_lunch`" != "no lunch" -a "$build_update_code" == "true" ];then
         copy_customs_to_android
         handler_custom_config
     else
