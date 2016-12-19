@@ -1726,6 +1726,11 @@ function handler_branch_for_YOcLauncherRes()
 
             ;;
 
+        k26s_RWY-CS85)
+            sz_branch_name=S7_RWY-CS85_V22
+
+            ;;
+
         *)
             sz_branch_name=S6_NXOS_V20
             ;;
