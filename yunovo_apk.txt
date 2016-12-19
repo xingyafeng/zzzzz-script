@@ -93,3 +93,7 @@ QQMusic
 TencentMap
 TencentVedioHD
 XmlyFM
+AutoLiteCs85
+DiDiCs85
+HomeVideoCs85
+WiFiSearchCs85
