@@ -368,7 +368,7 @@ function cpfs()
     local sz_server_path=/home/jenkins/$sz_base_path
     local sz_yafeng_path=/home/yafeng/$sz_base_path
 
-    if [ $sz_hostname == "s1" -o $sz_hostname == "s2" -o $sz_hostname == "s3" -o $sz_hostname == "s4" -o $sz_hostname == "f1" ];then
+    if [ $sz_hostname == "s1" -o $sz_hostname == "s2" -o $sz_hostname == "s3" -o $sz_hostname == "s4" -o $sz_hostname == "s5" -o $sz_hostname == "f1" ];then
         scp -r jenkins@${sz_hostname}.y:$sz_server_path/$sz_file .
     elif [ $sz_hostname == "happysongs" ];then
 
