@@ -89,6 +89,8 @@ k88c_bt_bt188_p=k88c_bt_bt188
 
 k88c_6735_VoLTE_develop_p=6735_VoLTE_develop
 mtk6753_volte_develop_p=mtk6753_volte_develop
+mtk6753_volte_develop_p=mtk6753_volte_develop
+mtk6735_gps_develop_p=mtk6735_gps_develop
 
 k86sa1_tpl_tpl86s_hd_p="k86sa1_tpl_tpl86s-hd"
 
@@ -249,7 +251,7 @@ function is_yunovo_project
 
             ;;
 
-        $k88c_6735_VoLTE_develop_p | $mtk6753_volte_develop_p)
+        $k88c_6735_VoLTE_develop_p | $mtk6753_volte_develop_p |$mtk6735_gps_develop_p)
             echo true
 
             ;;
@@ -1118,6 +1120,10 @@ function down_load_yunovo_source_code()
     local projectN=${prj_name%%_*}
     local customN=${prj_name#*_} && customN=${customN%%_*}
     local modeN=${prj_name##*_}
+
+    if [ $customN == "gps" ];then
+        customN=gps_repair
+    fi
 
     branchN="$projectN/$customN/$modeN"
 
