@@ -1814,6 +1814,13 @@ function handler_branch_for_YOcSettings()
 
             YOcSettings_branch=new_2.0
             ;;
+
+        k89_HP-S760 | k89_LD-HS830A)
+
+            YOcSettings_branch=new_2.0
+            ;;
+
+
         *)
             __echo "YOcSettings_branch is null !"
             ;;
@@ -1911,6 +1918,12 @@ function handler_branch_for_YOcBTCall()
 
             YOcBTCall_branch=bt_new2.0
             ;;
+
+        k89_HP-S760 | k89_LD-HS830A)
+
+            YOcBTCall_branch=bt_new2.0
+            ;;
+
 
         *)
             __echo "YOcBTCall_branch is null !"
