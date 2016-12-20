@@ -879,7 +879,7 @@ function copy_out_image()
 	    cp -vf ${OUT}/cache.img ${DEST_PATH}
 	    cp -vf ${OUT}/userdata.img ${DEST_PATH}
 
-	    cp -vf ${OUT}/obj/CGEN/APDB_MT*W15* ${DEST_PATH}/database/ap
+	    cp -vf ${OUT}/obj/CGEN/APDB_MT*W* ${DEST_PATH}/database/ap
 	    cp -vf ${OUT}/system/etc/mddb/BPLGUInfoCustomAppSrcP* ${DEST_PATH}/database/moden
 
         _echo "---> copy out image end ..."
