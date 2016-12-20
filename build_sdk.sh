@@ -2619,6 +2619,23 @@ function auto_update_yunovo_customs()
     for sz_custom in $sz_project_name
     do
         if [ "`get_project_real_name`" == "$sz_custom" ];then
+
+            case "`get_project_real_name`" in
+
+                k26sd)
+                    sz_custom=k26s
+                    ;;
+                k86ld)
+                    sz_custom=k86l
+                    ;;
+                k86lsd)
+                    sz_custom=k86ls
+                    ;;
+                *)
+                    __echo "sz_custom no mactch double mic procject. "
+                    ;;
+            esac
+
             local sz_yunovo_customs_path=$sz_base_path/$sz_custom/yunovo_customs
             local sz_yunovo_customs_link_server=`echo ssh://${jenkins_username}@gerrit.y:29419/xyf/${sz_custom}/yunovo_customs`
             local sz_yunovo_path=$sz_base_path/$sz_custom
