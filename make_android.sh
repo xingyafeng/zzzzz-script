@@ -440,6 +440,10 @@ function auto_create_manifest()
     local customN=${prj_name#*_} && customN=${customN%%_*}
     local modeN=${prj_name##*_}
 
+    if [ $customN == "gps" ];then
+        customN=gps_repair
+    fi
+
     manifest_branch="$projectN/$customN/$modeN"
 
     _echo "manifest_branch = $manifest_branch"
