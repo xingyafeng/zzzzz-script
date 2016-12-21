@@ -333,22 +333,12 @@ function is_branch_project()
 
 }
 
-function is_root_yunovo_project()
+function is_root_project()
 {
-    local thisP=$(pwd) && thisP=${thisP%/*} && thisP=${thisP##*/}
-    local project_name=($k26P $k26sP $k27P $k86aP $k86mP $k86mx2P $k86sP $k86smP $k86lP $k86lsP $k86ldP $k86lsdP $k88cP $k88c21P $k88sP)
-
-    if [ "$thisP" ];then
-
-        for p in ${project_name[@]}
-        do
-            if [ "$thisP" == "${p}_root" ];then
-                echo true
-            fi
-        done
+    if [ "$build_type" == "userdebug" -o "$build_type" == "eng" ];then
+        echo true
     else
-        echo "it do not get project name !"
-        return 1
+        echo false
     fi
 }
 
@@ -2576,6 +2566,7 @@ function sync_jenkins_server()
     local jenkins_server=jenkins@f1.y
 
     local root_version=userdebug
+    local root_version_eng=eng
     local branch_for_test=test
     local branch_for_master=master
     local branch_for_develop=develop
@@ -2584,19 +2575,19 @@ function sync_jenkins_server()
         if [ $build_test == "true" ];then
             rsync -av $firmware_path/ $jenkins_server:$share_path/happysongs
         elif [ "$build_branch" == $branch_for_test ];then
-            if [ "`is_root_yunovo_project`" == "true" -a "$build_type" == "$root_version" ];then
+            if [ "`is_root_project`" == "true" ] && [ "$build_type" == "$root_version" -o "$build_type" == "$root_version_eng" ];then
                 rsync -av $firmware_path/ $jenkins_server:$share_path/${branch_for_test}_root
             else
                 rsync -av $firmware_path/ $jenkins_server:$share_path/$branch_for_test
             fi
         elif [ "$build_branch" == $branch_for_develop ];then
-            if [ "`is_root_yunovo_project`" == "true" -a "$build_type" == "$root_version" ];then
+            if [ "`is_root_project`" == "true" ] && [ "$build_type" == "$root_version" -o "$build_type" == "$root_version_eng" ];then
                 rsync -av $firmware_path/ $jenkins_server:$share_path/${branch_for_develop}_root
             else
                 rsync -av $firmware_path/ $jenkins_server:$share_path/$branch_for_develop
             fi
         else
-            if [ "`is_root_yunovo_project`" == "true" -a "$build_type" == "$root_version" ];then
+            if [ "`is_root_project`" == "true" ] && [ "$build_type" == "$root_version" -o "$build_type" == "$root_version_eng" ];then
                 rsync -av $firmware_path/ $jenkins_server:$share_path/debug_root
             else
                 rsync -av $firmware_path $jenkins_server:$share_path
