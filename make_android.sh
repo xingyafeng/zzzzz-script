@@ -1235,6 +1235,7 @@ function sync_image_to_server()
     local jenkins_server=jenkins@f1.y
 
     local root_version=userdebug
+    local root_version_eng=eng
     local branch_for_test=test
     local branch_for_master=master
     local branch_for_develop=develop
@@ -1250,20 +1251,20 @@ function sync_image_to_server()
             rsync -av $firmware_path/ $jenkins_server:$share_path/happysongs
         elif [ "$build_branch" == $branch_for_test ];then
 
-            if [ "$build_type" == "$root_version" ];then
+            if [ "$build_type" == "$root_version" -o "$build_type" == "$root_version_eng" ];then
                 rsync -av $firmware_path/ $jenkins_server:$share_path/${branch_for_test}_root
             else
                 rsync -av $firmware_path/ $jenkins_server:$share_path/$branch_for_test
             fi
         elif [ "$build_branch" == $branch_for_develop ];then
 
-            if [ "$build_type" == "$root_version" ];then
+            if [ "$build_type" == "$root_version" -o "$build_type" == "$root_version_eng" ];then
                 rsync -av $firmware_path/ $jenkins_server:$share_path/${branch_for_develop}_root
             else
                 rsync -av $firmware_path/ $jenkins_server:$share_path/$branch_for_develop
             fi
         else
-            if [ "$build_type" == "$root_version" ];then
+            if [ "$build_type" == "$root_version" -o "$build_type" == "$root_version_eng" ];then
                 rsync -av $firmware_path/ $jenkins_server:$share_path/yunovo_root
             else
                 rsync -av $firmware_path/ $jenkins_server:$share_path/yunovo
