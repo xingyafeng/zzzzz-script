@@ -1,5 +1,18 @@
 #!/bin/bash
 
+function test_a_o()
+{
+
+    echo $1
+    echo $2
+    if [ "$1" == "a" -o "$1" == "b" ] && [ "$2" == "c" -o "$2" == "d" ];then
+        echo "ok ."
+    else
+        echo "fail ."
+    fi
+
+}
+
 TARGET_BUILD_VARIANT_LIST=("eng" "user" "userdebug")
 
 #function declaring
