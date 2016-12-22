@@ -1828,7 +1828,7 @@ function handler_branch_for_YOcMediaFolder()
 {
     local YOcMediaFolder_branch=
 
-    if [ $build_prj_name == "k26s_LD-A107C" ];then
+    if [ $build_prj_name == "k26s_LD-A107C" -o $build_prj_name == "k89_LD-HS830A" ];then
         YOcMediaFolder_branch=yunovo/k26s/lingdu/common
     else
          if [ "`git branch -r | grep 'test'`" -o "`git branch -r | grep develop`" ];then
