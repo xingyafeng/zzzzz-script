@@ -1851,6 +1851,8 @@ function handler_branch_for_YOcRecord()
         YOcRecord_branch=k26s/ld/a107c
     elif [ $build_prj_name == "k27l_HBS-T2" ];then
         YOcRecord_branch=yunovo/k27l/hbs/common
+    elif [ $build_prj_name == "k89_LD-HS830A" ];then
+        YOcRecord_branch=k89/ld/hs830a
     else
         if [ "`git branch -r | grep 'test'`" -o "`git branch -r | grep develop`" ];then
             :
