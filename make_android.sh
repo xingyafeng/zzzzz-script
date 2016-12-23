@@ -900,6 +900,9 @@ function copy_out_image()
             fi
         fi
 
+        if [ "`ls ${OUT}/target_files-package.zip`" ];then
+            cp -v ${OUT}/target_files-package.zip ${OTA_PATH}
+        fi
         ### add readme.txt in version
         if [ -f $readme_file ];then
             cp -vf $readme_file ${BASE_PATH}
