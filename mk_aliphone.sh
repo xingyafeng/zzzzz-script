@@ -1018,7 +1018,12 @@ function main()
         make update-api -j${CPUCORES}
     fi
 
-    make otapackage -j${CPUCORES} -k $moreArgs 2>&1 | tee build.yunos.log
+    if make otapackage -j${CPUCORES} -k $moreArgs;then
+        __echo " make project successful ..."
+    else
+        __echo " make project fail ..."
+        exit 1
+    fi
 
     auto_create_manifest
 
