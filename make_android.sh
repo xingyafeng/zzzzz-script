@@ -1210,8 +1210,7 @@ function make_yunovo_android()
         return 1
     fi
 
-    make -j${cpu_num} ${fota_version} 2>&1 | tee build_$cur_time.log
-    if [ $? -eq 0 ];then
+    if make -j${cpu_num} ${fota_version};then
         _echo "--> make project end ..."
     else
         _echo "make android failed !"
@@ -1219,8 +1218,7 @@ function make_yunovo_android()
     fi
 
     if [ "$build_make_ota" == "true" ];then
-        make -j${cpu_num} ${fota_version} otapackage 2>&1 | tee build_ota_$cur_time.log
-        if [ $? -eq 0 ];then
+        if make -j${cpu_num} ${fota_version} otapackage;then
             _echo "--> make otapackage end ..."
         else
             _echo "make otapackage fail ..."
