@@ -20,6 +20,8 @@ k88c_jm_cm01_p=k88c_jm_cm01
 k88c_jm_cm01_p=k88c_jm_cm01
 k27_aj_ajs_p=k27_aj_ajs
 
+mx1_xianzhi_t80_p=mx1_xianzhi_t80
+
 ## ota from to version
 ota_from_version=$1
 ota_to_version=$2
@@ -124,6 +126,12 @@ function is_yunovo_project
             echo true
 
             ;;
+
+        $mx1_xianzhi_t80_p)
+            echo true
+
+            ;;
+
         $k88c_jm_cm01_p | ${k27_aj_ajs_p}-1)
             echo true
 
