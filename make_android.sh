@@ -374,8 +374,14 @@ function send_diffmanifest_to_software()
 
     if [ -f $diff_manifest_log ];then
         sendEmail -f $sender -s $server_name -u $title -o $charset -o $content_type -xu $user -xp $key -t $receiver -o message-file=$diff_manifest_log
+
+        ## backup diff.html file
+        scp -r $diff_manifest_log jenkins@f1.y:/public/jenkins/jenkins_share_20T/backupfs
     fi
 
+    if [ -f $diff_manifest_log ];then
+        rm -rf $diff_manifest_log
+    fi
 }
 
 
@@ -1462,6 +1468,11 @@ EOF
     </html>
 EOF
 
+        scp -r $diff_manifest_log jenkins@f1.y:/public/jenkins/jenkins_share_20T/backupfs
+
+        if [ -f $diff_manifest_log ];then
+            rm -rf $diff_manifest_log
+        fi
     fi
 }
 
