@@ -124,6 +124,9 @@ mx1_xianzhi_k80_p=mx1_xianzhi_k80
 k89_master_p=k89_master
 k86mx1_jh_s04a_p=k86mx1_jh_s04a
 
+email_receiver=""
+email_content=""
+
 ################################ system env
 DEVICE=
 ROOT=
@@ -634,6 +637,72 @@ function print_system_app_and_apk()
     echo "-----------------------"
     echo
 }
+
+### 是否为调试版本
+function is_root_version()
+{
+    local build_type_root=(eng userdebug)
+
+    local buildR=$1
+
+    if [ $# -eq 1 ];then
+        :
+    else
+        _echo "$# is error, please check args [is_root_version] !"
+        return 1
+    fi
+
+    for t in ${build_type_root[@]}
+    do
+        if [ $t == $buildR ];then
+            echo true
+        fi
+    done
+}
+
+function sendEmail_diffmanifest_to_who()
+{
+    local sz_receiver=$1
+    local sz_message_file=$2
+    local title="${build_prj_name} project !"
+
+    local receiver=""
+    local content=""
+    local user="notify@yunovo.cn"
+    local sender="jenkins<$user>"
+
+    local key=n123456
+    local server_name=smtp.exmail.qq.com
+    local content_type="message-content-type=html"
+    local charset="message-charset=utf-8"
+
+    if [ "$sz_receiver" ];then
+        receiver=$sz_receiver
+    else
+        __echo "receiver is null ."
+        return 1
+    fi
+
+    if [ "$sz_message_file" -a -f "$sz_message_file" ];then
+        content=$sz_message_file
+    elif [ "$sz_message_file" ];then
+        content=$sz_message_file
+    fi
+
+    if [ -f "$content" ];then
+        sendEmail -f $sender -s $server_name -u $title -o $charset -o $content_type -xu $user -xp $key -t $receiver -o message-file=$content
+
+        ## backup diff.html file
+        scp -r $content jenkins@f1.y:/public/jenkins/jenkins_share_20T/backupfs
+    else
+        sendEmail -f "$sender" -s $server_name -u $title -o $charset -o $content_type -xu $user -xp $key -t $receiver -m "$content"
+    fi
+
+    if [ -f "$content" ];then
+        rm -rf $content
+    fi
+}
+
 
 ### handler vairable for jenkins
 function handler_vairable()
@@ -2539,6 +2608,8 @@ function make_yunovo_android()
 
     if make -j${cpu_num} ${fota_version};then
         _echo "--> make project end ..."
+
+        sendEmail_diffmanifest_to_who "$email_receiver" "$email_content"
     else
         _echo "make android failed !"
         return 1
@@ -2806,6 +2877,14 @@ function main()
 	    print_variable $build_prj_name $build_version $build_device $build_type $build_flag $build_file $build_test
     else
         echo "it is not print variable . please checkout your flag_print !"
+    fi
+
+    if [ "`is_root_version $build_type`" != "true" ];then
+        email_receiver="514779897@qq.com"
+        email_content="make root project successful ..."
+    else
+        email_receiver="514779897@qq.com"
+        email_content="make project successful ..."
     fi
 
     if [ -d .repo ];then
