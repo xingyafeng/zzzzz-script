@@ -49,6 +49,10 @@ custom_version=""
 first_version=""
 second_version=""
 
+### send email
+email_receiver=""
+email_content=""
+
 ################################# common variate
 hw_versiom=H3.1
 debug_path=~/debug
@@ -360,27 +364,68 @@ function is_build_type()
     done
 }
 
-function send_diffmanifest_to_software()
+### 是否为调试版本
+function is_root_version()
 {
-    local diff_manifest_log=$version_p/diff.html
+    local build_type_root=(eng userdebug)
+
+    local buildR=$1
+
+    if [ $# -eq 1 ];then
+        :
+    else
+        _echo "$# is error, please check args [is_root_version] !"
+        return 1
+    fi
+
+    for t in ${build_type_root[@]}
+    do
+        if [ $t == $buildR ];then
+            echo true
+        fi
+    done
+}
+
+function sendEmail_diffmanifest_to_who()
+{
+    local sz_receiver=$1
+    local sz_message_file=$2
+    local title="${build_prj_name} project !"
+
+    local receiver=""
+    local content=""
     local user="notify@yunovo.cn"
     local sender="jenkins<$user>"
-    local receiver=android_software@yunovo.cn
-    local title="${build_prj_name} project diff message !"
+
     local key=n123456
     local server_name=smtp.exmail.qq.com
     local content_type="message-content-type=html"
     local charset="message-charset=utf-8"
 
-    if [ -f $diff_manifest_log ];then
-        sendEmail -f $sender -s $server_name -u $title -o $charset -o $content_type -xu $user -xp $key -t $receiver -o message-file=$diff_manifest_log
-
-        ## backup diff.html file
-        scp -r $diff_manifest_log jenkins@f1.y:/public/jenkins/jenkins_share_20T/backupfs
+    if [ "$sz_receiver" ];then
+        receiver=$sz_receiver
+    else
+        __echo "receiver is null ."
+        return 1
     fi
 
-    if [ -f $diff_manifest_log ];then
-        rm -rf $diff_manifest_log
+    if [ "$sz_message_file" -a -f "$sz_message_file" ];then
+        content=$sz_message_file
+    elif [ "$sz_message_file" ];then
+        content=$sz_message_file
+    fi
+
+    if [ -f "$content" ];then
+        sendEmail -f $sender -s $server_name -u $title -o $charset -o $content_type -xu $user -xp $key -t $receiver -o message-file=$content
+
+        ## backup diff.html file
+        scp -r $content jenkins@f1.y:/public/jenkins/jenkins_share_20T/backupfs
+    else
+        sendEmail -f "$sender" -s $server_name -u $title -o $charset -o $content_type -xu $user -xp $key -t $receiver -m "$content"
+    fi
+
+    if [ -f "$content" ];then
+        rm -rf $content
     fi
 }
 
@@ -1174,6 +1219,9 @@ function down_load_yunovo_source_code()
 ## build android system for yunovo project
 function make_yunovo_android()
 {
+    local receiver="514779897@qq.com"
+    local content="make project successful ..."
+
 	if [ "$DEVICE" ];then
         :
     else
@@ -1218,6 +1266,8 @@ function make_yunovo_android()
 
     if make -j${cpu_num} ${fota_version};then
         _echo "--> make project end ..."
+
+        sendEmail_diffmanifest_to_who "$receiver" "$content"
     else
         _echo "make android failed !"
         return 1
@@ -1328,7 +1378,6 @@ function source_init()
 function main()
 {
     local start_curr_time=`date +'%Y-%m-%d %H:%M:%S'`
-
     if [ "`is_yunovo_project`" == "true" ];then
         if [ ! -d $debug_path ];then
             mkdir $debug_path -p
@@ -1352,6 +1401,14 @@ function main()
             handler_vairable $build_prj_name $build_device $build_file
             ### 输出完整参数
             print_variable $build_prj_name $build_version $build_device $build_type $build_file
+
+            if [ "`is_root_version $build_type`" == "true" ];then
+                email_receiver="514779897@qq.com"
+                email_content="make root project successful ..."
+            else
+                email_receiver="android_software@yunovo.cn"
+                email_content="$version_p/diff.html"
+          fi
         else
             _echo "xargs is error, please checkout xargs."
             return 1
@@ -1383,7 +1440,9 @@ function main()
         repo_diffmanifests_has_colors
 
         ### send email
-        send_diffmanifest_to_software
+        if [ "`is_root_version $build_type`" != "true" ];then
+            sendEmail_diffmanifest_to_who "$email_receiver" "$email_content"
+        fi
     fi
 
     if [ "`is_check_lunch`" != "no lunch" -a "$build_update_code" == "true" ];then
