@@ -421,6 +421,11 @@ function sendEmail_diffmanifest_to_who()
         ## backup diff.html file
         scp -r $content jenkins@f1.y:/public/jenkins/jenkins_share_20T/backupfs
     else
+
+        if [ ! -f "$content" ];then
+            content="make project successful ..."
+        fi
+
         sendEmail -f "$sender" -s $server_name -u $title -o $charset -o $content_type -xu $user -xp $key -t $receiver -m "$content"
     fi
 
