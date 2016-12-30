@@ -2020,6 +2020,28 @@ function handler_branch_for_YOcBTCallGoc()
     fi
 }
 
+function handler_branch_for_YOcTools()
+{
+    local YOcTools_branch=
+
+    case $build_prj_name in
+
+        k86s7_NM-N810)
+
+            YOcTools_branch="k86s7/newsmy/n810"
+            ;;
+
+        *)
+            __echo "YOcTools_branch is null !"
+            ;;
+    esac
+
+    if [ "$YOcTools_branch" ];then
+        handler_checkout_branch $YOcTools_branch
+        handler_update_source_code YOcTools $YOcTools_branch
+    fi
+}
+
 function handler_branch_for_TxzCore()
 {
     local TxzCore_branch=
@@ -2254,6 +2276,11 @@ function handler_branch_for_app()
     if [ $app_name == "YOcBTCallGoc" ];then
         handler_branch_for_YOcBTCallGoc
     fi
+
+    if [ $app_name == "YOcTools" ];then
+        handler_branch_for_YOcTools
+    fi
+
 
     if [ $local_branch_name == "long" -o $local_branch_name == "develop_long" -o $local_branch_name == "test_long" ];then
         tag_name=L
