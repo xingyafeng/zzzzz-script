@@ -1781,7 +1781,7 @@ function handler_branch_for_YOcLauncherRes()
 
             ;;
 
-        k86ls_K80)
+        k86ls_K80 | k89_T99)
             sz_branch_name=S7_XZ-K80_V20
 
             ;;
@@ -1854,7 +1854,7 @@ function handler_branch_for_YOcSettings()
             YOcSettings_branch=new_2.0
             ;;
 
-        k86ls_K80)
+        k86ls_K80 | k89_T99)
 
             YOcSettings_branch=new_2.0
             ;;
@@ -1966,7 +1966,7 @@ function handler_branch_for_YOcBTCall()
             ;;
 
 
-        k86ls_K80)
+        k86ls_K80 | k89_T99)
 
             YOcBTCall_branch=bt_new2.0
             ;;
@@ -2004,7 +2004,7 @@ function handler_branch_for_YOcBTCallGoc()
 
     case $build_prj_name in
 
-        k86ls_K80)
+        k86ls_K80 | k89_T99)
 
             YOcBTCall_branch="mx1/xianzhi/k80"
             ;;
