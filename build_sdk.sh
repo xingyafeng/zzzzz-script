@@ -675,6 +675,7 @@ function sendEmail_diffmanifest_to_who()
     local server_name=smtp.exmail.qq.com
     local content_type="message-content-type=html"
     local charset="message-charset=utf-8"
+    local msgfs=$zz_script_path/fs/msg.html
 
     if [ "$sz_receiver" ];then
         receiver=$sz_receiver
@@ -688,6 +689,39 @@ function sendEmail_diffmanifest_to_who()
     elif [ "$sz_message_file" ];then
         content=$sz_message_file
     fi
+
+cat >>  $msgfs << EOF
+
+    <html>
+        <head>
+            <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        </head>
+        <body>
+        <pre>
+EOF
+
+    echo >> $msgfs
+    echo "-------------------------------------------------" >> $msgfs
+    echo "1. 构建者 : ${BUILD_USER}" >> $msgfs
+    echo "2. 服务器 : `hostname`" >> $msgfs
+    echo "3. 全路径 : `pwd`" >> $msgfs
+    echo "4. 工程名 : ${project_name}" >> $msgfs
+    echo "5. 项目名 : ${custom_version}" >> $msgfs
+    echo "6. 版本号 : ${build_version}" >> $msgfs
+    echo "7. 客制化路径 : ${prefect_name}" >> $msgfs
+    echo "8. 系统版本号 : ${system_version}" >> $msgfs
+    echo "-------------------------------------------------" >> $msgfs
+    echo "1. lunch选工程， lunch       = ${lunch_project}" >> $msgfs
+    echo "2. 是否编译OTA， make ota    = ${build_make_ota}"  >> $msgfs
+    echo "3. 是否清除编译，make clean  = ${build_clean}"  >> $msgfs
+    echo "4. 是否更新代码，update code = ${build_update_code}" >> $msgfs
+    echo "-------------------------------------------------" >> $msgfs
+
+cat >> $msgfs << EOF
+    </pre>
+    </body>
+    </html>
+EOF
 
     if [ -f "$content" ];then
         sendEmail -f $sender -s $server_name -u $title -o $charset -o $content_type -xu $user -xp $key -t $receiver -o message-file=$content
@@ -2909,12 +2943,12 @@ function main()
         echo "it is not print variable . please checkout your flag_print !"
     fi
 
-    if [ "`is_root_version $build_type`" != "true" ];then
+    if [ "`is_root_version $build_type`" == "true" ];then
         email_receiver="514779897@qq.com"
         email_content="make root project successful ..."
     else
-        email_receiver="514779897@qq.com"
-        email_content="make project successful ..."
+        email_receiver="android_software@yunovo.cn"
+        email_content=$zz_script_path/fs/msg.html
     fi
 
     if [ -d .repo ];then
