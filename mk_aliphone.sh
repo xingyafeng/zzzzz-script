@@ -12,7 +12,7 @@ build_refs=
 build_update_code=
 
 ## 6735
-YUNOS_PROJECT_NAME=6735
+YUNOS_PROJECT_NAME=$1
 ## eng user userdebug
 TARGET_BUILD_VARIANT=
 ## adb acb
@@ -149,6 +149,19 @@ function handler_vairable()
         build_update_code=$yunovo_update_code
     else
         build_update_code=true
+    fi
+
+    ## 7. YUNOS_PROJECT_NAME
+    if [ "$YUNOS_PROJECT_NAME" ];then
+
+        if [ "$YUNOS_PROJECT_NAME" == "magc6580_we_l" ];then
+            :
+        else
+            echo "YUNOS_PROJECT_NAME do not match, please check it !"
+            exit 1
+        fi
+    else
+        YUNOS_PROJECT_NAME=6735
     fi
 }
 
@@ -527,6 +540,7 @@ YUNOS_PROJECT_NAME_LIST=(
     "n7100"
     "aeon6735m_65c_s_l1"
     "aeon6735_65c_s_l1"
+	"magc6580_we_l"
 )
 CODEBASE_VERSION="3.0"
 TARGET_BUILD_VARIANT_LIST=("eng" "user" "userdebug")
@@ -998,6 +1012,11 @@ function main()
             echo "choose 6735"
             source build/envsetup.sh
             lunch full_aeon6735_65c_s_l1-$TARGET_BUILD_VARIANT
+        ;;
+        magc6580_we_l)
+            echo "choose magc6580_we_l"
+            source build/envsetup.sh
+            lunch full_magc6580_we_l-$TARGET_BUILD_VARIANT
         ;;
         *)
             echo "DON'T KNOW HOW TO MAKE!!!!!!!!!!!!!"
