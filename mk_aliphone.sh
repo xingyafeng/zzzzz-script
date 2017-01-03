@@ -10,6 +10,7 @@ build_version=
 build_clean=
 build_refs=
 build_update_code=
+build_mode=
 
 ## 6735
 YUNOS_PROJECT_NAME=$1
@@ -24,6 +25,7 @@ MAKE_TYPE=remake
 t_project_name=
 t_custom_verion=
 
+voice_mode=
 CPUCORES=`cat /proc/cpuinfo | grep processor | wc -l`
 
 ## yunos project name
@@ -93,11 +95,14 @@ function handler_print()
     echo "build_clean = $build_clean"
     echo "build_refs = $build_refs"
     echo "build_update_code = $build_update_code"
+    echo "build_mode = $build_mode"
 
     echo "-----------------------------------"
     echo "build_project = $build_project"
     echo "t_project_name = $t_project_name"
     echo "t_custom_verion = $t_custom_verion"
+    echo "-----------------------------------"
+    echo "voice_mode = $voice_mode"
     echo "-----------------------------------"
     echo
 }
@@ -163,6 +168,15 @@ function handler_vairable()
     else
         YUNOS_PROJECT_NAME=6735
     fi
+
+    ## 8 VR_MODE
+    if [ "$yunovo_vr_mode" ];then
+        build_mode=$yunovo_vr_mode
+    else
+        __echo " yunovo_vr_mode is null, please check it !"
+    fi
+
+    voice_mode="VR_MODE=$build_mode"
 }
 
 ### 是否为阿里的项目
@@ -1046,7 +1060,7 @@ function main()
         make update-api -j${CPUCORES}
     fi
 
-    if make otapackage -j${CPUCORES} -k $moreArgs;then
+    if make otapackage $voice_mode -j${CPUCORES} -k $moreArgs;then
         __echo " make project successful ..."
     else
         __echo " make project fail ..."
