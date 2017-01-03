@@ -15,10 +15,12 @@ export LC_ALL=en_US.UTF-8
 
 ### build custom
 build_device=$1
+### build author
+build_user=$2
 ### build project name  e.g. : K86_H520
-build_prj_name=$2
+build_prj_name=$3
 ### eg: k86l_yunovo_zx
-build_file=$3
+build_file=$4
 ### eng|user|userdebug
 build_type=
 ### test
@@ -456,9 +458,26 @@ function repo_diffmanifests_to_jenkins()
         startV=`git --git-dir=$diff_manifests_git lg -1 | awk '{ print $7 }'`
     fi
 
-    if [ ! -f $tmp_version ];then
-        echo $startV "->" $endV > $tmp_version
-    fi
+    echo "start: $startV"
+    echo "end: $endV"
+    ##add version form ... to ...
+    echo $startV "->" $endV > $tmp_version
+    echo "-------------------------------------------------" >> $tmp_version
+    echo >> $tmp_version
+    echo "1. 构建者 : ${BUILD_USER}" >> $tmp_version
+    echo "2. 服务器 : `hostname`" >> $tmp_version
+    echo "3. 全路径 : ${OLDPWD}" >> $tmp_version
+    echo "4. 工程名 : ${project_name}" >> $tmp_version
+    echo "5. 项目名 : ${custom_version}" >> $tmp_version
+    echo "6. 版本号 : ${build_version}" >> $tmp_version
+    echo "7. 客制化路径 : ${prefect_name}" >> $tmp_version
+    echo "8. 系统版本号 : ${system_version}" >> $tmp_version
+    echo "-------------------------------------------------" >> $tmp_version
+    echo "1. lunch选工程， lunch       = ${lunch_project}" >> $tmp_version
+    echo "2. 是否编译OTA， make ota    = ${build_make_ota}"  >> $tmp_version
+    echo "3. 是否清除编译，make clean  = ${build_clean}"  >> $tmp_version
+    echo "4. 是否更新代码，update code = ${build_update_code}" >> $tmp_version
+    echo "-------------------------------------------------" >> $tmp_version
 
     if [ -f $old_manifest_version ];then
         cp $old_manifest_version $manifest_path/$diff_manifest_xml
