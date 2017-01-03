@@ -473,8 +473,8 @@ function repo_diffmanifests_to_jenkins()
     echo "7. 客制化路径 : ${prefect_name}" >> $tmp_version
     echo "8. 系统版本号 : ${system_version}" >> $tmp_version
     echo "-------------------------------------------------" >> $tmp_version
-    echo "1. lunch选工程， lunch       = ${lunch_project}" >> $tmp_version
-    echo "2. 是否编译OTA， make ota    = ${build_make_ota}"  >> $tmp_version
+    echo "1. lunch选工程， lunch      = ${lunch_project}" >> $tmp_version
+    echo "2. 是否编译OTA， make ota   = ${build_make_ota}"  >> $tmp_version
     echo "3. 是否清除编译，make clean  = ${build_clean}"  >> $tmp_version
     echo "4. 是否更新代码，update code = ${build_update_code}" >> $tmp_version
     echo "-------------------------------------------------" >> $tmp_version
