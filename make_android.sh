@@ -15,12 +15,10 @@ export LC_ALL=en_US.UTF-8
 
 ### build custom
 build_device=$1
-### build author
-build_user=$2
 ### build project name  e.g. : K86_H520
-build_prj_name=$3
+build_prj_name=$2
 ### eg: k86l_yunovo_zx
-build_file=$4
+build_file=$3
 ### eng|user|userdebug
 build_type=
 ### test
