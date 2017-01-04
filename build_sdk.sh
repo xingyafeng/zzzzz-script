@@ -711,9 +711,9 @@ EOF
     echo "7. 客制化路径 : ${prefect_name}" >> $msgfs
     echo "8. 系统版本号 : ${system_version}" >> $msgfs
     echo "-------------------------------------------------" >> $msgfs
-    echo "1. lunch选工程， lunch       = ${lunch_project}" >> $msgfs
-    echo "2. 是否编译OTA， make ota    = ${build_make_ota}"  >> $msgfs
-    echo "3. 是否清除编译，make clean  = ${build_clean}"  >> $msgfs
+    echo "1. lunch选工程，lunch       = ${lunch_project}" >> $msgfs
+    echo "2. 是否编译OTA，make ota    = ${build_make_ota}" >> $msgfs
+    echo "3. 是否清除编译，make clean  = ${build_clean}" >> $msgfs
     echo "4. 是否更新代码，update code = ${build_update_code}" >> $msgfs
     echo "-------------------------------------------------" >> $msgfs
 
