@@ -1207,7 +1207,7 @@ function handler_android_mk()
             cd $yunovo_app_path/$app > /dev/null
 
             if [ -f $sh ];then
-                chomd +x $sh
+                chmod +x $sh
                 ./$sh $app
             fi
 
