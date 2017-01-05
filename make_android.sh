@@ -1199,7 +1199,7 @@ function handler_android_mk()
     local app=$1
     local OLDPWD=`pwd`
     local yunovo_app_path=yunovo/packages/apps
-    local sh=auto_create_android_mk.sh
+    local sh=appmk.sh
 
     if [ $build_prj_name == "k28s_LD-A107C" ];then
 
@@ -1207,6 +1207,7 @@ function handler_android_mk()
             cd $yunovo_app_path/$app > /dev/null
 
             if [ -f $sh ];then
+                chomd +x $sh
                 ./$sh $app
             fi
 
