@@ -1913,7 +1913,7 @@ function handler_branch_for_YOcSettings()
             YOcSettings_branch=new_2.0
             ;;
 
-        k26s_RWY-CS85)
+        k26s_RWY-CS85 | k26s_RWY-CS82)
 
             YOcSettings_branch=new_2.0
             ;;
