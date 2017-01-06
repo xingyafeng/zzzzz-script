@@ -1825,6 +1825,12 @@ function handler_branch_for_YOcLauncherRes()
 
             ;;
 
+        k26s_RWY-CS82)
+            sz_branch_name=S6_RWY-CS82_V22
+
+            ;;
+
+
         k89_LD-HS830A)
             sz_branch_name=S7_LD-K89_V21
 
