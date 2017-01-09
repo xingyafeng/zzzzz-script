@@ -1373,9 +1373,15 @@ function cpcustoms()
 	local ConfigsPath=
 
     if [ "`is_branch_project`" == "true" ];then
-        ConfigsPath=${thisSDKTop}/yunovo/customs
+
+        if [ $build_prj_name == "k28s_K28-ZX" ];then
+            ConfigsPath=${thisSDKTop}/yunovo/customs
+        else
+            ConfigsPath=${thisSDKTop}/yunovo/customs/custom
+        fi
+
     else
-        ConfigsPath=${thisSDKTop}/../yunovo_customs
+        ConfigsPath=${thisSDKTop}/../yunovo_customs/custom
     fi
 
 	if [ -d "$ConfigsPath" ]; then
@@ -1386,7 +1392,7 @@ function cpcustoms()
 	fi
 
 	local ConfigsFName=proj_help.sh
-	local ProductSetTop=${ConfigsPath}/custom
+	local ProductSetTop=${ConfigsPath}
 
 
     #_echo " config path = $ConfigsPath"
