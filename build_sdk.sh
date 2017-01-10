@@ -1838,7 +1838,7 @@ function handler_branch_for_YOcLauncherRes()
             ;;
 
 
-        k89_LD-HS830A)
+        k89_LD-HS830A | k89_LD-HS720A)
             sz_branch_name=S7_LD-K89_V21
 
             ;;
@@ -1925,7 +1925,7 @@ function handler_branch_for_YOcSettings()
             YOcSettings_branch=new_2.0
             ;;
 
-        k89_HP-S760 | k89_LD-HS830A)
+        k89_HP-S760 | k89_LD-HS830A | k89_LD-HS720A)
 
             YOcSettings_branch=new_2.0
             ;;
@@ -1947,7 +1947,7 @@ function handler_branch_for_YOcMediaFolder()
 {
     local YOcMediaFolder_branch=
 
-    if [ $build_prj_name == "k26s_LD-A107C" -o $build_prj_name == "k89_LD-HS830A" ];then
+    if [ $build_prj_name == "k26s_LD-A107C" -o $build_prj_name == "k89_LD-HS830A" -o $build_prj_name == "k89_LD-HS720A" ];then
         YOcMediaFolder_branch=yunovo/k26s/lingdu/common
     else
          if [ "`git branch -r | grep 'test'`" -o "`git branch -r | grep develop`" ];then
@@ -1971,7 +1971,7 @@ function handler_branch_for_YOcRecord()
         YOcRecord_branch=k26s/ld/a107c
     elif [ $build_prj_name == "k27l_HBS-T2" ];then
         YOcRecord_branch=yunovo/k27l/hbs/common
-    elif [ $build_prj_name == "k89_LD-HS830A" ];then
+    elif [ $build_prj_name == "k89_LD-HS830A" -o $build_prj_name == "k89_LD-HS720A" ];then
         YOcRecord_branch=k89/ld/hs830a
     else
         if [ "`git branch -r | grep 'test'`" -o "`git branch -r | grep develop`" ];then
@@ -2031,7 +2031,7 @@ function handler_branch_for_YOcBTCall()
             YOcBTCall_branch=bt_new2.0
             ;;
 
-        k89_HP-S760 | k89_LD-HS830A)
+        k89_HP-S760 | k89_LD-HS830A | k89_LD-HS720A)
 
             YOcBTCall_branch=bt_new2.0
             ;;
