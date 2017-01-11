@@ -92,6 +92,7 @@ k88c_jm_cm01_p=k88c_jm_cm01
 k88c_bt_bt188_p=k88c_bt_bt188
 
 k86mx1_jh_s04a_p=k86mx1_jh_s04a
+k86mx1_rwy_dz80_p=k86mx1_rwy_dz80
 
 k88c_6735_VoLTE_develop_p=6735_VoLTE_develop
 mtk6753_volte_develop_p=mtk6753_volte_develop
@@ -248,7 +249,12 @@ function is_yunovo_project
 
             ;;
 
-        $mx1_xianzhi_t80c_p | $mx1_xianzhi_t80_p | $k86mx1_jh_s04a_p)
+        $mx1_xianzhi_t80c_p | $mx1_xianzhi_t80_p)
+            echo true
+
+            ;;
+
+        $k86mx1_jh_s04a_p | $k86mx1_rwy_dz80_p)
             echo true
 
             ;;
