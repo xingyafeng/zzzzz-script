@@ -89,6 +89,7 @@ k27_aj_ajs_p=k27_aj_ajs
 k28s_ld_a107c_p=k28s_ld_a107c
 
 k88c_jm_cm01_p=k88c_jm_cm01
+k88c_jm01_cm01_p=k88c_jm01_cm01
 k88c_bt_bt188_p=k88c_bt_bt188
 
 k86mx1_jh_s04a_p=k86mx1_jh_s04a
@@ -244,7 +245,7 @@ function is_yunovo_project
 
             ;;
 
-        $k88c_jm_cm01_p | $k88c_bt_bt188_p)
+        $k88c_jm_cm01_p | $k88c_jm01_cm01_p | $k88c_bt_bt188_p)
             echo true
 
             ;;
@@ -972,7 +973,11 @@ function copy_out_image()
 
         if [ $build_make_ota == "true" ];then
             if [ "`ls ${OUT}/full_${build_device}-ota*.zip`" ];then
-                cp -v ${OUT}/full_${build_device}-ota*.zip ${OTA_PATH}/sdupdate.zip
+                if [ "`get_project_name`" == "k88c_jm01_cm01"  ];then
+                    cp -v ${OUT}/full_${build_device}-ota*.zip ${OTA_PATH}/jmupdate.zip
+                else
+                    cp -v ${OUT}/full_${build_device}-ota*.zip ${OTA_PATH}/sdupdate.zip
+                fi
                 _echo "copy sdupdate.zip successful ..."
             fi
 
