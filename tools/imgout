@@ -215,12 +215,12 @@ fi
         cp -f out/target/product/${target_product}/obj/CGEN/APDB* ${images_dir}
     fi
 
-    if [ -n "`ls device/eastaeon/aeon6735_65c_s_l1/fat.img`" ]; then
-        cp -vf device/eastaeon/aeon6735_65c_s_l1/fat.img ${images_dir}
+    if [ -n "`ls device/eastaeon/${target_product}/fat.img`" ]; then
+        cp -vf device/eastaeon/${target_product}/fat.img ${images_dir}
     fi
 
-    if [ -n "`ls device/eastaeon/aeon6735_65c_s_l1/mdas.img`" ]; then
-        cp -vf device/eastaeon/aeon6735_65c_s_l1/mdas.img ${images_dir}
+    if [ -n "`ls device/eastaeon/${target_product}/mdas.img`" ]; then
+        cp -vf device/eastaeon/${target_product}/mdas.img ${images_dir}
     fi
 
     # for exynos
