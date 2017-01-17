@@ -449,7 +449,7 @@ function copy_image_to_folder()
 {
     local firmware_path=~/.yunos
     local server_name=`hostname`
-    local default_version_name=release-aeon6735_65c_s_l1
+    local default_version_name=release-${YUNOS_PROJECT_NAME}
     local BASE_PATH=$firmware_path/$t_project_name/${t_project_name}_${t_custom_verion}/$build_version
 
     if [ ! -d $firmware_path ];then
@@ -464,8 +464,8 @@ function copy_image_to_folder()
         mv $default_version_name/* $BASE_PATH
     fi
 
-    if [ "`ls ${OUT}/full_aeon6735_65c_s_l1-ota*.zip`" ];then
-        cp ${OUT}/full_aeon6735_65c_s_l1-ota*.zip $BASE_PATH/../${build_version}_sdupdate.zip
+    if [ "`ls ${OUT}/full_${YUNOS_PROJECT_NAME}-ota*.zip`" ];then
+        cp ${OUT}/full_${YUNOS_PROJECT_NAME}-ota*.zip $BASE_PATH/../${build_version}_sdupdate.zip
         _echo "--> copy sdupdate.zip sucessful ..."
     fi
 }
