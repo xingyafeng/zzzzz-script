@@ -451,7 +451,7 @@ function copy_image_to_folder()
 {
     local firmware_path=~/.yunos
     local server_name=`hostname`
-    local default_version_name=release-${YUNOS_PROJECT_NAME}
+    local default_version_name=""
     local BASE_PATH=$firmware_path/$t_project_name/${t_project_name}_${t_custom_verion}/$build_version
 
     if [ ! -d $firmware_path ];then
@@ -461,6 +461,12 @@ function copy_image_to_folder()
     if [ ! -d $BASE_PATH ];then
         mkdir -p $BASE_PATH
     fi
+
+    if [ $YUNOS_PROJECT_NAME == "6735" ];then
+        YUNOS_PROJECT_NAME=aeon6735_65c_s_l1
+    fi
+
+    default_version_name=release-${YUNOS_PROJECT_NAME}
 
     if [ -d $default_version_name ];then
         mv $default_version_name/* $BASE_PATH
