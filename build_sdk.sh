@@ -125,6 +125,7 @@ k89_master_p=k89_master
 k28s_master_p=k28s_master
 k86mx1_jh_s04a_p=k86mx1_jh_s04a
 k28f_p=k28f
+mtk6735_gps_master_p=mtk6735_gps_master
 
 email_receiver=""
 email_content=""
@@ -304,7 +305,7 @@ function is_yunovo_project
 
             ;;
 
-        $k27_xinke_ds50_p | $k86sa1_mazda_p | $mx1_xianzhi_k80_p | $k89_master_p | $k86mx1_jh_s04a_p | $k28s_master_p | $k28f_p)
+        $k27_xinke_ds50_p | $k86sa1_mazda_p | $mx1_xianzhi_k80_p | $k89_master_p | $k86mx1_jh_s04a_p | $k28s_master_p | $k28f_p | $mtk6735_gps_master_p)
             echo true
 
             ;;
@@ -325,7 +326,7 @@ function is_branch_project()
             echo true
 
             ;;
-        $mx1_xianzhi_k80_p | $k86mx1_jh_s04a_p)
+        $mx1_xianzhi_k80_p | $k86mx1_jh_s04a_p | $mtk6735_gps_master_p)
             echo true
 
             ;;
@@ -1375,7 +1376,7 @@ function cpcustoms()
 
     if [ "`is_branch_project`" == "true" ];then
 
-        if [ $build_prj_name == "k28s_K28-ZX" -o $build_prj_name == "k28f_K28-ZX" ];then
+        if [ $build_prj_name == "k28s_K28-ZX" -o $build_prj_name == "k28f_K28-ZX" -o $build_prj_name == "k86s7_S7-ZX" ];then
             ConfigsPath=${thisSDKTop}/yunovo/customs
         else
             ConfigsPath=${thisSDKTop}/yunovo/customs/custom
