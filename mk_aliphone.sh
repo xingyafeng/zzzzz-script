@@ -43,6 +43,8 @@ k88c_lufeng_f100_p=k88c_lufeng_f100
 k88c_cocolife_v6_p=k88c_cocolife_v6
 
 k26s_vst_i7_p=k26s_vst_i7
+k26s_vst_i7s_p=k26s_vst_i7s
+k26s_renwoyou_cs86_p=k26s_renwoyou_cs86
 
 ################
 
@@ -201,7 +203,7 @@ function is_yunos_project
 
             ;;
 
-        $k26s_vst_i7_p)
+        $k26s_vst_i7_p | $k26s_vst_i7s_p | $k26s_renwoyou_cs86_p)
             echo true
 
             ;;
