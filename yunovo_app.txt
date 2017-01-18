@@ -31,3 +31,4 @@ YOcSplitScreen
 YOcTools
 YOcVoice
 YOcVoiceAssistant
+YOcOTA
