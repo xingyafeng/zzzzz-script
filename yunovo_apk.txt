@@ -99,3 +99,5 @@ HomeVideoCs85
 WiFiSearchCs85
 SkyLineCs85
 UberCs85
+MXPlayerM8s
+GpsTesterM8s
