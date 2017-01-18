@@ -1849,6 +1849,12 @@ function handler_branch_for_YOcLauncherRes()
             sz_branch_name=S7_NM-D210_V20
 
             ;;
+
+        k86mx1_MB-M8S)
+            sz_branch_name=S7_MB-M8S_V21
+
+            ;;
+
         *)
             sz_branch_name=S6_NXOS_V20
             ;;
@@ -1911,7 +1917,7 @@ function handler_branch_for_YOcSettings()
             YOcSettings_branch=new_2.0
             ;;
 
-        k86mx1_QC-M78)
+        k86mx1_QC-M78 | k86mx1_MB-M8S)
 
             YOcSettings_branch=new_2.0
             ;;
@@ -2012,7 +2018,7 @@ function handler_branch_for_YOcBTCall()
             YOcBTCall_branch=bt_new2.0
             ;;
 
-        k86mx1_QC-M78)
+        k86mx1_QC-M78 | k86mx1_MB-M8S)
 
             YOcBTCall_branch=bt_new2.0
             ;;
