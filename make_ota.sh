@@ -30,6 +30,9 @@ ota_to_version=$2
 sz_f1_server_name=f1
 sz_ota_tmp_path=~/workspace/otafs
 
+## common
+build_clean_data=
+
 function __msg()
 {
     local pwd=`pwd`
@@ -228,6 +231,12 @@ function handler_variable()
     else
         _echo "xargs -nq 2 ,please checkout xargs ."
     fi
+
+    if [ "$yunovo_clean_data" ];then
+        build_clean_data=$yunovo_clean_data
+    else
+        build_clean_data=false
+    fi
 }
 
 
@@ -358,7 +367,11 @@ fi
 
     ### 2.编译OTA包存放指定路径
     if [ -e $ota_py -a "`is_yunovo_project`" == "true" -a -f $ota_path/$ota_previous -a -f $ota_path/$ota_current ];then
-        $ota_py -i $ota_path/$ota_previous $ota_path/$ota_current $ota_version_path/$OTA_FILE
+        if [ "$build_clean_data" == "true" ];then
+            $ota_py -w -i $ota_path/$ota_previous $ota_path/$ota_current $ota_version_path/$OTA_FILE
+        else
+            $ota_py -i $ota_path/$ota_previous $ota_path/$ota_current $ota_version_path/$OTA_FILE
+        fi
 
         if [ -d $ota_version_path ];then
             echo
