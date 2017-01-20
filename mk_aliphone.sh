@@ -105,6 +105,7 @@ function handler_print()
     echo "t_custom_verion = $t_custom_verion"
     echo "-----------------------------------"
     echo "voice_mode = $voice_mode"
+    echo "VR_MODE = $VR_MODE"
     echo "-----------------------------------"
     echo
 }
@@ -179,6 +180,8 @@ function handler_vairable()
     fi
 
     voice_mode="VR_MODE=$build_mode"
+
+    export $voice_mode
 }
 
 ### 是否为阿里的项目
