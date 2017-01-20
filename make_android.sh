@@ -1503,10 +1503,14 @@ function main()
         fi
     fi
 
-    if [ "`is_check_lunch`" != "no lunch" -a "$build_update_code" == "true" ];then
-        copy_customs_to_android
-        handler_custom_config
-        handler_android_mk CarConfig
+    if [ "`is_check_lunch`" != "no lunch" ];then
+        if [ "$build_update_code" == "true" ];then
+            copy_customs_to_android
+            handler_custom_config
+            handler_android_mk CarConfig
+        else
+            _echo "build_update_code is false !"
+        fi
     else
         _echo "current directory is not android ! gettop is null !"
         return 1
