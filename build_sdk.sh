@@ -2597,7 +2597,7 @@ function download_sdk()
 
 	if [ ! -d .repo ];then
 		if [ "$defalut" -a "$project_link" ];then
-            repo $project_link -m ${defalut}.xml -b yunovo
+            repo $project_link -m ${defalut}.xml
         fi
 		repo sync -c -d --prune --no-tags -j${cpu_num}
         ls -alF
@@ -2625,7 +2625,7 @@ function download_sdk()
 
             ## 重新初始化manifest
             if [ "$defalut" ];then
-                repo init -m ${defalut}.xml -b yunovo
+                repo init -m ${defalut}.xml
             fi
 
             ## update android source code for yunovo project ...
