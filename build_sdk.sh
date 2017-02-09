@@ -1840,9 +1840,13 @@ function handler_branch_for_YOcLauncherRes()
             ;;
 
 
-        k89_LD-HS830A | k89_LD-HS720A)
+        k89_LD-HS830A)
             sz_branch_name=S7_LD-K89_V21
 
+            ;;
+
+        k89_LD-HS720A)
+            sz_branch_name=S7_LD-HS720A_V20
             ;;
 
         k88s_NM-D210)
