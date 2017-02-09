@@ -102,6 +102,7 @@ mtk6735_gps_develop_p=mtk6735_gps_develop
 
 k86sa1_tpl_tpl86s_hd_p="k86sa1_tpl_tpl86s-hd"
 k86sa1_mazda_master_p=k86sa1_mazda_master
+k86sa1_meiban_m4z_p=k86sa1_meiban_m4z
 
 ################################ system env
 DEVICE=
@@ -260,7 +261,7 @@ function is_yunovo_project
 
             ;;
 
-        $k86sa1_tpl_tpl86s_hd_p | $k86sa1_mazda_master_p)
+        $k86sa1_tpl_tpl86s_hd_p | $k86sa1_mazda_master_p | $k86sa1_meiban_m4z_p)
             echo true
 
             ;;
