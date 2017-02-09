@@ -1445,6 +1445,10 @@ function main()
         if [ ! -d $version_p ];then
             mkdir -p $version_p
         fi
+
+        if [ ! -d $zz_script_path/fs ];then
+            mkdir -p $zz_script_path/fs
+        fi
     else
         _echo "current directory is not android !"
         return 1
