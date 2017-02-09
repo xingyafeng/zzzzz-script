@@ -19,7 +19,7 @@ TARGET_BUILD_VARIANT=
 ## adb acb
 TERMINAL_MODE=adb
 ## remake new
-MAKE_TYPE=remake
+MAKE_TYPE=new
 
 ## tmp variable
 t_project_name=
