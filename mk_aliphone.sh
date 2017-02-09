@@ -35,6 +35,7 @@ mx1_teyes_t7_p=mx1_teyes_t7
 mx1_teyes_t8_p=mx1_teyes_t8
 mx1_teyes_t8_new_p=mx1_teyes_t8_new
 mx1_anytek_m960_p=mx1_anytek_m960
+mx1_renwoyou_dz86_p=mx1_renwoyou_dz86
 
 mx2_teyes_t8_p=mx2_teyes_t8
 mx2_teyes_t8_new_p=mx2_teyes_t8_new
@@ -191,7 +192,7 @@ function is_yunos_project
 
     case $thisP in
 
-        $mx1_kkxl_v9_p | $mx1_kkxl_v9_ts_p | $mx1_teyes_t8_p | $mx1_teyes_t8_new_p | $mx1_anytek_m960_p | $mx1_teyes_t7_p)
+        $mx1_kkxl_v9_p | $mx1_kkxl_v9_ts_p | $mx1_teyes_t8_p | $mx1_teyes_t8_new_p | $mx1_anytek_m960_p | $mx1_teyes_t7_p | $mx1_renwoyou_dz86_p)
             echo true
 
             ;;
