@@ -2185,6 +2185,9 @@ function handler_branch_for_app()
 
     cd $app_name > /dev/null
 
+    ## 更新远程仓库
+    git fetch -p
+
     ## 长屏方案
     if [ "`is_long_project`" == "true" ];then
 
