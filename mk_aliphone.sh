@@ -17,9 +17,9 @@ YUNOS_PROJECT_NAME=$1
 ## eng user userdebug
 TARGET_BUILD_VARIANT=
 ## adb acb
-TERMINAL_MODE=adb
+export TERMINAL_MODE=adb
 ## remake new
-MAKE_TYPE=new
+export MAKE_TYPE=new
 
 ## tmp variable
 t_project_name=
