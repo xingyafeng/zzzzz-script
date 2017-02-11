@@ -580,7 +580,7 @@ function print_make_completed_time()
     mm=$(((useT - hh * 3600) / 60))
     ss=$((useT - hh * 3600 - mm * 60))
 
-    echo "#### make completed successfully ($hh:$mm:$ss (hh:mm:ss)) ###"
+    echo "#### make completed successfully ($hh:$mm:$ss (hh:mm:ss)) ($endT) ###"
 }
 
 ### handler vairable for jenkins
