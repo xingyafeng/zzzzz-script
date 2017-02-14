@@ -1779,7 +1779,7 @@ function handler_branch_for_YOcLauncherRes()
             sz_branch_name=S6_HBS_V10
 
             ;;
-        k86ls_LS6-ZX | k86ls_S6-ZX | k88s_YT-YBT686 | k27l_S6-ZX | k88s_S6-ZX | k26s_S6-ZX | k26s_YJ-K7 | k26s_K26-ZX | k27l_N91-ZX | k28s_K28-ZX)
+        k86ls_LS6-ZX | k86ls_S6-ZX | k88s_YT-YBT686 | k27l_S6-ZX | k88s_S6-ZX | k26s_S6-ZX | k26s_YJ-K7 | k26s_K26-ZX | k27l_N91-ZX | k28s_K28-ZX | k26s_NM-D900)
             sz_branch_name=S6_NXOS_V10
 
             ;;
@@ -1906,7 +1906,7 @@ function handler_branch_for_YOcSettings()
             YOcSettings_branch=new_2.0
             ;;
 
-        k26s_S6-ZX | k26s_S7-ZX)
+        k26s_S6-ZX | k26s_S7-ZX | k26s_NM-D900)
 
             YOcSettings_branch=new_2.0
             ;;
@@ -2012,7 +2012,7 @@ function handler_branch_for_YOcBTCall()
             YOcBTCall_branch=bt_new2.0
             ;;
 
-        k26s_S6-ZX | k26s_S7-ZX)
+        k26s_S6-ZX | k26s_S7-ZX | k26s_NM-D900)
 
             YOcBTCall_branch=bt_new2.0
             ;;
