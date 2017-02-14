@@ -204,7 +204,7 @@ function is_yunos_project
 
             ;;
 
-        $k88c_lufeng_f100_p | "${k88c_cocolife_v6_p}-k" | "${k88c_cocolife_v6}-p")
+        $k88c_lufeng_f100_p | "${k88c_cocolife_v6_p}-k" | "${k88c_cocolife_v6_p}-p")
             echo true
 
             ;;
