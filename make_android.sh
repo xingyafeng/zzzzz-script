@@ -93,6 +93,8 @@ k88c_jm_cm01_p=k88c_jm_cm01
 k88c_jm01_cm01_p=k88c_jm01_cm01
 k88c_bt_bt188_p=k88c_bt_bt188
 
+k89_ld_hs720a_p=k89_ld_hs720a
+
 k86mx1_jh_s04a_p=k86mx1_jh_s04a
 k86mx1_rwy_dz80_p=k86mx1_rwy_dz80
 
@@ -250,6 +252,10 @@ function is_yunovo_project
         $k88c_jm_cm01_p | $k88c_jm01_cm01_p | $k88c_bt_bt188_p)
             echo true
 
+            ;;
+
+        $k89_ld_hs720a_p)
+            echo true
             ;;
 
         $mx1_xianzhi_t80c_p | $mx1_xianzhi_t80_p)
