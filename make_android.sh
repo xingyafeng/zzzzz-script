@@ -1222,7 +1222,7 @@ function handler_android_mk()
     local yunovo_app_path=yunovo/packages/apps
     local sh=appmk.sh
 
-    if [ $build_prj_name == "k28s_LD-A107C" -o $build_prj_name == "k28s_LD-HS995" ];then
+    if [ $build_prj_name == "k28s_LD-A107C" -o $build_prj_name == "k28s_LD-HS995" -o $build_prj_name == "k28s_LD-HS995D" ];then
 
         if [ "$app" == "CarConfig" ];then
             cd $yunovo_app_path/$app > /dev/null
