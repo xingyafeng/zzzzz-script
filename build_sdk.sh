@@ -2110,13 +2110,35 @@ function handler_branch_for_YOcTools()
     fi
 }
 
+function handler_branch_for_TxzVoice()
+{
+    local TxzVoice_branch=
+
+    case $build_prj_name in
+
+        k86mx1_MB-M8S)
+
+            TxzVoice_branch=txzing2.0
+            ;;
+
+        *)
+            __echo "TxzVoice_branch is null !"
+            ;;
+    esac
+
+    if [ "$TxzVoice_branch" ];then
+        handler_checkout_branch $TxzVoice_branch
+        handler_update_source_code TxzVoice $TxzVoice_branch
+    fi
+}
+
 function handler_branch_for_TxzCore()
 {
     local TxzCore_branch=
 
     case $build_prj_name in
 
-        k86s7_NM-N810 | k88s_NM-D200 | k88s_NM-D210)
+        k86s7_NM-N810 | k88s_NM-D200 | k88s_NM-D210 | k86mx1_MB-M8S)
 
             TxzCore_branch=txzing2.0
             ;;
@@ -2140,7 +2162,7 @@ function handler_branch_for_TxzWebchat()
 
     case $build_prj_name in
 
-        k86s7_NM-N810 | k88s_NM-D200 | k88s_NM-D210)
+        k86s7_NM-N810 | k88s_NM-D200 | k88s_NM-D210 | k86mx1_MB-M8S)
 
             TxzWebchat_branch=txzing2.0
             ;;
@@ -2350,6 +2372,10 @@ function handler_branch_for_app()
 
     if [ $app_name == "YOcTools" ];then
         handler_branch_for_YOcTools
+    fi
+
+    if [ $app_name == "TxzVoice" ];then
+        handler_branch_for_TxzVoice
     fi
 
 
