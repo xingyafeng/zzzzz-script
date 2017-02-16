@@ -126,6 +126,7 @@ k28s_master_p=k28s_master
 k86mx1_jh_s04a_p=k86mx1_jh_s04a
 k28f_p=k28f
 mtk6735_gps_master_p=mtk6735_gps_master
+reglink_k100_develop_p=reglink_k100_develop
 
 email_receiver=""
 email_content=""
@@ -305,7 +306,7 @@ function is_yunovo_project
 
             ;;
 
-        $k27_xinke_ds50_p | $k86sa1_mazda_p | $mx1_xianzhi_k80_p | $k89_master_p | $k86mx1_jh_s04a_p | $k28s_master_p | $k28f_p | $mtk6735_gps_master_p)
+        $k27_xinke_ds50_p | $k86sa1_mazda_p | $mx1_xianzhi_k80_p | $k89_master_p | $k86mx1_jh_s04a_p | $k28s_master_p | $k28f_p | $mtk6735_gps_master_p | $reglink_k100_develop_p)
             echo true
 
             ;;
@@ -326,7 +327,7 @@ function is_branch_project()
             echo true
 
             ;;
-        $mx1_xianzhi_k80_p | $k86mx1_jh_s04a_p | $mtk6735_gps_master_p)
+        $mx1_xianzhi_k80_p | $k86mx1_jh_s04a_p | $mtk6735_gps_master_p | $reglink_k100_develop_p)
             echo true
 
             ;;
@@ -1020,8 +1021,13 @@ function handler_vairable()
         build_update_code=true
     fi
 
-    system_version=$custom_version\_$hw_versiom\_${first_version}.${project_name}.${second_version}
-    fota_version="SPT_VERSION_NO=${system_version}"
+    if [ "`get_project_real_name`" == "reglink_k100_develop" ];then
+        system_version=$custom_version\_${project_name}\_${first_version}.${second_version}
+        fota_version="SPT_VERSION_NO=${system_version}"
+    else
+        system_version=$custom_version\_$hw_versiom\_${first_version}.${project_name}.${second_version}
+        fota_version="SPT_VERSION_NO=${system_version}"
+    fi
 }
 
 #### touch all file
@@ -1376,7 +1382,7 @@ function cpcustoms()
 
     if [ "`is_branch_project`" == "true" ];then
 
-        if [ $build_prj_name == "k28s_K28-ZX" -o $build_prj_name == "k28f_K28-ZX" -o $build_prj_name == "k86s7_S7-ZX" ];then
+        if [ $build_prj_name == "k28s_K28-ZX" -o $build_prj_name == "k28f_K28-ZX" -o $build_prj_name == "k86s7_S7-ZX" -o $build_prj_name == "K100_ZX" ];then
             ConfigsPath=${thisSDKTop}/yunovo/customs
         else
             ConfigsPath=${thisSDKTop}/yunovo/customs/custom
@@ -2999,8 +3005,11 @@ function main()
     fi
 
     if [ $flag_clone_app -eq 1 ];then
+
+	if [ "`get_project_real_name`" != "reglink_k100_develop" ];then
         down_load_apk_for_yunovo
         down_load_app_for_yunovo
+	fi
         #ant_app
         #auto_copy_app_to_android
     else
