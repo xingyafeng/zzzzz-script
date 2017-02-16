@@ -88,6 +88,7 @@ k27_xinke_ds50_p=k27_xinke_ds50
 k27_aj_ajs_p=k27_aj_ajs
 
 k28s_ld_a107c_p=k28s_ld_a107c
+k28s_ld_hs995d_p=k28s_ld_hs995d
 
 k88c_jm_cm01_p=k88c_jm_cm01
 k88c_jm01_cm01_p=k88c_jm01_cm01
@@ -244,7 +245,7 @@ function is_yunovo_project
 
             ;;
 
-        $k28s_ld_a107c_p)
+        $k28s_ld_a107c_p | $k28s_ld_hs995d_p)
             echo true
 
             ;;
