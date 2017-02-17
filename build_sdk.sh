@@ -10,6 +10,8 @@ export CLASSPATH=.:$CLASSPATH:$JAVA_HOME/lib:$JRE_HOME/lib
 export PATH=${JAVA_HOME}/bin:$JRE_HOME/bin:$PATH
 export LANGUAGE=en_US
 export LC_ALL=en_US.UTF-8
+export ANDROID_HOME=~/workspace/android-sdk-linux
+export PATH=${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/tools:$PATH
 
 ################################## args
 
