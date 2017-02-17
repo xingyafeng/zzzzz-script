@@ -2927,6 +2927,21 @@ function auto_create_branch_refs()
     fi
 }
 
+function build_system_app()
+{
+    local OldPWD=`pwd`
+
+    if [ "`get_project_real_name`" == "reglink_k100_develop" ];then
+        if [ -f $buildfs_dir/$compile_sh ];then
+            cd $buildfs_dir > /dev/null
+
+            chmod +x $compile_sh
+            ./$compile_sh
+
+            cd $OLDPWD > /dev/null
+        fi
+    fi
+}
 ### 打印系统环境变量
 function print_env()
 {
@@ -2969,6 +2984,8 @@ function source_init()
 function main()
 {
     local start_curr_time=`date +'%Y-%m-%d %H:%M:%S'`
+    local buildfs_dir=reglink/package/apps
+    local compile_sh=compile.sh
 
     if [ "`is_yunovo_project`" == "true" ];then
 
@@ -3029,6 +3046,9 @@ function main()
     else
         echo "do not download_sdk !"
     fi
+
+    ##编译k100项目应用
+    build_system_app
 
     if [ $flag_clone_app -eq 1 ];then
 
