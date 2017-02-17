@@ -3049,9 +3049,6 @@ function main()
         echo "do not download_sdk !"
     fi
 
-    ##编译k100项目应用
-    build_system_app
-
     if [ $flag_clone_app -eq 1 ];then
 
 	if [ "`get_project_real_name`" != "reglink_k100_develop" ];then
@@ -3072,6 +3069,9 @@ function main()
         else
             cpcustoms
             handler_custom_config
+
+            ##编译k100项目应用
+            build_system_app
         fi
     else
         echo "do not cp customs !"
