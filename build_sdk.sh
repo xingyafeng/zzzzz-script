@@ -1225,6 +1225,10 @@ function cpimage()
             cp -vf ${OUT}/trustzone.bin ${DEST_PATH}
         fi
 
+        if [ -f ${OUT}/custom.img ];then
+            cp -vf ${OUT}/custom.img
+        fi
+
         cp -vf ${OUT}/system.img ${DEST_PATH}
 	    cp -vf ${OUT}/cache.img ${DEST_PATH}
 	    cp -vf ${OUT}/userdata.img ${DEST_PATH}
