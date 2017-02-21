@@ -2118,7 +2118,7 @@ function handler_branch_for_TxzVoice()
 
     case $build_prj_name in
 
-        k86mx1_MB-M8S)
+        k86s7_NM-N810 | k86mx1_MB-M8S)
 
             TxzVoice_branch=txzing2.0
             ;;
