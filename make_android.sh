@@ -3,6 +3,7 @@
 ### 若某一个命令返回非零值就退出
 set -e
 
+
 #set java env
 export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64
 export JRE_HOME=$JAVA_HOME/jre
@@ -100,6 +101,7 @@ k88c_bt_bt188_p=k88c_bt_bt188
 k89_ld_hs720a_p=k89_ld_hs720a
 
 k86mx1_jh_s04a_p=k86mx1_jh_s04a
+k86mx1_jh01_s04a_p=k86mx1_jh01_s04a
 k86mx1_rwy_dz80_p=k86mx1_rwy_dz80
 
 k88c_6735_VoLTE_develop_p=6735_VoLTE_develop
@@ -267,7 +269,7 @@ function is_yunovo_project
 
             ;;
 
-        $k86mx1_jh_s04a_p | $k86mx1_rwy_dz80_p)
+        $k86mx1_jh_s04a_p | $k86mx1_jh01_s04a_p | $k86mx1_rwy_dz80_p)
             echo true
 
             ;;
