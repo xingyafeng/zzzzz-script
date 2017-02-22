@@ -58,6 +58,7 @@ hw_versiom=H3.1
 debug_path=~/debug
 version_p=~/.jenkins_make_version
 cur_time=`date +%m%d_%H%M`
+time_for_version=`date +'%Y.%m.%d_%H.%M.%S'`
 zz_script_path=/home/jenkins/workspace/script/zzzzz-script
 cpu_num=`cat /proc/cpuinfo  | egrep 'processor' | wc -l`
 project_link="init -u ssh://jenkins@gerrit.y:29419/manifest"
@@ -320,6 +321,16 @@ function is_yunovo_branch()
             echo true
         fi
     done
+}
+
+### 是否为调试版本
+function is_root_project()
+{
+    if [ "$build_type" == "userdebug" -o "$build_type" == "eng" ];then
+        echo true
+    else
+        echo false
+    fi
 }
 
 ### 是否为编译服务器
@@ -915,8 +926,14 @@ function copy_out_image()
 {
 	### k86A_H520
 	local prj_name=$project_name\_$custom_version
-	local ver_name=${first_version}.${second_version}
+
 	echo "prj_name = $prj_name"
+
+    if [ "`is_root_project`" == "true" ];then
+        local ver_name=${first_version}.${second_version}
+    else
+        local ver_name=${first_version}.${second_version}.${time_for_version}
+    fi
 
     ### k86m_H520/S1
 	#local BASE_PATH=/home/work5/public/k86A_Test/${prj_name}/${ver_name}
@@ -927,7 +944,6 @@ function copy_out_image()
 
     local server_name=`hostname`
     local firmware_path_server=/home/share/jenkins_share/debug
-
 
     echo "--------------------------local base"
 	echo "BASE_PATH = $BASE_PATH"
