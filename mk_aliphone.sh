@@ -49,6 +49,7 @@ k26s_renwoyou_cs86_p=k26s_renwoyou_cs86
 k26s_qch_x88_p=k26s_qch_x88
 k26s_hp_s760_p=k26s_hp_s760
 
+k89_hp_s760d_p=k89_hp_s760d
 ################
 
 function __echo()
@@ -214,6 +215,10 @@ function is_yunos_project
 
             ;;
 
+        $k89_hp_s760d_p)
+            echo true
+
+            ;;
         *)
             echo false
 
