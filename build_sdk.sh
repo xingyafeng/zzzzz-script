@@ -76,6 +76,7 @@ hw_versiom=H3.1
 debug_path=~/debug
 cur_time=`date +%m%d_%H%M`
 time_for_refs=`date +'%Y.%m.%d_%H.%M.%S'`
+time_for_version=`date +'%Y.%m.%d_%H.%M.%S'`
 zz_script_path=/home/jenkins/workspace/script/zzzzz-script
 cpu_num=`cat /proc/cpuinfo  | egrep 'processor' | wc -l`
 project_link="init -u ssh://jenkins@gerrit.y:29419/manifest"
@@ -1158,8 +1159,14 @@ function cpimage()
 {
 	### k86A_H520
 	local prj_name=$project_name\_$custom_version
-	local ver_name=${first_version}.${second_version}
+
 	echo "prj_name = $prj_name"
+
+    if [ "`is_root_project`" == "true" ];then
+        local ver_name=${first_version}.${second_version}
+    else
+        local ver_name=${first_version}.${second_version}.${time_for_version}
+    fi
 
     ### k86m_H520/S1
 	#local BASE_PATH=/home/work5/public/k86A_Test/${prj_name}/${ver_name}
