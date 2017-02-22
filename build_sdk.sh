@@ -1226,7 +1226,7 @@ function cpimage()
         fi
 
         if [ -f ${OUT}/custom.img ];then
-            cp -vf ${OUT}/custom.img
+            cp -vf ${OUT}/custom.img ${DEST_PATH}
         fi
 
         cp -vf ${OUT}/system.img ${DEST_PATH}
