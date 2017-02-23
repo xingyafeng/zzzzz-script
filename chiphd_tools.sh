@@ -397,12 +397,74 @@ gfind()
 grepfs()
 {
     local files=$1
+    local types=$2
 
-	if [ "$files" ];then
-		find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f \( -name '*.c' -o -name '*.cc' -o -name '*.cpp' -o -name '*.h' -o -name '*.java' -o -name '*.xml' -o -name '*.sh' -o -name '*.mk' -o -name '*.rc' -o -name '*.cfg' -o -name 'Makefile' -o -name 'Kconfig' -o -name '*.sh' -o -name '*.prop' \) -print0 | xargs -0 grep --color -n $@
-	else
-		show_vip "what do you want to grep ?"
-	fi
+    if [ "$files" ];then
+        :
+    else
+        show_vip "what do you want to grep file ?"
+    fi
+
+    case $types in
+
+        c)
+           find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f -name '*.c' -print0 | xargs -0 grep --color -n "$1"
+            ;;
+
+        cc)
+           find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f -name '*.cc' -print0 | xargs -0 grep --color -n "$1"
+
+            ;;
+
+        cpp)
+
+           find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f -name '*.cpp' -print0 | xargs -0 grep --color -n "$1"
+            ;;
+
+        java)
+           find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f -name '*.java' -print0 | xargs -0 grep --color -n "$1"
+
+            ;;
+
+        xml)
+           find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f -name '*.xml' -print0 | xargs -0 grep --color -n "$1"
+
+            ;;
+
+        sh)
+           find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f -name '*.sh' -print0 | xargs -0 grep --color -n "$1"
+
+            ;;
+
+        mk)
+           find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f -name '*.mk' -print0 | xargs -0 grep --color -n "$1"
+
+            ;;
+
+        rc)
+           find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f -name '*.rc' -print0 | xargs -0 grep --color -n "$1"
+
+            ;;
+
+        cfg)
+           find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f -name '*.cfg' -print0 | xargs -0 grep --color -n "$1"
+
+            ;;
+
+        makefile)
+           find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f -name 'Makefile' -print0 | xargs -0 grep --color -n "$1"
+
+            ;;
+
+        prop)
+           find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f -name '*.prop' -print0 | xargs -0 grep --color -n "$1"
+
+            ;;
+        *)
+            find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f \( -name '*.c' -o -name '*.cc' -o -name '*.cpp' -o -name '*.h' -o -name '*.java' -o -name '*.xml' -o -name '*.sh' -o -name '*.mk' -o -name '*.rc' -o -name '*.cfg' -o -name 'Makefile' -o -name 'Kconfig' -o -name '*.sh' -o -name '*.prop' \) -print0 | xargs -0 grep --color -n $@
+
+            ;;
+    esac
 }
 
 ## rename photo modify bootanimation.zip
