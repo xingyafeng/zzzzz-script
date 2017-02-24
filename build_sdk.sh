@@ -992,8 +992,8 @@ function handler_vairable()
             return 1
         fi
     else
-        ### jenkins 没有填写，默认为master
-        build_branch=master
+        ### jenkins 没有填写，默认为develop
+        build_branch=develop
     fi
 
     ### 11. build clean
