@@ -1729,6 +1729,10 @@ function handler_branch_for_apk()
         handler_branch_for_CheYueBao
     fi
 
+    if [ $apk_name == "Car_YZYLN" ];then
+        handler_branch_for_Car_YZYLN
+    fi
+
     auto_git_create_branch_refs
 
     cd .. > /dev/null
@@ -2221,6 +2225,29 @@ function handler_branch_for_CheYueBao()
     fi
 }
 
+function handler_branch_for_Car_YZYLN()
+{
+    local Car_YZYLN_branch=
+
+    case $build_prj_name in
+
+        k86mx1_MB-M8S)
+
+            Car_YZYLN_branch="mx1/meiban/m8s"
+            ;;
+
+        *)
+
+           __echo "Car_YZYLN_branch is null !"
+            ;;
+
+    esac
+
+    if [ "$Car_YZYLN_branch" ];then
+        handler_checkout_branch $Car_YZYLN_branch
+        handler_update_source_code Car_YZYLN $Car_YZYLN_branch
+    fi
+}
 
 function handler_branch_for_app()
 {
