@@ -1497,7 +1497,7 @@ function main()
             print_variable $build_prj_name $build_version $build_device $build_type $build_file
 
             if [ "`is_root_version $build_type`" == "true" ];then
-                email_receiver="514779897@qq.com"
+                email_receiver="281220263@qq.com"
                 email_content="make root project successful ..."
             else
                 email_receiver="android_software@yunovo.cn"
