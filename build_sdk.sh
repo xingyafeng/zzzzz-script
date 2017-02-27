@@ -1725,6 +1725,10 @@ function handler_branch_for_apk()
         handler_branch_for_TxzWebchat
     fi
 
+    if [ $apk_name == "CheYueBao" ];then
+        handler_branch_for_CheYueBao
+    fi
+
     auto_git_create_branch_refs
 
     cd .. > /dev/null
@@ -2192,6 +2196,31 @@ function handler_branch_for_TxzWebchat()
         handler_update_source_code TxzWebchat $TxzWebchat_branch
     fi
 }
+
+function handler_branch_for_CheYueBao()
+{
+    local CheYueBao_branch=
+
+    case $build_prj_name in
+
+        k86mx1_MB-M8S)
+
+            CheYueBao_branch=cyb1.6
+            ;;
+
+        *)
+
+           __echo "CheYueBao_branch is null !"
+            ;;
+
+    esac
+
+    if [ "$CheYueBao_branch" ];then
+        handler_checkout_branch $CheYueBao_branch
+        handler_update_source_code CheYueBao $CheYueBao_branch
+    fi
+}
+
 
 function handler_branch_for_app()
 {
