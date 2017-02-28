@@ -2447,7 +2447,7 @@ function handler_branch_for_app()
         handler_branch_for_TxzVoice
     fi
 
-
+if false;then
     if [ $local_branch_name == "long" -o $local_branch_name == "develop_long" -o $local_branch_name == "test_long" ];then
         tag_name=L
     elif [ $local_branch_name == $branch_for_master -o $local_branch_name == $branch_for_develop -o $local_branch_name == $branch_for_test ];then
@@ -2459,7 +2459,7 @@ function handler_branch_for_app()
         ### 处理不同分支tag
         handler_tag_branch $local_branch_name $tag_name $app_name
     fi
-
+fi
     auto_git_create_branch_refs
 
     cd .. > /dev/null
