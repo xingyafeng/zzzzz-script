@@ -1948,7 +1948,7 @@ function handler_branch_for_YOcSettings()
             YOcSettings_branch=new_2.0
             ;;
 
-        k86mx1_QC-M78 | k86mx1_MB-M8S)
+        k86mx1_QC-M78 | k86mx1_MB-M8S | k86mx1_KKXL-C9)
 
             YOcSettings_branch=new_2.0
             ;;
