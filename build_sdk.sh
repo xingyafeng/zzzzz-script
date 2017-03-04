@@ -2137,7 +2137,7 @@ function handler_branch_for_TxzVoice()
 
     case $build_prj_name in
 
-        k86s7_NM-N810 | k86mx1_MB-M8S)
+        k86s7_NM-N810 | k86mx1_MB-M8S | k86ls_K80)
 
             TxzVoice_branch=txzing2.0
             ;;
@@ -2159,7 +2159,7 @@ function handler_branch_for_TxzCore()
 
     case $build_prj_name in
 
-        k86s7_NM-N810 | k88s_NM-D200 | k88s_NM-D210 | k86mx1_MB-M8S)
+        k86s7_NM-N810 | k88s_NM-D200 | k88s_NM-D210 | k86mx1_MB-M8S | k86ls_K80)
 
             TxzCore_branch=txzing2.0
             ;;
@@ -2183,7 +2183,7 @@ function handler_branch_for_TxzWebchat()
 
     case $build_prj_name in
 
-        k86s7_NM-N810 | k88s_NM-D200 | k88s_NM-D210 | k86mx1_MB-M8S)
+        k86s7_NM-N810 | k88s_NM-D200 | k88s_NM-D210 | k86mx1_MB-M8S | k86ls_K80)
 
             TxzWebchat_branch=txzing2.0
             ;;
@@ -2207,7 +2207,7 @@ function handler_branch_for_CheYueBao()
 
     case $build_prj_name in
 
-        k86mx1_MB-M8S)
+        k86mx1_MB-M8S | k86ls_K80)
 
             CheYueBao_branch=cyb1.6
             ;;
