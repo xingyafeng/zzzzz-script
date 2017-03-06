@@ -3000,15 +3000,13 @@ function build_system_app()
 {
     local OldPWD=`pwd`
 
-    if [ "`get_project_real_name`" == "reglink_k100_develop" ];then
-        if [ -f $buildfs_dir/$compile_sh ];then
-            cd $buildfs_dir > /dev/null
+    if [ -f $buildfs_dir/$compile_sh ];then
+        cd $buildfs_dir > /dev/null
 
-            chmod +x $compile_sh
-            ./$compile_sh
+        chmod +x $compile_sh
+        ./$compile_sh
 
-            cd $OLDPWD > /dev/null
-        fi
+        cd $OLDPWD > /dev/null
     fi
 }
 ### 打印系统环境变量
@@ -3134,11 +3132,13 @@ function main()
             echo "current directory is not android ! gettop is null !"
             return 1
         else
-            cpcustoms
-            handler_custom_config
+            if [ "`get_project_real_name`" != "reglink_k100_develop"  ];then
+                cpcustoms
+                handler_custom_config
 
-            ##编译k100项目应用
-            build_system_app
+                ##编译k100项目应用
+                build_system_app
+            fi
         fi
     else
         echo "do not cp customs !"
