@@ -3000,14 +3000,18 @@ function build_system_app()
 {
     local OldPWD=`pwd`
 
-    if [ -f $buildfs_dir/$compile_sh ];then
-        cd $buildfs_dir > /dev/null
+    if [ "`get_project_real_name`" == "reglink_k100_develop"   ];then
 
-        chmod +x $compile_sh
-        ./$compile_sh
+        if [ -f $buildfs_dir/$compile_sh ];then
+            cd $buildfs_dir > /dev/null
 
-        cd $OLDPWD > /dev/null
+            chmod +x $compile_sh
+            ./$compile_sh
+
+            cd $OLDPWD > /dev/null
+        fi
     fi
+
 }
 ### 打印系统环境变量
 function print_env()
@@ -3135,10 +3139,11 @@ function main()
             if [ "`get_project_real_name`" != "reglink_k100_develop"  ];then
                 cpcustoms
                 handler_custom_config
-
-                ##编译k100项目应用
-                build_system_app
             fi
+
+            ##编译k100项目应用
+            build_system_app
+
         fi
     else
         echo "do not cp customs !"
