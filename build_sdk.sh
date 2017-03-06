@@ -4,10 +4,10 @@
 set -e
 
 #set java env
-export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64
-export JRE_HOME=$JAVA_HOME/jre
-export CLASSPATH=.:$CLASSPATH:$JAVA_HOME/lib:$JRE_HOME/lib
-export PATH=${JAVA_HOME}/bin:$JRE_HOME/bin:$PATH
+#export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64
+#export JRE_HOME=$JAVA_HOME/jre
+#export CLASSPATH=.:$CLASSPATH:$JAVA_HOME/lib:$JRE_HOME/lib
+#export PATH=${JAVA_HOME}/bin:$JRE_HOME/bin:$PATH
 export LANGUAGE=en_US
 export LC_ALL=en_US.UTF-8
 export ANDROID_HOME=~/workspace/android-sdk-linux
