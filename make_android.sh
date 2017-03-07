@@ -109,6 +109,7 @@ k86mx1_jh_s04a_p=k86mx1_jh_s04a
 k86mx1_jh01_s04a_p=k86mx1_jh01_s04a
 k86mx1_rwy_dz80_p=k86mx1_rwy_dz80
 k86mx1_byos_s8_p=k86mx1_byos_s8
+k86mx1_meiban_m8s_p=k86mx1_meiban_m8s
 
 k88c_6735_VoLTE_develop_p=6735_VoLTE_develop
 mtk6753_volte_develop_p=mtk6753_volte_develop
@@ -275,7 +276,7 @@ function is_yunovo_project
 
             ;;
 
-        $k86mx1_jh_s04a_p | $k86mx1_jh01_s04a_p | $k86mx1_rwy_dz80_p | $k86mx1_byos_s8_p)
+        $k86mx1_jh_s04a_p | $k86mx1_jh01_s04a_p | $k86mx1_rwy_dz80_p | $k86mx1_byos_s8_p | $k86mx1_meiban_m8s_p)
             echo true
 
             ;;
