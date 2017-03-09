@@ -1005,9 +1005,23 @@ function handler_vairable()
 
     ### 12. build ota
     if [ "$yunovo_make_ota" ];then
-        build_make_ota=$yunovo_make_ota
+        build_make_ota=true
     else
-        build_make_ota=false
+        if [ "`is_root_project`" == "true" ];then
+            build_make_ota=false
+        else
+            build_make_ota=true
+        fi
+    fi
+
+    if [ "$yunovo_ota" ];then
+        build_make_ota=$yunovo_ota
+    else
+        if [ "`is_root_project`" == "true" ];then
+            build_make_ota=false
+        else
+            build_make_ota=true
+        fi
     fi
 
     ## 13. build refs
