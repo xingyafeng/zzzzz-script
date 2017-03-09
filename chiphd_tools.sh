@@ -388,10 +388,47 @@ gfind()
     local files=$1
 
 	if [ "$files" ];then
-		find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f -name "$files" -print
-	else
+	    types=$files
+    else
 		show_vip "please add only one arg, eg:gfind + string"
 	fi
+
+    case $types in
+
+        c | cc | cpp | java | xml | sh | mk | rc | cfg | makefile | prop)
+
+            find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f -name \*"$types" -print
+            ;;
+
+        bmp | jpg | png)
+
+            find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f -name \*"$types" -print
+            ;;
+
+        txt | pdf | doc | xls)
+
+            find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f -name \*"$types" -print
+            ;;
+
+        zip | rar | tar | gz | img)
+
+            find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f -name \*"$types" -print
+            ;;
+
+        xml | html)
+
+            find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f -name \*"$types" -print
+            ;;
+
+        wav | mp3 | acc | flac | wma | wav)
+
+            find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f -name \*"$types" -print
+            ;;
+
+        *)
+            find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f -name "$files" -print
+            ;;
+    esac
 }
 
 grepfs()
