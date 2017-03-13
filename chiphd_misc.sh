@@ -34,7 +34,7 @@ function auto_running_jenkins()
     if [ -f $jenkins_war_path ];then
 
         if [ "`ps aux | grep jenkins.war | grep -v "color=auto" | awk '{print $13}'`" != "$jenkins_war" ];then
-            java -jar $jenkins_war_path --httpPort=8089 --daemon
+            java -jar $jenkins_war_path --httpPort=8089 --daemon --logfile=/home/jenkins/.jenkins_run.log
         fi
     else
         echo " $jenkins_war_path is no found ..."
