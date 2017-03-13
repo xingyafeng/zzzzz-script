@@ -700,6 +700,7 @@ function sshfs-server()
     local jobs_path=/home/$userN/jobs
     local share_path=/public/jenkins/jenkins_share_20T
     local s3_path=/home/work5/jenkins/jobs
+    local s4_path=/media/lvm/jobs
 
     if [ "`is_yunovo_server`" == "true" ];then
         for hostname in $hostN
@@ -719,6 +720,8 @@ function sshfs-server()
                     sshfs $userN@$hostname:$share_path ~/$hostname
                 elif [ $hostname == "s3.y" ];then
                     sshfs $userN@$hostname:$s3_path ~/$hostname
+                elif [ $hostname == "s4.y" ];then
+                    sshfs $userN@$hostname:$s4_path ~/$hostname
                 else
                     sshfs $userN@$hostname:$jobs_path ~/$hostname
                 fi
