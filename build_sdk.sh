@@ -667,6 +667,22 @@ function is_root_version()
     done
 }
 
+## 是否为k100项目
+function is_k100_project()
+{
+
+    case `get_project_real_name` in
+
+        $reglink_k100_develop_p)
+            echo true
+
+            ;;
+        *)
+            echo false
+            ;;
+    esac
+}
+
 function sendEmail_diffmanifest_to_who()
 {
     local sz_receiver=$1
@@ -1038,7 +1054,7 @@ function handler_vairable()
         build_update_code=true
     fi
 
-    if [ "`get_project_real_name`" == "reglink_k100_develop" ];then
+    if [ "`is_k100_project`" == "true" ];then
         system_version=$custom_version\_${project_name}\_${first_version}.${second_version}
         fota_version="SPT_VERSION_NO=${system_version}"
     else
@@ -3014,7 +3030,7 @@ function build_system_app()
 {
     local OldPWD=`pwd`
 
-    if [ "`get_project_real_name`" == "reglink_k100_develop"   ];then
+    if [ "`is_k100_project`" == "true" ];then
 
         if [ -f $buildfs_dir/$compile_sh ];then
             cd $buildfs_dir > /dev/null
@@ -3134,7 +3150,9 @@ function main()
 
     if [ $flag_clone_app -eq 1 ];then
 
-	if [ "`get_project_real_name`" != "reglink_k100_develop" ];then
+	if [ "`is_k100_project`" == "true" ];then
+        :
+    else
         down_load_apk_for_yunovo
         down_load_app_for_yunovo
 	fi
@@ -3150,7 +3168,9 @@ function main()
             echo "current directory is not android ! gettop is null !"
             return 1
         else
-            if [ "`get_project_real_name`" != "reglink_k100_develop"  ];then
+            if [ "`is_k100_project`" == "true" ];then
+                :
+            else
                 cpcustoms
                 handler_custom_config
             fi
