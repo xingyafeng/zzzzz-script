@@ -130,6 +130,7 @@ k86mx1_jh_s04a_p=k86mx1_jh_s04a
 k28f_p=k28f
 mtk6735_gps_master_p=mtk6735_gps_master
 reglink_k100_develop_p=reglink_k100_develop
+reglink_k100_ykt_p=reglink_k100_ykt
 
 email_receiver=""
 email_content=""
@@ -309,11 +310,14 @@ function is_yunovo_project
 
             ;;
 
-        $k27_xinke_ds50_p | $k86sa1_mazda_p | $mx1_xianzhi_k80_p | $k89_master_p | $k86mx1_jh_s04a_p | $k28s_master_p | $k28f_p | $mtk6735_gps_master_p | $reglink_k100_develop_p)
+        $k27_xinke_ds50_p | $k86sa1_mazda_p | $mx1_xianzhi_k80_p | $k89_master_p | $k86mx1_jh_s04a_p | $k28s_master_p | $k28f_p | $mtk6735_gps_master_p)
             echo true
 
             ;;
+        $reglink_k100_develop_p | ${reglink_k100_ykt_p}-0bihu)
+            echo true
 
+            ;;
         *)
             echo false
 
@@ -673,7 +677,7 @@ function is_k100_project()
 
     case `get_project_real_name` in
 
-        $reglink_k100_develop_p)
+        $reglink_k100_develop_p | ${reglink_k100_ykt_p}-0bihu)
             echo true
 
             ;;
@@ -2698,6 +2702,7 @@ function download_sdk()
 {
     local project_name=`get_project_name`
     local defalut=
+    local branchN=
 
     if [ "$project_name" ];then
         if [ $project_name == "k86a" -o $project_name == "k86m" ];then
@@ -2731,24 +2736,33 @@ function download_sdk()
         return 1
     fi
 
-    _echo "defalut = $defalut"
+    local projectN=${project_name%%_*}
+    local customN=${project_name#*_} && customN=${customN%%_*}
+    local modeN=${project_name##*_}
 
-	if [ ! -d .repo ];then
-		if [ "$defalut" -a "$project_link" ];then
-            repo $project_link -m ${defalut}.xml
-        fi
-		repo sync -c -d --prune --no-tags -j${cpu_num}
-        ls -alF
-
-    if flase;then
-        if [ "$defalut" == "K26" -o "$defalut" == "k86A" ];then
-            defalut=master
-        fi
-
-        if [ $defalut ];then
-            repo start $defalut --all
+    if [ "$defalut"x == ""x -a "$branchN"x == ""x ];then
+        if [ "`is_k100_project`" == "true" ];then
+            branchN="yunovo/$projectN/$customN/$modeN"
+        else
+            branchN="$projectN/$customN/$modeN"
         fi
     fi
+
+    _echo "defalut = $defalut"
+    _echo "branchN = $branchN"
+
+    if [ ! -d .repo ];then
+        if [ "$defalut" -a "$project_link" ];then
+            repo $project_link -m ${defalut}.xml
+        fi
+
+        if [ "$branchN" -a "$project_link" ];then
+            repo $project_link -b ${branchN}
+        fi
+
+        repo sync -c -d --prune --no-tags -j${cpu_num}
+        ls -alF
+
         ## 第一次下载完成后，需要初始化环境变量
         if [ -d .repo ];then
             source_init
@@ -2756,7 +2770,8 @@ function download_sdk()
             echo "The (.repo) not found ! please download sdk !"
             return 1
         fi
-	else
+
+    else
         if [ `is_yunovo_server` == "true" ];then
             ## 还原 androiud源代码 ...
             recover_standard_android_project
@@ -2766,12 +2781,16 @@ function download_sdk()
                 repo init -m ${defalut}.xml
             fi
 
+            if [ "$branchN" ];then
+                repo init -b ${branchN}
+            fi
+
             ## update android source code for yunovo project ...
             if repo sync -c -d --prune --no-tags -j${cpu_num};then
                 _echo "----------------- repo sync successful ..."
             fi
         fi
-	fi
+    fi
 }
 
 ## build android system for yunovo project
