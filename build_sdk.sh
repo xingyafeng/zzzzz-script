@@ -2744,7 +2744,11 @@ function download_sdk()
         if [ "`is_k100_project`" == "true" ];then
             branchN="yunovo/$projectN/$customN/$modeN"
         else
-            branchN="$projectN/$customN/$modeN"
+            if [ "$customN" == "$modeN" ];then
+                branchN="$projectN/$customN"
+            else
+                branchN="$projectN/$customN/$modeN"
+            fi
         fi
     fi
 
