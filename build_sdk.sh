@@ -131,6 +131,7 @@ k28f_p=k28f
 mtk6735_gps_master_p=mtk6735_gps_master
 reglink_k100_develop_p=reglink_k100_develop
 reglink_k100_ykt_p=reglink_k100_ykt
+reglink_k100_cq_p=reglink_k100_cq
 
 email_receiver=""
 email_content=""
@@ -314,7 +315,7 @@ function is_yunovo_project
             echo true
 
             ;;
-        $reglink_k100_develop_p | ${reglink_k100_ykt_p}-0bihu)
+        $reglink_k100_develop_p | ${reglink_k100_ykt_p}-0bihu | $reglink_k100_cq_p)
             echo true
 
             ;;
@@ -677,7 +678,7 @@ function is_k100_project()
 
     case `get_project_real_name` in
 
-        $reglink_k100_develop_p | ${reglink_k100_ykt_p}-0bihu)
+        $reglink_k100_develop_p | ${reglink_k100_ykt_p}-0bihu | $reglink_k100_cq_p)
             echo true
 
             ;;
