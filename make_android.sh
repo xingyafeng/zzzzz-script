@@ -89,6 +89,7 @@ k26s_vst_a2a_p=k26s_vst_a2a
 
 k26s_ld_a107c_p=k26s_ld_a107c
 k26s_newsmy_d900_p=k26s_newsmy_d900
+k26s_fxft_h481_p=k26s_fxft_h481
 
 k27_hbs_t2_p=k27_hbs_t2
 k27_xinke_ds50_p=k27_xinke_ds50
@@ -249,7 +250,7 @@ function is_yunovo_project
             ;;
 
 
-        $k26s_ld_a107c_p | $k26s_vst_a1a_p | $k26s_vst_a2a_p)
+        $k26s_ld_a107c_p | $k26s_vst_a1a_p | $k26s_vst_a2a_p | $k26s_fxft_h481_p)
             echo true
 
             ;;
