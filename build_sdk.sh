@@ -1429,13 +1429,7 @@ function cpcustoms()
 	local ConfigsPath=
 
     if [ "`is_branch_project`" == "true" ];then
-
-        if [ $build_prj_name == "k28s_K28-ZX" -o $build_prj_name == "k28f_K28-ZX" -o $build_prj_name == "k86s7_S7-ZX" -o $build_prj_name == "K100_ZX" ];then
-            ConfigsPath=${thisSDKTop}/yunovo/customs
-        else
-            ConfigsPath=${thisSDKTop}/yunovo/customs/custom
-        fi
-
+        ConfigsPath=${thisSDKTop}/yunovo/customs
     else
         ConfigsPath=${thisSDKTop}/../yunovo_customs/custom
     fi
