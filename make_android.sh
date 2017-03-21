@@ -1162,11 +1162,13 @@ function copy_customs_to_android()
 			local thisProjDelFileSh=$thisSDKTop/chiphd_delete.sh
 			if [ -f "$thisProjDelFileSh" ]; then rm $thisProjDelFileSh; fi
 
+            if false;then
             ## 清除旧项目的修改
 			echo "clean by $OldProductSelDirAndroid" && chiphd_recover_standard_device_cfg $OldProductSelDirAndroid
 
 			## 确保新项目的修改纯净
 			echo "clean by $ProjectSelDirAndroid" && chiphd_recover_standard_device_cfg $ProjectSelDirAndroid
+            fi
 
 			## 新项目代码拷贝
 			update_all_type_file_time_stamp $ProjectSelDirAndroid
