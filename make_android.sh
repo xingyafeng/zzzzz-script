@@ -1290,6 +1290,55 @@ function handler_android_mk()
     fi
 }
 
+## 更新源代码
+function update_source_code()
+{
+    if [ -f build/core/envsetup.mk -a -f Makefile  ]; then
+
+        ## 初始化环境变量
+        source_init
+
+        ## 还原 androiud源代码 ...
+        recover_standard_android_project
+
+        if [ `is_yunovo_server` == "true" ];then
+
+        ## start repo init
+        repo init -b ${branchN}
+
+        ## update android source code for yunovo project ...
+        if repo sync -j${cpu_num} -c -d --no-tags --prune;then
+            __echo "repo sync successful ..."
+        fi
+        fi
+
+    else
+
+        ## 下载中断处理,需要重新下载代码
+        rm .repo/ -rf
+
+        downlod_source_code
+    fi
+
+}
+
+## 下载源代码
+function downlod_source_code()
+{
+    if [ "$project_link" -a "$branchN" ];then
+        repo $project_link -b ${branchN}
+        repo sync -j${cpu_num} -c -d --no-tags --prune
+    fi
+
+    ## 第一次下载完成后，需要初始化环境变量
+    if [ -d .repo ];then
+        source_init
+    else
+        echo "The (.repo) not found ! please download sdk !"
+        return 1
+    fi
+}
+
 function down_load_yunovo_source_code()
 {
     local prj_name=`get_project_name`
@@ -1307,32 +1356,10 @@ function down_load_yunovo_source_code()
 
     _echo "branchN = $branchN"
 
-	if [ ! -d .repo ];then
-		if [ "$project_link" -a "$branchN" ];then
-            repo $project_link -b ${branchN}
-            repo sync -j${cpu_num} -c -d --no-tags --prune
-        fi
-
-        ## 第一次下载完成后，需要初始化环境变量
-        if [ -d .repo ];then
-            source_init
-        else
-            echo "The (.repo) not found ! please download sdk !"
-            return 1
-        fi
+	if [ -d .repo ];then
+        update_source_code
 	else
-        if [ `is_yunovo_server` == "true" ];then
-            ## 还原 androiud源代码 ...
-            recover_standard_android_project
-
-            ## start repo init
-            repo init -b ${branchN}
-
-            ## update android source code for yunovo project ...
-            if repo sync -j${cpu_num} -c -d --no-tags --prune;then
-                __echo "repo sync successful ..."
-            fi
-        fi
+        downlod_source_code
 	fi
 }
 
@@ -1543,7 +1570,7 @@ function main()
         return 1
     fi
 
-    if [ -d .repo ];then
+    if [ -d .repo -a -f Makefle ];then
         ### 初始化环境变量
         if [ "`is_check_lunch`" == "no lunch" ];then
             source_init
