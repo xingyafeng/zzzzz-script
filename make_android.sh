@@ -1317,13 +1317,13 @@ function update_source_code()
         ## 下载中断处理,需要重新下载代码
         rm .repo/ -rf
 
-        downlod_source_code
+        download_source_code
     fi
 
 }
 
 ## 下载源代码
-function downlod_source_code()
+function download_source_code()
 {
     if [ "$project_link" -a "$branchN" ];then
         repo $project_link -b ${branchN}
@@ -1359,7 +1359,7 @@ function down_load_yunovo_source_code()
 	if [ -d .repo ];then
         update_source_code
 	else
-        downlod_source_code
+        download_source_code
 	fi
 }
 
