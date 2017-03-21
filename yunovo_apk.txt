@@ -103,3 +103,5 @@ MXPlayerM8s
 GpsTesterM8s
 GaodeSocol
 TrafficK80
+IOV_SQ01
+Platform_SQ01
