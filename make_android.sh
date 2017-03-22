@@ -1572,7 +1572,7 @@ function main()
         return 1
     fi
 
-    if [ -d .repo -a -f Makefle ];then
+    if [ -d .repo -a -f build/core/envsetup.mk -a -f Makefile ];then
         ### 初始化环境变量
         if [ "`is_check_lunch`" == "no lunch" ];then
             source_init
