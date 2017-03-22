@@ -26,6 +26,8 @@ t_project_name=
 t_custom_verion=
 
 voice_mode=
+yunovo_version_no=
+
 CPUCORES=`cat /proc/cpuinfo | grep processor | wc -l`
 
 ## yunos project name
@@ -83,6 +85,15 @@ function __msg()
 
     echo "---- dir: $dir"
     echo
+}
+
+function handler_export()
+{
+    voice_mode="VR_MODE=$build_mode"
+    yunovo_version_no="YUNOVO_VERSION_NO=$build_version"
+
+    export $voice_mode
+    export $yunovo_version_no
 }
 
 function handler_print()
@@ -183,9 +194,6 @@ function handler_vairable()
         __echo " yunovo_vr_mode is null, please check it !"
     fi
 
-    voice_mode="VR_MODE=$build_mode"
-
-    export $voice_mode
 }
 
 ### 是否为阿里的项目
@@ -511,6 +519,8 @@ function rsync_version_to_f1_server()
 
 handler_vairable
 handler_print
+handler_export
+
 ### add by yunovo
 
 # ///////////////////////////////////////////////////////分界线 #
@@ -1079,7 +1089,7 @@ function main()
         make update-api -j${CPUCORES}
     fi
 
-    if make otapackage $voice_mode -j${CPUCORES} -k $moreArgs;then
+    if make otapackage $voice_mode $yunovo_version_no -j${CPUCORES} -k $moreArgs;then
         __echo " make project successful ..."
     else
         __echo " make project fail ..."
