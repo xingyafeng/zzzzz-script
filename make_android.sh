@@ -113,6 +113,7 @@ k86mx1_jh01_s04a_p=k86mx1_jh01_s04a
 k86mx1_rwy_dz80_p=k86mx1_rwy_dz80
 k86mx1_byos_s8_p=k86mx1_byos_s8
 k86mx1_meiban_m8s_p=k86mx1_meiban_m8s
+k86mx1_kkxl_c9_p=k86mx1_kkxl_c9
 
 k86l_linghz_q18_p=k86l_linghz_q18
 
@@ -284,7 +285,7 @@ function is_yunovo_project
 
             ;;
 
-        $k86mx1_jh_s04a_p | $k86mx1_jh01_s04a_p | $k86mx1_rwy_dz80_p | $k86mx1_byos_s8_p | $k86mx1_meiban_m8s_p)
+        $k86mx1_jh_s04a_p | $k86mx1_jh01_s04a_p | $k86mx1_rwy_dz80_p | $k86mx1_byos_s8_p | $k86mx1_meiban_m8s_p | $k86mx1_kkxl_c9_p)
             echo true
 
             ;;
