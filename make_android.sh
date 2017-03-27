@@ -973,6 +973,7 @@ function copy_out_image()
 {
 	### k86A_H520
 	local prj_name=$project_name\_$custom_version
+    local manifestfs=.repo/manifests/default.xml
 
 	echo "prj_name = $prj_name"
 
@@ -1068,12 +1069,18 @@ function copy_out_image()
         if [ "`ls ${OUT}/target_files-package.zip`" ];then
             cp -v ${OUT}/target_files-package.zip ${OTA_PATH}
         fi
+
         ### add readme.txt in version
         if [ -f $readme_file ];then
             cp -vf $readme_file ${BASE_PATH}
             if [ $? -eq 0 ];then
                 rm $readme_file -r
             fi
+        fi
+
+        ## add manifest file
+        if [ -f $manifestfs ];then
+            cp -vf $manifestfs ${BASE_PATH}
         fi
     fi
 
