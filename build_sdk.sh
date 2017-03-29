@@ -132,6 +132,7 @@ mtk6735_gps_master_p=mtk6735_gps_master
 reglink_k100_develop_p=reglink_k100_develop
 reglink_k100_ykt_p=reglink_k100_ykt
 reglink_k100_cq_p=reglink_k100_cq
+reglink_k100_cqhm_p=reglink_k100_cqhm
 
 email_receiver=""
 email_content=""
@@ -318,7 +319,7 @@ function is_yunovo_project
             echo true
 
             ;;
-        $reglink_k100_develop_p | ${reglink_k100_ykt_p}-0bihu | $reglink_k100_cq_p)
+        $reglink_k100_develop_p | ${reglink_k100_ykt_p}-0bihu | $reglink_k100_cq_p | $reglink_k100_cqhm_p)
             echo true
 
             ;;
