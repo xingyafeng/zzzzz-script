@@ -136,6 +136,9 @@ reglink_k100_cq_p=reglink_k100_cq
 email_receiver=""
 email_content=""
 
+## make ota
+is_test_verion=
+
 ################################ system env
 DEVICE=
 ROOT=
@@ -831,6 +834,12 @@ function handler_vairable()
                 echo "first_version or second_version is null !"
                 return 1
             fi
+
+            if [ -n "`echo $second_version | sed -n '/\./p'`"  ];then
+                is_test_verion=false
+            else
+                is_test_verion=true
+            fi
         else
             echo "build_version is error, please checkout it ."
             return 1
@@ -1003,6 +1012,24 @@ function handler_vairable()
         echo "$build_readme" >> $readme_file
     fi
 
+    ### 11. build clean
+    if [ "$yunovo_clean" ];then
+        build_clean=$yunovo_clean
+    else
+        build_clean=false
+    fi
+
+    ### 12. build ota
+    if [ "$yunovo_ota" ];then
+        build_make_ota=$yunovo_ota
+    else
+        if [ "`is_root_project`" == "true" ];then
+            build_make_ota=false
+        else
+            build_make_ota=$is_test_verion
+        fi
+    fi
+
     ### 10. build branch
     if [ "$yunovo_branch" ];then
 
@@ -1013,37 +1040,13 @@ function handler_vairable()
             return 1
         fi
     else
-        ### jenkins 没有填写，默认为develop
-        build_branch=develop
-    fi
-
-    ### 11. build clean
-    if [ "$yunovo_clean" ];then
-        build_clean=$yunovo_clean
-    else
-        build_clean=false
-    fi
-
-    ### 12. build ota
-    if [ "$yunovo_make_ota" ];then
-        build_make_ota=true
-    else
-        if [ "`is_root_project`" == "true" ];then
-            build_make_ota=false
+        if [ "$is_test_verion" == "true" ];then
+            build_branch="test"
         else
-            build_make_ota=true
+            build_branch=develop
         fi
     fi
 
-    if [ "$yunovo_ota" ];then
-        build_make_ota=$yunovo_ota
-    else
-        if [ "`is_root_project`" == "true" ];then
-            build_make_ota=false
-        else
-            build_make_ota=true
-        fi
-    fi
 
     ## 13. build refs
     if [ "$yunovo_refs" ];then
@@ -1408,6 +1411,7 @@ function print_variable()
     echo "yunovo_branch = $yunovo_branch"
     echo "yunovo_update_api = $yunovo_update_api"
 	echo '-----------------------------------------'
+    echo "is_test_verion = $is_test_verion"
 
 	echo "\$1 = $1"
 	echo "\$2 = $2"
@@ -2882,6 +2886,12 @@ function sync_jenkins_server()
     local branch_for_test=test
     local branch_for_master=master
     local branch_for_develop=develop
+
+    if [ "$is_test_verion" == "true" ];then
+        share_path=/public/jenkins/share_test
+    else
+        share_path=/public/jenkins/share_develop
+    fi
 
     if [ "`is_yunovo_server`" == "true" ];then
         if [ $build_test == "true" ];then
