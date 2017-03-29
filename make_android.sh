@@ -54,6 +54,9 @@ second_version=""
 email_receiver=""
 email_content=""
 
+## make ota
+is_test_verion=
+
 ################################# common variate
 hw_versiom=H3.1
 debug_path=~/debug
@@ -680,6 +683,12 @@ function handler_vairable()
             first_version=${build_version%%.*}
             second_version=${build_version#*.}
 
+            if [ -n "`echo $second_version | sed -n '/\./p'`" ];then
+                is_test_verion=false
+            else
+                is_test_verion=true
+            fi
+
             if [ -z "$first_version" -o -z "$second_version" ];then
                 echo "first_version or second_version is null !"
                 return 1
@@ -761,23 +770,13 @@ function handler_vairable()
     fi
 
     ### 7. build ota
-    if [ "$yunovo_make_ota" ];then
-        build_make_ota=true
-    else
-        if [ "`is_root_project`" == "true" ];then
-            build_make_ota=false
-        else
-            build_make_ota=true
-        fi
-    fi
-
     if [ "$yunovo_ota" ];then
         build_make_ota=$yunovo_ota
     else
         if [ "`is_root_project`" == "true" ];then
             build_make_ota=false
         else
-            build_make_ota=true
+            build_make_ota=$is_test_verion
         fi
     fi
 
@@ -1119,6 +1118,7 @@ function print_variable()
     echo "yunovo_update_api = $yunovo_update_api"
     echo "yunovo_update_code = $yunovo_update_code"
 	echo '-----------------------------------------'
+    echo "is_test_verion = $is_test_verion"
 
 	echo "\$1 = $1"
 	echo "\$2 = $2"
@@ -1460,38 +1460,26 @@ function make_yunovo_android()
 function sync_image_to_server()
 {
     local firmware_path=$version_p
-    local share_path=/public/jenkins/jenkins_share_20T
+    local share_path=
     local jenkins_server=jenkins@f1.y
 
     local root_version=userdebug
     local root_version_eng=eng
-    local branch_for_test=test
-    local branch_for_master=master
-    local branch_for_develop=develop
 
     if [ ! -d $firmware_path ];then
         mkdir $firmware_path
     fi
 
+    if [ "$is_test_verion" == "true" ];then
+        share_path=/public/jenkins/share_test
+    else
+        share_path=/public/jenkins/share_develop
+    fi
+
     if [ "`is_yunovo_server`" == "true" ];then
 
         if [ $build_test == "true" ];then
-
             rsync -av $firmware_path/ $jenkins_server:$share_path/happysongs
-        elif [ "$build_branch" == $branch_for_test ];then
-
-            if [ "$build_type" == "$root_version" -o "$build_type" == "$root_version_eng" ];then
-                rsync -av $firmware_path/ $jenkins_server:$share_path/${branch_for_test}_root
-            else
-                rsync -av $firmware_path/ $jenkins_server:$share_path/$branch_for_test
-            fi
-        elif [ "$build_branch" == $branch_for_develop ];then
-
-            if [ "$build_type" == "$root_version" -o "$build_type" == "$root_version_eng" ];then
-                rsync -av $firmware_path/ $jenkins_server:$share_path/${branch_for_develop}_root
-            else
-                rsync -av $firmware_path/ $jenkins_server:$share_path/$branch_for_develop
-            fi
         else
             if [ "$build_type" == "$root_version" -o "$build_type" == "$root_version_eng" ];then
                 rsync -av $firmware_path/ $jenkins_server:$share_path/yunovo_root
