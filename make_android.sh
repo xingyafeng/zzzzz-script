@@ -513,6 +513,7 @@ function repo_diffmanifests_to_jenkins()
     local diff_manifests_git=yunovo/diffmanifests/.git
     local tmp_version=$zz_script_path/fs/version.log
     local diff_manifests_tmp=$zz_script_path/fs/diff.log
+    local hardware_config_mk=$ROOT/$DEVICE/HardWareConfig.mk
 
     local startV=
     local datetime=`date +'%Y.%m.%d_%H.%M.%S'`
@@ -537,11 +538,16 @@ function repo_diffmanifests_to_jenkins()
     echo "7. 客制化路径 : ${prefect_name}" >> $tmp_version
     echo "8. 系统版本号 : ${system_version}" >> $tmp_version
     echo "-------------------------------------------------" >> $tmp_version
-    echo "1. lunch选工程， lunch       = ${lunch_project}" >> $tmp_version
-    echo "2. 是否编译OTA， make ota    = ${build_make_ota}"  >> $tmp_version
-    echo "3. 是否清除编译，make clean  = ${build_clean}"  >> $tmp_version
-    echo "4. 是否更新代码，update code = ${build_update_code}" >> $tmp_version
+
+    echo "1. 选工程lunch  : lunch       = ${lunch_project}" >> $tmp_version
+    echo "2. 是否编译OTA  : make ota    = ${build_make_ota}" >> $tmp_version
+    echo "3. 是否清除编译 : make clean  = ${build_clean}" >> $tmp_version
+    echo "4. 是否更新代码 : update code = ${build_update_code}" >> $tmp_version
     echo "-------------------------------------------------" >> $tmp_version
+
+    if [ -f $hardware_config_mk ];then
+        cat $hardware_config_mk >> $tmp_version
+    fi
 
     if [ -f $old_manifest_version ];then
         cp $old_manifest_version $manifest_path/$diff_manifest_xml
@@ -1498,6 +1504,20 @@ function sync_image_to_server()
     fi
 }
 
+function send_email()
+{
+    ### repo diffmainifests
+    repo_diffmanifests_to_jenkins
+
+    ### input content diff has colors
+    repo_diffmanifests_has_colors
+
+    ### send email
+    if [ "`is_root_version $build_type`" != "true" ];then
+        sendEmail_diffmanifest_to_who "$email_receiver" "$email_content"
+    fi
+}
+
 ### 打印系统环境变量
 function print_env()
 {
@@ -1597,29 +1617,19 @@ function main()
         ## 下载，更新源码
         down_load_yunovo_source_code
 
-        ### repo diffmainifests
-        repo_diffmanifests_to_jenkins
+        ## 拷贝客制化
+        copy_customs_to_android
 
-        ### input content diff has colors
-        repo_diffmanifests_has_colors
+        ## 发送diffmanifest
+        send_email
 
-        ### send email
-        if [ "`is_root_version $build_type`" != "true" ];then
-            sendEmail_diffmanifest_to_who "$email_receiver" "$email_content"
-        fi
-    fi
+        ## 处理HardWareConfig
+        handler_custom_config
 
-    if [ "`is_check_lunch`" != "no lunch" ];then
-        if [ "$build_update_code" == "true" ];then
-            copy_customs_to_android
-            handler_custom_config
-            handler_android_mk CarConfig
-        else
-            _echo "build_update_code is false !"
-        fi
+        ## 处理 CarConfig apk
+        handler_android_mk CarConfig
     else
-        _echo "current directory is not android ! gettop is null !"
-        return 1
+        _echo "build_update_code is false !"
     fi
 
     if [ "$build_update_api" == "true" ];then
