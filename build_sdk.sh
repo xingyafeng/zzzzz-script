@@ -682,7 +682,7 @@ function is_k100_project()
 
     case `get_project_real_name` in
 
-        $reglink_k100_develop_p | ${reglink_k100_ykt_p}-0bihu | $reglink_k100_cq_p)
+        $reglink_k100_develop_p | ${reglink_k100_ykt_p}-0bihu | $reglink_k100_cq_p | $reglink_k100_cqhm_p)
             echo true
 
             ;;
