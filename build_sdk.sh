@@ -1041,11 +1041,7 @@ function handler_vairable()
             return 1
         fi
     else
-        if [ "$is_test_verion" == "true" ];then
-            build_branch="test"
-        else
-            build_branch=develop
-        fi
+        build_branch=develop
     fi
 
 
@@ -2905,9 +2901,17 @@ function sync_jenkins_server()
             fi
         elif [ "$build_branch" == $branch_for_develop ];then
             if [ "`is_root_project`" == "true" ] && [ "$build_type" == "$root_version" -o "$build_type" == "$root_version_eng" ];then
-                rsync -av $firmware_path/ $jenkins_server:$share_path/${branch_for_develop}_root
+                if [ "$is_test_verion" == "true" ];then
+                    rsync -av $firmware_path/ $jenkins_server:$share_path/${branch_for_test}_root
+                else
+                    rsync -av $firmware_path/ $jenkins_server:$share_path/${branch_for_develop}_root
+                fi
             else
-                rsync -av $firmware_path/ $jenkins_server:$share_path/$branch_for_develop
+                if [ "$is_test_verion" == "true" ];then
+                    rsync -av $firmware_path/ $jenkins_server:$share_path/$branch_for_test
+                else
+                    rsync -av $firmware_path/ $jenkins_server:$share_path/$branch_for_develop
+                fi
             fi
         else
             if [ "`is_root_project`" == "true" ] && [ "$build_type" == "$root_version" -o "$build_type" == "$root_version_eng" ];then
