@@ -12,6 +12,10 @@ build_refs=
 build_update_code=
 build_mode=
 
+##version
+first_version=
+second_version=
+
 ## 6735
 YUNOS_PROJECT_NAME=$1
 ## eng user userdebug
@@ -90,7 +94,7 @@ function __msg()
 function handler_export()
 {
     voice_mode="VR_MODE=$build_mode"
-    yunovo_version_no="YUNOVO_VERSION_NO=$build_version"
+    yunovo_version_no="YUNOVO_VERSION_NO=$second_version"
 
     export $voice_mode
     export $yunovo_version_no
@@ -113,11 +117,13 @@ function handler_print()
     echo "build_refs = $build_refs"
     echo "build_update_code = $build_update_code"
     echo "build_mode = $build_mode"
-
     echo "-----------------------------------"
     echo "build_project = $build_project"
     echo "t_project_name = $t_project_name"
     echo "t_custom_verion = $t_custom_verion"
+    echo "-----------------------------------"
+    echo "first_version = $first_version"
+    echo "second_version = $second_version"
     echo "-----------------------------------"
     echo "voice_mode = $voice_mode"
     echo "VR_MODE = $VR_MODE"
@@ -141,6 +147,9 @@ function handler_vairable()
     ## 2. build version
     if [ "$yunovo_version" ];then
         build_version=$yunovo_version
+
+        first_version=${build_version%%.*}
+        second_version=${build_version#*.}
     else
         _echo "yunovo_version is null, please check it !"
         exit 1
