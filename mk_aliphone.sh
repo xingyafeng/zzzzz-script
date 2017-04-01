@@ -126,7 +126,7 @@ function handler_print()
     echo "second_version = $second_version"
     echo "-----------------------------------"
     echo "voice_mode = $voice_mode"
-    echo "VR_MODE = $VR_MODE"
+    echo "yunovo_version_no = $yunovo_version_no"
     echo "-----------------------------------"
     echo
 }
@@ -527,8 +527,8 @@ function rsync_version_to_f1_server()
 }
 
 handler_vairable
-handler_print
 handler_export
+handler_print
 
 ### add by yunovo
 
