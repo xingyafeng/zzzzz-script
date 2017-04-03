@@ -698,7 +698,7 @@ function sshfs-server()
     local userN=jenkins
     local hostN=`echo s1.y s2.y s3.y s4.y f1.y`
     local jobs_path=/home/$userN/jobs
-    local share_path=/public/jenkins/jenkins_share_20T
+    local share_path=/public/jenkins
     local s3_path=/home/work5/jenkins/jobs
     local s4_path=/media/lvm/jobs
 
