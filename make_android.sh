@@ -83,6 +83,7 @@ mx1_xianzhi_t80_p=mx1_xianzhi_t80
 
 k26b_vst_s2_p=k26b_vst_s2
 k26b_fxft_h480_p=k26b_fxft_h480
+k26f_byos_s5_p=k26f_byos_s5
 
 k26_vst_s1_p=k26_vst_s1
 k26s_vst_s1_p=k26s_vst_s1
@@ -267,7 +268,7 @@ function is_yunovo_project
 
             ;;
 
-        $k26s_xianzhi_t99_p | $k26_vst_s1_p)
+        $k26s_xianzhi_t99_p | $k26_vst_s1_p | $k26f_byos_s5_p)
             echo true
 
             ;;
