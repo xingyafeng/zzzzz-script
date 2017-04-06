@@ -2022,7 +2022,7 @@ function handler_branch_for_CarEngine()
     local CarEngine_branch=
 
     if [ $build_prj_name == "k88c_MB-SQ01" ];then
-        CarEngine_branch=k88c/meiban/sq01
+        CarEngine_branch=k88c/mb/sq01
     else
          if [ "`git branch -r | grep 'test'`" -o "`git branch -r | grep develop`" ];then
             :
