@@ -2017,6 +2017,25 @@ function handler_branch_for_YOcSettings()
     fi
 }
 
+function handler_branch_for_CarEngine()
+{
+    local CarEngine_branch=
+
+    if [ $build_prj_name == "k88c_MB-SQ01" ];then
+        CarEngine_branch=k88c/meiban/sq01
+    else
+         if [ "`git branch -r | grep 'test'`" -o "`git branch -r | grep develop`" ];then
+            :
+        else
+            git checkout master
+        fi
+    fi
+
+    if [ "$CarEngine_branch" ];then
+        handler_checkout_branch $CarEngine_branch
+        handler_update_source_code CarEngine $CarEngine_branch
+    fi
+}
 
 function handler_branch_for_YOcMediaFolder()
 {
@@ -2481,6 +2500,10 @@ function handler_branch_for_app()
 
     if [ $app_name == "TxzVoice" ];then
         handler_branch_for_TxzVoice
+    fi
+
+    if [ $app_name == "CarEngine" ];then
+        handler_branch_for_CarEngine
     fi
 
 if false;then
