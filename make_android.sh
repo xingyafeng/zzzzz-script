@@ -1631,7 +1631,7 @@ function main()
         handler_custom_config
 
         ## 处理 CarConfig apk
-        handler_android_mk CarConfig
+        #handler_android_mk CarConfig
     else
         _echo "build_update_code is false !"
     fi
