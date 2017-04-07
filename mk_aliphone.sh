@@ -357,13 +357,13 @@ function get_project_name()
 
 function repo_sync_for_source_code()
 {
-    if repo sync -c -d --prune --no-tags;then
+    if repo sync --no-tags;then
         __echo "repo sync successful ..."
     else
-        if repo sync -c -d --prune --no-tags;then
+        if repo sync --no-tags;then
             __echo "repo sync successful 2 ..."
         else
-            repo sync -c -d --prune --no-tags && __echo "repo sync successful 3 ..."
+            repo sync --no-tags && __echo "repo sync successful 3 ..."
         fi
     fi
 }
