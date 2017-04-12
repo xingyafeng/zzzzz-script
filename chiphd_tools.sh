@@ -832,6 +832,11 @@ function jenkinsf1()
     ssh jenkins@f1.y
 }
 
+function jenkinsp1()
+{
+    ssh jenkins@p1
+}
+
 function git-tag-for-app()
 {
     local OLDP=`pwd`
