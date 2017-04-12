@@ -834,7 +834,7 @@ function jenkinsf1()
 
 function jenkinsp1()
 {
-    ssh jenkins@p1
+    ssh jenkins@p1.y
 }
 
 function git-tag-for-app()
