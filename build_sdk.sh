@@ -1917,7 +1917,7 @@ function handler_branch_for_YOcLauncherRes()
 
             ;;
 
-        k86mx1_MB-M8S)
+        k86mx1_MB-M8S | k86mx1_MB-M8A)
             sz_branch_name=S7_MB-M8S_V21
 
             ;;
@@ -2109,7 +2109,7 @@ function handler_branch_for_YOcBTCall()
             YOcBTCall_branch=bt_new2.0
             ;;
 
-        k86mx1_QC-M78 | k86mx1_MB-M8S)
+        k86mx1_QC-M78 | k86mx1_MB-M8S | k86mx1_MB-M8A)
 
             YOcBTCall_branch=bt_new2.0
             ;;
@@ -2197,7 +2197,7 @@ function handler_branch_for_TxzVoice()
 
     case $build_prj_name in
 
-        k86s7_NM-N810 | k86mx1_MB-M8S | k86ls_K80)
+        k86s7_NM-N810 | k86mx1_MB-M8S | k86ls_K80 | k86mx1_MB-M8A)
 
             TxzVoice_branch=txzing2.0
             ;;
@@ -2219,7 +2219,7 @@ function handler_branch_for_TxzCore()
 
     case $build_prj_name in
 
-        k86s7_NM-N810 | k88s_NM-D200 | k88s_NM-D210 | k86mx1_MB-M8S | k86ls_K80)
+        k86s7_NM-N810 | k88s_NM-D200 | k88s_NM-D210 | k86mx1_MB-M8S | k86ls_K80 | k86mx1_MB-M8A)
 
             TxzCore_branch=txzing2.0
             ;;
@@ -2243,7 +2243,7 @@ function handler_branch_for_TxzWebchat()
 
     case $build_prj_name in
 
-        k86s7_NM-N810 | k88s_NM-D200 | k88s_NM-D210 | k86mx1_MB-M8S | k86ls_K80)
+        k86s7_NM-N810 | k88s_NM-D200 | k88s_NM-D210 | k86mx1_MB-M8S | k86ls_K80 | k86mx1_MB-M8A)
 
             TxzWebchat_branch=txzing2.0
             ;;
@@ -2267,7 +2267,7 @@ function handler_branch_for_CheYueBao()
 
     case $build_prj_name in
 
-        k86mx1_MB-M8S | k86ls_K80)
+        k86mx1_MB-M8S | k86ls_K80 | k86mx1_MB-M8A)
 
             CheYueBao_branch=cyb1.6
             ;;
