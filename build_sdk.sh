@@ -2549,7 +2549,7 @@ function down_load_apk_for_yunovo()
 
             ## clone apk
             if [ "$ssh_link" ];then
-                git clone $ssh_link/$apk_name
+                git clone -b master $ssh_link/$apk_name
                 _echo "---- clone $apk_name"
             else
                 _echo "$ssh_link is null. please check it !"
