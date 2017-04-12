@@ -1974,7 +1974,7 @@ function handler_branch_for_YOcSettings()
             YOcSettings_branch=new_2.0
             ;;
 
-        k26s_S6-ZX | k26s_S7-ZX | k26s_NM-D900)
+        k26s_S6-ZX | k26s_S7-ZX | k26s_NM-D900 | k26s_MB-M60)
 
             YOcSettings_branch=new_2.0
             ;;
@@ -1989,7 +1989,7 @@ function handler_branch_for_YOcSettings()
             YOcSettings_branch=new_2.0
             ;;
 
-        k86mx1_QC-M78 | k86mx1_MB-M8S | k86mx1_KKXL-C9)
+        k86mx1_QC-M78 | k86mx1_MB-M8S | k86mx1_KKXL-C9 | k86mx1_MB-M8A)
 
             YOcSettings_branch=new_2.0
             ;;
