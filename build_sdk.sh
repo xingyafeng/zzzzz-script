@@ -2885,7 +2885,11 @@ function make_yunovo_android()
     if make -j${cpu_num} ${fota_version};then
         _echo "--> make project end ..."
 
-        sendEmail_diffmanifest_to_who "$email_receiver" "$email_content"
+        if [ "`is_root_project `" == "true" ];then
+            :
+        else
+            sendEmail_diffmanifest_to_who "$email_receiver" "$email_content"
+        fi
     else
         _echo "make android failed !"
         return 1
