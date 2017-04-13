@@ -1708,7 +1708,7 @@ function handler_branch_for_apk()
     else
 
         ## 检查 local_branch_name 远程分支是否存在?
-        if [ "`git branch -r | grep $local_branch_name`" ];then
+        if [ "`git branch -r | grep $local_branch_name`" == "$remote_branch_name" ];then
 
             ## 当前没有检出分支，开始进行检出分支..
             if git checkout -b $defalut_branch;then
@@ -1739,9 +1739,9 @@ function handler_branch_for_apk()
             fi
 
             if git pull;then
-                _echo "---- pull $master_branch $apk_name successful ..."
+                _echo "---- pull $apk_name successful ..."
             else
-                _echo "---- pull $master_branch $apk_name fail ..."
+                _echo "---- pull $apk_name fail ..."
             fi
         fi
 
@@ -2428,7 +2428,7 @@ function handler_branch_for_app()
     else
 
         ## 检查 local_branch_name 远程分支是否存在?
-        if [ "`git branch -r | grep $local_branch_name`" ];then
+        if [ "`git branch -r | grep $local_branch_name`" == "$remote_branch_name" ];then
 
             if git checkout -b $defalut_branch;then
                 _echo "---- checkout $local_branch_name $app_name successful ..."
@@ -2462,9 +2462,9 @@ function handler_branch_for_app()
 
                 ## update apk
                 if git pull;then
-                    _echo "---- pull $local_branch_name $app_name successful ..."
+                    _echo "---- pull $app_name successful ..."
                 else
-                    _echo "---- pull $local_branch_name $app_name fail ... "
+                    _echo "---- pull $app_name fail ... "
                     return 1
                 fi
             else
