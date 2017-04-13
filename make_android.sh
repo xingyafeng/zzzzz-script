@@ -379,7 +379,7 @@ function is_root_project()
 function is_yunovo_server()
 {
     local hostN=`hostname`
-    local serverN=(s1 s2 s3 s4 s5 happysongs ww he-All-Series.)
+    local serverN=(s1 s2 s3 s4 s5 p1 happysongs ww he-All-Series.)
     local isServer=false
 
     for n in ${serverN[@]}
