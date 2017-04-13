@@ -140,6 +140,8 @@ k86sa1_meiban_m4z_p=k86sa1_meiban_m4z
 
 k86s7_wc_vs188_p=k86s7_wc_vs188
 
+k85_yunovo_develop_p=k85_yunovo_develop
+
 ################################ system env
 DEVICE=
 ROOT=
@@ -321,6 +323,11 @@ function is_yunovo_project
             ;;
 
         $k86l_linghz_q18_p)
+            echo true
+
+            ;;
+
+        $k85_yunovo_develop_p)
             echo true
 
             ;;
