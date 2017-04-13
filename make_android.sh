@@ -597,7 +597,12 @@ function auto_create_manifest()
         customN=gps_repair
     fi
 
-    manifest_branch="$projectN/$customN/$modeN"
+    if [ "$projectN" == "k85" ];then
+        manifest_branch="mtk6735t/$projectN/$customN/$modeN"
+    else
+        manifest_branch="$projectN/$customN/$modeN"
+    fi
+
 
     _echo "manifest_branch = $manifest_branch"
 
@@ -1389,7 +1394,11 @@ function down_load_yunovo_source_code()
         customN=gps_repair
     fi
 
-    branchN="$projectN/$customN/$modeN"
+    if [ "$projectN" == "k85" ];then
+        branchN="mtk6735t/$projectN/$customN/$modeN"
+    else
+        branchN="$projectN/$customN/$modeN"
+    fi
 
     _echo "branchN = $branchN"
 
