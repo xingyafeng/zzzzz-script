@@ -343,7 +343,7 @@ function is_branch_project()
     local thisP=$(pwd) && thisP=${thisP%/*} && thisP=${thisP##*/}
 
      case $thisP in
-        $k27_xinke_ds50_p | $k86sa1_mazda_p | $k89_master_p | $k28s_master_p | $k28f_p)
+        $k27_xinke_ds50_p | $k86sa1_mazda_p  | $k26s_master_p | $k89_master_p | $k28s_master_p | $k28f_p)
             echo true
 
             ;;
