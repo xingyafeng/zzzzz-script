@@ -2989,7 +2989,7 @@ function auto_update_yunovo_customs()
 
     if [ $hostN == "happysongs" ];then
         jenkins_username=xingyafeng
-    elif [ $hostN == "s1" -o $hostN == "s2" -o $hostN == "s3" -o $hostN == "s4" -o $hostN == "s5" ];then
+    elif [ $hostN == "s1" -o $hostN == "s2" -o $hostN == "s3" -o $hostN == "s4" -o $hostN == "s5" -o $hostN == "p1" ];then
         jenkins_username=jenkins
     fi
 
