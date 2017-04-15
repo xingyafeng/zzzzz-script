@@ -320,7 +320,7 @@ function is_yunovo_project
 
             ;;
 
-        $k26s_master_p | $k28s_master_p | $k89_master_p)
+        $k26_master_p | $k26s_master_p | $k27_master_p | $k28s_master_p | $k89_master_p)
             echo true
 
             ;;
