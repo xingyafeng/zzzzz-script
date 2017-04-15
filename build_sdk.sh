@@ -2025,6 +2025,10 @@ function handler_branch_for_YOcSettings()
             YOcSettings_branch=new_2.0
             ;;
 
+        k26s_S5-ZX)
+            YOcSettings_branch=master_5c
+
+            ;;
 
         *)
             __echo "YOcSettings_branch is null !"
