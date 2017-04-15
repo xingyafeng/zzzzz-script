@@ -1935,6 +1935,11 @@ function handler_branch_for_YOcLauncherRes()
 
             ;;
 
+        k26s_S5-ZX)
+            sz_branch_name=S5_NXOS_V30
+
+            ;;
+
         *)
             sz_branch_name=S6_NXOS_V20
             ;;
