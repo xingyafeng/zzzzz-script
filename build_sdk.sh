@@ -2103,6 +2103,28 @@ function handler_branch_for_YOcRecord()
     fi
 }
 
+function handler_branch_for_YOcSplitScreen()
+{
+    local YOcSplitScreen_branch=
+
+    if [ $build_prj_name == "k26s_S5-ZX" ];then
+        YOcSplitScreen_branch=master_5c
+    else
+        if [ "`git branch -r | grep 'test'`" -o "`git branch -r | grep develop`" ];then
+            :
+        else
+            git checkout master
+        fi
+
+        _echo "checkout master branch on YOcRecord"
+    fi
+
+    if [ "$YOcSplitScreen_branch" ];then
+        handler_checkout_branch $YOcSplitScreen_branch
+        handler_update_source_code YOcSplitScreen $YOcSplitScreen_branch
+    fi
+}
+
 function handler_branch_for_YOcBTCall()
 {
     local YOcBTCall_branch=
@@ -2496,6 +2518,10 @@ function handler_branch_for_app()
     ## handler k26s_LD-A107C branch
     if [ $app_name == "YOcRecord" ];then
         handler_branch_for_YOcRecord
+    fi
+
+    if [ $app_name == "YOcSplitScreen" ];then
+        handler_branch_for_YOcSplitScreen
     fi
 
     if [ $app_name == "YOcMediaFolder" ];then
