@@ -6,23 +6,25 @@
 ##
 ##############################################
 
-function git-push-gerrit()
+function auto_git_push_gerrit()
 {
+    local branchN=
+    local HEAD="HEAD:refs/for"
+    local remoteN="origin"
+
     if [ $# -eq 1 ];then
-        :
+        branchN=$1
     else
-        show_vir "args[] error, please check it !"
+        branchN="`git branch | grep \* | cut -d ' ' -f2`"
     fi
 
-    if [ "$1" ];then
-        local branchN=$1
-        local HEAD="HEAD:refs/for"
-        local remoteN="origin"
+    echo
+    show_viy "branchN = $branchN"
+    echo
 
+    if [ "$branchN" ];then
         if [ -d .git ];then
             git push $remoteN $HEAD/$branchN
         fi
-    else
-        show_vir "args[] is null, ag: git-push-gerrit branchN"
     fi
 }
