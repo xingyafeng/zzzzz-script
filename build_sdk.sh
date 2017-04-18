@@ -1942,6 +1942,12 @@ function handler_branch_for_YOcLauncherRes()
 
             ;;
 
+        k26s_NM-C66)
+            sz_branch_name=S6_NM-C66_V21
+
+            ;;
+
+
         *)
             sz_branch_name=S6_NXOS_V20
             ;;
