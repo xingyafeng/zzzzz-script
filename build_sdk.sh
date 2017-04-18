@@ -2479,11 +2479,14 @@ function handler_branch_for_app()
     else
 
         branchR=`git branch -r | grep $local_branch_name`
-        echo "$branchR" > $tmp_file
-        branchR=`remove_space_for_vairable $branchR`
+
+        if [ "branchR" ];then
+            echo "$branchR" > $tmp_file
+            branchR=`remove_space_for_vairable $branchR`
+        fi
 
         ## 检查 local_branch_name 远程分支是否存在?
-        if [ "branchR" == "$remote_branch_name" ];then
+        if [ "$branchR" == "$remote_branch_name" ];then
 
             if git checkout -b $defalut_branch;then
                 _echo "---- checkout $local_branch_name $app_name successful ..."
