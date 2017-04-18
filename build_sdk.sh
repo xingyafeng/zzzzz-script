@@ -3286,15 +3286,12 @@ function main()
     fi
 
     if [ $flag_clone_app -eq 1 ];then
-
-	if [ "`is_k100_project`" == "true" ];then
-        :
-    else
-        down_load_apk_for_yunovo
-        down_load_app_for_yunovo
-	fi
-        #ant_app
-        #auto_copy_app_to_android
+        if [ "`is_k100_project`" == "true" ];then
+            :
+        else
+            down_load_apk_for_yunovo
+            down_load_app_for_yunovo
+        fi
     else
         echo "do not clone app !"
     fi
