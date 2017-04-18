@@ -1995,7 +1995,7 @@ function handler_branch_for_YOcSettings()
             YOcSettings_branch=new_2.0
             ;;
 
-        k26s_S6-ZX | k26s_S7-ZX | k26s_NM-D900 | k26s_MB-M60)
+        k26s_S6-ZX | k26s_S7-ZX | k26s_NM-D900 | k26s_MB-M60 | k26s_NM-C66)
 
             YOcSettings_branch=new_2.0
             ;;
@@ -2148,7 +2148,7 @@ function handler_branch_for_YOcBTCall()
             YOcBTCall_branch=bt_new2.0
             ;;
 
-        k26s_S6-ZX | k26s_S7-ZX | k26s_NM-D900)
+        k26s_S6-ZX | k26s_S7-ZX | k26s_NM-D900 | k26s_NM-C66)
 
             YOcBTCall_branch=bt_new2.0
             ;;
