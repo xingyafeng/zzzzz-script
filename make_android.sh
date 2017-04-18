@@ -654,7 +654,11 @@ function auto_create_manifest()
 
         cd - > /dev/null
 
-        repo init -b $manifest_branch
+        if [ "`is_k85_project`" == "true" ];then
+            repo init -b $manifest_branch -g default,yunovo_adv
+        else
+            repo init -b $manifest_branch
+        fi
     else
         _echo "current directory is not android !"
         exit 1
@@ -1369,7 +1373,11 @@ function update_source_code()
         if [ `is_yunovo_server` == "true" ];then
 
         ## start repo init
-        repo init -b ${branchN}
+        if [ "`is_k85_project`" == "true" ];then
+            repo init -b ${branchN} -g default,yunovo_adv
+        else
+            repo init -b ${branchN}
+        fi
 
         ## update android source code for yunovo project ...
         if repo sync --no-tags;then
