@@ -339,6 +339,22 @@ function is_yunovo_project
     esac
 }
 
+function is_k85_project()
+{
+    projectN=$build_prj_name
+
+    case $projectN in
+
+        k85_S6-ZX)
+            echo true
+            ;;
+
+        *)
+            echo false
+            ;;
+    esac
+}
+
 function get_project_name()
 {
     local thisP=$(pwd) && thisP=${thisP%/*} && thisP=${thisP##*/}
@@ -1375,9 +1391,14 @@ function update_source_code()
 function download_source_code()
 {
     if [ "$ssh_link" -a "$branchN" ];then
-        repo init -u $ssh_link -b ${branchN}
-        repo sync --no-tags
+        if [ "`is_k85_project`" == "true" ];then
+            repo init -u $ssh_link -b ${branchN} -g default,yunovo_adv
+        else
+            repo init -u $ssh_link -b ${branchN}
+        fi
     fi
+
+    repo sync --no-tags
 
     ## 第一次下载完成后，需要初始化环境变量
     if [ -d .repo ];then
