@@ -2382,6 +2382,8 @@ function handler_branch_for_app()
     local branch_for_master="master"
     local branch_for_develop="develop"
 
+    local branchR=""
+
     if [ $# -eq 1 ];then
         :
     else
@@ -2476,8 +2478,12 @@ function handler_branch_for_app()
     ## 当前没有检出分支，开始进行检出分支..
     else
 
+        branchR=`git branch -r | grep $local_branch_name`
+        echo "$branchR" > $tmp_file
+        branchR=`remove_space_for_vairable $branchR`
+
         ## 检查 local_branch_name 远程分支是否存在?
-        if [ "`git branch -r | grep $local_branch_name`" == "$remote_branch_name" ];then
+        if [ "branchR" == "$remote_branch_name" ];then
 
             if git checkout -b $defalut_branch;then
                 _echo "---- checkout $local_branch_name $app_name successful ..."
@@ -2713,6 +2719,12 @@ function clone_app()
 
     if [ -d $app_name ];then
 
+        ##调试app切换分支问题
+        if false;then
+            if [ $app_name != "YOcVoice" ];then
+                continue;
+            fi
+        fi
         ## handler switch branch
         handler_branch_for_app $app_name
     else
