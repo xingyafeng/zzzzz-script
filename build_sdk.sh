@@ -2478,9 +2478,9 @@ function handler_branch_for_app()
     ## 当前没有检出分支，开始进行检出分支..
     else
 
-        branchR=`git branch -r | grep $local_branch_name`
+        if [ "`git branch -r | grep $remote_branch_name`" ]
+            branchR="`git branch -r | grep $remote_branch_name`"
 
-        if [ "branchR" ];then
             echo "$branchR" > $tmp_file
             branchR=`remove_space_for_vairable $branchR`
         fi
