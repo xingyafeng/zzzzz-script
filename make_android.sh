@@ -68,6 +68,8 @@ cpu_num=`cat /proc/cpuinfo  | egrep 'processor' | wc -l`
 ssh_link="ssh://jenkins@gerrit.y:29419/manifest"
 tmp_file=$debug_path/tmp.txt
 readme_file=$debug_path/readme.txt
+groups_name="all,yunovo_adv"
+
 lunch_project=
 prefect_name=
 system_version=
@@ -655,7 +657,7 @@ function auto_create_manifest()
         cd - > /dev/null
 
         if [ "`is_k85_project`" == "true" ];then
-            repo init -b $manifest_branch -g default,yunovo_adv
+            repo init -b $manifest_branch -g $groups_name
         else
             repo init -b $manifest_branch
         fi
@@ -1374,7 +1376,7 @@ function update_source_code()
 
         ## start repo init
         if [ "`is_k85_project`" == "true" ];then
-            repo init -b ${branchN} -g default,yunovo_adv
+            repo init -b ${branchN} -g $groups_name
         else
             repo init -b ${branchN}
         fi
@@ -1400,7 +1402,7 @@ function download_source_code()
 {
     if [ "$ssh_link" -a "$branchN" ];then
         if [ "`is_k85_project`" == "true" ];then
-            repo init -u $ssh_link -b ${branchN} -g default,yunovo_adv
+            repo init -u $ssh_link -b ${branchN} -g $groups_name
         else
             repo init -u $ssh_link -b ${branchN}
         fi
