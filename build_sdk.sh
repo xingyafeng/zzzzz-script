@@ -2382,9 +2382,6 @@ function handler_branch_for_app()
     local branch_for_master="master"
     local branch_for_develop="develop"
 
-    local remoteB=
-    local localB=
-
     if [ $# -eq 1 ];then
         :
     else
@@ -2448,10 +2445,8 @@ function handler_branch_for_app()
     #echo "local_branch_name = $local_branch_name"
     #echo "remote_branch_name = $remote_branch_name"
 
-    localB="`git branch | grep $local_branch_name`"
-
     ## 1. 检查当前分支是否有检出对应的分支
-    if [ "$localB" ];then
+    if [ "`git branch | grep $local_branch_name`" ];then
 
         ## 2. 检查当前分支是否为需要切换的分支
         if [ "`git branch | grep \* | cut -d ' ' -f2`" != $local_branch_name ];then
@@ -2481,9 +2476,8 @@ function handler_branch_for_app()
     ## 当前没有检出分支，开始进行检出分支..
     else
 
-        remoteB="`git branch -r | grep $local_branch_name`"
         ## 检查 local_branch_name 远程分支是否存在?
-        if [ "$remoteB" == "$remote_branch_name" ];then
+        if [ "`git branch -r | grep $local_branch_name`" == "$remote_branch_name" ];then
 
             if git checkout -b $defalut_branch;then
                 _echo "---- checkout $local_branch_name $app_name successful ..."
