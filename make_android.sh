@@ -65,7 +65,7 @@ cur_time=`date +%m%d_%H%M`
 time_for_version=`date +'%Y.%m.%d_%H.%M.%S'`
 zz_script_path=/home/jenkins/workspace/script/zzzzz-script
 cpu_num=`cat /proc/cpuinfo  | egrep 'processor' | wc -l`
-project_link="init -u ssh://jenkins@gerrit.y:29419/manifest"
+ssh_link="ssh://jenkins@gerrit.y:29419/manifest"
 tmp_file=$debug_path/tmp.txt
 readme_file=$debug_path/readme.txt
 lunch_project=
@@ -1374,8 +1374,8 @@ function update_source_code()
 ## 下载源代码
 function download_source_code()
 {
-    if [ "$project_link" -a "$branchN" ];then
-        repo $project_link -b ${branchN}
+    if [ "$ssh_link" -a "$branchN" ];then
+        repo init -u $ssh_link -b ${branchN}
         repo sync --no-tags
     fi
 
