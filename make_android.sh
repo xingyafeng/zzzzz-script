@@ -1583,6 +1583,7 @@ function source_init()
     local magcomm_project=magc6580_we_l
     local eastaeon_project=aeon6735_65c_s_l1
     local eastaeon_project_m=aeon6735m_65c_s_l1
+    local eastaeon_project_m0=aeon6735_66c_m0
 
     source  build/envsetup.sh
     __echo "source end ..."
@@ -1597,11 +1598,11 @@ function source_init()
 
     if [ $DEVICE_PROJECT == $magcomm_project ];then
         DEVICE=device/magcomm/$DEVICE_PROJECT
-    elif [ $DEVICE_PROJECT == $eastaeon_project -o $DEVICE_PROJECT == $eastaeon_project_m ];then
+    elif [ $DEVICE_PROJECT == $eastaeon_project -o $DEVICE_PROJECT == $eastaeon_project_m -o $DEVICE_PROJECT == $eastaeon_project_m0 ];then
         DEVICE=device/eastaeon/$DEVICE_PROJECT
     else
-        DEVICE=device/eastaeon/$DEVICE_PROJECT
         _echo "DEVICE do not match it ..."
+        return 1
     fi
     print_env
 }
