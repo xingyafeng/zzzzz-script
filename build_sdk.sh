@@ -1096,7 +1096,7 @@ function handler_vairable()
         build_update_code=true
     fi
 
-    if [ "`is_k100_project`" == "true" ];then
+    if [ "`is_k100_project`" == "true" -o "`is_k101_project`" == "true" ];then
         system_version=$custom_version\_${project_name}\_${first_version}.${second_version}
         fota_version="SPT_VERSION_NO=${system_version}"
     else
@@ -2870,7 +2870,7 @@ function download_sdk()
     local modeN=${project_name##*_}
 
     if [ "$defalut"x == ""x -a "$branchN"x == ""x ];then
-        if [ "`is_k100_project`" == "true" ];then
+        if [ "`is_k100_project`" == "true" -o "`is_k101_project`" == "true" ];then
             branchN="yunovo/$projectN/$customN/$modeN"
         else
             if [ "$customN" == "$modeN" ];then
@@ -3200,7 +3200,7 @@ function build_system_app()
 {
     local OldPWD=`pwd`
 
-    if [ "`is_k100_project`" == "true" ];then
+    if [ "`is_k100_project`" == "true" -o "`is_k101_project`" == "true" ];then
 
         if [ -f $buildfs_dir/$compile_sh ];then
             cd $buildfs_dir > /dev/null
@@ -3323,7 +3323,7 @@ function main()
     fi
 
     if [ $flag_clone_app -eq 1 ];then
-        if [ "`is_k100_project`" == "true" ];then
+        if [ "`is_k100_project`" == "true" -o "`is_k101_project`" == "true" ];then
             :
         else
             down_load_apk_for_yunovo
@@ -3339,7 +3339,7 @@ function main()
             echo "current directory is not android ! gettop is null !"
             return 1
         else
-            if [ "`is_k100_project`" == "true" ];then
+            if [ "`is_k100_project`" == "true" -o "`is_k101_project`" == "true" ];then
                 :
             else
                 cpcustoms
