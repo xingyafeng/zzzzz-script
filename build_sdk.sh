@@ -456,10 +456,16 @@ function is_yunovo_server()
     fi
 }
 
+###############################################
+##  1, aeon6735_65c_s_l1 aeon6735m_65c_s_l1 --> mtk6580
+##  2, magc6580_we_l  --> mtk6580
+##  3, along8321_emmc_706m --> mtk8321
+##############################################
+
 ### 是否为使用的芯片类型
 function is_build_device()
 {
-    local cpu_type_more=(aeon6735_65c_s_l1 aeon6735m_65c_s_l1 magc6580_we_l)
+    local cpu_type_more=(aeon6735_65c_s_l1 aeon6735m_65c_s_l1 magc6580_we_l along8321_emmc_706m)
     local cpu_type=$1
 
     if [ $# -eq 1 ];then
@@ -3221,6 +3227,7 @@ function source_init()
     local magcomm_project=magc6580_we_l
     local eastaeon_project=aeon6735_65c_s_l1
     local eastaeon_project_m=aeon6735m_65c_s_l1
+    local along_project=along8321_emmc_706m
 
     source  build/envsetup.sh
     echo
@@ -3239,9 +3246,11 @@ function source_init()
         DEVICE=device/magcomm/$DEVICE_PROJECT
     elif [ $DEVICE_PROJECT == $eastaeon_project -o $DEVICE_PROJECT == $eastaeon_project_m ];then
         DEVICE=device/eastaeon/$DEVICE_PROJECT
+    elif [ $DEVICE_PROJECT == $along_project ];then
+        DEVICE=device/along/$DEVICE_PROJECT
     else
-        DEVICE=device/eastaeon/$DEVICE_PROJECT
         echo "DEVICE do not match it ..."
+        return 1
     fi
     print_env
 }
