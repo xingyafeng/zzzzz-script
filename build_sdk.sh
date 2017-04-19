@@ -134,10 +134,15 @@ mx1_xianzhi_k80_p=mx1_xianzhi_k80
 k86mx1_jh_s04a_p=k86mx1_jh_s04a
 k28f_p=k28f
 mtk6735_gps_master_p=mtk6735_gps_master
+
+## reglink mtk6735
 reglink_k100_develop_p=reglink_k100_develop
 reglink_k100_ykt_p=reglink_k100_ykt
 reglink_k100_cq_p=reglink_k100_cq
 reglink_k100_cqhm_p=reglink_k100_cqhm
+
+## along mtk8321
+along_k101_develop_p=along_k101_develop
 
 email_receiver=""
 email_content=""
@@ -686,13 +691,29 @@ function is_root_version()
     done
 }
 
-## 是否为k100项目
+## 是否为k100项目[MTK6735]
 function is_k100_project()
 {
 
     case `get_project_real_name` in
 
         $reglink_k100_develop_p | ${reglink_k100_ykt_p}-0bihu | $reglink_k100_cq_p | $reglink_k100_cqhm_p)
+            echo true
+
+            ;;
+        *)
+            echo false
+            ;;
+    esac
+}
+
+## 是否为k101项目[MTK8321]
+function is_k101_project()
+{
+
+    case `get_project_real_name` in
+
+        $along_k101_develop_p)
             echo true
 
             ;;
