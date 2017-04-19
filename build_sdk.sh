@@ -1897,7 +1897,7 @@ function handler_branch_for_YOcLauncherRes()
 
             ;;
 
-        k86ls_K80 | k89_T99)
+        k86ls_K80)
             sz_branch_name=S7_XZ-K80_V20
 
             ;;
@@ -1947,6 +1947,10 @@ function handler_branch_for_YOcLauncherRes()
 
             ;;
 
+        k89_T99)
+            sz_branch_name=S6_XZ-T99_V21
+
+            ;;
 
         *)
             sz_branch_name=S6_NXOS_V20
