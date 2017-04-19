@@ -338,6 +338,10 @@ function is_yunovo_project
             echo true
 
             ;;
+        $along_k101_develop_p)
+            echo true
+
+            ;;
         *)
             echo false
 
