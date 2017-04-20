@@ -56,6 +56,7 @@ k26s_renwoyou_cs86_p=k26s_renwoyou_cs86
 k26s_qch_x88_p=k26s_qch_x88
 k26s_hp_s760_p=k26s_hp_s760
 k26s_xy_c18_p=k26s_xy_c18
+k26s_teyes_a8_p=k26s_teyes_a8
 
 k89_hp_s760d_p=k89_hp_s760d
 ################
@@ -229,7 +230,7 @@ function is_yunos_project
 
             ;;
 
-        $k26s_vst_i7_p | $k26s_vst_i7s_p | $k26s_renwoyou_cs86_p | $k26s_qch_x88_p | $k26s_hp_s760_p | $k26s_xy_c18_p)
+        $k26s_vst_i7_p | $k26s_vst_i7s_p | $k26s_renwoyou_cs86_p | $k26s_qch_x88_p | $k26s_hp_s760_p | $k26s_xy_c18_p | $k26s_teyes_a8_p)
             echo true
 
             ;;
