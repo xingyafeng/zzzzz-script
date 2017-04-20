@@ -2897,7 +2897,7 @@ function download_sdk()
             repo $project_link -b ${branchN}
         fi
 
-        repo sync --no-tags
+        repo sync -j${cpu_num} --no-tags
         ls -alF
 
         ## 第一次下载完成后，需要初始化环境变量
@@ -2923,7 +2923,7 @@ function download_sdk()
             fi
 
             ## update android source code for yunovo project ...
-            if repo sync --no-tags;then
+            if repo sync -j${cpu_num} --no-tags;then
                 _echo "----------------- repo sync successful ..."
             fi
         fi

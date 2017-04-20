@@ -1382,7 +1382,7 @@ function update_source_code()
         fi
 
         ## update android source code for yunovo project ...
-        if repo sync --no-tags;then
+        if repo sync -j${cpu_num} --no-tags;then
             __echo "repo sync successful ..."
         fi
         fi
@@ -1408,7 +1408,7 @@ function download_source_code()
         fi
     fi
 
-    repo sync --no-tags
+    repo sync -j${cpu_num} --no-tags
 
     ## 第一次下载完成后，需要初始化环境变量
     if [ -d .repo ];then

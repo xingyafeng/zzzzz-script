@@ -359,13 +359,13 @@ function get_project_name()
 
 function repo_sync_for_source_code()
 {
-    if repo sync --no-tags;then
+    if repo sync -j${CPUCORES} --no-tags;then
         __echo "repo sync successful ..."
     else
-        if repo sync --no-tags;then
+        if repo sync -j${CPUCORES} --no-tags;then
             __echo "repo sync successful 2 ..."
         else
-            repo sync --no-tags && __echo "repo sync successful 3 ..."
+            repo sync -j${CPUCORES} --no-tags && __echo "repo sync successful 3 ..."
         fi
     fi
 }
