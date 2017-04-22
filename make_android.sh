@@ -548,8 +548,7 @@ function repo_diffmanifests_to_jenkins()
     local hardware_config_mk=$ROOT/$DEVICE/HardWareConfig.mk
 
     local startV=
-    local datetime=`date +'%Y.%m.%d_%H.%M.%S'`
-    local endV=${build_prj_name}_${build_version}_${datetime}
+    local endV=${build_prj_name}_${build_version}_${time_for_version}
 
     if [ -d $diff_manifests_git ];then
         startV=`git --git-dir=$diff_manifests_git lg -1 | awk '{ print $7 }'`
@@ -606,8 +605,7 @@ function auto_create_manifest()
 {
     local remotename=
     local username=`whoami`
-    local datetime=`date +'%Y.%m.%d_%H.%M.%S'`
-    local refsname=${build_prj_name}_${build_version}_${datetime}
+    local refsname=${build_prj_name}_${build_version}_${time_for_version}
     local prj_name=`get_project_name`
 
     local manifest_path=.repo/manifests
