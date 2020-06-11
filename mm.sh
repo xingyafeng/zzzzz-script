@@ -13,7 +13,7 @@ shellfs=$0
 script_p=~/workspace/script/zzzzz-script
 
 ### init function
-. "`dirname $0`/jenkins/yunovo_init.sh"
+. "`dirname $0`/jenkins/jenkins_init.sh"
 
 ############################################# common function
 

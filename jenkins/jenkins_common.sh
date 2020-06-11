@@ -165,10 +165,10 @@ target_build_variant=
 ## 调试开关,默认都执行,配置false不执行
 DBG=true
 
-if false; then
+if true; then
 git_username="`git config --get user.name`"
-gerrit_server="gerrit.y"
-gerrit_port="29419"
+gerrit_server="SZ.gerrit.tclcom.com"
+gerrit_port="29418"
 else
 git_username='git'
 gerrit_server='shenzhen.gitweb.com'

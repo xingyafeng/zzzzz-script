@@ -17,7 +17,6 @@ functions from zzzzz-script , down: git clone ssh://xingyafeng@gerrit-in.yunovo.
     - renamefs              rename photo FileName
     - recover_android       clean all customs file
     - change_ps             set .ssh and set .repo
-    - change_mode           set usb mode  devices or host
     - H-to-D H-to-H
     - B-to-D D-to-B
 
@@ -30,7 +29,6 @@ functions from zzzzz-script , down: git clone ssh://xingyafeng@gerrit-in.yunovo.
 
     @@@ set
     - setgitconfig          set gitconfig list
-    - set_ssh_permission    set .ssh/* chmod
 
     @@@
     - showfile:             e.g. showfile FileName 20 30   -- show the 20th to 30th lines of the "FileName" file.
@@ -68,22 +66,51 @@ functions from zzzzz-script , down: git clone ssh://xingyafeng@gerrit-in.yunovo.
     -----------------------
     @@@ cmd for simple
 
-    - ssh-update-script
-    - ssh-jenkins
-    - ssh-gerrit
+    - ssh-set-permission      -- set .ssh/* chmod
+    - ssh-update-script       -- update the zzzzz-script on server
+    - ssh-jenkins             -- login jenkins
+    - ssh-gerrit              -- login gerrit
 
     -----------------------
     @@@
-    cpotafs                                                 -- cp otf files to path
-    make_idegen                                             -- android studio config
-    auto_make_key                                           -- create android key
-    copy_image_to_folder                                    -- cp img to release path
+    - cpotafs                   -- cp otf files to path
+    - make_idegen               -- android studio config
+    - auto_make_key             -- create android key
+    - copy_image_to_folder      -- cp img to release path
 
     -----------------------
     @@@ sshfs
-    ls-server
-    sshfs-server
-    fusermount-server
+    - ls-server
+    - sshfs-server
+    - fusermount-server
+
+    @@@ print
+    -  __echo
+    -  __msg
+    -  __wrn
+    -  __err
+    - __debug
+
+    @@@ show
+    - show_vibk
+    - show_vir
+    - show_vig
+    - show_viy
+    - show_vib
+    - show_vip
+    - show_vidg
+    - show_viw
+
+    @@@ __color__
+    - __red__
+    - __green__
+    - __yellow__
+    - __black__
+    - __black__
+    - __black__
+    - __black__
+    - __black__
+    - __black__
 
     ----------------------
     e.g. am start -n com.android.settings/com.android.settings.Settings     ---- open setting.apk

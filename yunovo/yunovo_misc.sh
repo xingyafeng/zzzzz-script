@@ -91,28 +91,25 @@ function ssh-update-script()
     done
 }
 
-## 设置ssh权限
+## 配置ssh文件权限
 function ssh-set-permission()
 {
     if [[ -d ~/.ssh ]];then
         chmod 755 ~/.ssh
     else
-        __err ".ssh folder not found!"
-        return 0
+        log error "The ~/.ssh folder not found!"
     fi
 
     if [[ -f ~/.ssh/id_rsa && -f ~/.ssh/id_rsa.pub ]];then
         chmod 600 ~/.ssh/id_rsa ~/.ssh/id_rsa.pub
     else
-        __err "id_rsa or id_rsa.pub not found!"
-        return 0
+        log error "The id_rsa or The id_rsa.pub file not found!"
     fi
 
     if [[ -f ~/.ssh/known_hosts ]];then
         chmod 644 ~/.ssh/known_hosts
     else
-        __err "known_hosts not found!"
-        return 0
+        log error "The known_hosts fiel not found!"
     fi
 }
 
@@ -525,7 +522,7 @@ function cpotafs()
     echo ${ver[@]}
 }
 
-## 设置git编码格式
+## 修复git提交信息乱码问题
 function setgitencoding()
 {
     git config --global i18n.commitencoding utf-8
@@ -536,30 +533,31 @@ function setgitencoding()
 ## 设置vim配置文件
 function setgitconfig()
 {
-	local git_name=""
+    case $# in
+        1)
+            git_username=$1
+            ;;
+        *)
+            if [[ $# -eq 0 ]]; then
+                git_username=yafeng.xing
+            else
+                echo ""
+                echo "${FUNCNAME[0]} [args1] ..."
+                echo
+                echo "    args1 : git账号名称　如：yafeng.xing"
+                echo
+                echo "    e.g."
+                echo "        1. ${FUNCNAME[0]} 无参数"
+                echo "        2. ${FUNCNAME[0]} yafeng.xing"
+                echo
+                return 1
+            fi
+            ;;
+    esac
 
-    if [[ -n $1 ]]; then
-        git_name=$1
-    fi
-
-    if [[ $# -gt 1 ]]; then
-        echo ""
-        echo "setgitconfig \$@"
-        echo
-        echo "    参数: 1. gerrit username "
-        echo
-        echo "    e.g. setgitconfig xingyafeng"
-        echo
-
-        return 1
-    fi
-
-	if [[ -n ${git_name} ]];then
-		git config --global user.name  ${git_name}
-        git config --global user.email ${git_name}@yunovo.cn
-	else
-		git config --global user.name  xingyafeng
-		git config --global user.email xingyf@yunovo.cn
+	if [[ -n ${git_username} ]];then
+		git config --global user.name  ${git_username}
+        git config --global user.email ${git_username}@tcl.com
 		git config --global ssh.variant ssh
 	fi
 

@@ -801,6 +801,21 @@ function is_yunovo_server()
     esac
 }
 
+### 是否为编译服务器
+function is_build_server()
+{
+    case `hostname` in
+
+        u-yafeng.xing)
+            echo true
+            ;;
+
+        *)
+            echo false
+            ;;
+    esac
+}
+
 ### 是否为master test develop分支
 function is_yunovo_branch()
 {

@@ -11,7 +11,7 @@ declare -a manifest_branch
 shellfs=$0
 
 # init function
-. "`dirname $0`/jenkins/yunovo_init.sh"
+. "`dirname $0`/jenkins/jenkins_init.sh"
 
 # 并发数,并发数过大可能造成系统崩溃
 Qp=$[JOBS/4]

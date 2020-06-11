@@ -23,27 +23,10 @@ function mkdir_data_folder()
     fi
 }
 
-## 更新zzzzz-script脚本
+## 下载或更新zzzzz-script
 function update_script()
 {
-    local nowPwd=$(pwd)
-    local git_project_name=xyf/zzzzz-script
-
-    if [[ -d ${script_p}/.git ]]; then
-        recover_standard_git_project "${script_p}"
-
-        cd ${script_p} > /dev/null
-
-        if [[ "master" == "`git branch | grep \* | cut -d ' ' -f2`" ]]; then
-            git pull
-         else
-             git checkout master && git pull
-         fi
-     else
-         git clone -b master ssh://${git_username}@${gerrit_server}:${gerrit_port}/${git_project_name}
-     fi
-
-     cd ${nowPwd} > /dev/null
+    git_sync_repository gcs_sz/zzzzz-script master `dirname ${script_p}`
 }
 
 ## 开机自动启动jenkins

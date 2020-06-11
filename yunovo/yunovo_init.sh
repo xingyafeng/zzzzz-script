@@ -7,27 +7,38 @@ yunovo_p=${script_p}/yunovo
 jenkins_p=${script_p}/jenkins
 gerrit_p=${script_p}/gerrit
 
-# jenkins build
-source ${jenkins_p}/yunovo_show.sh
-source ${jenkins_p}/yunovo_build.sh
-source ${jenkins_p}/yunovo_common.sh
-source ${jenkins_p}/yunovo_tools.sh
-source ${jenkins_p}/yunovo_git_func.sh
-source ${jenkins_p}/yunovo_simple_func.sh
+# load jenkins script
+for script in `find jenkins -type f -name jenkins_*.sh` ; do
 
-# jenkins extend
-source ${jenkins_p}/extend/yunovo_jenkins_function.sh
+    case `basename ${script}` in
+
+        jenkins_init.sh)
+            continue
+            ;;
+
+        *)
+            source ${script}
+            ;;
+    esac
+done
 
 # gerrit
 source ${gerrit_p}/yunovo_ssh_gerrit.sh
 
-# yunovo local script
-source ${yunovo_p}/yunovocommon.sh
-source ${yunovo_p}/yunovo_config.sh
-source ${yunovo_p}/yunovo_misc.sh
-source ${yunovo_p}/yunovo_alias.sh
-source ${yunovo_p}/yunovo_git_misc.sh
-source ${yunovo_p}/yunovohelp.sh
+# load yunovo script
+for script in `find yunovo -type f -name yunovo_*.sh` ; do
+
+    case `basename ${script}` in
+
+        yunovo_init.sh)
+            continue
+            ;;
+
+        *)
+            source ${script}
+            ;;
+    esac
+done
 
 # auxiliary tools
 source ${aux_p}/clone_project.sh

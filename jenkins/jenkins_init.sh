@@ -13,17 +13,17 @@ yunovo_p=yunovo
 shellfs=${shellfs##*/}
 
 ## 初始化公共的函数
-. "`dirname $0`/$jenkins_p/yunovo_show.sh"
-. "`dirname $0`/$jenkins_p/yunovo_log.sh"
-. "`dirname $0`/$jenkins_p/yunovo_build.sh"
-. "`dirname $0`/$jenkins_p/yunovo_common.sh"
-. "`dirname $0`/$jenkins_p/yunovo_tools.sh"
-. "`dirname $0`/$jenkins_p/yunovo_git_func.sh"
-. "`dirname $0`/$jenkins_p/yunovo_simple_func.sh"
+. "`dirname $0`/$jenkins_p/jenkins_show.sh"
+. "`dirname $0`/$jenkins_p/jenkins_log.sh"
+. "`dirname $0`/$jenkins_p/jenkins_build.sh"
+. "`dirname $0`/$jenkins_p/jenkins_common.sh"
+. "`dirname $0`/$jenkins_p/jenkins_tools.sh"
+. "`dirname $0`/$jenkins_p/jenkins_utils.sh"
+. "`dirname $0`/$jenkins_p/jenkins_git_func.sh"
+. "`dirname $0`/$jenkins_p/jenkins_simple_func.sh"
 
 . "`dirname $0`/$yunovo_p/yunovo_git_misc.sh"
 . "`dirname $0`/$yunovo_p/yunovo_misc.sh"
-
 . "`dirname $0`/$gerrit_p/yunovo_ssh_gerrit.sh"
 
 case ${shellfs} in

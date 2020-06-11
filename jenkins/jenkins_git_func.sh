@@ -131,7 +131,140 @@ function download_and_update_apk_repository()
     fi
 }
 
-## 恢复到干净工作区,每个项目仓库.
+#####################################################
+##
+##  函数: git_sync_repository
+##  功能: 下载或更新git仓库
+##  参数: 1 GITRES: 仓库路径
+##        2 GITRES_BRANCH: 仓库分支
+##        3 GITRES_PATH: 下载本地路径
+##
+##
+##  举栗:
+##      git_sync_repository gcs_sz/manifest master
+##      git_sync_repository gcs_sz/zzzzz-script master
+##
+####################################################
+function git_sync_repository()
+{
+    local cmd=
+
+    local GITRES=""
+    local GITRES_BRANCH=""
+    local GITRES_PATH=""
+
+    local git_username="`git config --get user.name`"
+    local gerrit_server='SZ.gerrit.tclcom.com'
+    local gerrit_port='29418'
+
+    case $# in
+
+        1)
+            case $@ in
+                -h|--help)
+                    echo "${FUNCNAME[0]} args1 args2 args3 ..."
+                    echo
+                    echo "   args1 : gcs_sz/manifest"
+                    echo "   args2 : master "
+                    echo "   args3 : 可选，指定下载路径 "
+                    echo
+                    echo "    e.g."
+                    echo "        1. ${FUNCNAME[0]}                     # 输出帮助文档"
+                    echo "        1. ${FUNCNAME[0]} [ -h | --help ]     # 输出帮助文档"
+                    echo "        2. ${FUNCNAME[0]} gcs_sz/manifest master"
+                    echo
+                    return 1
+                ;;
+
+                *)
+                    echo "${FUNCNAME[0]} args1 args2 args3 ..."
+                    echo
+                    echo "   args1 : gcs_sz/manifest"
+                    echo "   args2 : master "
+                    echo "   args3 : 可选，指定下载路径 "
+                    echo
+                    echo "    e.g."
+                    echo "        1. ${FUNCNAME[0]}                     # 输出帮助文档"
+                    echo "        1. ${FUNCNAME[0]} [ -h | --help ]     # 输出帮助文档"
+                    echo "        2. ${FUNCNAME[0]} gcs_sz/manifest master"
+                    echo
+                    return 1
+            esac
+            ;;
+
+        2)
+            GITRES=$1
+            GITRES_BRANCH=$2
+            GITRES_PATH=${tmpfs}
+            ;;
+
+        3)
+            GITRES=$1
+            GITRES_BRANCH=$2
+            GITRES_PATH=$3
+            ;;
+
+        *)
+            if [[ $# -ne 2 || $# -ne 3 ]]; then
+                echo "${FUNCNAME[0]} args1 args2 args3 ..."
+                echo
+                echo "   args1 : gcs_sz/manifest"
+                echo "   args2 : master "
+                echo "   args3 : 可选，指定下载路径 "
+                echo
+                echo "    e.g."
+                echo "        1. ${FUNCNAME[0]}                     # 输出帮助文档"
+                echo "        2. ${FUNCNAME[0]} [ -h | --help ]     # 输出帮助文档"
+                echo "        3. ${FUNCNAME[0]} gcs_sz/manifest master"
+                echo "        4. ${FUNCNAME[0]} gcs_sz/pipeline master"
+                echo
+                return 1
+            fi
+        ;;
+    esac
+
+#    show_vip "sync [ repository|branch|path ] ==> [ ${GITRES##*/}|${GITRES_BRANCH}|${GITRES_PATH}/${GITRES##*/}] ..."
+
+    if [[ -d ${GITRES_PATH}/${GITRES##*/}/.git ]];then
+        ## 恢复本来面目
+        recover_standard_git_project "${GITRES_PATH}/${GITRES##*/}"
+
+        pushd ${GITRES_PATH}/${GITRES##*/} > /dev/null
+
+        if [[ "${GITRES_BRANCH}" == "`git branch | grep \* | cut -d ' ' -f2`" ]]; then
+            # 异常删除远程分支后存在问题. 当远程分支存在变化的时候,需要特殊处理
+            if [[ "`check_remote_branch`" == "true" ]]; then
+#                git fetch -q
+#                git checkout master
+#                git branch -D ${GITRES_BRANCH}
+
+                git fetch -q
+                git checkout ${GITRES_BRANCH}
+                git pull
+            else
+                git pull
+            fi
+        else
+            git fetch -q
+            git checkout ${GITRES_BRANCH}
+            git pull
+        fi
+
+        popd > /dev/null
+    else
+        command "git clone -b ${GITRES_BRANCH} ssh://${git_username}@${gerrit_server}:${gerrit_port}/${GITRES} ${GITRES_PATH}/${GITRES##*/}"
+
+        pushd ${GITRES_PATH}/${GITRES##*/} > /dev/null
+
+        git fetch http://SZ.gerrit.tclcom.com:8080/gcs_sz/repo.git stable_gcs
+        git checkout FETCH_HEAD -- hooks/commit-msg
+        mv ./hooks/commit-msg .git/hooks/
+        git rm ./hooks/commit-msg
+
+        popd > /dev/null
+    fi
+}
+
 function recover_standard_git_project()
 {
 	local tDir=$1

@@ -7,7 +7,7 @@ set -e
 shellfs=$0
 
 ### init function
-. "`dirname $0`/jenkins/yunovo_init.sh"
+. "`dirname $0`/jenkins/jenkins_init.sh"
 
 # 删除分支、标签、隐式分支
 function remove_refs() {
