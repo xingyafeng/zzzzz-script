@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+    <remote
+        fetch="."
+        name="origin"
+        review="http://gerrit.y"/>
+
+    <default
+        revision="branch"
+        remote="origin"
+        sync-c="true"
+        sync-j="4" />
+
+    <project name="k86A/abi" path="abi" />
+    <project name="k86A/art" path="art" />
+    <project name="k86A/bionic" path="bionic" />
+    <project name="k86A/bootable" path="bootable" />
+    <project name="k86A/build" path="build" >
+        <copyfile dest="Makefile" src="core/root.mk"/>
+    </project>
+    <project name="k86A/cts" path="cts" />
+    <project name="k86A/dalvik" path="dalvik" />
+    <project name="k86A/developers" path="developers" />
+    <project name="k86A/development" path="development" />
+    <project name="k86A/device" path="device" />
+    <project name="k86A/docs" path="docs" />
+    <project name="k86A/external" path="external" />
+    <project name="k86A/frameworks" path="frameworks" />
+    <project name="k86A/hardware" path="hardware" />
+    <project name="k86A/kernel-3.10" path="kernel-3.10" />
+    <project name="k86A/libcore" path="libcore" />
+    <project name="k86A/libnativehelper" path="libnativehelper" />
+    <project name="k86A/md32" path="md32" />
+    <project name="k86A/ndk" path="ndk" />
+    <project name="k86A/packages" path="packages" />
+    <project name="k86A/pdk" path="pdk" />
+    <project name="k86A/prebuilts" path="prebuilts" />
+    <project name="k86A/sdk" path="sdk" />
+    <project name="k86A/system" path="system" />
+    <project name="k86A/tools" path="tools" />
+    <project name="k86A/vendor" path="vendor" />
+
+    <project name="yunovo/customs" path="yunovo/customs" revision="master" />
+    <project name="yunovo/diffmanifests" path="yunovo/diffmanifests" revision="master" />
+    <project name="yunovo/build" path="yunovo/build" revision="master" >
+        <copyfile dest="buildfs.sh" src="buildfs.sh" />
+    </project>

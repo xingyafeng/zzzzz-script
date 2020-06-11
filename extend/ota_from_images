@@ -1,0 +1,370 @@
+#!/bin/bash
+
+function check_images()
+{
+    local images_dir=$1
+
+    if [[ ! -f ${images_dir}/otatools.zip ]]; then
+        echo "${images_dir}/otatools.zip not exist"
+        return 254
+    fi
+    if [[ ! -f ${images_dir}/target_files.zip ]]; then
+        echo "${images_dir}/target_files.zip not exist"
+        return 253
+    fi
+    if [[ ! -f ${images_dir}/system.img ]]; then
+        echo "${images_dir}/system.img not exist"
+        return 252
+    fi
+
+    if [[ -d ${images_dir}/sig ]]; then
+        if [[ ! -f ${images_dir}/unsigned/boot.img ]] \
+                || [[ ! -f ${images_dir}/unsigned/recovery.img ]] \
+                || [[ ! -f ${images_dir}/unsigned/trustzone.bin ]]; then
+            echo "unsigned images(boot.img, recovery.img, trustzone.bin, etc) not exist"
+            return 251
+        fi
+    fi
+
+    return 0
+}
+
+function check_signkey()
+{
+    local signkey_dir=$1
+
+    if [[ ! -f ${signkey_dir}/testkey.x509.pem ]] || [[ ! -f ${signkey_dir}/testkey.pk8 ]]; then
+        echo "${signkey_dir}/testkey.x509.pem or ${signkey_dir}/testkey.pk8 not exist"
+        return 251
+    fi
+    return 0
+}
+
+function get_target_files_from_image()
+{
+    local work_dir=$1
+    local image_file=$2
+    local target_dir=$3
+    local image_basename=$(basename ${image_file})
+    local mount_image=${work_dir}/${image_basename}.ext4
+    local mount_mnt=${work_dir}/mnt/${image_basename%%.*}
+
+    mkdir -p ${mount_mnt}
+    mkdir -p ${work_dir}/target_files/${target_dir}
+    if [[ `file ${image_file} | grep 'ext4 filesystem'  | wc -l` -gt 0 ]]; then
+        cp -vf ${image_file} ${mount_image}
+    else
+        ${work_dir}/otatools/linux-x86/bin/simg2img ${image_file} ${mount_image}
+        if [[ $? != 0 ]]; then
+            # strip security sign header
+            local nosec_image=${work_dir}/$(date +%s.%N)-$(basename ${image_file})
+            dd if=${image_file} of=${nosec_image} bs=16448 skip=1
+            ${work_dir}/otatools/linux-x86/bin/simg2img ${nosec_image} ${mount_image}
+        fi
+    fi
+    sudo mount -t ext4 -o loop ${mount_image} ${mount_mnt}
+    sudo ${work_dir}/otatools/linux-x86/bin/acp -rd ${mount_mnt}/* ${work_dir}/target_files/${target_dir}
+    sudo chown -R ${USER} ${work_dir}/target_files/${target_dir}
+    rm -rf ${work_dir}/target_files/${target_dir}/lost+found
+    sudo umount ${mount_mnt}
+}
+
+##     $1               $2
+## ${base_work_dir} ${images_dir}
+function create_target_files()
+{
+    local work_dir=$1
+    local images_dir=$2
+
+    echo "creating target files"
+
+    mkdir -p ${work_dir}
+    rm -rf ${work_dir}/*
+
+    cp -vf ${images_dir}/file_contexts ${work_dir}/
+    unzip -q ${images_dir}/otatools.zip -d ${work_dir}
+    unzip -q ${images_dir}/target_files.zip -d ${work_dir}/target_files
+
+    if [[ -f ${images_dir}/uboot.img ]]; then
+        echo "copy prebuilt uboot image"
+        cp -vf ${images_dir}/uboot.img ${work_dir}/target_files/
+    fi
+    echo "copy prebuilt boot image"
+    mkdir -p ${work_dir}/target_files/BOOTABLE_IMAGES
+    if [[ -f ${images_dir}/unsigned/boot.img ]]; then
+        cp -vf ${images_dir}/unsigned/boot.img ${work_dir}/target_files/BOOTABLE_IMAGES/
+    elif [[ -f ${images_dir}/boot.img ]]; then
+        cp -vf ${images_dir}/boot.img ${work_dir}/target_files/BOOTABLE_IMAGES/
+    fi
+    echo "copy prebuilt recovery image"
+    if [[ -f ${images_dir}/unsigned/recovery.img ]]; then
+        cp -vf ${images_dir}/unsigned/recovery.img ${work_dir}/target_files/BOOTABLE_IMAGES/
+    elif [[ -f ${images_dir}/recovery.img ]]; then
+        cp -vf ${images_dir}/recovery.img ${work_dir}/target_files/BOOTABLE_IMAGES/
+    fi
+
+    echo "getting SYSTEM files from system.img"
+    get_target_files_from_image ${work_dir} ${images_dir}/system.img SYSTEM
+    # remove unuseful file verifyRomInfo added by YunOS release signed
+    if [[ -f ${work_dir}/target_files/SYSTEM/etc/verifyRomInfo ]]; then
+        rm -f ${work_dir}/target_files/SYSTEM/etc/verifyRomInfo
+    fi
+    # remove recovery from boot patch file, recovery.img has changed
+    rm -f ${work_dir}/target_files/SYSTEM/bin/install-recovery.sh
+    rm -f ${work_dir}/target_files/SYSTEM/recovery-from-boot.p
+
+    if [[ -f ${images_dir}/userdata.img ]]; then
+        echo "getting DATA files from userdata.img"
+        get_target_files_from_image ${work_dir} ${images_dir}/userdata.img DATA
+    fi
+
+    # for mtk
+    if [[ -f ${images_dir}/ota_scatter.txt ]]; then
+        cust_dir=`cat ${work_dir}/target_files/SYSTEM/build.prop | grep ^ro.product.device= | awk -F '=' '{print $2}'`
+        mkdir -p ${work_dir}/out/target/product/${cust_dir}
+        cp -vf ${images_dir}/ota_scatter.txt ${work_dir}/out/target/product/${cust_dir}/
+    fi
+
+    # for mtk security signed
+    if [[ -f ${images_dir}/unsigned/trustzone.bin ]]; then
+        cp -vf ${images_dir}/unsigned/trustzone.bin ${work_dir}/trustzone.bin
+    elif [[ -f ${images_dir}/trustzone.bin ]]; then
+        cp -vf ${images_dir}/trustzone.bin ${work_dir}/trustzone.bin
+    fi
+    if [[ -f ${images_dir}/sig/boot.sig ]]; then
+        cp -vf ${images_dir}/sig/boot.sig ${work_dir}/target_files/META/
+    fi
+    if [[ -f ${images_dir}/sig/recovery.sig ]]; then
+        cp -vf ${images_dir}/sig/recovery.sig ${work_dir}/target_files/META/
+    fi
+
+    # for rockchip
+    if [[ -f ${images_dir}/ResidentFlash.img ]]; then
+        echo "getting RESIDENTFLASH files from ResidentFlash.img"
+        get_target_files_from_image ${work_dir} ${images_dir}/ResidentFlash.img RESIDENTFLASH
+    fi
+
+    # set ota extension tools path
+    if [[ -f ${work_dir}/otatools/tool_extensions/releasetools.py ]]; then
+        sed -i "/^tool_extensions=.*$/d" ${work_dir}/target_files/META/misc_info.txt
+        echo "tool_extensions=${work_dir}/otatools/tool_extensions" >> ${work_dir}/target_files/META/misc_info.txt
+    elif [[ -f ${work_dir}/target_files/META/releasetools.py ]]; then
+        sed -i "/^tool_extensions=.*$/d" ${work_dir}/target_files/META/misc_info.txt
+        echo "tool_extensions=${work_dir}/target_files/META" >> ${work_dir}/target_files/META/misc_info.txt
+    fi
+
+    # set selinux file_contexts path
+    if [[ -f ${work_dir}/file_contexts ]]; then
+        sed -i "/^selinux_fc=.*$/d" ${work_dir}/target_files/META/misc_info.txt
+        echo "selinux_fc=${work_dir}/file_contexts" >> ${work_dir}/target_files/META/misc_info.txt
+    elif [[ -f ${work_dir}/target_files/BOOT/RAMDISK/file_contexts ]]; then
+        sed -i "/^selinux_fc=.*$/d" ${work_dir}/target_files/META/misc_info.txt
+        echo "selinux_fc=${work_dir}/target_files/BOOT/RAMDISK/file_contexts" >> ${work_dir}/target_files/META/misc_info.txt
+    fi
+
+    echo "zipping target files"
+    pushd ${work_dir}/target_files > /dev/null
+    if [[ $? = 0 ]]; then
+        zip -qry ../target_files.zip *
+        popd > /dev/null
+    fi
+}
+
+function create_otapackage()
+{
+    local ret=1
+    local work_dir=$1
+    local images_dir=$2
+    local sign_key=$2
+    local create_incremental=false
+    local incremental_work_dir
+    local otapackage_zip
+
+    local build_prop=${work_dir}/target_files/SYSTEM/build.prop
+    local yunos_build_version=$(cat ${build_prop} | grep ^ro.yunos.build.version | awk -F "=" '{print $2}')
+    local board_platform=$(cat ${build_prop} | grep ^ro.board.platform | awk -F "=" '{print $2}' | tr "A-Z" "a-z")
+    local sdk_version=$(cat ${build_prop} | grep ^ro.build.version.sdk | awk -F "=" '{print $2}')
+
+    if [[ $# = 3 ]] && [[ -f $3/target_files.zip ]]; then
+        create_incremental=true
+        incremental_work_dir=$3
+
+        local base_build_prop=${incremental_work_dir}/target_files/SYSTEM/build.prop
+        local base_yunos_update_version=$(cat ${base_build_prop} | grep ^ro.yunos.build.version | awk -F "=" '{print $2}' | awk -F "-" '{print $3}')
+
+        if [[ -n "${yunos_build_version}" ]] && [[ -n "${base_yunos_update_version}" ]]; then
+            otapackage_zip=ota-${base_yunos_update_version}-${yunos_build_version}.zip
+        else
+            local version_incremental=$(cat ${build_prop} | grep ^ro.build.version.incremental | awk -F "=" '{print $2}')
+            local base_version_incremental=$(cat ${base_build_prop} | grep ^ro.build.version.incremental | awk -F "=" '{print $2}')
+            otapackage_zip=ota-${base_version_incremental}-${version_incremental}.zip
+        fi
+    else
+        if [[ -n "${yunos_build_version}" ]]; then
+            otapackage_zip=ota-${yunos_build_version}.zip
+        else
+            local version_incremental=$(cat ${build_prop} | grep ^ro.build.version.incremental | awk -F "=" '{print $2}')
+            otapackage_zip=ota-${version_incremental}.zip
+        fi
+    fi
+
+    echo "making ota from target files"
+    # remove old if exist
+    rm -rf ${otapackage_zip}
+    pushd ${work_dir} > /dev/null
+
+    echo "--------------------------1"
+    if [[ $? = 0 ]]; then
+        local create_otapackage_cmd
+        local extra_args
+
+        if  [[ ${sdk_version} = 21 || ${sdk_version} = 22 ]] && [[ -n "$(echo ${board_platform} | grep ^mt)" ]]; then
+            extra_args="-v --block"
+            if [[ -f ${work_dir}/target_files/META/boot.sig ]]; then
+                export MTK_SECURITY_SW_SUPPORT=yes
+            fi
+            if [[ -f ${work_dir}/trustzone.bin ]]; then
+                extra_args="${extra_args} --trustonic trustzone.bin"
+            fi
+
+            ./otatools/releasetools/add_img_to_target_files -p otatools/linux-x86 target_files.zip
+
+            echo "--------------------------2"
+        elif  [[ ${sdk_version} = 19 ]] && [[ -n "$(echo ${board_platform} | grep ^mt)" ]]; then
+            extra_args="-v -n"
+        elif [[ ${sdk_version} = 19 ]] && [[ ${board_platform} = rkpx2 ]]; then
+            extra_args="-v"
+        elif [[ ${sdk_version} = 19 ]] && [[ ${board_platform} = baytrail ]]; then
+            extra_args="-v --no_prereq"
+        fi
+
+        echo "--------------------------3"
+        if [[ -n "${extra_args}" ]]; then
+            if [[ ${create_incremental} = true ]]; then
+                create_otapackage_cmd="./otatools/releasetools/ota_from_target_files ${extra_args} -i ${incremental_work_dir}/target_files.zip -p otatools/linux-x86 -k ${sign_key} target_files.zip ${otapackage_zip}"
+            else
+                create_otapackage_cmd="./otatools/releasetools/ota_from_target_files ${extra_args} -p otatools/linux-x86 -k ${sign_key} target_files.zip ${otapackage_zip}"
+            fi
+            export PATH=otatools/linux-x86/bin:$PATH
+            export LD_LIBRARY_PATH=otatools/linux-x86/lib:${LD_LIBRARY_PATH}
+            echo "--------------------------4"
+            eval ${create_otapackage_cmd}
+            echo "--------------------------5"
+            ret=$?
+        else
+            echo "don't know how to create otapackage for ${board_platform}"
+            ret=1
+        fi
+        popd > /dev/null
+    fi
+    echo "--------------------------6"
+
+    if [[ ${ret} = 0 ]] && [[ -f ${work_dir}/${otapackage_zip} ]]; then
+        echo "image build info:"
+        cat ${build_prop} | grep ^ro.build.version.sdk
+        cat ${build_prop} | grep ^ro.build.type
+        cat ${build_prop} | grep ^ro.build.fingerprint
+        cat ${build_prop} | grep ^ro.product.model
+        cat ${build_prop} | grep ^ro.product.brand
+        cat ${build_prop} | grep ^ro.product.name
+        cat ${build_prop} | grep ^ro.product.device
+        cat ${build_prop} | grep ^ro.build.display.id
+        cat ${build_prop} | grep ^ro.yunos.build.version
+        cat ${build_prop} | grep ^ro.yunos.model
+        mv ${work_dir}/${otapackage_zip} ./
+        echo "make ota package successful: ${otapackage_zip}"
+    else
+        echo "make ota package failed"
+    fi
+
+    return ${ret}
+}
+
+function usage()
+{
+    cat <<EOF
+usage: $0 <images dir> <sign keys dir|sing keys zip> [incremental from images dir]
+e.g.
+$0 <images dir> <keys.zip>
+$0 <images dir> <keys dir>
+$0 <images dir> <keys.zip> <incremental from images dir>
+EOF
+}
+
+function main()
+{
+    if [[ $# != 2 && $# != 3 ]] || [[ ! -d $1 ]] || [[ $# = 3 && ! -d "$3" ]]; then
+        usage
+        return 255
+    fi
+
+    local ret=0
+    # strip xxx/ to xxx
+    local images_dir=$(echo $1 | sed 's/\/$//g')
+    local incremental_images_dir=$(echo $3 | sed 's/\/$//g')
+    local create_incremental=false
+    local signkey_dir=/tmp/keytmp_$(date +%s)
+
+    # cp -vf sign key
+    if [[ -d $2 ]]; then
+        mkdir -p ${signkey_dir}
+        cp -vf -rf $2/* ${signkey_dir}/
+    elif [[ "$(file --mime-type -b $2)" = "application/zip" ]]; then
+        unzip -q $2 -d ${signkey_dir}
+    fi
+
+    if [[ $# = 3 ]]; then
+        create_incremental=true
+    fi
+
+    while true
+    do
+        check_images ${images_dir}
+        ret=$?
+        if [[ ${ret} != 0 ]]; then break; fi
+
+        check_signkey ${signkey_dir}
+        ret=$?
+        if [[ ${ret} != 0 ]]; then break; fi
+
+        if [[ ${create_incremental} = true ]]; then
+            check_images ${incremental_images_dir}
+            ret=$?
+            if [[ ${ret} != 0 ]]; then break; fi
+        fi
+
+        if [[ -z "`echo ${images_dir} | grep ^/`" ]]; then
+            images_dir="`pwd`/${images_dir}"
+        fi
+        if [[ ${create_incremental} = true ]]; then
+            if [[ -z "`echo ${incremental_images_dir} | grep ^/`" ]]; then
+                incremental_images_dir="`pwd`/${incremental_images_dir}"
+            fi
+            local new_work_dir=/tmp/otanew_$(date +%s)
+            local base_work_dir=/tmp/otabase_$(date +%s)
+
+            create_target_files ${base_work_dir} ${incremental_images_dir}
+            create_target_files ${new_work_dir} ${images_dir}
+            create_otapackage ${new_work_dir} ${signkey_dir}/testkey ${base_work_dir}
+            ret=$?
+            #rm -rf ${base_work_dir}
+            #rm -rf ${new_work_dir}
+        else
+            local work_dir=/tmp/otatmp_$(date +%s)
+
+
+            create_target_files ${work_dir} ${images_dir}
+            create_otapackage ${work_dir} ${signkey_dir}/testkey
+            ret=$?
+            #rm -rf ${work_dir}
+        fi
+
+        break
+    done
+
+    rm -rf ${signkey_dir}
+    return ${ret}
+}
+
+main $@
+exit $?

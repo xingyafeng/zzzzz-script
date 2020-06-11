@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+    <remote
+        fetch="."
+        name="origin"
+        review="http://gerrit.y"/>
+
+    <default
+        revision="branch"
+        remote="origin"
+        sync-c="true"
+        sync-j="4" />
+
+    <project name="K26/abi" path="abi" />
+    <project name="K26/art" path="art" />
+    <project name="K26/bionic" path="bionic" />
+    <project name="K26/bootable" path="bootable" />
+    <project name="K26/build" path="build" >
+        <copyfile dest="Makefile" src="core/root.mk"/>
+    </project>
+    <project name="K26/cts" path="cts" />
+    <project name="K26/dalvik" path="dalvik" />
+    <project name="K26/developers" path="developers" />
+    <project name="K26/development" path="development" />
+    <project name="K26/device" path="device" />
+    <project name="K26/docs" path="docs" />
+    <project name="K26/external" path="external" />
+    <project name="K26/frameworks" path="frameworks" />
+    <project name="K26/hardware" path="hardware" />
+    <project name="K26/kernel-3.10" path="kernel-3.10" />
+    <project name="K26/libcore" path="libcore" />
+    <project name="K26/libnativehelper" path="libnativehelper" />
+    <project name="K26/md32" path="md32" />
+    <project name="K26/ndk" path="ndk" />
+    <project name="K26/packages" path="packages" />
+    <project name="K26/pdk" path="pdk" />
+    <project name="K26/prebuilts" path="prebuilts" />
+    <project name="K26/sdk" path="sdk" />
+    <project name="K26/system" path="system" />
+    <project name="K26/tools" path="tools" />
+    <project name="K26/vendor" path="vendor" />
+
+    <project name="yunovo/customs" path="yunovo/customs" revision="master" />
+    <project name="yunovo/diffmanifests" path="yunovo/diffmanifests" revision="master" />
+    <project name="yunovo/build" path="yunovo/build" revision="master" >
+        <copyfile dest="buildfs.sh" src="buildfs.sh" />
+    </project>

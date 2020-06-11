@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+  <remove-project groups="sprd" name="chipram" />
+  <remove-project groups="pdk" name="device/sample" />
+  
+  <remove-project groups="sprd" name="device/sprd/scx35l/common" /> 
+  <remove-project groups="sprd" name="device/sprd/scx35l/sharklc_z2lte" />
+  <remove-project groups="sprd" name="device/sprd/scx35l/sp9830a_5h10_volte" /> 
+  <remove-project groups="sprd" name="device/sprd/scx35l/sp9830a_7h10_volte" /> 
+  <remove-project groups="sprd" name="device/sprd/scx35l/sp9830i_j2lte" /> 
+  <remove-project groups="sprd" name="device/sprd/scx35l/sp9830i_j3lte" /> 
+  <remove-project groups="sprd" name="device/sprd/scx35l/sp9832a_2h11" />
+  <remove-project groups="sprd" name="device/sprd/scx35l/sp9832a_2h11_volte" />
+  <remove-project groups="sprd" name="device/sprd/scx35l/sp9832a2_vol_13cam" />
+  <remove-project groups="sprd" name="device/sprd/scx35l/sp9832a_3h10_volte" />
+  
+  <remove-project groups="sprd" name="platform/kernel" path="kernel" />
+    
+  <remove-project groups="sprd" name="platform/packages/apps/10086cn" path="packages/apps/10086cn" />
+  <remove-project groups="sprd" name="platform/packages/apps/AudioProfile" path="packages/apps/AudioProfile" />
+  
+  <remove-project groups="sprd" name="platform/packages/apps/EngineerMode" path="packages/apps/EngineerMode" />
+  
+  <remove-project groups="sprd" name="platform/packages/apps/FileExplorer" path="packages/apps/FileExplorer" />
+  <remove-project groups="sprd" name="platform/packages/apps/FotaUpdate" path="packages/apps/FotaUpdate" />
+  
+  <remove-project groups="sprd" name="platform/packages/apps/MyFavorites" path="packages/apps/MyFavorites" />
+
+  <remove-project groups="sprd" name="platform/packages/apps/Note" path="packages/apps/Note" />
+  <remove-project groups="sprd" name="platform/packages/apps/Omacp" path="packages/apps/Omacp" />
+ 
+  <remove-project groups="sprd" name="platform/packages/apps/SGPS" path="packages/apps/SGPS" />
+ 
+  <remove-project groups="sprd" name="platform/packages/apps/SprdAppBackup" path="packages/apps/SprdAppBackup" />
+  <remove-project groups="sprd" name="platform/packages/apps/SprdCompass" path="packages/apps/SprdCompass" />
+  <remove-project groups="sprd" name="platform/packages/apps/SprdQuickSearchBox" path="packages/apps/SprdQuickSearchBox" />
+  <remove-project groups="sprd" name="platform/packages/apps/SprdSlt" path="packages/apps/SprdSlt" />
+ 
+  <remove-project groups="sprd" name="platform/packages/apps/SystemUpdate" path="packages/apps/SystemUpdate" />
+ 
+  <remove-project groups="sprd" name="platform/packages/apps/ValidationTools" path="packages/apps/ValidationTools" />
+  
+  <remove-project groups="sprd" name="platform/packages/services/FdnService" path="packages/services/FdnService" />
+ 
+  <remove-project groups="sprd" name="sprdisk/buildroot" />
+  <remove-project groups="sprd" name="sprdisk/ltp" />
+  <remove-project groups="sprd" name="sprdisk/testsuites" />
+  <remove-project groups="sprd" name="sprdisk/toolchain" />
+  <remove-project groups="sprd" name="sprdisk/utils" >
+    <copyfile dest="sprdisk/Makefile" src="root.mk"/>
+  </remove-project>
+  <remove-project groups="sprd" name="u-boot64" />
+  <remove-project groups="sprd" name="vendor/sprd/UniverseUI/LockScreen" />
+  <remove-project groups="sprd" name="vendor/sprd/UniverseUI/SprdLauncher1" />
+  <remove-project groups="sprd" name="vendor/sprd/UniverseUI/SprdLauncher2" />
+  <remove-project groups="sprd" name="vendor/sprd/UniverseUI/ThemeRes" />
+  <remove-project groups="sprd" name="vendor/sprd/build" />
+  <remove-project groups="sprd" name="vendor/sprd/component" />
+  <remove-project groups="sprd" name="vendor/sprd/gps" />
+  <remove-project groups="sprd" name="vendor/sprd/modules/audio" />
+  <remove-project groups="sprd" name="vendor/sprd/modules/libcamera" />
+  <remove-project groups="sprd" name="vendor/sprd/modules/libgpu" />
+  <remove-project groups="sprd" name="vendor/sprd/modules/resampler" />
+  <remove-project groups="sprd" name="vendor/sprd/open-source" />
+  <remove-project groups="sprd" name="vendor/sprd/operator/cmcc" />
+  <remove-project groups="sprd" name="vendor/sprd/operator/ctcc" />
+  <remove-project groups="sprd" name="vendor/sprd/operator/cucc" />
+  <remove-project groups="sprd" name="vendor/sprd/operator/operator_res/apn" />
+  <remove-project groups="sprd" name="vendor/sprd/operator/operator_res/operatorname_overlay" />
+  <remove-project groups="sprd" name="vendor/sprd/operator/reliance" />
+  <remove-project groups="sprd" name="vendor/sprd/overlay/apn" />
+  <remove-project groups="sprd" name="vendor/sprd/partner" />
+  <remove-project groups="sprd" name="vendor/sprd/plugins" />
+  <remove-project groups="sprd" name="vendor/sprd/proprietories" />    
+  <remove-project groups="sprd" name="vendor/sprd/sprd-webview" />
+  <remove-project groups="sprd" name="vendor/sprd/wcn" />
+    
+  <remove-project groups="sprd" name="platform/packages/apps/CallFireWall" path="packages/apps/CallFireWall"/>
+  <remove-project groups="qcom" name="platform/hardware/qcom/power" path="hardware/qcom/power" />    
+  <remove-project groups="mediatek,mediatek_wear" name="platform/hardware/mediatek" path="hardware/mediatek" />              
+   
+</manifest>
