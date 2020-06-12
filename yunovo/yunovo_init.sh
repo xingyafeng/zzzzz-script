@@ -1,52 +1,35 @@
 #!/bin/bash
 
-# script
-aux_p=${script_p}/extend
+############################################################################### common var
+
+#工具类
+utils_p=${script_p}/utils
+#配置文件
 config_p=${script_p}/config
-yunovo_p=${script_p}/yunovo
-jenkins_p=${script_p}/jenkins
-gerrit_p=${script_p}/gerrit
 
-# load jenkins script
-for script in `find ${jenkins_p} -type f -name jenkins_*.sh` ; do
+#------------------------------------------------------------------------------ 导入环境
 
-    case `basename ${script}` in
+# 自动导入脚本
+for fname in `find ${script_p} -type f -name *_init.sh | awk -F/ '{print $(NF-1)}'` ; do
 
-        jenkins_init.sh)
-            continue
-            ;;
+    # load script
+    for script in `find ${script_p}/${fname} -type f -name ${fname}_*.sh` ; do
 
-        *)
-            source ${script}
-            ;;
-    esac
+        case `basename ${script}` in
+
+            ${fname}_init.sh)
+                continue
+                ;;
+
+            *)
+                source ${script}
+                ;;
+        esac
+    done
+
 done
 
-# gerrit
-source ${gerrit_p}/yunovo_ssh_gerrit.sh
-
-# load yunovo script
-for script in `find ${yunovo_p} -type f -name yunovo_*.sh` ; do
-
-    case `basename ${script}` in
-
-        yunovo_init.sh)
-            continue
-            ;;
-
-        *)
-            source ${script}
-            ;;
-    esac
+# utils 文件名不规则，独立导入
+for script in `find ${utils_p} -type f -name "*.sh"` ; do
+    source ${script}
 done
-
-# auxiliary tools
-source ${aux_p}/clone_project.sh
-source ${aux_p}/auto_create_manifest.sh
-source ${aux_p}/auto_create_android_mk.sh
-
-# Abandoned
-source ${script_p}/chiphd/chiphd_adb_shell.sh
-#source ${script_p}/chiphd/chiphd_make_android.sh
-#source ${script_p}/chiphd/chiphd_make_lichee.sh
-#source ${script_p}/chiphd/chiphd_make_ota.sh

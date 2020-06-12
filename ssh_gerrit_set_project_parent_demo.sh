@@ -9,8 +9,7 @@ set -e
 shellfs=$0
 
 # init function
-. "`dirname $0`/yunovo_init.sh"
-
+. "`dirname $0`/jenkins/jenkins_init.sh"
 
 function main() {
 

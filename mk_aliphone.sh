@@ -70,7 +70,7 @@ export TERMINAL_MODE=adb
 export MAKE_TYPE=new
 
 ### init function
-. "`dirname $0`/jenkins/yunovo_init.sh"
+. "`dirname $0`/jenkins/jenkins_init.sh"
 
 ############################################# common function
 

@@ -28,7 +28,7 @@ declare -x BUILD_TIME=`date +'%Y.%m.%d_%H.%M.%S'`
 shellfs=$0
 
 # init function
-. "`dirname $0`/jenkins/yunovo_init.sh"
+. "`dirname $0`/jenkins/jenkins_init.sh"
 
 ################################# public vairable
 

@@ -23,7 +23,7 @@ to_flag=false
 shellfs=$0
 
 ### init function
-. "`dirname $0`/jenkins/yunovo_init.sh"
+. "`dirname $0`/jenkins/jenkins_init.sh"
 
 # 封板标签xml的存放路径
 ref_p=${tmpfs}/ref

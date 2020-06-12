@@ -7,7 +7,7 @@ set -e
 shellfs=$0
 
 # init function
-. "`dirname $0`/jenkins/yunovo_init.sh"
+. "`dirname $0`/jenkins/jenkins_init.sh"
 
 # debug
 DEBUG=true

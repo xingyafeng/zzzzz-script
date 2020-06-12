@@ -43,17 +43,22 @@ function auto_start_jenkins
     fi
 }
 
-## 设置命令别名
-function set_alias()
-{
-    ### grep
-    alias grep='grep --color=auto'
-    alias fgrep='fgrep --color=auto'
-    alias egrep='egrep --color=auto'
+#####################################################
+##
+##  函数: init_script_path
+##  功能: 创建需要新建的路径
+##
+##  描述: 新建在脚本使用中需要的各种文件夹
+##
+####################################################
+function init_script_path() {
 
-    # some more ls aliases
-    alias ll='ls -alF'
-    alias la='ls -A'
-    alias l='ls -CF'
+    unset pathfs
+
+    pathfs[${#pathfs[@]}]=${tmpfs}
+    pathfs[${#pathfs[@]}]=${version_p}
+    pathfs[${#pathfs[@]}]=${tmpfs}/log
+    pathfs[${#pathfs[@]}]=${tmpfs}/ota
+    pathfs[${#pathfs[@]}]=${tmpfs}/zip
+    pathfs[${#pathfs[@]}]=${apk_release_p}
 }
-

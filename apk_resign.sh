@@ -16,7 +16,7 @@ shellfs=$0
 declare -a signapk
 
 ### init function
-. "`dirname $0`/jenkins/yunovo_init.sh"
+. "`dirname $0`/jenkins/jenkins_init.sh"
 
 function get_resign_apk() {
 

@@ -12,7 +12,7 @@
 ### color black
 function show_vibk
 {
-    if [[ "$1" ]];then
+    if [[ "$@" ]];then
         for ret in "$@"; do
             echo -e -n "\e[1;30m$ret \e[0m"
         done
@@ -25,7 +25,7 @@ function show_vibk
 ### color red
 function show_vir
 {
-    if [[ "$1" ]];then
+    if [[ "$@" ]];then
         for ret in "$@"; do
             echo -e -n "\e[1;31m$ret \e[0m"
         done
@@ -38,7 +38,7 @@ function show_vir
 ### color green
 function show_vig
 {
-    if [[ "$1" ]];then
+    if [[ "$@" ]];then
         for ret in "$@"; do
             echo -e -n "\e[1;32m$ret \e[0m"
         done
@@ -51,7 +51,7 @@ function show_vig
 ### color yellow
 function show_viy
 {
-    if [[ "$1" ]];then
+    if [[ "$@" ]];then
         for ret in "$@"; do
             echo -e -n "\e[1;33m$ret \e[0m"
         done
@@ -64,7 +64,7 @@ function show_viy
 ### color blue
 function show_vib
 {
-    if [[ "$1" ]];then
+    if [[ "$@" ]];then
         for ret in "$@"; do
             echo -e -n "\e[1;34m$ret \e[0m"
         done
@@ -77,7 +77,7 @@ function show_vib
 ### color purple
 function show_vip
 {
-    if [[ "$1" ]];then
+    if [[ "$@" ]];then
         for ret in "$@"; do
             echo -e -n "\e[1;35m$ret \e[0m"
         done
@@ -90,7 +90,7 @@ function show_vip
 ### color dark green
 function show_vidg
 {
-    if [[ "$1" ]];then
+    if [[ "$@" ]];then
         for ret in "$@"; do
             echo -e -n "\e[1;36m$ret \e[0m"
         done
@@ -103,7 +103,7 @@ function show_vidg
 ### color white
 function show_viw
 {
-    if [[ "$1" ]];then
+    if [[ "$@" ]];then
         for ret in "$@"; do
             echo -e -n "\e[1;37m$ret \e[0m"
         done
@@ -140,12 +140,10 @@ function __err()
 ## 输出路径
 function __msg()
 {
-    local OPLD=`pwd`
-
     case $# in
 
         *)
-            _echo "dir is : ${OPLD} $@"
+            _echo "dir is : `pwd` $@"
             ;;
     esac
 }
@@ -196,7 +194,7 @@ function __debug__
 
 function __black__
 {
-    if [[ "$1" ]]
+    if [[ "$@" ]]
     then
         for ret in "$@"; do
             echo -e -n "\e[1;30m$ret \e[0m"
@@ -207,7 +205,7 @@ function __black__
 
 function __red__
 {
-    if [[ "$1" ]]
+    if [[ "$@" ]]
     then
         for ret in "$@"; do
             echo -e -n "\e[1;31m$ret \e[0m"
@@ -218,7 +216,7 @@ function __red__
 
 function __green__
 {
-    if [[ "$1" ]]
+    if [[ "$@" ]]
     then
         for ret in "$@"; do
             echo -e -n "\e[1;32m$ret \e[0m"
@@ -229,7 +227,7 @@ function __green__
 
 function __yellow__
 {
-    if [[ "$1" ]]
+    if [[ "$@" ]]
     then
         for ret in "$@"; do
             echo -e -n "\e[1;33m$ret \e[0m"
@@ -240,7 +238,7 @@ function __yellow__
 
 function __blue__
 {
-    if [[ "$1" ]]
+    if [[ "$@" ]]
     then
         for ret in "$@"; do
             echo -e -n "\e[1;34m$ret \e[0m"
@@ -251,7 +249,7 @@ function __blue__
 
 function __pruple__
 {
-    if [[ "$1" ]]
+    if [[ "$@" ]]
     then
         for ret in "$@"; do
             echo -e -n "\e[1;35m$ret \e[0m"
@@ -262,7 +260,7 @@ function __pruple__
 
 function __dark_green__
 {
-    if [[ "$1" ]]
+    if [[ "$@" ]]
     then
         for ret in "$@"; do
             echo -e -n "\e[1;36m$ret \e[0m"
@@ -273,7 +271,7 @@ function __dark_green__
 
 function __white__
 {
-    if [[ "$1" ]]
+    if [[ "$@" ]]
     then
         for ret in "$@"; do
             echo -e -n "\e[1;37m$ret \e[0m"

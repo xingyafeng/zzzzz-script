@@ -79,7 +79,7 @@ is_public_version=""
 declare -a rom_info
 
 ### init function
-. "`dirname $0`/jenkins/yunovo_init.sh"
+. "`dirname $0`/jenkins/jenkins_init.sh"
 
 ############################################# common function
 

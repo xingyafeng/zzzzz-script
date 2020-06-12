@@ -6,6 +6,7 @@
 ##
 ##############################################
 
+# 一键提交代码
 function git-push-gerrit()
 {
     local branchN=
@@ -15,40 +16,56 @@ function git-push-gerrit()
 
     if [[ -d `git rev-parse --git-dir` ]];then
 
-        if [[ $# -eq 1 ]];then
+        case $# in
 
-            if [[ "$1" == "-f" ]]; then
-                is_force=true
+            0)
                 branchN="`git branch | grep \* | cut -d ' ' -f2`"
-            else
-                branchN=$1
-            fi
-        else
-            branchN="`git branch | grep \* | cut -d ' ' -f2`"
-        fi
+                ;;
+            1)
+                if [[ "$@" == "-f" ]]; then
+                    is_force=true
+                else
+                    branchN="$@"
+                fi
+            ;;
+
+            2)
+                is_force=true
+
+                for arg in $@ ; do
+                    if [[ ${arg} != '-f' ]]; then
+                        branchN=${arg}
+                    fi
+                done
+                ;;
+            *)
+                echo ""
+                echo "${FUNCNAME[0]} [args1] [args2] ..."
+                echo
+                echo "    args1 : 分支名 或 -f"
+                echo "    args2 : 分支名 或 -f"
+                echo
+                echo "    e.g."
+                echo "        1. ${FUNCNAME[0]}"
+                echo "        2. ${FUNCNAME[0]} -f"
+                echo "        3. ${FUNCNAME[0]} -f master"
+                echo "        4. ${FUNCNAME[0]} master -f"
+                echo
+                return 0
+            ;;
+        esac
 
         echo
         show_viy "branchN = $branchN"
         echo
 
         if [[ ${is_force} == "true" ]];then
-            if [[ -n ${branchN} ]]; then
-                git push `git remote | grep origin` ${HEAD}/${branchN}%submit
-            else
-                __err "currect branch not found ..."
-                return 1
-            fi
+            git push `git remote | grep origin` ${HEAD}/${branchN}%submit
         else
-            if [[ -n ${branchN} ]]; then
-                git push `git remote | grep origin` ${HEAD}/${branchN}
-            else
-                __err "currect branch not found ..."
-                return 1
-            fi
+            git push `git remote | grep origin` ${HEAD}/${branchN}
         fi
     else
-        __err "currect dir not in .git folder ..."
-        return 1
+        log error "Could not found '.git' folder ..."
     fi
 }
 

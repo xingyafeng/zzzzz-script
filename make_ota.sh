@@ -20,7 +20,7 @@ ota_to_version=$3
 shellfs=$0
 
 ### init function
-. "`dirname $0`/jenkins/yunovo_init.sh"
+. "`dirname $0`/jenkins/jenkins_init.sh"
 
 # 处理公共版本号
 function handle_common_version() {

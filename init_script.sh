@@ -17,16 +17,13 @@ workspace_p=~/workspace
 #脚本路径
 script_p=${workspace_p}/script/zzzzz-script
 
-if [[ ! -d ${script_p}/fs ]];then
-    mkdir -p ${script_p}/fs
-fi
+#------------------------------------------------------------------------------ 导入环境
 
-# 初始化入口
 if [[ -f ${script_p}/vendorsetup.sh ]];then
 	source ${script_p}/vendorsetup.sh
 fi
 
-#---------------------------------------------------------- prepare
+#------------------------------------------------------------------------------ 准备环境
 
 if [[ "`is_build_server`" == "true" ]];then
     if [[ -f ${tmpfs}/yf.lock ]];then
@@ -44,6 +41,10 @@ if [[ "`is_build_server`" == "true" ]];then
 
     #配置编码
     setgitencoding
+
+    #创建文件夹
+    init_script_path
+    enhance_create_dir
 else
     log error "The server is not running on build server."
 fi

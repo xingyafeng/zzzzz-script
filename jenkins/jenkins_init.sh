@@ -1,43 +1,18 @@
 #!/usr/bin/env bash
 
-## script path
-nxos_p=nxos
-yunos_p=yunos
-droid_p=android
-
-jenkins_p=jenkins
-gerrit_p=gerrit
-
-yunovo_p=yunovo
-
-shellfs=${shellfs##*/}
-
 ## 初始化公共的函数
-. "`dirname $0`/$jenkins_p/jenkins_show.sh"
-. "`dirname $0`/$jenkins_p/jenkins_log.sh"
-. "`dirname $0`/$jenkins_p/jenkins_build.sh"
-. "`dirname $0`/$jenkins_p/jenkins_common.sh"
-. "`dirname $0`/$jenkins_p/jenkins_tools.sh"
-. "`dirname $0`/$jenkins_p/jenkins_utils.sh"
-. "`dirname $0`/$jenkins_p/jenkins_git_func.sh"
-. "`dirname $0`/$jenkins_p/jenkins_simple_func.sh"
+. "`dirname $0`"/init_script.sh
 
-. "`dirname $0`/$yunovo_p/yunovo_git_misc.sh"
-. "`dirname $0`/$yunovo_p/yunovo_misc.sh"
-. "`dirname $0`/$gerrit_p/yunovo_ssh_gerrit.sh"
-
-case ${shellfs} in
+case ${shellfs##*/} in
 
     build_sdk.sh)
-        . "`dirname $0`/$jenkins_p/$droid_p/yunovo_handle_old_branch.sh"
-        . "`dirname $0`/$jenkins_p/$droid_p/yunovo_handle_branch.sh"
-        . "`dirname $0`/$jenkins_p/$droid_p/yunovo_make_func.sh"
+        . "`dirname $0`"/jenkins/yunovo/yunovo_make_func.sh
 
         make_version=Android
         ;;
 
     make_android.sh|makefs.sh|replace_logo.sh|make_ota.sh|build_ota.sh|repo_diffmanifests.sh|make_so.sh)
-        . "`dirname $0`/$jenkins_p/$droid_p/yunovo_make_android.sh"
+        . "`dirname $0`"/jenkins/yunovo/yunovo_make_android.sh
 
         make_version=Android
         ;;
@@ -51,11 +26,11 @@ case ${shellfs} in
         ;;
 
     make_nxos.sh)
-        . "`dirname $0`/$jenkins_p/$nxos_p/yunovo_make_nxos.sh"
+        . "`dirname $0`"/jenkins/nxos/yunovo_make_nxos.sh
         ;;
 
     mk_aliphone.sh|mk_aliphone4mt6737t.sh)
-        . "`dirname $0`/$jenkins_p/$yunos_p/yunovo_make_aliphone.sh"
+        . "`dirname $0`"/jenkins/yunos/yunovo_make_aliphone.sh
 
         make_version=Yunos
         ;;
