@@ -1,11 +1,15 @@
 #!/bin/bash
 
 ####################################################### define
-## env
+
+# ---------------------------------------- env
 export rom_p=/public/share/ROM
 export otafs_p=${rom_p}/otafs
 
-## define common variable
+# ---------------------------------------- common variable
+
+# 时间文件夹
+td=${workspace_p}/date/`date +%m%d`
 
 ################################################### function
 
@@ -63,8 +67,6 @@ function cscript
 
 function cdate
 {
-    local td=${workspace_p}/date/`date +%m%d`
-
     check_if_dir_exists ${td}
     \cd ${td} > /dev/null
 }
