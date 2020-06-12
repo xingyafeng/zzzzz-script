@@ -1,10 +1,5 @@
 #!/bin/bash
 
-function main()
-{
-    ssh-update-script
-}
-
 function ssh-update-script()
 {
     local init_script=~/workspace/script/zzzzz-script/init_script.sh
@@ -43,4 +38,18 @@ function ssh-update-script()
     done
 }
 
-main $@
+function update_script() {
+
+    local script_p=~/workspace/script/zzzzz-script/init_script.sh
+
+    if [[ -f ${script_p} ]]; then
+        source ${script_p}
+    fi
+}
+
+function main()
+{
+    update_script
+}
+
+main "$@"
