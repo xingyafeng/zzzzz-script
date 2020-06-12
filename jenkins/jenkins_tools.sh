@@ -810,6 +810,10 @@ function is_build_server()
             echo true
             ;;
 
+        WS186)
+            echo true
+            ;;
+
         *)
             echo false
             ;;
