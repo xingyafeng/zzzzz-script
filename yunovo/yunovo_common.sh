@@ -18,7 +18,9 @@ td=${workspace_p}/date/`date +%m%d`
 function cworkspace
 {
     check_if_dir_exists ${workspace_p}
-    \cd ${workspace_p} > /dev/null
+    if [[ $? -eq 0 ]]; then
+        \cd ${workspace_p} > /dev/null
+    fi
 }
 
 function cjobs
@@ -26,7 +28,9 @@ function cjobs
     local jobs_p=~/jobs
 
     check_if_dir_exists ${jobs_p}
-    \cd ${jobs_p} > /dev/null
+    if [[ $? -eq 0 ]]; then
+        \cd ${jobs_p} > /dev/null
+    fi
 }
 
 function capp
@@ -34,7 +38,9 @@ function capp
     local app_p=${workspace_p}/app
 
     check_if_dir_exists ${app_p}
-    \cd ${app_p} > /dev/null
+    if [[ $? -eq 0 ]]; then
+        \cd ${app_p} > /dev/null
+    fi
 }
 
 function cmanifest
@@ -42,7 +48,9 @@ function cmanifest
     local manifest_p=${workspace_p}/app/manifest
 
     check_if_dir_exists ${manifest_p}
-    \cd ${manifest_p} > /dev/null
+    if [[ $? -eq 0 ]]; then
+        \cd ${manifest_p} > /dev/null
+    fi
 }
 
 function cshare
@@ -54,7 +62,9 @@ function cshare
 
         *)
             check_if_dir_exists ${share_p}
-            \cd ${share_p} > /dev/null
+            if [[ $? -eq 0 ]]; then
+                \cd ${share_p} > /dev/null
+            fi
             ;;
     esac
 }
@@ -62,17 +72,23 @@ function cshare
 function cscript
 {
     check_if_dir_exists ${script_p}
-    \cd ${script_p} > /dev/null
+    if [[ $? -eq 0 ]]; then
+        \cd ${script_p} > /dev/null
+    fi
 }
 
 function cdate
 {
     check_if_dir_exists ${td}
-    \cd ${td} > /dev/null
+    if [[ $? -eq 0 ]]; then
+        \cd ${td} > /dev/null
+    fi
 }
 
 function crom
 {
     check_if_dir_exists ${rom_p}
-    \cd ${rom_p} > /dev/null
+    if [[ $? -eq 0 ]]; then
+        \cd ${rom_p} > /dev/null
+    fi
 }
