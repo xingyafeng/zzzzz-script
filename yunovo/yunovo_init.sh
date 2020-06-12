@@ -8,7 +8,7 @@ jenkins_p=${script_p}/jenkins
 gerrit_p=${script_p}/gerrit
 
 # load jenkins script
-for script in `find jenkins -type f -name jenkins_*.sh` ; do
+for script in `find ${jenkins_p} -type f -name jenkins_*.sh` ; do
 
     case `basename ${script}` in
 
@@ -26,7 +26,7 @@ done
 source ${gerrit_p}/yunovo_ssh_gerrit.sh
 
 # load yunovo script
-for script in `find yunovo -type f -name yunovo_*.sh` ; do
+for script in `find ${yunovo_p} -type f -name yunovo_*.sh` ; do
 
     case `basename ${script}` in
 
