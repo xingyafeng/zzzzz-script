@@ -1,5 +1,28 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
+#####################################################################
+#
+#                  帮助文档
+#
+# 说明: 在ubuntu系统中，执行 cat tools/init >> ~/.bashrc 命令后
+#       每次开机系统，或者打开终端事，系统自动将script脚本导入
+#       环境中，执行成功就可以使用啦.
+#       $ help--script 查看快捷命令
+#
+#       e.g :
+#           1 cscript
+#           2 show_vip
+#           3 grepfs gfind
+#           4 setgitconfig
+#           5 get_file_name
+#           6 get_file_type
+#
+#       以上只是其中部分，有需要可以句需求封装，为了高效率的工作。
+#
+#
+#####################################################################
+
+# script help
 function help--script()
 {
     echo
@@ -9,16 +32,11 @@ functions from zzzzz-script , down: git clone ssh://xingyafeng@gerrit-in.yunovo.
 
     open terminal auto source
 
-    - gfind                 find on all local
     - grepfs                Greps on all local .c .cc .cpp .h .java .xml .sh .mk .cfg Kconfig  .sh files.
+    - gfind                 find on all local
     - openfs                open file folder
-    - rsyncfs               rsync file and folder
     - geditfs               open file run backgroud
-    - renamefs              rename photo FileName
     - recover_android       clean all customs file
-    - change_ps             set .ssh and set .repo
-    - H-to-D H-to-H
-    - B-to-D D-to-B
 
     @@@ get
     - get_week              Calculate the day of the month in a certain year
@@ -33,7 +51,7 @@ functions from zzzzz-script , down: git clone ssh://xingyafeng@gerrit-in.yunovo.
     @@@
     - showfile:             e.g. showfile FileName 20 30   -- show the 20th to 30th lines of the "FileName" file.
 
-    @@@@
+    @@@
     - cgrep                 Greps on all local C/C++ files.
     - ggrep                 Greps on all local Gradle files.
     - jgrep                 Greps on all local Java files.
@@ -73,23 +91,15 @@ functions from zzzzz-script , down: git clone ssh://xingyafeng@gerrit-in.yunovo.
 
     -----------------------
     @@@
-    - cpotafs                   -- cp otf files to path
     - make_idegen               -- android studio config
     - auto_make_key             -- create android key
-    - copy_image_to_folder      -- cp img to release path
-
-    -----------------------
-    @@@ sshfs
-    - ls-server
-    - sshfs-server
-    - fusermount-server
 
     @@@ print
     -  __echo
+    -  __debug
     -  __msg
     -  __wrn
     -  __err
-    - __debug
 
     @@@ show
     - show_vibk
