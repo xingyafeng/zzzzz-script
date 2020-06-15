@@ -7,7 +7,7 @@ set -e
 shellfs=$0
 
 # init function
-. "`dirname $0`/jenkins/jenkins_init.sh"
+. "`dirname $0`/tct/tct_init.sh"
 
 # 1.项目名
 build_zip_project=
