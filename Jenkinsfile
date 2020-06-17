@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-//@Library('jenkinslibrary@master') _
+@Library('share-library@master') _
 
 """
 初始化对象
@@ -56,7 +56,7 @@ pipeline {
                         // sh 'sleep 5'
                         // sh 'touch branch_b'
 
-//                        script {
+                        script {
 //                            println(currentBuild.displayName)
 //                            println(currentBuild)
 //                            tools.cmd("test sh func ...")
@@ -67,11 +67,11 @@ pipeline {
 //
 //                            utils.print_env()
 //
-//                            log.v('测试log输出功能')
-//                            log.d('测试log输出功能')
-//                            log.i('测试log输出功能')
-//                            log.w('测试log输出功能')
-//                            log.e('测试log输出功能')
+                            log.v('测试log输出功能')
+                            log.d('测试log输出功能')
+                            log.i('测试log输出功能')
+                            log.w('测试log输出功能')
+                            log.e('测试log输出功能')
 //
 //                            d.init()
 //                            d.setName("小黄")
@@ -86,7 +86,7 @@ pipeline {
 //                            for (int i = 0; i < browsers.size(); ++i) {
 //                                echo "Testing the ${browsers[i]} browser"
 //                            }
-//                        }
+                        }
                     }
                 }
             }
