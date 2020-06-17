@@ -4,6 +4,12 @@
 """
 初始化对象
 """
+def logs_ = new com.tct.log()
+def utils_ = new com.tct.utils()
+
+def test = new com.tct.example.Test(log, utils)
+def cat = new com.tct.example.Cat("mimi")
+def dog = new com.tct.example.Dog("dahuang", log, utils)
 
 pipeline {
     agent {
@@ -38,10 +44,6 @@ pipeline {
                     steps {
                         echo "On build A"
                         echo "Hello, ${CC}, nice to meet you."
-
-                        // sh 'sleep 5'
-                        // sh 'touch branch_a'
-                        // sh 'touch branch_xxx'
                     }
                 }
 
@@ -49,43 +51,36 @@ pipeline {
                     // agent {
                     //     label "10.129.46.20"
                     // }
+
                     steps {
                         echo "On build B"
                         echo "Hello, ${CC}, nice to meet you."
 
-                        // sh 'sleep 5'
-                        // sh 'touch branch_b'
-
                         script {
-//                            println(currentBuild.displayName)
-//                            println(currentBuild)
-//                            tools.cmd("test sh func ...")
-//
-//                            tt.init()
-//
-//                            cat.run()
-//
-//                            utils.print_env()
-//
+                            println(currentBuild.displayName)
+                            println(currentBuild)
+                            println('---- currentBuild ----')
+
+                            test.run()
+                            cat.run()
+                            dog.run()
+
                             log.v('测试log输出功能')
                             log.d('测试log输出功能')
                             log.i('测试log输出功能')
                             log.w('测试log输出功能')
                             log.e('测试log输出功能')
-//
-//                            d.init()
-//                            d.setName("小黄")
-//                            println(d.getName())
-//                            d.run()
-//                            println(d.getName())
-//
-//                            userEmail = "514779897@qq.com"
-//                            tools.PrintMes("测试 Share lib 成功","green")
-//                            // toemail.Email("代码质量阈错误！请及时修复！",userEmail)
-//                            def browsers = ['chrome', 'firefox']
-//                            for (int i = 0; i < browsers.size(); ++i) {
-//                                echo "Testing the ${browsers[i]} browser"
-//                            }
+
+                            utils.command("ls -al")
+
+//                            email = "514779897@qq.com"
+//                            utils.send_email("构建成功...1",  email)
+//                            utils_.send_email("构建成功...2", email)
+
+                            def browsers = ['chrome', 'firefox']
+                            for (int i = 0; i < browsers.size(); ++i) {
+                                echo "Testing the ${browsers[i]} browser"
+                            }
                         }
                     }
                 }
