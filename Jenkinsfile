@@ -69,7 +69,7 @@ pipeline {
                             log.d('测试log输出功能')
                             log.i('测试log输出功能')
                             log.w('测试log输出功能')
-                            log.e('测试log输出功能')
+//                            log.e('测试log输出功能')
 
                             utils.command("ls -al")
 
