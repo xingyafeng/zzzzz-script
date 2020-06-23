@@ -11,6 +11,9 @@ case ${shellfs##*/} in
     download_mirror.sh)
         ;;
 
+    bts2zip.sh)
+        ;;
+
     *)
         log error "执行脚本不匹配 ..."
         ;;

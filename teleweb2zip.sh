@@ -53,56 +53,6 @@ function init() {
     print_variable
 }
 
-#####################################################
-##
-##  函数: enhance_zip
-##  功能: 增强压缩系统版本
-##  参数: 1 zip_path: 压缩路径
-##        2 zip_name: 压缩名称
-##
-##
-##  zip 参数说明:
-##　　　-1 : compress faster  2G文件大概花费 2min33s
-##      -9 : compress bester  2G文件大概花费 9min18s
-####################################################
-function enhance_zip() {
-
-    local zip_p=${tmpfs}/zip
-
-    log print "--> zip version start ..."
-
-    echo
-    echo "JOBS = " ${JOBS}
-    echo '-----------------------------------------'
-    echo "zip_path  = " ${zip_path}
-    echo "zip_name  = " ${zip_name}
-    echo '-----------------------------------------'
-    echo
-
-    pushd ${zip_path} > /dev/null
-
-    if [[ ! -f ${zip_name}.zip ]]; then
-        zip -1v ${zip_p}/${zip_name}.zip *.*
-        if [[ $? -eq 0 ]]; then
-            log print "backup ${zip_name}.zip to Teleweb Server ..."
-
-            sudo cp -vf ${zip_p}/${zip_name}.zip .
-
-            if [[ -d ${zip_p} ]]; then
-                rm ${zip_p}/* -rf
-            fi
-        else
-            log error "zip version fail. "
-        fi
-    else
-        log info "The ${zip_name}.zip file is exist ... "
-    fi
-
-    log print "--> zip version end ..."
-
-    popd > /dev/null
-}
-
 function zip_rom() {
 
     local ret
