@@ -55,72 +55,15 @@ function init() {
 
 function zip_rom() {
 
-    local ret
     local zip_path  zip_name
-    local version=('5' '6' '7' '8' '9' 'A' 'B' 'C' 'D' 'E' 'F' 'G' 'H' 'I' 'J' 'K' 'L' 'M' 'N')
 
-    # 1级目录
-    case ${build_zip_project} in
-
-        tokyolitetmo|seattlevzw|seattletmo|apollo84gtmo)
-            log print "normal mode .."
-
-            zip_path=${rom_p}/${build_zip_project}/${build_zip_type}/${build_zip_version}
-            zip_name=${build_zip_version}
-            ;;
-
-        portotmo|thor84gvzw)
-            log print "more type mode .."
-
-            # 2级目录
-            case ${build_zip_type} in
-
-                tmp|appli)
-
-                    ret=${build_zip_version: -2} && ret=${ret:0:1}
-                    log debug "ret = ${ret}"
-
-                    # 3级目录 若版本号倒数第二位 为 ('5' '6' '7' '8' '9' 'A' 'B' 'C' 'D' 'E' 'F' 'G' 'H' 'I' 'J' 'K' 'L' 'M' 'N') 的要特殊处理
-                    case ${ret} in
-                        3|4|5|6|7|8|9|A|B|C|D|E|F|G|H|I|J|K|L|M|N)
-                            if [[ -n ${build_zip_other} ]]; then
-                                zip_path=${rom_p}/${build_zip_project}/${build_zip_type}/${build_zip_version}/${build_zip_other}
-                                zip_name=${build_zip_version}_`echo ${build_zip_other} | sed s#/#_#g`
-                            else
-                                log info "The build_zip_other has error."
-                            fi
-                          ;;
-                    *)
-                        zip_path=${rom_p}/${build_zip_project}/${build_zip_type}/${build_zip_version}
-                        zip_name=${build_zip_version}
-                        ;;
-                    esac
-                    ;;
-
-                userdebug)
-                    # 3级目录 若版本号倒数第二位 为 p 则会特殊处理
-                    ret=${build_zip_version: -2} && ret=${ret:0:1}
-                    log debug "ret = ${ret}"
-
-                    # 3级目录 若版本号倒数第二位 为 (P) 的要特殊处理
-                    case ${ret} in
-                        P)
-                            if [[ -n ${build_zip_other} ]]; then
-                                zip_path=${rom_p}/${build_zip_project}/${build_zip_type}/${build_zip_version}/${build_zip_other}
-                                zip_name=${build_zip_version}_`echo ${build_zip_other} | sed s#/#_#g`
-                            else
-                                log info "The build_zip_other has error."
-                            fi
-                            ;;
-                        *)
-                            ;;
-                    esac
-            esac
-            ;;
-        *)
-            log error "没匹配到正确的项目."
-            ;;
-    esac
+    if [[ -n ${build_zip_other} ]]; then
+        zip_path=${rom_p}/${build_zip_project}/${build_zip_type}/${build_zip_version}/${build_zip_other}
+        zip_name=${build_zip_version}_`echo ${build_zip_other} | sed s#/#_#g`
+    else
+        zip_path=${rom_p}/${build_zip_project}/${build_zip_type}/${build_zip_version}
+        zip_name=${build_zip_version}
+    fi
 
     if [[ -d ${zip_path} && -n ${zip_name} ]]; then
 
