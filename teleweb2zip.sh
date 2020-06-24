@@ -16,7 +16,7 @@ build_zip_type=
 # 3.同步版本
 build_zip_version=
 # 4.其他版本
-build_zip_other=
+build_zip_more=
 
 
 function handle_vairable() {
@@ -31,7 +31,7 @@ function handle_vairable() {
     build_zip_version=${zip_version:=}
 
     # 4. 其他信息
-    build_zip_other=${zip_other:=}
+    build_zip_more=${zip_more:=}
 }
 
 function print_variable() {
@@ -42,7 +42,7 @@ function print_variable() {
     echo "build_zip_project = " ${build_zip_project}
     echo "build_zip_type    = " ${build_zip_type}
     echo "build_zip_version = " ${build_zip_version}
-    echo "build_zip_other   = " ${build_zip_other}
+    echo "build_zip_more   = " ${build_zip_more}
     echo '-----------------------------------------'
     echo
 }
@@ -57,9 +57,9 @@ function zip_rom() {
 
     local zip_path  zip_name
 
-    if [[ -n ${build_zip_other} ]]; then
-        zip_path=${rom_p}/${build_zip_project}/${build_zip_type}/${build_zip_version}/${build_zip_other}
-        zip_name=${build_zip_version}_`echo ${build_zip_other} | sed s#/#_#g`
+    if [[ -n ${build_zip_more} ]]; then
+        zip_path=${rom_p}/${build_zip_project}/${build_zip_type}/${build_zip_version}/${build_zip_more}
+        zip_name=${build_zip_version}_`echo ${build_zip_more} | sed s#/#_#g`
     else
         zip_path=${rom_p}/${build_zip_project}/${build_zip_type}/${build_zip_version}
         zip_name=${build_zip_version}
