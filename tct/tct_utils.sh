@@ -74,6 +74,10 @@ function enhance_zip() {
 
                         popd > /dev/null
                     ;;
+
+                    *)
+                        log error "文件格式：get_file_type ${perso_p}，暂不支持!"
+                        ;;
                 esac
             fi
 

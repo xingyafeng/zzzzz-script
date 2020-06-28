@@ -37,10 +37,13 @@ function handle_vairable() {
     if [[ "${bts_more}" =~ "simlock" ]]; then
         build_bts_more=${bts_more:=}
     else
+        build_bts_more=${bts_more:=}
+
         # person版本
         bts_perso=${bts_more:=}
     fi
 
+    # 打包前，需要确定两个参数，zip_name和zip_path
     if [[ -n ${bts_perso} ]]; then
         preso_ver=`echo ${bts_perso} | awk -F/ '{print $1}'`
         preso_num=`get_file_name ${bts_perso} | sed 's/.*\(..\)$/\1/' | sed 's/0//'`
@@ -66,7 +69,11 @@ function print_variable() {
     echo "build_bts_project = " ${build_bts_project}
     echo "build_bts_type    = " ${build_bts_type}
     echo "build_bts_version = " ${build_bts_version}
-    echo "build_bts_more    = " ${build_bts_more}
+
+    if [[ -n ${build_bts_more} ]]; then
+        echo "build_bts_more    = " ${build_bts_more}
+    fi
+
     echo '-----------------------------------------'
 
     if [[ -n ${bts_perso} ]]; then
@@ -94,6 +101,7 @@ function zip_bts() {
 
     image[${#image[@]}]=`check_if_boot_exists`
 
+    # perso目录下不存在时，需要去寻找主版本下的system.img
     if [[ -z ${bts_perso} ]]; then
         image[${#image[@]}]=`check_if_system_exists`
     fi
