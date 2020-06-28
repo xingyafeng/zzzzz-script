@@ -36,7 +36,7 @@ function enhance_zip() {
         fi
 
         if [[ $? -eq 0 ]]; then
-            if [[ -n ${build_zip_perso} ]]; then
+            if [[ -n ${bts_perso} ]]; then
                 case `get_file_type ${perso_p}` in
 
                     mbn)
