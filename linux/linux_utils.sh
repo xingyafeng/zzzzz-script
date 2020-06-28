@@ -330,3 +330,259 @@ function get_file_name() {
         __err "输入有误, 请在终端输入 [${FUNCNAME[0]}] 查询其帮助文档." && return 1
     fi
 }
+
+function left_remove_first() {
+
+    local var
+
+    case $# in
+        1)
+            case $@ in
+                -h|--help)
+                    echo ""
+                    echo "${FUNCNAME[0]} [args1] [args2] ..."
+                    echo
+                    echo "    args1 : 处理的字符串 "
+                    echo "    args2 : 分割符 如 / ' \" : etc "
+                    echo
+                    echo "    e.g."
+                    echo "        1. ${FUNCNAME[0]}"              #帮助
+                    echo "        2. ${FUNCNAME[0]} -h --help"    #帮助
+                    echo "        3. ${FUNCNAME[0]} http://www.aaa.com/123.html /"
+                    echo
+                    return 0
+                    ;;
+
+                *)
+                    echo ""
+                    echo "${FUNCNAME[0]} [args1] [args2] ..."
+                    echo
+                    echo "    args1 : 处理的字符串 "
+                    echo "    args2 : 分割符 如 / ' \" : etc "
+                    echo
+                    echo "    e.g."
+                    echo "        1. ${FUNCNAME[0]}"              #帮助
+                    echo "        2. ${FUNCNAME[0]} -h --help"    #帮助
+                    echo "        3. ${FUNCNAME[0]} http://www.aaa.com/123.html /"
+                    echo
+                    return 0
+                    ;;
+            esac
+
+            ;;
+
+        2)
+            var=$1
+            op=$2
+            ;;
+
+        *)
+            echo ""
+            echo "${FUNCNAME[0]} [args1] [args2] ..."
+            echo
+            echo "    args1 : 处理的字符串 "
+            echo "    args2 : 分割符 如 / ' \" : etc "
+            echo
+            echo "    e.g."
+            echo "        1. ${FUNCNAME[0]}"              #帮助
+            echo "        2. ${FUNCNAME[0]} -h --help"    #帮助
+            echo "        3. ${FUNCNAME[0]} http://www.aaa.com/123.html /"
+            echo
+            return 0
+            ;;
+    esac
+
+    echo ${var#*${op}}
+}
+
+function left_remove_end() {
+
+    local var
+
+    case $# in
+        1)
+            case $@ in
+                -h|--help)
+                    echo ""
+                    echo "${FUNCNAME[0]} [args1] [args2] ..."
+                    echo
+                    echo "    args1 : 处理的字符串 "
+                    echo "    args2 : 分割符 如 / ' \" : etc "
+                    echo
+                    echo "    e.g."
+                    echo "        1. ${FUNCNAME[0]}"              #帮助
+                    echo "        2. ${FUNCNAME[0]} -h --help"    #帮助
+                    echo "        3. ${FUNCNAME[0]} http://www.aaa.com/123.html /"
+                    echo
+                    return 0
+                    ;;
+
+                *)
+                    echo ""
+                    echo "${FUNCNAME[0]} [args1] [args2] ..."
+                    echo
+                    echo "    args1 : 处理的字符串 "
+                    echo "    args2 : 分割符 如 / ' \" : etc "
+                    echo
+                    echo "    e.g."
+                    echo "        1. ${FUNCNAME[0]}"              #帮助
+                    echo "        2. ${FUNCNAME[0]} -h --help"    #帮助
+                    echo "        3. ${FUNCNAME[0]} http://www.aaa.com/123.html /"
+                    echo
+                    return 0
+                    ;;
+            esac
+
+            ;;
+
+        2)
+            var=$1
+            op=$2
+            ;;
+
+        *)
+            echo ""
+            echo "${FUNCNAME[0]} [args1] [args2] ..."
+            echo
+            echo "    args1 : 处理的字符串 "
+            echo "    args2 : 分割符 如 / ' \" : etc "
+            echo
+            echo "    e.g."
+            echo "        1. ${FUNCNAME[0]}"              #帮助
+            echo "        2. ${FUNCNAME[0]} -h --help"    #帮助
+            echo "        3. ${FUNCNAME[0]} http://www.aaa.com/123.html /"
+            echo
+            return 0
+            ;;
+    esac
+
+    echo ${var##*${op}}
+}
+
+function right_remove_first() {
+
+    local var
+
+    case $# in
+        1)
+            case $@ in
+                -h|--help)
+                    echo ""
+                    echo "${FUNCNAME[0]} [args1] [args2] ..."
+                    echo
+                    echo "    args1 : 处理的字符串 "
+                    echo "    args2 : 分割符 如 / ' \" : etc "
+                    echo
+                    echo "    e.g."
+                    echo "        1. ${FUNCNAME[0]}"              #帮助
+                    echo "        2. ${FUNCNAME[0]} -h --help"    #帮助
+                    echo "        3. ${FUNCNAME[0]} http://www.aaa.com/123.html /"
+                    echo
+                    return 0
+                    ;;
+
+                *)
+                    echo ""
+                    echo "${FUNCNAME[0]} [args1] [args2] ..."
+                    echo
+                    echo "    args1 : 处理的字符串 "
+                    echo "    args2 : 分割符 如 / ' \" : etc "
+                    echo
+                    echo "    e.g."
+                    echo "        1. ${FUNCNAME[0]}"              #帮助
+                    echo "        2. ${FUNCNAME[0]} -h --help"    #帮助
+                    echo "        3. ${FUNCNAME[0]} http://www.aaa.com/123.html /"
+                    echo
+                    return 0
+                    ;;
+            esac
+
+            ;;
+
+        2)
+            var=$1
+            op=$2
+            ;;
+
+        *)
+            echo ""
+            echo "${FUNCNAME[0]} [args1] [args2] ..."
+            echo
+            echo "    args1 : 处理的字符串 "
+            echo "    args2 : 分割符 如 / ' \" : etc "
+            echo
+            echo "    e.g."
+            echo "        1. ${FUNCNAME[0]}"              #帮助
+            echo "        2. ${FUNCNAME[0]} -h --help"    #帮助
+            echo "        3. ${FUNCNAME[0]} http://www.aaa.com/123.html /"
+            echo
+            return 0
+            ;;
+    esac
+
+    echo ${var%${op}*}
+}
+
+function right_remove_end() {
+
+    local var
+
+    case $# in
+        1)
+            case $@ in
+                -h|--help)
+                    echo ""
+                    echo "${FUNCNAME[0]} [args1] [args2] ..."
+                    echo
+                    echo "    args1 : 处理的字符串 "
+                    echo "    args2 : 分割符 如 / ' \" : etc "
+                    echo
+                    echo "    e.g."
+                    echo "        1. ${FUNCNAME[0]}"              #帮助
+                    echo "        2. ${FUNCNAME[0]} -h --help"    #帮助
+                    echo "        3. ${FUNCNAME[0]} http://www.aaa.com/123.html /"
+                    echo
+                    return 0
+                    ;;
+
+                *)
+                    echo ""
+                    echo "${FUNCNAME[0]} [args1] [args2] ..."
+                    echo
+                    echo "    args1 : 处理的字符串 "
+                    echo "    args2 : 分割符 如 / ' \" : etc "
+                    echo
+                    echo "    e.g."
+                    echo "        1. ${FUNCNAME[0]}"              #帮助
+                    echo "        2. ${FUNCNAME[0]} -h --help"    #帮助
+                    echo "        3. ${FUNCNAME[0]} http://www.aaa.com/123.html /"
+                    echo
+                    return 0
+                    ;;
+            esac
+
+            ;;
+
+        2)
+            var=$1
+            op=$2
+            ;;
+
+        *)
+            echo ""
+            echo "${FUNCNAME[0]} [args1] [args2] ..."
+            echo
+            echo "    args1 : 处理的字符串 "
+            echo "    args2 : 分割符 如 / ' \" : etc "
+            echo
+            echo "    e.g."
+            echo "        1. ${FUNCNAME[0]}"              #帮助
+            echo "        2. ${FUNCNAME[0]} -h --help"    #帮助
+            echo "        3. ${FUNCNAME[0]} http://www.aaa.com/123.html /"
+            echo
+            return 0
+            ;;
+    esac
+
+    echo ${var%%${op}*}
+}
