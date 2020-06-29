@@ -37,8 +37,6 @@ function handle_vairable() {
     if [[ "${bts_more}" =~ "simlock" ]]; then
         build_bts_more=${bts_more:=}
     else
-        build_bts_more=${bts_more:=}
-
         # person版本
         bts_perso=${bts_more:=}
     fi
@@ -70,7 +68,9 @@ function print_variable() {
     echo "build_bts_type    = " ${build_bts_type}
     echo "build_bts_version = " ${build_bts_version}
 
-    if [[ -n ${build_bts_more} ]]; then
+    if [[ -n ${bts_perso} ]]; then
+        echo "build_bts_more    = " ${bts_perso}
+    elif [[ -n ${build_bts_more} ]];then
         echo "build_bts_more    = " ${build_bts_more}
     fi
 
@@ -131,7 +131,11 @@ function sendEmail() {
         log error "参数错误."
     fi
 
-    python ${script_p}/extend/sendemail.py ${build_bts_project} ${build_bts_type} ${build_bts_version} ${BUILD_USER_EMAIL} ${isSend}
+    if [[ -n ${build_bts_more} ]]; then
+        python ${script_p}/extend/sendemail2bts.py ${build_bts_project} ${build_bts_type} ${build_bts_version}/${build_bts_more}/${zip_name}.zip ${BUILD_USER_EMAIL} ${isSend}
+    else
+        python ${script_p}/extend/sendemail2bts.py ${build_bts_project} ${build_bts_type} ${build_bts_version}/${zip_name}.zip ${BUILD_USER_EMAIL} ${isSend}
+    fi
 }
 
 function main() {
