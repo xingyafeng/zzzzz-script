@@ -109,7 +109,7 @@ function zip_bts() {
     image[${#image[@]}]=`check_if_recovery_exists`
     image[${#image[@]}]=`check_if_userdata_exists`
 
-    show_vig "image = ${image[@]}"
+    show_vig "image = ${image[@]} ${build_bts_more}"
 
     if [[ -d ${zip_path} && -n ${zip_name} ]]; then
         time enhance_zip
