@@ -13,11 +13,17 @@ shellfs=$0
 
 function main() {
 
+    trap 'DEBUGTRAP $LINENO' DEBUG
+
     log debug "start ..."
 
     _echo "main"
 
+
     log debug "end ..."
+
+    trap - DEBUG
 }
 
 main $@
+
