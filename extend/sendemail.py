@@ -33,7 +33,7 @@ def send_mail(subject, content):
 # noinspection PyInterpreter
 if __name__ == '__main__':
 
-    rom_p = "/local/telweb/"
+    rom_p = 'https://teleweb-sz.tclcom.com/0_Shenzhen/'
 
     zip_project = sys.argv[1]
     zip_type = sys.argv[2]
@@ -41,11 +41,11 @@ if __name__ == '__main__':
     email_list = sys.argv[4]
     isdelivery = sys.argv[5]
 
-    print "the zip_project is %s" % zip_project
-    print "the zip_type is %s" % zip_type
-    print "the zip_version is %s" % zip_version
-    print "the email_list is %s" % email_list
-    print "the isdelivery is %s" % isdelivery
+    print("the zip_project is %s" % zip_project)
+    print("the zip_type is %s" % zip_type)
+    print("the zip_version is %s" % zip_version)
+    print("the email_list is %s" % email_list)
+    print("the isdelivery is %s" % isdelivery)
 
     if isdelivery == 'true':
         content = zip_project + '/' + zip_version + '/' + zip_type \

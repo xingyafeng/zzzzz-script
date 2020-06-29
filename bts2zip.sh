@@ -120,6 +120,20 @@ function zip_bts() {
     popd > /dev/null
 }
 
+# 邮件功能
+function sendEmail() {
+
+    local isSend=
+
+    if [[ "$1" ]]; then
+        isSend=$1
+    else
+        log error "参数错误."
+    fi
+
+    python ${script_p}/extend/sendemail.py ${build_bts_project} ${build_bts_type} ${build_bts_version} ${BUILD_USER_EMAIL} ${isSend}
+}
+
 function main() {
 
     local rom_p=/mfs_tablet/teleweb
@@ -131,6 +145,12 @@ function main() {
 
     # 压缩ROM版本
     zip_bts
+
+    if [[ $? -eq 0 ]]; then
+        sendEmail true
+    else
+        sendEmail false
+    fi
 }
 
 main $@
