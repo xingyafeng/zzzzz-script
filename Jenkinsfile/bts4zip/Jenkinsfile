@@ -53,7 +53,7 @@ pipeline {
 
         failure {
             script {
-                log.e 'This will run only if <failed>'
+                log.d 'This will run only if <failed>'
             }
         }
 
