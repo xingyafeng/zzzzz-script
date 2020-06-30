@@ -28,63 +28,59 @@ function enhance_zip() {
 
     pushd ${zip_path} > /dev/null
 
-    if [[ ! -f ${zip_name}.zip ]]; then
-        if [[ ${#image[@]} -gt 0 ]]; then
-            zip -1v ${zip_p}/${zip_name}.zip ${image[@]}
-        else
-            zip -1v ${zip_p}/${zip_name}.zip *.*
-        fi
+    if [[ ${#image[@]} -gt 0 ]]; then
+        zip -1v ${zip_p}/${zip_name}.zip ${image[@]}
+    else
+        zip -1v ${zip_p}/${zip_name}.zip *.*
+    fi
 
-        if [[ $? -eq 0 ]]; then
-            if [[ -n ${bts_perso} ]]; then
-                case `get_file_type ${perso_p}` in
+    if [[ $? -eq 0 ]]; then
+        if [[ -n ${bts_perso} ]]; then
+            case `get_file_type ${perso_p}` in
 
-                    mbn)
-                        pushd `dirname ${perso_p}` > /dev/null
-                        zip -1uv ${zip_p}/${zip_name}.zip `basename ${perso_p}`
-                        popd > /dev/null
+                mbn)
+                    pushd `dirname ${perso_p}` > /dev/null
+                    zip -1uv ${zip_p}/${zip_name}.zip `basename ${perso_p}`
+                    popd > /dev/null
+                ;;
+
+                zip)
+                    local perso_mbn=
+                    local perso_name=`test -n ${perso_p} && test -f ${perso_p} && unzip -l ${perso_p} | egrep ".raw|.mbn" | tail -1 | awk '{print $NF}'`
+
+                    show_vig "perso_name = ${perso_name}"
+
+                    pushd ${zip_p} > /dev/null
+
+                    unzip ${perso_p} -d .
+                    if [[ -f ${perso_name} ]]; then
+                        case `get_file_type ${perso_name}` in
+
+                            raw)
+                                perso_mbn=`echo ${perso_name} | sed 's/.raw/.mbn/'`
+                                mv -vf ${perso_name} ${perso_mbn}
+                            ;;
+
+                            *)
+                                perso_mbn=${perso_name}
+                            ;;
+                        esac
+
+                        zip -1uv ${zip_p}/${zip_name}.zip ${perso_mbn}
+                    else
+                        log warn "Could not found the ${perso_name} ..."
+                    fi
+
+                    popd > /dev/null
+                ;;
+
+                *)
+                    log error "文件格式：get_file_type ${perso_p}，暂不支持!"
                     ;;
-
-                    zip)
-                        local perso_mbn=
-                        local perso_name=`test -n ${perso_p} && test -f ${perso_p} && unzip -l ${perso_p} | egrep ".raw|.mbn" | tail -1 | awk '{print $NF}'`
-
-                        show_vig "perso_name = ${perso_name}"
-
-                        pushd ${zip_p} > /dev/null
-
-                        unzip ${perso_p} -d .
-                        if [[ -f ${perso_name} ]]; then
-                            case `get_file_type ${perso_name}` in
-
-                                raw)
-                                    perso_mbn=`echo ${perso_name} | sed 's/.raw/.mbn/'`
-                                    mv -vf ${perso_name} ${perso_mbn}
-                                ;;
-
-                                *)
-                                    perso_mbn=${perso_name}
-                                ;;
-                            esac
-
-                            zip -1uv ${zip_p}/${zip_name}.zip ${perso_mbn}
-                        else
-                            log warn "Could not found the ${perso_name} ..."
-                        fi
-
-                        popd > /dev/null
-                    ;;
-
-                    *)
-                        log error "文件格式：get_file_type ${perso_p}，暂不支持!"
-                        ;;
-                esac
-            fi
-        else
-            log error "zip version fail. "
+            esac
         fi
     else
-        log warn "The ${zip_name}.zip file is exist ... "
+        log error "zip version fail. "
     fi
 
     log debug "--> zip version end ..."
