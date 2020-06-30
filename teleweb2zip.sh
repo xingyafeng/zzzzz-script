@@ -18,6 +18,17 @@ build_zip_version=
 # 4.其他版本
 build_zip_more=
 
+# 处理公共变量
+function handle_common_variable() {
+
+    if [[ -n ${build_zip_more} ]]; then
+        zip_path=${rom_p}/${build_zip_project}/${build_zip_type}/${build_zip_version}/${build_zip_more}
+        zip_name=${build_zip_version}_`echo ${build_zip_more} | sed s#/#_#g`
+    else
+        zip_path=${rom_p}/${build_zip_project}/${build_zip_type}/${build_zip_version}
+        zip_name=${build_zip_version}
+    fi
+}
 
 function handle_vairable() {
 
@@ -32,6 +43,9 @@ function handle_vairable() {
 
     # 4. 其他信息
     build_zip_more=${zip_more:=}
+
+    # 公共变量
+    handle_common_variable
 }
 
 function print_variable() {
@@ -54,16 +68,6 @@ function init() {
 }
 
 function zip_rom() {
-
-    local zip_path  zip_name
-
-    if [[ -n ${build_zip_more} ]]; then
-        zip_path=${rom_p}/${build_zip_project}/${build_zip_type}/${build_zip_version}/${build_zip_more}
-        zip_name=${build_zip_version}_`echo ${build_zip_more} | sed s#/#_#g`
-    else
-        zip_path=${rom_p}/${build_zip_project}/${build_zip_type}/${build_zip_version}
-        zip_name=${build_zip_version}
-    fi
 
     if [[ -d ${zip_path} && -n ${zip_name} ]]; then
 
@@ -93,12 +97,16 @@ function sendEmail() {
 function main() {
 
     local rom_p=/mfs_tablet/0_Shenzhen
+    local zip_path  zip_name
 
     # 初始化
     init
 
     # 压缩ROM版本
     zip_rom
+
+    # 备份zip文件
+    backup_zip_to_teleweb
 
     if [[ $? -eq 0 ]]; then
         sendEmail true

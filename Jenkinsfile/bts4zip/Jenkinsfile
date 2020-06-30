@@ -1,0 +1,62 @@
+#!/usr/bin/env groovy
+@Library('share-library@master') _
+
+pipeline {
+    agent {
+        node {
+            label "WS186"
+            customWorkspace "/home/yafeng/jobs/${JOB_NAME}"
+        }
+    }
+
+    stages {
+        stage('init') {
+            steps {
+                echo 'init ...'
+            }
+        }
+
+        stage('build') {
+            steps {
+                echo "build ..."
+                script {
+                    log.d('测试log输出功能')
+                    utils.command("ls -al")
+
+//                            utils.send_email("构建成功...1",  email)
+//                            utils_.send_email("构建成功...2", email)
+
+                    def browsers = ['chrome', 'firefox']
+                    for (int i = 0; i < browsers.size(); ++i) {
+                        echo "Testing the ${browsers[i]} browser"
+                    }
+                }
+            }
+        }
+    }
+
+    // 编译结束后问题的处理
+    post {
+        always {
+            log.d 'This will <always> run'
+        }
+
+        success {
+            log.d 'This will run only if <successful>'
+            // mail bcc: '', body: '测试邮件', cc: '', from: '', replyTo: '', subject: '测试标题', to: 'yafeng.xing@tcl.cpm'
+        }
+
+        failure {
+            log.e 'This will run only if <failed>'
+        }
+
+        unstable {
+            log.w 'This will run only if the run was marked as <unstable>'
+        }
+
+        changed {
+            log.i 'This will run only if the state of the Pipeline has <changed>'
+            log.i 'For example, if the Pipeline was previously failing but is now successful'
+        }
+    }
+}

@@ -22,6 +22,27 @@ bts_perso=
 preso_ver=
 preso_num=
 
+# 处理公共变量
+function handle_common_variable() {
+
+    # 打包前，需要确定两个参数，zip_name和zip_path
+    if [[ -n ${bts_perso} ]]; then
+        preso_ver=`echo ${bts_perso} | awk -F/ '{print $1}'`
+        preso_num=`get_file_name ${bts_perso} | sed 's/.*\(..\)$/\1/' | sed 's/0//'`
+
+        perso_p=${rom_p}/${build_bts_project}/perso/`echo ${build_bts_version} | sed s/v//`/${bts_perso}
+
+        zip_name=bts_${build_bts_project}_${build_bts_version}_${preso_ver}_${preso_num}
+        zip_path=${rom_p}/${build_bts_project}/${build_bts_type}/${build_bts_version}
+    elif [[ -n ${build_bts_more} ]]; then
+        zip_name=bts_${build_bts_project}_${build_bts_version}_`echo ${build_bts_more} | sed s#/#_#g`
+        zip_path=${rom_p}/${build_bts_project}/${build_bts_type}/${build_bts_version}/${build_bts_more}
+    else
+        zip_name=bts_${build_bts_project}_${build_bts_version}
+        zip_path=${rom_p}/${build_bts_project}/${build_bts_type}/${build_bts_version}
+    fi
+}
+
 function handle_vairable() {
 
     # 1. 项目名
@@ -41,22 +62,7 @@ function handle_vairable() {
         bts_perso=${bts_more:=}
     fi
 
-    # 打包前，需要确定两个参数，zip_name和zip_path
-    if [[ -n ${bts_perso} ]]; then
-        preso_ver=`echo ${bts_perso} | awk -F/ '{print $1}'`
-        preso_num=`get_file_name ${bts_perso} | sed 's/.*\(..\)$/\1/' | sed 's/0//'`
-
-        perso_p=${rom_p}/${build_bts_project}/perso/`echo ${build_bts_version} | sed s/v//`/${bts_perso}
-
-        zip_name=bts_${build_bts_project}_${build_bts_version}_${preso_ver}_${preso_num}
-        zip_path=${rom_p}/${build_bts_project}/${build_bts_type}/${build_bts_version}
-    elif [[ -n ${build_bts_more} ]]; then
-        zip_name=bts_${build_bts_project}_${build_bts_version}_`echo ${build_bts_more} | sed s#/#_#g`
-        zip_path=${rom_p}/${build_bts_project}/${build_bts_type}/${build_bts_version}/${build_bts_more}
-    else
-        zip_name=bts_${build_bts_project}_${build_bts_version}
-        zip_path=${rom_p}/${build_bts_project}/${build_bts_type}/${build_bts_version}
-    fi
+    handle_common_variable
 }
 
 function print_variable() {
@@ -109,7 +115,7 @@ function zip_bts() {
     image[${#image[@]}]=`check_if_recovery_exists`
     image[${#image[@]}]=`check_if_userdata_exists`
 
-    show_vig "image = ${image[@]} ${build_bts_more}"
+    show_vig "image = ${image[@]} ${bts_perso}"
 
     if [[ -d ${zip_path} && -n ${zip_name} ]]; then
         time enhance_zip
@@ -144,17 +150,51 @@ function main() {
     local zip_path  zip_name
     local perso_p=
 
-    # 初始化
-    init
 
-    # 压缩ROM版本
-    zip_bts
+    case $# in
 
-    if [[ $? -eq 0 ]]; then
-        sendEmail true
-    else
-        sendEmail false
-    fi
+        0)
+            # 初始化
+            init
+
+            # 压缩bts zip
+            zip_bts
+
+            # 备份bts zip
+            backup_zip_to_teleweb
+
+            if [[ $? -eq 0 ]]; then
+                sendEmail true
+            else
+                sendEmail false
+            fi
+        ;;
+
+        1)
+            # 初始化
+            init
+
+            case $@ in
+
+                build)
+                    zip_bts
+                    ;;
+
+                backup)
+                    backup_zip_to_teleweb
+                    if [[ $? -eq 0 ]]; then
+                        sendEmail true
+                    else
+                        sendEmail false
+                    fi
+                    ;;
+            esac
+        ;;
+
+        *)
+            log error "参数识别识别..."
+        ;;
+    esac
 }
 
 main $@

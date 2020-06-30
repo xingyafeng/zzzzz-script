@@ -80,13 +80,6 @@ function enhance_zip() {
                         ;;
                 esac
             fi
-
-            show_vip "Backup the ${zip_name}.zip file to Teleweb Server."
-
-            sudo cp -vf ${zip_p}/${zip_name}.zip .
-            if [[ -d ${zip_p} ]]; then
-                rm ${zip_p}/* -rf
-            fi
         else
             log error "zip version fail. "
         fi
@@ -95,6 +88,27 @@ function enhance_zip() {
     fi
 
     log debug "--> zip version end ..."
+
+    popd > /dev/null
+}
+
+# 备份压缩包至Teleweb服务器
+function backup_zip_to_teleweb() {
+
+    local zip_p=${tmpfs}/zip
+
+    pushd ${zip_path} > /dev/null
+
+    if [[ -f ${zip_p}/${zip_name}.zip ]]; then
+        sudo cp -vf ${zip_p}/${zip_name}.zip .
+
+        # 清理动作
+        if [[ -d ${zip_p} ]]; then
+            rm ${zip_p}/* -rf
+        fi
+    fi
+
+    show_vip "--> Backup the ${zip_name}.zip file to Teleweb Server."
 
     popd > /dev/null
 }
