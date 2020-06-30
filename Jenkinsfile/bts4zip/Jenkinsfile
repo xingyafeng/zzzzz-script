@@ -38,25 +38,36 @@ pipeline {
     // 编译结束后问题的处理
     post {
         always {
-            log.d 'This will <always> run'
+            script {
+                log.d 'This will <always> run'
+            }
+
         }
 
         success {
-            log.d 'This will run only if <successful>'
+            script {
+                log.d 'This will run only if <successful>'
+            }
             // mail bcc: '', body: '测试邮件', cc: '', from: '', replyTo: '', subject: '测试标题', to: 'yafeng.xing@tcl.cpm'
         }
 
         failure {
-            log.e 'This will run only if <failed>'
+            script {
+                log.e 'This will run only if <failed>'
+            }
         }
 
         unstable {
-            log.w 'This will run only if the run was marked as <unstable>'
+            script {
+                log.w 'This will run only if the run was marked as <unstable>'
+            }
         }
 
         changed {
-            log.i 'This will run only if the state of the Pipeline has <changed>'
-            log.i 'For example, if the Pipeline was previously failing but is now successful'
+            script {
+                log.i 'This will run only if the state of the Pipeline has <changed>'
+                log.i 'For example, if the Pipeline was previously failing but is now successful'
+            }
         }
     }
 }
