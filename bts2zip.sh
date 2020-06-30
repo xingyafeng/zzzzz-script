@@ -175,13 +175,6 @@ function main() {
 
                 backup)
                     backup_zip_to_teleweb
-                    if [[ $? -eq 0 ]]; then
-                        isSend=true
-                    else
-                        isSend=false
-                    fi
-
-                    sendEmail
                     ;;
             esac
         ;;
