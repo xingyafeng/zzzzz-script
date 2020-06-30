@@ -18,18 +18,16 @@ pipeline {
 
         stage('build') {
             steps {
-                echo "build ..."
                 script {
-                    log.d('测试log输出功能')
-                    utils.command("ls -al")
+                    utils.command("`dirname ${0}`/bts2zip.sh build")
+                }
+            }
+        }
 
-//                            utils.send_email("构建成功...1",  email)
-//                            utils_.send_email("构建成功...2", email)
-
-                    def browsers = ['chrome', 'firefox']
-                    for (int i = 0; i < browsers.size(); ++i) {
-                        echo "Testing the ${browsers[i]} browser"
-                    }
+        stage('backup') {
+            steps {
+                script {
+                    utils.command("`dirname ${0}`/bts2zip.sh backup")
                 }
             }
         }
@@ -41,7 +39,6 @@ pipeline {
             script {
                 log.d 'This will <always> run'
             }
-
         }
 
         success {
@@ -49,6 +46,8 @@ pipeline {
                 log.d 'This will run only if <successful>'
             }
             // mail bcc: '', body: '测试邮件', cc: '', from: '', replyTo: '', subject: '测试标题', to: 'yafeng.xing@tcl.cpm'
+            // utils.send_email("构建成功...1",  email)
+            // utils_.send_email("构建成功...2", email)
         }
 
         failure {

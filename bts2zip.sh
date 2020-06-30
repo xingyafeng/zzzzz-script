@@ -129,14 +129,6 @@ function zip_bts() {
 # 邮件功能
 function sendEmail() {
 
-    local isSend=
-
-    if [[ "$1" ]]; then
-        isSend=$1
-    else
-        log error "参数错误."
-    fi
-
     if [[ -n ${build_bts_more} ]]; then
         python ${script_p}/extend/sendemail2bts.py ${build_bts_project} ${build_bts_type} ${build_bts_version}/${build_bts_more}/${zip_name}.zip ${BUILD_USER_EMAIL} ${isSend}
     else
@@ -149,7 +141,7 @@ function main() {
     local rom_p=/mfs_tablet/teleweb
     local zip_path  zip_name
     local perso_p=
-
+    local isSend=
 
     case $# in
 
@@ -162,12 +154,13 @@ function main() {
 
             # 备份bts zip
             backup_zip_to_teleweb
-
             if [[ $? -eq 0 ]]; then
-                sendEmail true
+                isSend=true
             else
-                sendEmail false
+                isSend=false
             fi
+
+            sendEmail
         ;;
 
         1)
