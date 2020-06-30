@@ -145,6 +145,7 @@ function main() {
 
     case $# in
 
+        # --------------------------------------- 自由风格
         0)
             # 初始化
             init
@@ -163,6 +164,7 @@ function main() {
             sendEmail
         ;;
 
+        # --------------------------------------- pipeline 风格
         1)
             # 初始化
             init
@@ -180,7 +182,7 @@ function main() {
         ;;
 
         *)
-            log error "参数识别识别..."
+            log error "参数识别错误..."
         ;;
     esac
 }
