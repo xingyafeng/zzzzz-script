@@ -586,3 +586,53 @@ function right_remove_end() {
 
     echo ${var%%${op}*}
 }
+
+# 拿到某个路径下的磁盘单位，如: M G T etc
+function get_disk_unit() {
+
+    local path=
+
+    case $# in
+
+        0)
+            path='/home'
+            ;;
+        1)
+            case $@ in
+                -h|--help)
+                    echo ""
+                    echo "${FUNCNAME[0]} [args1]  ..."
+                    echo
+                    echo "    args1 : 文件夹路径，可为空，默认为/home"
+                    echo
+                    echo "    e.g."
+                    echo "        1. ${FUNCNAME[0]} -h --help"    #帮助
+                    echo "        2. ${FUNCNAME[0]} /home"        #查看/home目录下
+                    echo "        3. ${FUNCNAME[0]} /mnt"
+                    echo
+                    return 0
+                    ;;
+                *)
+                    path=$1
+                    ;;
+            esac
+            ;;
+        *)
+            echo ""
+            echo "${FUNCNAME[0]} [args1]  ..."
+            echo
+            echo "    args1 : 文件夹路径，可为空，默认为/home"
+            echo
+            echo "    e.g."
+            echo "        1. ${FUNCNAME[0]} -h --help"    #帮助
+            echo "        2. ${FUNCNAME[0]} /home"        #查看/home目录下
+            echo "        3. ${FUNCNAME[0]} /mnt"
+            echo
+            return 0
+            ;;
+    esac
+
+    if [[ -n ${path} ]]; then
+        df -lh ${path} | tail -1 | awk '{print $(NF-2)}' | sed 's/.*\(.\)$/\1/'
+    fi
+}
