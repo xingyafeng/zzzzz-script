@@ -101,21 +101,21 @@ function init() {
 
 function zip_bts() {
 
-    declare -a image
+    declare -a images
 
     pushd ${zip_path} > /dev/null
 
-    image[${#image[@]}]=`check_if_boot_exists`
+    images[${#images[@]}]=`check_if_boot_exists`
 
     # perso目录下不存在时，需要去寻找主版本下的system.img
     if [[ -z ${bts_perso} ]]; then
-        image[${#image[@]}]=`check_if_system_exists`
+        images[${#images[@]}]=`check_if_system_exists`
     fi
 
-    image[${#image[@]}]=`check_if_recovery_exists`
-    image[${#image[@]}]=`check_if_userdata_exists`
+    images[${#images[@]}]=`check_if_recovery_exists`
+    images[${#images[@]}]=`check_if_userdata_exists`
 
-    show_vig "image = ${image[@]} ${bts_perso}"
+    show_vig "images = ${images[@]} ${bts_perso}"
 
     if [[ -d ${zip_path} && -n ${zip_name} ]]; then
         time enhance_zip

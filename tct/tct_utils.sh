@@ -14,6 +14,7 @@
 ####################################################
 function enhance_zip() {
 
+    local image=
     local zip_p=${tmpfs}/zip
 
     log debug "--> zip version start ..."
@@ -28,8 +29,21 @@ function enhance_zip() {
 
     pushd ${zip_path} > /dev/null
 
-    if [[ ${#image[@]} -gt 0 ]]; then
-        zip -1v ${zip_p}/${zip_name}.zip ${image[@]}
+    # 清理动作,防止构建失败后,临时文件未及时清理
+    if [[ -d ${zip_p} ]]; then
+        rm ${zip_p}/* -rvf
+    fi
+
+    if [[ ${#images[@]} -gt 0 ]]; then
+
+        for image in ${images[@]} ; do
+            cp -vf ${image} ${zip_p}/`check_rom_image`
+        done
+
+        pushd ${zip_p} > /dev/null
+        zip -1v ${zip_p}/${zip_name}.zip *.*
+        popd > /dev/null
+
     else
         zip -1v ${zip_p}/${zip_name}.zip *.*
     fi
@@ -39,14 +53,23 @@ function enhance_zip() {
             case `get_file_type ${perso_p}` in
 
                 mbn)
+                    image=`basename ${perso_p}`
+
                     pushd `dirname ${perso_p}` > /dev/null
-                    zip -1uv ${zip_p}/${zip_name}.zip `basename ${perso_p}`
+                    # rename image
+                    cp -vf ${image} ${zip_p}/`check_rom_image`
+
+                    # updte perso image
+                    pushd ${zip_p} > /dev/null
+                    zip -1uv ${zip_p}/${zip_name}.zip `check_rom_image`
+                    popd > /dev/null
+
                     popd > /dev/null
                 ;;
 
                 zip)
-                    local perso_mbn=
                     local perso_name=`test -n ${perso_p} && test -f ${perso_p} && unzip -l ${perso_p} | egrep ".raw|.mbn" | tail -1 | awk '{print $NF}'`
+                    local perso_image=
 
                     show_vig "perso_name = ${perso_name}"
 
@@ -56,19 +79,24 @@ function enhance_zip() {
                     if [[ -f ${perso_name} ]]; then
                         case `get_file_type ${perso_name}` in
 
-                            raw)
-                                perso_mbn=`echo ${perso_name} | sed 's/.raw/.mbn/'`
-                                mv -vf ${perso_name} ${perso_mbn}
+                            raw|mbn)
+                                image=${perso_name}
+                                perso_image=`check_rom_image`
+                                mv -vf ${image} ${perso_image}
                             ;;
 
                             *)
-                                perso_mbn=${perso_name}
+                                log error "格式不匹配 ..."
                             ;;
                         esac
 
-                        zip -1uv ${zip_p}/${zip_name}.zip ${perso_mbn}
+                        if [[ ${perso_image} == `unzip -l ${zip_p}/${zip_name}.zip | egrep ${perso_image} | awk '{print $NF}'` ]]; then
+                            zip -d ${zip_p}/${zip_name}.zip ${perso_image}
+                        fi
+
+                        zip -1uv ${zip_p}/${zip_name}.zip ${perso_image}
                     else
-                        log warn "Could not found the ${perso_name} ..."
+                        log warn "Could not found the ${perso_image} ..."
                     fi
 
                     popd > /dev/null
@@ -107,6 +135,35 @@ function backup_zip_to_teleweb() {
     show_vip "--> Backup the ${zip_name}.zip file to Teleweb Server."
 
     popd > /dev/null
+}
+
+function check_rom_image() {
+
+    case ${image} in
+
+        B*[01]?.mbn)
+            echo 'boot.img'
+            ;;
+
+        [Yy]*[01]?.mbn|[Yy]*.raw)
+            echo 'system.img'
+            ;;
+
+        S*[01]?.mbn|U*[01]?.mbn)
+            echo 'userdata.img'
+            ;;
+
+        R*[01]?.mbn)
+            echo 'recovery.img'
+            ;;
+
+        3*??.mbn)
+            echo 'super.img'
+            ;;
+        *)
+            log error "check image file failed ..."
+        ;;
+    esac
 }
 
 function get_rom_image() {
