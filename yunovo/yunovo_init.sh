@@ -13,7 +13,7 @@ config_p=${script_p}/config
 for fname in `find ${script_p} -type f -name *_init.sh | awk -F/ '{print $(NF-1)}'` ; do
 
     # load script
-    for script in `find ${script_p}/${fname} -type f -name ${fname}_*.sh` ; do
+    for script in `find "${script_p}/${fname}" -type f -name "${fname}_*.sh"` ; do
 
         case `basename ${script}` in
 
