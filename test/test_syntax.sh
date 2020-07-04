@@ -40,6 +40,22 @@ function test_indirect() {
     echo "Now a = ${!a}"    # Indirect reference.
 }
 
+##################################
+#
+#  知识点
+#  1. 备份文件，无须重复copy份，利用bash的展开特性可以这样做
+#　   e.g  touch test{1,2,3} 创建个文件　test1 test2 test3　
+#
+##################################
+function test_backup_file() {
+
+    if [[ ! -f config/file.list  ]]; then
+        touch config/file.list
+    fi
+
+    cp -vf config/file.list{,.$(date +'%Y.%m.%d_%H.%M.%S')}
+}
+
 # 测试读取txt文件
 function read_txt()
 {
