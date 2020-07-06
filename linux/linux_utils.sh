@@ -636,3 +636,47 @@ function get_disk_unit() {
         df -lh ${path} | tail -1 | awk '{print $(NF-2)}' | sed 's/.*\(.\)$/\1/'
     fi
 }
+
+# 拿到某个文件的大小，单位byte
+function get_file_size() {
+
+    local file=
+
+    case $# in
+        1)
+            case $@ in
+                -h|--help)
+                    echo ""
+                    echo "${FUNCNAME[0]} [args1]  ..."
+                    echo
+                    echo "    args1 : 文件名"
+                    echo
+                    echo "    e.g."
+                    echo "        1. ${FUNCNAME[0]} -h --help"    #帮助
+                    echo "        2. ${FUNCNAME[0]} readme.txt"   #查看/home目录下
+                    echo "        3. ${FUNCNAME[0]} /mnt/test.txt"
+                    echo
+                    return 0
+                    ;;
+                *)
+                    file=${1:-}
+                    ;;
+            esac
+            ;;
+        *)
+            echo ""
+            echo "${FUNCNAME[0]} [args1]  ..."
+            echo
+            echo "    args1 : 文件名"
+            echo
+            echo "    e.g."
+            echo "        1. ${FUNCNAME[0]} -h --help"    #帮助
+            echo "        2. ${FUNCNAME[0]} readme.txt"   #查看/home目录下
+            echo "        3. ${FUNCNAME[0]} /mnt/test.txt"
+            echo
+            return 0
+            ;;
+    esac
+
+    wc -c < ${file}
+}

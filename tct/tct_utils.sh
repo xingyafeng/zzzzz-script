@@ -37,7 +37,23 @@ function enhance_zip() {
     if [[ ${#images[@]} -gt 0 ]]; then
 
         for image in ${images[@]} ; do
-            cp -vf ${image} ${zip_p}/`check_rom_image`
+
+            case `check_rom_image` in
+
+                vendor.img)
+                    if [[ -n ${bts_perso} ]]; then
+                        pushd `dirname ${perso_p}` > /dev/null
+                        cp -vf ${image} ${zip_p}/`check_rom_image`
+                        popd > /dev/null
+                    else
+                        cp -vf ${image} ${zip_p}/`check_rom_image`
+                    fi
+                    ;;
+
+                *)
+                    cp -vf ${image} ${zip_p}/`check_rom_image`
+                    ;;
+            esac
         done
 
         pushd ${zip_p} > /dev/null
@@ -48,67 +64,80 @@ function enhance_zip() {
         zip -1v ${zip_p}/${zip_name}.zip *.*
     fi
 
-    if [[ $? -eq 0 ]]; then
-        if [[ -n ${bts_perso} ]]; then
-            case `get_file_type ${perso_p}` in
+    # 处理追加文件，perso vendor.img
+    if [[ -n ${bts_perso} ]]; then
+        case `get_file_type ${perso_p}` in
 
-                mbn)
-                    image=`basename ${perso_p}`
+            mbn)
+                image=`basename ${perso_p}`
 
-                    pushd `dirname ${perso_p}` > /dev/null
-                    # rename image
-                    cp -vf ${image} ${zip_p}/`check_rom_image`
+                pushd `dirname ${perso_p}` > /dev/null
+                # rename image
+                cp -vf ${image} ${zip_p}/`check_rom_image`
 
-                    # updte perso image
-                    pushd ${zip_p} > /dev/null
-                    zip -1uv ${zip_p}/${zip_name}.zip `check_rom_image`
-                    popd > /dev/null
+                # updte perso image
+                pushd ${zip_p} > /dev/null
+                zip -1uv ${zip_p}/${zip_name}.zip `check_rom_image`
+                popd > /dev/null
 
-                    popd > /dev/null
-                ;;
+                popd > /dev/null
+            ;;
 
-                zip)
-                    local perso_name=`test -n ${perso_p} && test -f ${perso_p} && unzip -l ${perso_p} | egrep ".raw|.mbn" | tail -1 | awk '{print $NF}'`
-                    local perso_image=
+            zip)
+                local perso_name=`test -n ${perso_p} && test -f ${perso_p} && unzip -l ${perso_p} | egrep ".raw|.mbn" | tail -1 | awk '{print $NF}'`
+                local perso_image=
 
-                    show_vig "perso_name = ${perso_name}"
+                show_vig "perso_name = ${perso_name}"
 
-                    pushd ${zip_p} > /dev/null
+                pushd ${zip_p} > /dev/null
 
-                    unzip ${perso_p} -d .
-                    if [[ -f ${perso_name} ]]; then
-                        case `get_file_type ${perso_name}` in
+                unzip ${perso_p} -d .
+                if [[ -f ${perso_name} ]]; then
+                    case `get_file_type ${perso_name}` in
 
-                            raw|mbn)
-                                image=${perso_name}
-                                perso_image=`check_rom_image`
-                                mv -vf ${image} ${perso_image}
-                            ;;
+                        raw|mbn)
+                            image=${perso_name}
+                            perso_image=`check_rom_image`
+                            mv -vf ${image} ${perso_image}
+                        ;;
 
-                            *)
-                                log error "格式不匹配 ..."
-                            ;;
-                        esac
+                        *)
+                            log error "格式不匹配 ..."
+                        ;;
+                    esac
 
-                        if [[ ${perso_image} == `unzip -l ${zip_p}/${zip_name}.zip | egrep ${perso_image} | awk '{print $NF}'` ]]; then
-                            zip -d ${zip_p}/${zip_name}.zip ${perso_image}
-                        fi
-
-                        zip -1uv ${zip_p}/${zip_name}.zip ${perso_image}
-                    else
-                        log warn "Could not found the ${perso_image} ..."
+                    if [[ ${perso_image} == `unzip -l ${zip_p}/${zip_name}.zip | egrep ${perso_image} | awk '{print $NF}'` ]]; then
+                        zip -d ${zip_p}/${zip_name}.zip ${perso_image}
                     fi
 
-                    popd > /dev/null
-                ;;
+                    zip -1uv ${zip_p}/${zip_name}.zip ${perso_image}
+                else
+                    log warn "Could not found the ${perso_image} ..."
+                fi
 
-                *)
-                    log error "文件格式：get_file_type ${perso_p}，暂不支持!"
-                    ;;
-            esac
-        fi
-    else
-        log error "zip version fail. "
+                popd > /dev/null
+            ;;
+
+            *)
+                log error "文件格式：get_file_type ${perso_p}，暂不支持!"
+                ;;
+        esac
+
+    # 当不存在perso文件的时候，vendor.img的压缩,处理perso目录下的^2.*.mbn
+    elif [[ -n ${bts_vendor} ]];then
+
+        image=`basename ${perso_p}`
+
+        pushd `dirname ${perso_p}` > /dev/null
+        # rename image
+        cp -vf ${image} ${zip_p}/`check_rom_image`
+
+        # updte perso image
+        pushd ${zip_p} > /dev/null
+        zip -1uv ${zip_p}/${zip_name}.zip `check_rom_image`
+        popd > /dev/null
+
+        popd > /dev/null
     fi
 
     log debug "--> zip version end ..."
@@ -155,6 +184,14 @@ function check_rom_image() {
 
         R*[01]?.mbn)
             echo 'recovery.img'
+            ;;
+
+        [Vv]*[Dd]?.mbn|2*.mbn)
+            echo 'vendor.img'
+            ;;
+
+        V*8?.mbn)
+            echo 'oem.img'
             ;;
 
         3*??.mbn)
@@ -215,6 +252,52 @@ function check_if_userdata_exists() {
     get_rom_image
 }
 
+# check oem.img
+function check_if_oem_exists() {
+
+    local reg=''
+
+    if [[ -n "${build_bts_more}" ]]; then
+        case "`right_remove_end ${build_bts_more} '/'`" in
+            MP*)
+                reg='^V.*MP.*[8]0.mbn$?'
+                ;;
+
+            TM*)
+                reg='^V.*TM.*[8]0.mbn$?'
+                ;;
+
+            *)
+                reg='^V.*[8]0.mbn$?'
+                ;;
+        esac
+    fi
+
+    get_rom_image | head -1
+}
+
+# check vendor.img
+function check_if_vendor_exists() {
+
+    local reg='^[Vv].*[Dd]0.mbn$?'
+
+    case `get_rom_image | wc -l` in
+
+        1)
+            get_rom_image
+            ;;
+
+        *)
+            for img in `get_rom_image` ; do
+                img=`get_file_name ${img}`
+                if [[ `get_perso_num ${img}` == ${preso_num} ]]; then
+                    echo ${img}.mbn
+                fi
+            done
+            ;;
+    esac
+}
+
 # 探测MTK芯片
 function is_mtk_board() {
 
@@ -225,4 +308,12 @@ function is_mtk_board() {
     else
         echo false
     fi
+}
+
+# 拿到perso号
+function get_perso_num() {
+
+    local mbn=${1-}
+
+    echo ${mbn: -5:1}
 }

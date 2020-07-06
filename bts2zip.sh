@@ -21,6 +21,8 @@ build_bts_more=
 bts_perso=
 preso_ver=
 preso_num=
+# 6. vendor
+bts_vendor=
 
 # 处理公共变量
 function handle_common_variable() {
@@ -28,7 +30,7 @@ function handle_common_variable() {
     # 打包前，需要确定两个参数，zip_name和zip_path
     if [[ -n ${bts_perso} ]]; then
         preso_ver=`echo ${bts_perso} | awk -F/ '{print $1}'`
-        preso_num=`get_file_name ${bts_perso} | sed 's/.*\(..\)$/\1/' | sed 's/0//'`
+        preso_num=`get_file_name ${bts_perso}` && preso_num=`get_perso_num ${preso_num}` # perso号 倒数第五位
 
         perso_p=${rom_p}/${build_bts_project}/perso/`echo ${build_bts_version} | sed s/v//`/${bts_perso}
 
@@ -38,6 +40,10 @@ function handle_common_variable() {
         zip_name=bts_${build_bts_project}_${build_bts_version}_`echo ${build_bts_more} | sed s#/#_#g`
         zip_path=${rom_p}/${build_bts_project}/${build_bts_type}/${build_bts_version}/${build_bts_more}
     else
+        if [[ -n "${bts_vendor}" ]]; then
+            perso_p=${rom_p}/${build_bts_project}/perso/`echo ${build_bts_version} | sed s/v//`/${bts_vendor}
+        fi
+
         zip_name=bts_${build_bts_project}_${build_bts_version}
         zip_path=${rom_p}/${build_bts_project}/${build_bts_type}/${build_bts_version}
     fi
@@ -55,12 +61,21 @@ function handle_vairable() {
     build_bts_version=${bts_version:=}
 
     # 4. 其他信息
-    if [[ "${bts_more}" =~ "simlock" ]]; then
-        build_bts_more=${bts_more:=}
-    else
-        # person版本
-        bts_perso=${bts_more:=}
-    fi
+    case "`basename ${bts_more}`" in
+
+        *simlock)
+            build_bts_more=${bts_more:=}
+            ;;
+
+        2*.mbn)
+            bts_vendor=${bts_more:=}
+            ;;
+
+        *)
+            # person版本
+            bts_perso=${bts_more:=}
+            ;;
+    esac
 
     handle_common_variable
 }
@@ -105,11 +120,19 @@ function zip_bts() {
 
     pushd ${zip_path} > /dev/null
 
+    images[${#images[@]}]=`check_if_oem_exists`
     images[${#images[@]}]=`check_if_boot_exists`
 
     # perso目录下不存在时，需要去寻找主版本下的system.img
     if [[ -z ${bts_perso} ]]; then
         images[${#images[@]}]=`check_if_system_exists`
+        #处理 主目录下的vendor ^V.*D0.mbn
+        images[${#images[@]}]=`check_if_vendor_exists`
+    else
+        #处理 主目录下的vendor ^v.*d0.mbn, 当存在多个时，取与perso num对于的img文件
+        pushd `dirname ${perso_p}` > /dev/null
+        images[${#images[@]}]=`check_if_vendor_exists`
+        popd > /dev/null
     fi
 
     images[${#images[@]}]=`check_if_recovery_exists`
