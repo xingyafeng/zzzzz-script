@@ -84,10 +84,25 @@ function cdate
 
 function crom
 {
-    check_if_dir_exists ${rom_p}
+    check_if_dir_exists ${teleweb_p}
     if [[ $? -eq 0 ]]; then
-        \cd ${rom_p} > /dev/null
+        \cd ${teleweb_p} > /dev/null
     fi
+}
+
+function zzzzzz() {
+
+    local lock=${tmpfs}/yf.lock
+    local unlock=${lock}.bak
+
+    if [[ -f ${lock} ]]; then
+        mv ${lock}{,.bak}
+    elif [[ -f ${unlock} ]]; then
+        mv ${unlock} ${lock}
+    fi
+
+    echo
+    show_vip "--> lock file : `basename $(ls ${lock}*)`"
 }
 
 ## 打开文件
