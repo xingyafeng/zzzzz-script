@@ -3,6 +3,46 @@
 ##################################
 #
 #  知识点:
+#     频繁切换目录， pushd/popd/dirs
+#
+#     1、dirs [-clpv] [+N | -N]
+#        Display the list of currently remembered directories. Directories are added to the list with the pushd command;
+#        the popd command removes directories from the list.
+#        The current directory is always the first directory in the stack.
+#     2、popd [-n] [+N | -N]
+#        When no arguments are given, popd removes the top directory from the stack and performs a cd to the new top directory.
+#        The elements are numbered from 0 starting at the first directory listed with dirs; that is, popd is equivalent to popd +0.
+#     3、pushd [-n] [+N | -N | dir]
+#        Save the current directory on the top of the directory stack and then cd to dir.
+#        With no arguments, pushd exchanges the top two directories and makes the new top the current directory.
+#
+#        e.g pushd <-> cd -
+#
+#  问题点:
+#     如果你要在脚本里频繁改变当前目录，可以看看 pushd/popd/dirs 等命令
+#     可能你在代码里面写的 cd/pwd 命令都是没有必要的
+#
+##################################
+function test_dir() {
+
+    show_vip "start current dir: "`dirs`
+
+    for ts in `find . -maxdepth 1 -name .git -prune -o -name "*" -type d` ; do
+        pushd ${ts} > /dev/null
+        echo 'All dirs : '`dirs`
+        echo 'one dirs : '`dirs +0`
+        echo 'two dirs : '`dirs +1`
+        echo '----'
+        popd > /dev/null
+    done
+
+    echo
+    show_vip "end current dir: "`dirs`
+}
+
+##################################
+#
+#  知识点:
 #                           ${@:位置:个数}
 #  1. 参数的获取方法，${2-} ${@:2:1}
 #  2. 文件定向到标准输入　使用 exec  0 <标准输入> 1<标准输出> 2<标准错误>
