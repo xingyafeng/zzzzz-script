@@ -551,7 +551,7 @@ function makepac()
     local end_time=$(date +"%s")
     local tdiff=$(($end_time-$start_time))
     local hours=$(($tdiff / 3600 ))
-    local mins=$[ (($tdiff % 3600) / 60) ]
+    local mins=$(($tdiff % 3600)) && mins=$(($mins / 60))
     local secs=$(($tdiff % 60))
     local ncolors=$(tput colors 2>/dev/null)
     local ret=""

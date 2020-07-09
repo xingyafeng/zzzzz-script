@@ -28,7 +28,7 @@ function git_commit() {
 
         thisFiles=`git diff --cached --name-only`
         if [[ -n "${thisFiles}" ]]; then
-            git commit -m "manifest branch renamed to `echo ${b} | sed s#origin/##g`"
+            git commit -m "manifest branch renamed to `echo ${b} | sed s%origin/%%g`"
         fi
 
         git-push-gerrit
@@ -128,7 +128,7 @@ function main()
     :> ${script_p}/config/branchs.txt
     for b in `git branch -r | egrep -E -w 'a36|d1402|K26|k1402|k18|k570e|k86|k66|k6806|k86A|xt273|m170m|m66|s802'`;
     do
-        manifest_branch=`echo ${b} | sed s#origin/##g`
+        manifest_branch=`echo ${b} | sed s%origin/%%g`
 
         if [[ "${b}" != "->" ]];then
 

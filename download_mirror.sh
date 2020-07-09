@@ -14,7 +14,7 @@ shellfs=$0
 . "`dirname $0`/tct/tct_init.sh"
 
 # 并发数,并发数过大可能造成系统崩溃
-Qp=$[JOBS/4]
+Qp=$((JOBS/4))
 # 存放进程的队列
 Qarr=();
 # 运行进程数

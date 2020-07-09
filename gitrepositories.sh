@@ -29,7 +29,7 @@ function remove_the_same_branch() {
     for f in `ls` ; do
         while read ref;do
             echo "the same ref: ${pre_ref}/${ref}"
-        done < ${log_dir}/`get_file_name ${f}`.the_same_branch.log
+        done < ${log_dir}/"`get_file_name ${f}`".the_same_branch.log
     done
 
     cd - > /dev/null
@@ -98,7 +98,7 @@ function display_the_name_branch() {
     cd ${log_dir} > /dev/null
 
     for f in `ls` ; do
-        cat ${f} | sort | uniq -d >> ${log_dir_the_same_branch}/`get_file_name ${f}`.the_same_branch.log
+        cat ${f} | sort | uniq -d >> ${log_dir_the_same_branch}/"`get_file_name ${f}`".the_same_branch.log
     done
 
     cd - > /dev/null

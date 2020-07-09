@@ -28,7 +28,7 @@ function git_commit() {
 
         thisFiles=`git diff --cached --name-only`
         if [[ -n "${thisFiles}" ]]; then
-            git commit -m "git repositories renamed to \"platform\" in `echo ${b} | sed s#origin/##g`"
+            git commit -m "git repositories renamed to \"platform\" in `echo ${b} | sed s%origin/%%g`"
         fi
 
         git-push-gerrit
@@ -96,19 +96,19 @@ function mm() {
                             fi
                         done
 
-                        echo ${b} | sed s#origin/##g >> ${script_p}/config/branch.txt
+                        echo ${b} | sed s%origin/%%g >> ${script_p}/config/branch.txt
                     ;;
                 esac
 
-                case `echo ${b} | sed s#origin/##g` in
+                case `echo ${b} | sed s%origin/%%g` in
 
                     HEAD|yunovo/empty)
-                        echo "continue >> `echo ${b} | sed s#origin/##g`"
+                        echo "continue >> `echo ${b} | sed s%origin/%%g`"
                         continue;
                         ;;
 
                     *)
-                        __green__ "-- git commit -> ${b} == `echo ${b} | sed s#origin/##g`"
+                        __green__ "-- git commit -> ${b} == `echo ${b} | sed s%origin/%%g`"
                         echo "----------------------------------------------------------------"
                         echo
 
@@ -142,7 +142,7 @@ function main()
 
             echo "----------------------------------------------------------------"
             # 切换分支并更新.
-            git checkout `echo ${b} | sed s#origin/##g` && git pull -q
+            git checkout `echo ${b} | sed s%origin/%%g` && git pull -q
 
             for p in ${project[@]} ; do
                 mm

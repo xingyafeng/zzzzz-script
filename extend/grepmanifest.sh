@@ -64,7 +64,7 @@ function main()
 
                     *test|*volte*)
                         continue
-                        ;;&
+                        ;;
                     *)
                         :
                         ;;

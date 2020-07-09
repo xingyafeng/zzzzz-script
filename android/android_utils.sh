@@ -76,8 +76,8 @@ function print_make_completed_time()
 
     useT=$(($(date +%s -d "$endT") - $(date +%s -d "$startT")))
     hh=$((useT / 3600))
-    mm=$[ (useT - hh * 3600) / 60 ]
-    ss=$[ (useT - hh * 3600 - mm * 60) ]
+    mm=$((useT - hh * 3600)) && mm=$((mm  / 60))
+    ss=$((useT - hh * 3600 - mm * 60))
 
     __red__ "#### make completed successfully ($hh:$mm:$ss (hh:mm:ss)) ($endT) ###"
 }
@@ -111,7 +111,7 @@ function get_cpu_cores()
     case "$JOBS" in
 
         56)
-            JOBS=$[JOBS/2]
+            JOBS=$((JOBS/2))
             ;;
 
         *)

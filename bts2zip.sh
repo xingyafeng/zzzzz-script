@@ -37,7 +37,7 @@ function handle_common_variable() {
         zip_name=bts_${build_bts_project}_${build_bts_version}_${preso_ver}_${preso_num}
         zip_path=${rom_p}/${build_bts_project}/${build_bts_type}/${build_bts_version}
     elif [[ -n ${build_bts_more} ]]; then
-        zip_name=bts_${build_bts_project}_${build_bts_version}_`echo ${build_bts_more} | sed s#/#_#g`
+        zip_name=bts_${build_bts_project}_${build_bts_version}_`echo ${build_bts_more} | sed s%/%_%g`
         zip_path=${rom_p}/${build_bts_project}/${build_bts_type}/${build_bts_version}/${build_bts_more}
     else
         if [[ -n "${bts_vendor}" ]]; then

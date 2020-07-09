@@ -2,7 +2,7 @@
 
 temp_fifo_file=$$.info        #以当前进程号，为临时管道取名
 mkfifo ${temp_fifo_file}        #创建临时管道
-exec 6<>${temp_fifo_file}       #创建标识为6，可以对管道进行读写
+exec 6<> ${temp_fifo_file}       #创建标识为6，可以对管道进行读写
 rm ${temp_fifo_file}            #清空管道内容
 
 function f_sleep

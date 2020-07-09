@@ -227,18 +227,18 @@ function main() {
                 strcmp="${strcmp}""${tmp}"
             done
 
-            _inlist=(`ssh -p 29419 ${git_username}@gerrit.y gerrit ls-user-refs -p manifest -u ${git_username} --only-refs-heads | sed s#refs/heads/## | egrep -v "${strcmp}"`)
+            _inlist=(`ssh -p 29419 ${git_username}@gerrit.y gerrit ls-user-refs -p manifest -u ${git_username} --only-refs-heads | sed s%refs/heads/%% | egrep -v "${strcmp}"`)
         ;;
 
         *)
-            _inlist=(`ssh -p 29419 ${git_username}@gerrit.y gerrit ls-user-refs -p manifest -u ${git_username} --only-refs-heads | sed s#refs/heads/## | egrep "^${board}/master$|^${board}/stable$|^${board}/master[0-9][0-9]$|^${board}/stable[0-9][0-9]$"`)
+            _inlist=(`ssh -p 29419 ${git_username}@gerrit.y gerrit ls-user-refs -p manifest -u ${git_username} --only-refs-heads | sed s%refs/heads/%% | egrep "^${board}/master$|^${board}/stable$|^${board}/master[0-9][0-9]$|^${board}/stable[0-9][0-9]$"`)
         ;;
     esac
 
     show_vib "Choose Which manifest branch?"
     select_choice branch
 
-    code_p=`echo ${branch} | sed s#/#_#`
+    code_p=`echo ${branch} | sed s%/%_%`
 
     #echo "branch = $branch ; code_p = $code_p"
     case ${branch} in
