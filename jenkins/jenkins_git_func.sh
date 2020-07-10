@@ -20,6 +20,18 @@ function get_repo_git_path_from_xml()
     echo ${git_prj_name[@]}
 }
 
+# 移除无效的linkfile或者copyfile
+function remove_invalid_linkfile() {
+
+    local xml=.repo/manifest.xml
+
+    if [[ -f ${xml} ]]; then
+        for x in `cat ${xml} | egrep 'linkfile|copyfile' | awk -F '"' '{print $2}'`;do
+            rm ${x} -rf ;
+        done
+    fi
+}
+
 # 拿到Android根路径,会覆盖source中的gettop函数
 function gettop() {
 
