@@ -96,6 +96,38 @@ function test_backup_file() {
     cp -vf config/file.list{,.$(date +'%Y.%m.%d_%H.%M.%S')}
 }
 
+##################################
+#
+#  知识点
+#  1. IFS, 内部域分隔符
+#
+##################################
+function read_ifs() {
+
+    local input="config/d.txt"
+
+    while IFS=',' read -r userid group;do
+        echo ${userid}
+        echo ${group}
+    done < ${input}
+}
+
+##################################
+#
+#  知识点
+#  1. read 参数
+#      -d:表示delimiter，即定界符，一般情况下是以IFS为参数的间隔，但是通过-d，我们可以定义一直读到出现执行的字符位置。
+#　    -r:在参数输入中，我们可以使用’/’表示没有输入完，换行继续输入，如果我们需要行最后的’/’作为有效的字符，可以通过-r来进行。此外在输入字符中，我们希望/n这类特殊字符生效，也应采用-r选项。
+#  2. find -print0 结束符号 $'\0', 而 find -print 结束符号为：'\n'
+#
+##################################
+function test_r_d() {
+
+    while IFS= read -r -d $'\0'; do
+        echo "===> ${REPLY}"
+    done < <(find tools/ -print0)
+}
+
 # 测试读取txt文件
 function read_txt()
 {
