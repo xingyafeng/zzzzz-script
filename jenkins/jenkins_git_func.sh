@@ -27,7 +27,9 @@ function remove_invalid_linkfile() {
 
     if [[ -f ${xml} ]]; then
         for x in `cat ${xml} | egrep 'linkfile|copyfile' | awk -F '"' '{print $2}'`;do
-            rm ${x} -rf ;
+            if [[ -L ${x} ]]; then
+                rm ${x} -rf
+            fi
         done
     fi
 }
