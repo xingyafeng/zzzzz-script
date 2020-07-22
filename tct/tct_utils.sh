@@ -61,7 +61,7 @@ function enhance_zip() {
         popd > /dev/null
 
     else
-        zip -1v ${zip_p}/${zip_name}.zip *.*
+        zip -1v ${zip_p}/${zip_name}.zip *.* -x bts_*.zip
     fi
 
     # 处理追加文件，perso vendor.img
