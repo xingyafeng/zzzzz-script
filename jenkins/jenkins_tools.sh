@@ -810,7 +810,7 @@ function is_build_server()
             echo true
             ;;
 
-        WS186)
+        WS186|androidbuild20)
             echo true
             ;;
 
