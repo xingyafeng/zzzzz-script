@@ -34,16 +34,6 @@ function remove_invalid_linkfile() {
     fi
 }
 
-# 拿到Android根路径,会覆盖source中的gettop函数
-function gettop() {
-
-    if [[ -n "${gettop_p}" ]]; then
-        (cd ${gettop_p}; PWD= /bin/pwd)
-    else
-        log error "Don't get the gettop, please check it ..."
-    fi
-}
-
 ## 切换至gettop目录下
 function cd_to_gettop() {
 

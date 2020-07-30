@@ -1,5 +1,15 @@
 #!/usr/bin/env bash
 
+# 拿到Android根路径,会覆盖source中的gettop函数
+function gettop() {
+
+    if [[ -n "${gettop_p}" ]]; then
+        (cd ${gettop_p}; PWD= /bin/pwd)
+    else
+        log error "Don't get the gettop, please check it ..."
+    fi
+}
+
 function get_repo_reference_info()
 {
     if [[ -n "`get_cpu_type`" ]];then
