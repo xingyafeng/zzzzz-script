@@ -256,7 +256,7 @@ function git_sync_repository()
 
         popd > /dev/null
     else
-        command "git clone -b ${GITRES_BRANCH} ssh://${git_username}@${gerrit_server}:${gerrit_port}/${GITRES} ${GITRES_PATH}/${GITRES##*/}"
+        Command "git clone -b ${GITRES_BRANCH} ssh://${git_username}@${gerrit_server}:${gerrit_port}/${GITRES} ${GITRES_PATH}/${GITRES##*/}"
 
         pushd ${GITRES_PATH}/${GITRES##*/} > /dev/null
 

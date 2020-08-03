@@ -39,8 +39,8 @@ function select_choice()
     fi
 }
 
-function command() {
-    command="$@"
+function Command() {
+    local command="$@"
 
     echo
     echo '@@@@@'
