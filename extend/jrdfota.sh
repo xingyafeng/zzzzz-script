@@ -16,6 +16,8 @@ function download() {
     else
         cd ${tmpfs}/JrdDiffTool > /dev/null
         git clean -dxf
+        git reset --hard
+        git pull
         cd - > /dev/null
     fi
 }
@@ -58,33 +60,48 @@ function prepare() {
         mkdir -p data
     fi
 
-    if [[ -f ${rom_p}/appli/${source_version}/${source_version}.zip ]]; then
-        unzip ${rom_p}/appli/${source_version}/${source_version}.zip -d data/src/
+
+    if ${userdebug}; then
+        GET_VERSION_PATH=originfiles/userdebug
+    else
+        if ${SETSIMLOCK}; then
+              GET_VERSION_PATH=simlock
+        else 
+              GET_VERSION_PATH=nosimlock
+        fi
+    fi
+    echo "-------------------$GET_VERSION_PATH---------------------------"
+    if [[ -d ${rom_p}/appli/${source_version}/${GET_VERSION_PATH} ]]; then
+        #unzip ${rom_p}/appli/${source_version}/${source_version}.zip -d data/src/
+        cp ${rom_p}/appli/${source_version}/${GET_VERSION_PATH}/*.mbn data/src
         backup_oem src
-    elif [[ -f ${rom_p}/tmp/${source_version}/${source_version}.zip ]]; then
-        unzip ${rom_p}/tmp/${source_version}/${source_version}.zip -d data/src/
+    elif [[ -d ${rom_p}/tmp/${source_version}/${GET_VERSION_PATH} ]]; then
+        #unzip ${rom_p}/tmp/${source_version}/${source_version}.zip -d data/src/
+        cp ${rom_p}/tmp/${source_version}/${GET_VERSION_PATH}/*.mbn data/src
         backup_oem src
     fi
 
-    if [[ -f ${rom_p}/appli/${target_version}/${target_version}.zip ]]; then
-        unzip ${rom_p}/appli/${target_version}/${target_version}.zip -d data/tgt/
+    if [[ -d ${rom_p}/appli/${target_version}/${GET_VERSION_PATH} ]]; then
+        #unzip ${rom_p}/appli/${target_version}/${target_version}.zip -d data/tgt/
+        cp ${rom_p}/appli/${target_version}/${GET_VERSION_PATH}/*.mbn data/tgt -fv
         backup_oem tgt
-    elif [[ -f ${rom_p}/tmp/${target_version}/${target_version}.zip ]]; then
-        unzip ${rom_p}/tmp/${target_version}/${target_version}.zip -d data/tgt/
+    elif [[ -d ${rom_p}/tmp/${target_version}/${GET_VERSION_PATH} ]]; then
+        #unzip ${rom_p}/tmp/${target_version}/${target_version}.zip -d data/tgt/
+        cp ${rom_p}/tmp/${target_version}/${GET_VERSION_PATH}/*.mbn data/tgt -fv
         backup_oem tgt
     fi
 
-    if [[ -f "`ls ${rom_p}/appli/${source_version}/7*.mbn`" ]]; then
-        cp -vf ${rom_p}/appli/${source_version}/7*.mbn data/src/
-    elif [[ -f "`ls ${rom_p}/tmp/${source_version}/7*.mbn`" ]]; then
-        cp -vf ${rom_p}/tmp/${source_version}/7*.mbn data/src/
-    fi
+   # if [[ -f "`ls ${rom_p}/appli/${source_version}/7*.mbn`" ]]; then
+   #     cp -vf ${rom_p}/appli/${source_version}/7*.mbn data/src/
+   # elif [[ -f "`ls ${rom_p}/tmp/${source_version}/7*.mbn`" ]]; then
+   #     cp -vf ${rom_p}/tmp/${source_version}/7*.mbn data/src/
+   # fi
 
-    if [[ -f "`ls ${rom_p}/appli/${target_version}/7*.mbn`" ]]; then
-        cp -vf ${rom_p}/appli/${target_version}/7*.mbn data/tgt/
-    elif [[ -f "`ls ${rom_p}/tmp/${target_version}/7*.mbn`" ]]; then
-        cp -vf ${rom_p}/tmp/${target_version}/7*.mbn data/tgt/
-    fi
+   # if [[ -f "`ls ${rom_p}/appli/${target_version}/7*.mbn`" ]]; then
+   #     cp -vf ${rom_p}/appli/${target_version}/7*.mbn data/tgt/
+   # elif [[ -f "`ls ${rom_p}/tmp/${target_version}/7*.mbn`" ]]; then
+   #     cp -vf ${rom_p}/tmp/${target_version}/7*.mbn data/tgt/
+   # fi
 }
 
 function exec_sh() {
@@ -155,6 +172,7 @@ function handle_xml() {
 
     if [[ -f ${xml} ]]; then
         git checkout -- ${xml}
+        sed -i s/TCL_9048S_8.1.0_8.2.3/TCL_9048S_8.1.0_8.2.3_downgrade/g ${xml}
         sed -i s/8.1.0/${remove_v_target_version}/g ${xml}
         sed -i s/8.2.3/${remove_v_source_version}/g ${xml}
         size=`ls -al downgrade_rkey.zip | awk '{print $5}'`
@@ -170,6 +188,7 @@ function handle_xml() {
 
     if [[ -f ${xml} ]]; then
         git checkout -- ${xml}
+        sed -i s/TCL_9048S_8.1.0_8.2.3/TCL_9048S_8.1.0_8.2.3_bad_integrity/g ${xml}
         sed -i s/8.1.0/${remove_v_source_version}/g ${xml}
         sed -i s/8.2.3/${remove_v_target_version}/g ${xml}
         size=`ls -al update_tkey.zip | awk '{print $5}'`
@@ -182,6 +201,7 @@ function handle_xml() {
     # 4. invalid_9.19.1 <error > 升级包中使用降级包
     if [[ -f ${xml} ]]; then
         git checkout -- ${xml}
+        sed -i s/TCL_9048S_8.1.0_8.2.3/TCL_9048S_8.1.0_8.2.3_invalid/g ${xml}
         sed -i s/8.1.0/${remove_v_source_version}/g ${xml}
         sed -i s/8.2.3/${remove_v_target_version}/g ${xml}
         size=`ls -al downgrade_rkey.zip | awk '{print $5}'`
@@ -191,6 +211,29 @@ function handle_xml() {
 
     head -c -1 -q ${xml} downgrade_rkey.zip__base64 TCL_9048S_2.xml > TCL_9048S_${source_version}_${target_version}_invalid_9.19.1.xml
 
+    # 5. size_over_1.5G_9.19.4 升级包中添加了大文件fillfile
+    if ${ADD_BIG_UPC}; then
+        echo "-------------------make big upc-------------------------------"
+        cp update_rkey.zip bigupdate.zip
+        zip bigupdate.zip fillfile
+        java -Xmx2048m -Djava.library.path=${tmpfs}/JrdDiffTool/lib64 -Dcom.tclcom.apksig.connect=localhost:50051,10.128.180.21:50051,10.128.180.117:50051,10.128.180.220:50051 -Dcom.tclcom.apksig.keysuite=thor84gvzw -jar ${tmpfs}/JrdDiffTool/framework/signapk.jar -providerClass com.tclcom.apksig.StubJCAProvider -w ${tmpfs}/JrdDiffTool/TCT_releasekeys/releasekey.x509.pem ${tmpfs}/JrdDiffTool/TCT_releasekeys/releasekey.pk8 ${tmpfs}/JrdDiffTool/data/bigupdate.zip ${tmpfs}/JrdDiffTool/data/bigupdate_rkey.zip    
+        python File2Base64.py -b bigupdate_rkey.zip
+        echo "" >>bigupdate_rkey.zip__base64
+        if [[ -f ${xml} ]]; then
+            git checkout -- ${xml}
+            sed -i s/TCL_9048S_8.1.0_8.2.3/TCL_9048S_8.1.0_8.2.3_size_over_1.5G/g ${xml}
+            sed -i s/8.1.0/${remove_v_source_version}/g ${xml}
+            sed -i s/8.2.3/${remove_v_target_version}/g ${xml}
+            size=`ls -al bigupdate_rkey.zip | awk '{print $5}'`
+            sed -i s/2862528/${size}/g ${xml}
+            sed -i s/2018-05-23/`date +"%Y-%m-%d"`/g ${xml}
+        fi
+
+        head -c -1 -q ${xml} bigupdate_rkey.zip__base64 TCL_9048S_2.xml > TCL_9048S_${source_version}_${target_version}_size_over_1.5G_9.19.4.xml
+    else 
+        echo "------------------ADD_BIG_UPC = $ADD_BIG_UPC------------------"
+    fi
+
     backup_fota_file
 
     cd - > /dev/null
@@ -199,7 +242,11 @@ function handle_xml() {
 function backup_fota_file() {
 
     local ota_path=/mfs_tablet/teleweb/thor84gvzw/fota
-    local prj_path=${source_version}_${target_version}_fota_`date +"%Y-%m-%d_%H-%M-%S"`
+    if ${userdebug}; then
+        local prj_path=${source_version}_${target_version}_userdebug_fota_`date +"%Y-%m-%d_%H-%M-%S"`
+    else
+        local prj_path=${source_version}_${target_version}_fota_`date +"%Y-%m-%d_%H-%M-%S"`
+    fi
 
     if [[ ! -d ${ota_path}/${prj_path} ]]; then
         sudo mkdir -p ${ota_path}/${prj_path}
@@ -224,7 +271,7 @@ function backup_fota_file() {
 }
 
 function main() {
-
+    
     local tmpfs=~/.tmpfs/
     local OLDP=`pwd`
 
