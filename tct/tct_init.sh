@@ -14,6 +14,9 @@ case ${shellfs##*/} in
     bts2zip.sh)
         ;;
 
+    jrdfota.sh)
+        ;;
+
     *)
         log error "执行脚本不匹配 ..."
         ;;

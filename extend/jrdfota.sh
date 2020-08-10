@@ -56,9 +56,6 @@ function prepare() {
 
     local rom_p=${mfs_p}/teleweb/thor84gvzw
 
-    local GET_VERSION_SRC_PATH=
-    local GET_VERSION_TGT_PATH=
-
     if [[ ! -d tmp ]]; then
         mkdir -p tmp
     fi
