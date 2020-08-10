@@ -5,8 +5,12 @@ set -e
 
 mfs_p=/mfs_tablet
 
-source_version=${src_version}
-target_version=${tgt_version}
+source_version=${ota_src_version:=}
+target_version=${ota_tgt_version:=}
+
+build_source_more=${ota_src_more:=}
+build_target_more=${ota_tgt_more:=}
+
 oem_type=${oem_type}
 
 function download() {
@@ -52,6 +56,9 @@ function prepare() {
 
     local rom_p=${mfs_p}/teleweb/thor84gvzw
 
+    local GET_VERSION_SRC_PATH=
+    local GET_VERSION_TGT_PATH=
+
     if [[ ! -d tmp ]]; then
         mkdir -p tmp
     fi
@@ -60,34 +67,39 @@ function prepare() {
         mkdir -p data
     fi
 
-
     if ${userdebug}; then
-        GET_VERSION_PATH=originfiles/userdebug
+        GET_VERSION_SRC_PATH=originfiles/userdebug
+        GET_VERSION_TGT_PATH=originfiles/userdebug
+
     else
-        if ${SETSIMLOCK}; then
-              GET_VERSION_PATH=simlock
-        else 
-              GET_VERSION_PATH=nosimlock
+        if [[ -n "${build_source_more}" ]]; then
+            GET_VERSION_SRC_PATH=${build_source_more}
+        fi
+
+        if [[ -n "${build_target_more}" ]]; then
+            GET_VERSION_TGT_PATH=${build_target_more}
         fi
     fi
-    echo "-------------------$GET_VERSION_PATH---------------------------"
-    if [[ -d ${rom_p}/appli/${source_version}/${GET_VERSION_PATH} ]]; then
+
+    echo "-------------------${GET_VERSION_SRC_PATH}---------------------------"
+    if [[ -d ${rom_p}/appli/${source_version}/${GET_VERSION_SRC_PATH} ]]; then
         #unzip ${rom_p}/appli/${source_version}/${source_version}.zip -d data/src/
-        cp ${rom_p}/appli/${source_version}/${GET_VERSION_PATH}/*.mbn data/src
+        cp ${rom_p}/appli/${source_version}/${GET_VERSION_SRC_PATH}/*.mbn data/src
         backup_oem src
-    elif [[ -d ${rom_p}/tmp/${source_version}/${GET_VERSION_PATH} ]]; then
+    elif [[ -d ${rom_p}/tmp/${source_version}/${GET_VERSION_SRC_PATH} ]]; then
         #unzip ${rom_p}/tmp/${source_version}/${source_version}.zip -d data/src/
-        cp ${rom_p}/tmp/${source_version}/${GET_VERSION_PATH}/*.mbn data/src
+        cp ${rom_p}/tmp/${source_version}/${GET_VERSION_SRC_PATH}/*.mbn data/src
         backup_oem src
     fi
 
-    if [[ -d ${rom_p}/appli/${target_version}/${GET_VERSION_PATH} ]]; then
+    echo "-------------------${GET_VERSION_TGT_PATH}---------------------------"
+    if [[ -d ${rom_p}/appli/${target_version}/${GET_VERSION_TGT_PATH} ]]; then
         #unzip ${rom_p}/appli/${target_version}/${target_version}.zip -d data/tgt/
-        cp ${rom_p}/appli/${target_version}/${GET_VERSION_PATH}/*.mbn data/tgt -fv
+        cp ${rom_p}/appli/${target_version}/${GET_VERSION_TGT_PATH}/*.mbn data/tgt -fv
         backup_oem tgt
-    elif [[ -d ${rom_p}/tmp/${target_version}/${GET_VERSION_PATH} ]]; then
+    elif [[ -d ${rom_p}/tmp/${target_version}/${GET_VERSION_TGT_PATH} ]]; then
         #unzip ${rom_p}/tmp/${target_version}/${target_version}.zip -d data/tgt/
-        cp ${rom_p}/tmp/${target_version}/${GET_VERSION_PATH}/*.mbn data/tgt -fv
+        cp ${rom_p}/tmp/${target_version}/${GET_VERSION_TGT_PATH}/*.mbn data/tgt -fv
         backup_oem tgt
     fi
 
