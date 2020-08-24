@@ -18,12 +18,29 @@ build_zip_version=
 # 4.其他版本
 build_zip_more=
 
+# perso
+build_zip_perso=
+perso_ver=
+perso_num=
+
 # 处理公共变量
 function handle_common_variable() {
 
     if [[ -n ${build_zip_more} ]]; then
-        zip_path=${rom_p}/${build_zip_project}/${build_zip_type}/${build_zip_version}/${build_zip_more}
-        zip_name=${build_zip_version}_`echo ${build_zip_more} | sed s%/%_%g`
+
+        if [[ "`is_perso_project`" == "true" ]]; then
+            # 处理不同perso,识别项目那些分区存在perso
+            preso_ver=`echo ${zip_perso} | awk -F/ '{print $1}'`
+            preso_num=`get_file_name ${zip_perso}` && preso_num=`get_perso_num ${preso_num}` # perso号 倒数第五位
+            perso_p=${rom_p}/${build_zip_project}/perso/`echo ${build_zip_version} | sed s/v//`/${zip_perso}
+
+            # 此版本需要更换路径.
+            zip_path=${rom_p}/${build_zip_project}/${build_zip_type}/${build_zip_version}
+            zip_name=${build_zip_version}
+        else
+            zip_path=${rom_p}/${build_zip_project}/${build_zip_type}/${build_zip_version}/${build_zip_more}
+            zip_name=${build_zip_version}_`echo ${build_zip_more} | sed s%/%_%g`
+        fi
     else
         zip_path=${rom_p}/${build_zip_project}/${build_zip_type}/${build_zip_version}
         zip_name=${build_zip_version}
@@ -43,6 +60,13 @@ function handle_vairable() {
 
     # 4. 其他信息
     build_zip_more=${zip_more:=}
+    case "`basename ${build_zip_more}`" in
+
+        *)
+            # person版本
+            zip_perso=${build_zip_more:=}
+            ;;
+    esac
 
     # 公共变量
     handle_common_variable
@@ -56,7 +80,16 @@ function print_variable() {
     echo "build_zip_project = " ${build_zip_project}
     echo "build_zip_type    = " ${build_zip_type}
     echo "build_zip_version = " ${build_zip_version}
-    echo "build_zip_more   = " ${build_zip_more}
+    echo '-----------------------------------------'
+    echo "build_zip_more    = " ${build_zip_more}
+
+    if [[ "`is_perso_project`" == "true" ]]; then
+        echo "zip_perso         = " ${zip_perso}
+        echo "preso_ver         = " ${preso_ver}
+        echo "preso_num         = " ${preso_num}
+        echo "perso_p           = " ${perso_p}
+    fi
+
     echo '-----------------------------------------'
     echo
 }
@@ -65,6 +98,20 @@ function init() {
 
     handle_vairable
     print_variable
+}
+
+function zip_perso() {
+
+    declare -a images
+
+    pushd `dirname ${perso_p}` > /dev/null
+
+    images[${#images[@]}]=`check_if_system_exists`
+    images[${#images[@]}]=`check_if_vendor_exists`
+
+    show_vig "images = ${images[@]}"
+
+    popd > /dev/null
 }
 
 function zip_rom() {
@@ -98,9 +145,16 @@ function main() {
 
     local rom_p=/mfs_tablet/0_Shenzhen
     local zip_path  zip_name
+    local perso_p
 
     # 初始化
     init
+
+    if [[ "`is_perso_project`" == "true" ]]; then
+
+        # 压缩perso版本
+        zip_perso
+    fi
 
     # 压缩ROM版本
     zip_rom

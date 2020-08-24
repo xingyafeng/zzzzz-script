@@ -225,7 +225,7 @@ function check_if_boot_exists() {
 # check system.img
 function check_if_system_exists() {
 
-    local reg='^Y.*[01]0.mbn$?'
+    local reg='^[Yy].*[01]0.mbn$?'
 
     get_rom_image
 }
@@ -316,4 +316,33 @@ function get_perso_num() {
     local mbn=${1-}
 
     echo ${mbn: -5:1}
+}
+
+# perso项目
+function is_perso_project() {
+
+    case ${build_zip_project} in
+
+        *)
+            echo false
+            ;;
+    esac
+}
+
+# 拿到所以perso img
+function get_perso_img() {
+
+    local reg="*${preso_num}.{4}.mbn$"
+
+    declare -a perso_img_list
+
+    for file in `ls | egrep ${reg} 2> /dev/null` ; do
+        if [[ -f ${file} ]]; then
+            perso_img_list[${#perso_img_list[@]}]=${file}
+        fi
+    done
+
+    if [[ ${#perso_img_list[@]} -gt 0 ]]; then
+        echo ${perso_img_list[@]}
+    fi
 }
