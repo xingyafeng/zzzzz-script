@@ -401,7 +401,17 @@ function treegrep()
         -exec grep --color -n -i "$@" {} +
 }
 
+# 利用shell自动展开特性.
+function copy_to_bak() {
 
+    local file=${1-}
+
+    if [[ -n ${file} && -f ${file}  ]]; then
+        cp ${file}{,.bak}
+    else
+        log error "copy_to_bak: cannot find '${file}': No such file or directory"
+    fi
+}
 
 ## login ssh server shortcuts
 function jenkins
