@@ -493,6 +493,10 @@ function droid20() {
     ssh android@10.129.46.20
 }
 
+function droid34() {
+    ssh 'android-bld@10.129.93.34' -p 8089
+}
+
 function droid186() {
     ssh -l android-bld 10.128.180.186
 }
