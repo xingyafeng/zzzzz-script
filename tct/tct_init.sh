@@ -17,6 +17,9 @@ case ${shellfs##*/} in
     jrdfota.sh)
         ;;
 
+    build_release.sh)
+        ;;
+
     *)
         log error "执行脚本不匹配 ..."
         ;;
