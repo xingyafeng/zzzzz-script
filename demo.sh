@@ -24,7 +24,4 @@ function main() {
     trap - ERR
 }
 
-
-
-main $@
-
+main "$@"
