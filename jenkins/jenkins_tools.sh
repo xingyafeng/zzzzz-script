@@ -758,7 +758,7 @@ function is_yunos_project
 ## 获取项目真实名称
 function get_project_real_name()
 {
-    local thisP=`pwd | awk -F/ '{print $(NF-1)}'`
+    local thisP=$(dirs | awk -F/ '{print $(NF-1)}')
 
     if [[ -n "${thisP}" ]];then
         echo "${thisP}"
