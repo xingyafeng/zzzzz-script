@@ -24,3 +24,14 @@
 #       echo "${str:1:-1}"
 #
 ####################################################################################################
+
+# 返回值的写法
+function return_value()
+{
+    local default=
+
+    # 脚本中通过python print ，shell echo 将值返回.
+    if (! python $vendor_root/tools/TCTHeaderGen.py -s $vendor_root/Macro_Desc.csv -v $1 -p ${project} -o ${operator}); then
+        echo $default
+    fi
+}
