@@ -13,7 +13,7 @@ shellfs=$0
 
 function main() {
 
-    trap 'ERRTRAP $LINENO' ERR
+    trap 'ERRTRAP ${LINENO} ${FUNCNAME} ${BASH_LINENO}' ERR
 
     log debug "start ..."
 

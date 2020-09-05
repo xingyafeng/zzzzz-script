@@ -22,7 +22,14 @@ function EXITTRAP() {
 
 function ERRTRAP() {
 
-    show_vir "[LINE:$1] Error: Command or function exited with status $?"
+    local errcode=$?
+    local lineno="$1"
+    local funcstack="$2"
+    local linecallfunc="$3"
+
+    if [[ -n "${funcstack}" && -n "${linecallfunc}" ]]; then
+        __red__ "[LINE:${linecallfunc}:${lineno}] Error: called at function : ${funcstack[0]}() - command exited with status : ${errcode} - "
+    fi
 }
 
 function DEBUGTRAP() {
