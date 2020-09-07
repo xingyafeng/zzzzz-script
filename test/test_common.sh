@@ -23,6 +23,9 @@
 #       echo "${str%?}"                 # 删除字符串中的最后个 类似地，你也可以删除2个、3个、4个……
 #       echo "${str:1:-1}"
 #   13. pre_dir=$(dirname $(readlink -e $(dirname $0))) # 拿到父路径
+#   14. set 用来显示本地变量, 特殊的妙用　 set -- "a b c d"
+#   15. env 用来显示环境变量
+#   14. export 用来显示和设置环境变量
 ####################################################################################################
 
 # 返回值的写法
@@ -34,4 +37,16 @@ function return_value()
     if (! python $vendor_root/tools/TCTHeaderGen.py -s $vendor_root/Macro_Desc.csv -v $1 -p ${project} -o ${operator}); then
         echo $default
     fi
+}
+
+# set 关键字的妙用
+function test_set()
+{
+    # 设置固定参数
+    set -- "hello" "joking"
+
+    while [[ $# -ne 0 ]]; do
+        echo ${1:-}
+        shift
+    done
 }
