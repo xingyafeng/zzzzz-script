@@ -125,13 +125,7 @@ function download_and_update_apk_repository()
 
         cd ${OPWD} > /dev/null
     else
-        git clone -b ${GITRES_BRANCH} ${git_username}@${gerrit_server}:${gerrit_port}/${GITRES} ${GITRES_PATH}/${GITRES##*/}
-
-        cd ${GITRES_PATH}/${GITRES##*/} > /dev/null
-
-        gitdir=$(git rev-parse --git-dir); scp -p -P 29419 ${git_username}@${gerrit_server}:hooks/commit-msg ${gitdir}/hooks/
-
-        cd ${OPWD} > /dev/null
+        git clone -b ${GITRES_BRANCH} ${default_gerrit}:${GITRES} ${GITRES_PATH}/${GITRES##*/}
     fi
 }
 
@@ -256,7 +250,11 @@ function git_sync_repository()
 
         popd > /dev/null
     else
-        Command "git clone -b ${GITRES_BRANCH} ssh://${git_username}@${gerrit_server}:${gerrit_port}/${GITRES} ${GITRES_PATH}/${GITRES##*/}"
+        if [[ "`is_valid_user`" == "true" ]]; then
+            Command "git clone -b ${GITRES_BRANCH} ssh://${git_username}@${gerrit_server}:${gerrit_port}/${GITRES} ${GITRES_PATH}/${GITRES##*/}"
+        else
+            Command "git clone -b ${GITRES_BRANCH} ${default_gerrit}:${GITRES} ${GITRES_PATH}/${GITRES##*/}"
+        fi
 
         pushd ${GITRES_PATH}/${GITRES##*/} > /dev/null
 

@@ -176,6 +176,7 @@ if true; then
 git_username="`git config --get user.name`"
 gerrit_server="SZ.gerrit.tclcom.com"
 gerrit_port="29418"
+default_gerrit='git@shenzhen.gitweb.com'
 else
 git_username='git'
 gerrit_server='shenzhen.gitweb.com'

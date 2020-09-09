@@ -786,6 +786,21 @@ function is_root_project()
     esac
 }
 
+### 有效git用户
+function is_valid_user() {
+
+    case ${git_username} in
+
+        yafeng.xing|Integration.tablet)
+            echo true
+            ;;
+
+        *)
+            echo false
+            ;;
+    esac
+}
+
 ### 是否为编译服务器
 function is_yunovo_server()
 {

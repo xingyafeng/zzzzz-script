@@ -3,22 +3,28 @@
 # if error;then exit
 set -e
 
-# 仓库名称
-declare -a git_prj_name
-declare -a manifest_branch
-
 # exec shell
 shellfs=$0
 
 # init function
 . "`dirname $0`/tct/tct_init.sh"
 
+# 1、mirror debug
+build_mirror_debug=
+
+# 仓库名称
+declare -a git_prj_name
+declare -a manifest_branch
+declare -a prefix
+
 # 并发数,并发数过大可能造成系统崩溃
-Qp=$((JOBS/4))
+Qp=
 # 存放进程的队列
 Qarr=();
 # 运行进程数
 run=0
+# 调试开关
+DEBUG=false
 
 # 将进程的添加到队列里的函数
 function push() {
@@ -38,9 +44,10 @@ function check() {
 	run=${#Qarr[@]}
 }
 
-function get_git_path_from_xml() {
+function download_mirror() {
 
     local xml=
+    declare -a tmp
 
     cd ${tmpfs}/manifest > /dev/null
 
@@ -52,40 +59,75 @@ function get_git_path_from_xml() {
         fi
 
         if [[ -f ${xml} ]]; then
-            append=$(cat ${xml} | grep ${url}: | sed "s%.*${url}:%%" | sed 's%".*%%')
-            echo "append ... ${append} ..."
-            if [[ -n "${append}" ]]; then
-                git_prj_name[${#git_prj_name[@]}]=${append}/`egrep -E '<project' ${xml} | grep name | egrep -v '<!--' | grep path | sed 's%.*name="%%' | sed 's%".*%%'`
-                git_prj_name[${#git_prj_name[@]}]=${append}/`egrep -E '<project' ${xml} | grep name | egrep -v '<!--|path' | sed 's%.*name="%%' | sed 's%".*%%'`
+            local append=$(cat ${xml} | grep ${default_gerrit}: | sed "s%.*${default_gerrit}:%%" | sed 's%".*%%')
+
+            unset tmp
+            unset git_prj_name
+            tmp[${#tmp[@]}]=`egrep -E '<project' ${xml} | grep name | egrep -v '<!--' | grep path | sed 's%.*name="%%' | sed 's%".*%%'`
+            tmp[${#tmp[@]}]=`egrep -E '<project' ${xml} | grep name | egrep -v '<!--|path' | sed 's%.*name="%%' | sed 's%".*%%'`
+
+            if [[ -n ${append} ]]; then
+                for t in ${tmp[@]} ; do
+                    git_prj_name[${#git_prj_name[@]}]=${append}/${t}
+                done
             else
-                git_prj_name[${#git_prj_name[@]}]=`egrep -E '<project' ${xml} | grep name | egrep -v '<!--' | grep path | sed 's%.*name="%%' | sed 's%".*%%'`
-                git_prj_name[${#git_prj_name[@]}]=`egrep -E '<project' ${xml} | grep name | egrep -v '<!--|path' | sed 's%.*name="%%' | sed 's%".*%%'`
+                git_prj_name[${#git_prj_name[@]}]+=${tmp[@]}
             fi
+
+            if [[ "${DEBUG}" == "true" ]]; then
+                __green__ "[git] project: ${mb}"
+                echo 'append : ' ${append}
+                echo ${git_prj_name[@]}
+                echo
+            fi
+
+            download_mirror_repository
         fi
     done
 
     cd - > /dev/null
 }
 
-function download_mirror() {
-
-    get_git_path_from_xml
+function download_mirror_repository() {
 
     pushd ${mirror_p} > /dev/null
 
     for g in ${git_prj_name[@]} ; do
+
         git_path=`dirname ${g}`
         git_name=`basename ${g}`
 
+        if [[ -n "${append}" ]]; then
+            if [[ "${git_path}" =~ "${append}" ]]; then
+                if [[ `dirname "${git_path}"` == '.' ]]; then
+                    git_path='.'
+                else
+                    git_path=`echo "${git_path}" | sed "s#${append}/##"`
+                fi
+            fi
+        fi
+
         if [[ ! -d ${git_path} ]]; then
             mkdir -p ${git_path}
+        fi
+
+        if [[ "${DEBUG}" == "true" ]]; then
+            echo '------'
+            echo 'git_path = ' ${git_path}
+            echo 'git_name = ' ${git_name}
+            echo '------'
+            echo
         fi
 
         pushd ${git_path} > /dev/null
 
         if [[ ! -d ${git_name}.git ]]; then
 
-            git clone --mirror ${url}:${g}.git &
+            if [[ "${DEBUG}" == "true" ]]; then
+                __green__ "git clone --mirror ${default_gerrit}:${g}.git &"
+            else
+                git clone --mirror ${default_gerrit}:${g}.git &
+            fi
             push $!
             while [[ ${run} -gt ${Qp} ]];do
                 check
@@ -111,10 +153,62 @@ function download_mirror() {
     echo "Running time is $SECONDS."
 }
 
+function get_process() {
+
+    if [[ ${JOBS} -gt 8 ]]; then
+        Qp=$((JOBS/4))
+    else
+        Qp=${JOBS}
+    fi
+}
+
+function set_manifest_branch() {
+
+    manifest_branch[${#manifest_branch[@]}]=mt6762-tf-r0-v1.1-dint
+    manifest_branch[${#manifest_branch[@]}]=sm7250-r0-seattletmo-dint
+    manifest_branch[${#manifest_branch[@]}]=sm6125-r0-portotmo-dint
+}
+
+function handle_common_variable() {
+
+    # 拿到进程数
+    get_process
+
+    # 设置要下载的分支名
+    set_manifest_branch
+
+}
+
+function handle_vairable() {
+
+    # mirror项目名
+
+    build_mirror_debug=${mirror_debug:-false}
+    DEBUG=${build_mirror_debug:-false}
+
+    handle_common_variable
+}
+
+function print_variable() {
+
+    echo
+    echo "JOBS  = " ${JOBS}
+    echo "DEBUG = " ${DEBUG}
+    echo '-----------------------------------------'
+    echo "build_mirror_debug = " ${build_mirror_debug}
+    echo '-----------------------------------------'
+    echo
+}
+
+function init() {
+
+    handle_vairable
+    print_variable
+}
+
 function main() {
 
-    local url='git@shenzhen.gitweb.com'
-    local mirror_p=/${tmpfs}/mirror
+    local mirror_p=${tmpfs}/mirror
 
     local git_path=
     local git_name=
@@ -123,17 +217,17 @@ function main() {
         mkdir ${mirror_p}
     fi
 
-    manifest_branch[${#manifest_branch[@]}]=q6125_portotmo
+    init
 
-    for b in ${branch} ; do
-        manifest_branch[${#manifest_branch[@]}]=${b}
+    for branch in ${mirror_branch} ; do
+        manifest_branch[${#manifest_branch[@]}]=${branch}
     done
 
-    # 1.下载manifest仓库
-    download_and_update_apk_repository gcs_sz/manifest master
+    # 1.下载 manifest
+    git_sync_repository gcs_sz/manifest master
 
-    # 2.下载或更新mirror仓库
+    # 2.下载、更新mirror
     download_mirror
 }
 
-main $@
+main "$@"
