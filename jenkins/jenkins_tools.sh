@@ -814,6 +814,10 @@ function is_build_server()
             echo true
             ;;
 
+        Mirror|mirrorInt)
+            echo true
+            ;;
+
         *)
             echo false
             ;;
