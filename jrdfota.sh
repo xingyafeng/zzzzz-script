@@ -118,6 +118,7 @@ function dowork() {
 function handle_xml() {
 
     local xml=TCL_9048S_1.xml
+    local xml2=TCL_9048S_2.xml
     local remove_v_build_source_version=`echo ${build_source_version} | sed s/"[v|V]"//`
     local remove_v_build_target_version=`echo ${build_target_version} | sed s/"[v|V]"//`
 
@@ -137,9 +138,10 @@ function handle_xml() {
         size=`ls -al update_rkey.zip | awk '{print $5}'`
         sed -i s/2862528/${size}/g ${xml}
         sed -i s/2018-05-23/`date +"%Y-%m-%d"`/g ${xml}
+        sed -i s/9048S/${device_name}/g ${xml}
     fi
 
-    head -c -1 -q ${xml} update_rkey.zip__base64 TCL_9048S_2.xml > TCL_9048S_${build_source_version}_${build_target_version}_upgrade.xml
+    head -c -1 -q ${xml} update_rkey.zip__base64 ${xml2} > TCL_${device_name}_${build_source_version}_${build_target_version}_upgrade.xml
 
     # 2. downgrade <降级包>
     python File2Base64.py -b downgrade_rkey.zip
@@ -153,9 +155,10 @@ function handle_xml() {
         size=`ls -al downgrade_rkey.zip | awk '{print $5}'`
         sed -i s/2862528/${size}/g ${xml}
         sed -i s/2018-05-23/`date +"%Y-%m-%d"`/g ${xml}
+        sed -i s/9048S/${device_name}/g ${xml}
     fi
 
-    head -c -1 -q ${xml} downgrade_rkey.zip__base64 TCL_9048S_2.xml > TCL_9048S_${build_target_version}_${build_source_version}_downgrade.xml
+    head -c -1 -q ${xml} downgrade_rkey.zip__base64 ${xml2} > TCL_${device_name}_${build_target_version}_${build_source_version}_downgrade.xml
 
     # 3. bad_integrity_9.19.3 <testkey>
     python File2Base64.py -b update_tkey.zip
@@ -169,9 +172,10 @@ function handle_xml() {
         size=`ls -al update_tkey.zip | awk '{print $5}'`
         sed -i s/2862528/${size}/g ${xml}
         sed -i s/2018-05-23/`date +"%Y-%m-%d"`/g ${xml}
+        sed -i s/9048S/${device_name}/g ${xml}
     fi
 
-    head -c -1 -q ${xml} update_tkey.zip__base64 TCL_9048S_2.xml > TCL_9048S_${build_source_version}_${build_target_version}_bad_integrity_9.19.3.xml
+    head -c -1 -q ${xml} update_tkey.zip__base64 ${xml2} > TCL_${device_name}_${build_source_version}_${build_target_version}_bad_integrity_9.19.3.xml
 
     # 4. invalid_9.19.1 <error > 升级包中使用降级包
     if [[ -f ${xml} ]]; then
@@ -182,9 +186,10 @@ function handle_xml() {
         size=`ls -al downgrade_rkey.zip | awk '{print $5}'`
         sed -i s/2862528/${size}/g ${xml}
         sed -i s/2018-05-23/`date +"%Y-%m-%d"`/g ${xml}
+        sed -i s/9048S/${device_name}/g ${xml}
     fi
 
-    head -c -1 -q ${xml} downgrade_rkey.zip__base64 TCL_9048S_2.xml > TCL_9048S_${build_source_version}_${build_target_version}_invalid_9.19.1.xml
+    head -c -1 -q ${xml} downgrade_rkey.zip__base64 ${xml2} > TCL_${device_name}_${build_source_version}_${build_target_version}_invalid_9.19.1.xml
 
     # 5. size_over_1.5G_9.19.4 升级包中添加了大文件fillfile
     if ${ADD_BIG_UPC}; then
@@ -202,9 +207,10 @@ function handle_xml() {
             size=`ls -al bigupdate_rkey.zip | awk '{print $5}'`
             sed -i s/2862528/${size}/g ${xml}
             sed -i s/2018-05-23/`date +"%Y-%m-%d"`/g ${xml}
+            sed -i s/9048S/${device_name}/g ${xml}
         fi
 
-        head -c -1 -q ${xml} bigupdate_rkey.zip__base64 TCL_9048S_2.xml > TCL_9048S_${build_source_version}_${build_target_version}_size_over_1.5G_9.19.4.xml
+        head -c -1 -q ${xml} bigupdate_rkey.zip__base64 ${xml2} > TCL_${device_name}_${build_source_version}_${build_target_version}_size_over_1.5G_9.19.4.xml
     else
         echo "------------------ADD_BIG_UPC = $ADD_BIG_UPC------------------"
     fi
@@ -240,10 +246,13 @@ function backup_fota() {
         sudo cp -vf update_tkey.zip ${ota_path}/${prj_path}
     fi
 
-    if [[ -n "`ls TCL_9048S_${build_source_version}_${build_target_version}_*.xml`" ]]; then
-        sudo cp -vf TCL_9048S_${build_source_version}_${build_target_version}_*.xml ${ota_path}/${prj_path}
-        sudo cp -vf TCL_9048S_${build_target_version}_${build_source_version}_*.xml ${ota_path}/${prj_path}
+    if [[ -n "`ls TCL_${device_name}_${build_source_version}_${build_target_version}_*.xml`" ]]; then
+        sudo cp -vf TCL_${device_name}_${build_source_version}_${build_target_version}_*.xml ${ota_path}/${prj_path}
+        sudo cp -vf TCL_${device_name}_${build_target_version}_${build_source_version}_*.xml ${ota_path}/${prj_path}
     fi
+
+    echo
+    show_vip "--> copy fota image finish ..."
 }
 
 function handle_vairable() {
@@ -284,6 +293,8 @@ function handle_vairable() {
     if [[ -z ${build_oem_type} ]];then
         log error "The build_oem_type is null, please check it."
     fi
+
+    handle_common_variable
 }
 
 function print_variable() {
@@ -292,24 +303,62 @@ function print_variable() {
     echo "JOBS = " ${JOBS}
     echo '-----------------------------------------'
     echo "build_source_version = " ${build_source_version}
+    echo "build_source_more    = " ${build_source_more}
     echo "build_target_version = " ${build_target_version}
+    echo "build_target_more    = " ${build_target_more}
     echo "build_oem_type       = " ${build_oem_type}
+    echo '-----------------------------------------'
+    echo "project_name_src     = " ${project_name_src}
+    echo "project_name_tgt     = " ${project_name_tgt}
+    echo "device_name          = " ${device_name}
     echo '-----------------------------------------'
     echo
 }
 
-function init() {
+function get_project_name() {
 
-    handle_vairable
-    print_variable
+    project_name_src=$(dirname ${build_source_more})
+    project_name_tgt=$(dirname ${build_target_more})
+
+    if [[ ${project_name_src} != ${project_name_tgt} ]]; then
+        log error "project don't matchup ..."
+    fi
+
+    case ${project_name_src} in
+
+        KIDS)
+            device_name="9049L"
+            ;;
+        *)
+            device_name="9048S"
+            ;;
+    esac
+}
+
+function handle_common_variable() {
 
     # 下载仓库
     git_sync_repository jrd/JrdDiffTool thor84g_vzw_1.0
+
+    # 获取项目名和更新设备名
+    get_project_name
+}
+
+function init() {
+
+    local project_name_src=
+    local project_name_tgt=
+
+    handle_vairable
+    print_variable
 }
 
 function main() {
 
-    mfs_p=/mfs_tablet
+    local mfs_p=/mfs_tablet
+
+    local project_name=
+    local device_name=
 
     init
 
@@ -318,7 +367,7 @@ function main() {
     prepare
     dowork
 
-    pushd > /dev/null
+    popd > /dev/null
 }
 
 main "$@"
