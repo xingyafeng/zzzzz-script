@@ -167,9 +167,20 @@ function set_manifest_branch() {
     manifest_branch[${#manifest_branch[@]}]=mt6762-tf-r0-v1.1-dint
     manifest_branch[${#manifest_branch[@]}]=sm7250-r0-seattletmo-dint
     manifest_branch[${#manifest_branch[@]}]=sm6125-r0-portotmo-dint
+    manifest_branch[${#manifest_branch[@]}]=qct-sm4250-tf-r-v1.0-dint
 }
 
 function handle_common_variable() {
+
+    if [[ ${build_mirror_debug} == "true" ]]; then
+        mirror_p=${tmpfs}/mirror
+    else
+        mirror_p=~/mirror
+    fi
+
+    if [[ ! -d ${mirror_p} ]]; then
+        mkdir ${mirror_p}
+    fi
 
     # 拿到进程数
     get_process
@@ -208,20 +219,18 @@ function init() {
 
 function main() {
 
-    local mirror_p=${tmpfs}/mirror
+    local mirror_p=
 
     local git_path=
     local git_name=
-
-    if [[ ! -d ${mirror_p} ]]; then
-        mkdir ${mirror_p}
-    fi
 
     init
 
     for branch in ${mirror_branch} ; do
         manifest_branch[${#manifest_branch[@]}]=${branch}
     done
+
+    manifest_branch=($(awk -vRS=' ' '!a[$1]++' <<< ${manifest_branch[@]}))
 
     # 1.下载 manifest
     git_sync_repository gcs_sz/manifest master
