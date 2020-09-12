@@ -829,7 +829,7 @@ function is_build_server()
             echo true
             ;;
 
-        Mirror|mirrorInt)
+        Mirror|mirrorInt|Gcs-mirror)
             echo true
             ;;
 
