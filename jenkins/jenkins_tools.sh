@@ -833,8 +833,13 @@ function is_build_server()
             echo true
             ;;
 
+        # build server
+        SZCS28)
+            echo true
+            ;;
+
         *)
-            echo false
+            echo true
             ;;
     esac
 }

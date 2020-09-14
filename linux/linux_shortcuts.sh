@@ -505,6 +505,11 @@ function droid186() {
     ssh -l android-bld 10.128.180.186
 }
 
+# 编译服务器，密码mobile#3
+function build102() {
+    ssh yafeng.xing@10.129.93.102
+}
+
 function droidyafeng() {
     ssh -l yafeng WS186
 }
