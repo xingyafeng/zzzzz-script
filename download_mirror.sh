@@ -58,15 +58,17 @@ function download_mirror() {
             xml=${mb}.xml
         fi
 
-        if [[ -f ${xml} ]]; then
-            local append=$(cat ${xml} | grep ${default_gerrit}: | sed "s%.*${default_gerrit}:%%" | sed 's%".*%%')
+        if [[ -f "${xml}" ]]; then
+            local append=$(xmlstarlet sel -T -t -m /manifest/remote  -v "concat(@fetch,'')" -n ${xml})
+            if [[ -n "${append}" ]]; then
+                append=$(echo ${append} | awk -F ':' '{print $NF}' | sort -u)
+            fi
 
             unset tmp
             unset git_prj_name
-            tmp[${#tmp[@]}]=`egrep -E '<project' ${xml} | grep name | egrep -v '<!--' | grep path | sed 's%.*name="%%' | sed 's%".*%%'`
-            tmp[${#tmp[@]}]=`egrep -E '<project' ${xml} | grep name | egrep -v '<!--|path' | sed 's%.*name="%%' | sed 's%".*%%'`
+            tmp[${#tmp[@]}]=$(xmlstarlet sel -T -t -m /manifest/project -v "concat(@name,' ')" -n ${xml} | sort -u)
 
-            if [[ -n ${append} ]]; then
+            if [[ -n "${append}" ]]; then
                 for t in ${tmp[@]} ; do
                     git_prj_name[${#git_prj_name[@]}]=${append}/${t}
                 done
