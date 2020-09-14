@@ -168,6 +168,13 @@ function set_manifest_branch() {
     manifest_branch[${#manifest_branch[@]}]=sm7250-r0-seattletmo-dint
     manifest_branch[${#manifest_branch[@]}]=sm6125-r0-portotmo-dint
     manifest_branch[${#manifest_branch[@]}]=qct-sm4250-tf-r-v1.0-dint
+
+    for branch in ${mirror_branch} ; do
+        manifest_branch[${#manifest_branch[@]}]=${branch}
+    done
+
+    # 去重
+    manifest_branch=($(awk -vRS=' ' '!a[$1]++' <<< ${manifest_branch[@]}))
 }
 
 function handle_common_variable() {
@@ -188,6 +195,8 @@ function handle_common_variable() {
     # 设置要下载的分支名
     set_manifest_branch
 
+    # 下载 manifest
+    git_sync_repository gcs_sz/manifest master
 }
 
 function handle_vairable() {
@@ -226,16 +235,7 @@ function main() {
 
     init
 
-    for branch in ${mirror_branch} ; do
-        manifest_branch[${#manifest_branch[@]}]=${branch}
-    done
-
-    manifest_branch=($(awk -vRS=' ' '!a[$1]++' <<< ${manifest_branch[@]}))
-
-    # 1.下载 manifest
-    git_sync_repository gcs_sz/manifest master
-
-    # 2.下载、更新mirror
+    # 下载、更新mirror
     download_mirror
 }
 
