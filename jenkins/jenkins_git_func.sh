@@ -3,21 +3,20 @@
 #### 获取所有repo下的xml文件中的git仓库路径
 function get_repo_git_path_from_xml()
 {
-    local OPWD=`pwd`
+    declare -a git_path
 
-    cd .repo/manifests > /dev/null
+    pushd .repo/manifests > /dev/null
 
     for xml in `ls`
     do
         if [[ -f ${xml} ]];then
-            git_prj_name[${#git_prj_name[@]}]=`egrep -E '<project' ${xml} | grep name | egrep -v '<!--' | grep path | sed 's%.*path="%%' | sed 's%".*%%'`
-            git_prj_name[${#git_prj_name[@]}]=`egrep -E '<project' ${xml} | grep name | egrep -v '<!--|path' | sed 's%.*name="%%' | sed 's%".*%%'`
+            git_path[${#git_path[@]}]=$(xmlstarlet sel -T -t -m /manifest/project -v "concat(@name,' ')" -n ${xml} | sort -u)
         fi
     done
 
-    cd ${OPWD} > /dev/null
+    popd > /dev/null
 
-    echo ${git_prj_name[@]}
+    echo ${git_path[@]}
 }
 
 # 移除无效的linkfile或者copyfile

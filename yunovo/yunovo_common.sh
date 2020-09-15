@@ -62,7 +62,6 @@ contentfs=""
 
 ## make编译参数
 declare -a compile_para
-declare -a git_prj_name
 ## V2.2主板参数
 YUNOVO_HARDWARE_VERSION=""
 ## mode custom
