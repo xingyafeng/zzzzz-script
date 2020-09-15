@@ -1,7 +1,19 @@
 
-### init script
-init_script=~/workspace/script/zzzzz-script/init_script.sh
+# script path
+script_p=~/workspace/script/zzzzz-script
 
-if [ -e $init_script ];then
-    source $init_script
+### init script
+init_script=${script_p}/init_script.sh
+
+if [ -e "${init_script}" ];then
+    source "${init_script}"
+fi
+
+### init .git-completion.bash
+git_completion_p=${script_p}/tools/.git-completion.bash
+
+if [ -e ~/$(basename "${git_completion_p}" ];then
+    source ~/$(basename "${git_completion_p}")
+else
+    cp -f "${git_completion_p}" ~/ && source ~/$(basename "${git_completion_p}")
 fi
