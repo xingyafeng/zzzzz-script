@@ -126,6 +126,8 @@ function download_mirror_repository() {
         if [[ ! -d ${git_name}.git ]]; then
 
             if [[ "${DEBUG}" == "true" ]]; then
+                __green__ 'pwd = ' $(pwd)
+                __green__ "path, name = " ${git_path} ',' ${git_name}
                 __green__ "git clone --mirror ${default_gerrit}:${g}.git &"
             else
                 git clone --mirror ${default_gerrit}:${g}.git &
@@ -182,7 +184,7 @@ function set_manifest_branch() {
 function handle_common_variable() {
 
     if [[ ${build_mirror_debug} == "true" ]]; then
-        mirror_p=${tmpfs}/mirror
+        mirror_p=~/mirror
     else
         mirror_p=~/mirror
     fi
