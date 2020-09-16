@@ -7,7 +7,7 @@ set -e
 shellfs=$0
 
 # init function
-. "`dirname $0`/tct/tct_init.sh"
+. "$(dirname "$0")/tct/tct_init.sh"
 
 # 1、mirror debug
 build_mirror_debug=
@@ -49,7 +49,7 @@ function download_mirror() {
     local xml=
     declare -a tmp
 
-    cd ${tmpfs}/manifest > /dev/null
+    cd "${tmpfs}"/manifest > /dev/null
 
     for mb in ${manifest_branch[@]} ; do
         if [[ ${mb} =~ '.xml' ]]; then
@@ -59,14 +59,14 @@ function download_mirror() {
         fi
 
         if [[ -f "${xml}" ]]; then
-            local append=$(xmlstarlet sel -T -t -m /manifest/remote  -v "concat(@fetch,'')" -n ${xml})
+            local append=$(xmlstarlet sel -T -t -m /manifest/remote  -v "concat(@fetch,'')" -n "${xml}")
             if [[ -n "${append}" ]]; then
-                append=$(echo ${append} | awk -F ':' '{print $NF}' | sort -u)
+                append=$(echo "${append}" | awk -F ':' '{print $NF}' | sort -u)
             fi
 
             unset tmp
             unset git_prj_name
-            tmp[${#tmp[@]}]=$(xmlstarlet sel -T -t -m /manifest/project -v "concat(@name,' ')" -n ${xml} | sort -u)
+            tmp[${#tmp[@]}]=$(xmlstarlet sel -T -t -m /manifest/project -v "concat(@name,' ')" -n "${xml}" | sort -u)
 
             if [[ -n "${append}" ]]; then
                 for t in ${tmp[@]} ; do
@@ -78,7 +78,7 @@ function download_mirror() {
 
             if [[ "${DEBUG}" == "true" ]]; then
                 __green__ "[git] project: ${mb}"
-                echo 'append : ' ${append}
+                echo 'append : ' "${append}"
                 echo ${git_prj_name[@]}
                 echo
             fi
@@ -92,45 +92,45 @@ function download_mirror() {
 
 function download_mirror_repository() {
 
-    pushd ${mirror_p} > /dev/null
+    pushd "${mirror_p}" > /dev/null
 
     for g in ${git_prj_name[@]} ; do
 
-        git_path=`dirname ${g}`
-        git_name=`basename ${g}`
+        git_path=$(dirname "${g}")
+        git_name=$(basename "${g}")
 
         if [[ -n "${append}" ]]; then
             if [[ "${git_path}" =~ "${append}" ]]; then
-                if [[ `dirname "${git_path}"` == '.' ]]; then
+                if [[ $(dirname "${git_path}") == '.' ]]; then
                     git_path='.'
                 else
-                    git_path=`echo "${git_path}" | sed "s#${append}/##"`
+                    git_path=$(echo "${git_path}" | sed "s#${append}/##")
                 fi
             fi
         fi
 
         if [[ ! -d ${git_path} ]]; then
-            mkdir -p ${git_path}
+            mkdir -p "${git_path}"
         fi
 
         if [[ "${DEBUG}" == "true" ]]; then
             echo '------'
-            echo 'git_path = ' ${git_path}
-            echo 'git_name = ' ${git_name}
+            echo 'git_path = ' "${git_path}"
+            echo 'git_name = ' "${git_name}"
             echo '------'
             echo
         fi
 
-        pushd ${git_path} > /dev/null
+        pushd "${git_path}" > /dev/null
 
         if [[ ! -d ${git_name}.git ]]; then
 
             if [[ "${DEBUG}" == "true" ]]; then
                 __green__ 'pwd = ' $(pwd)
-                __green__ "path, name = " ${git_path} ',' ${git_name}
+                __green__ "path, name = " "${git_path}" ',' "${git_name}"
                 __green__ "git clone --mirror ${default_gerrit}:${g}.git &"
             else
-                git clone --mirror ${default_gerrit}:${g}.git &
+                git clone --mirror "${default_gerrit}":"${g}".git &
             fi
             push $!
             while [[ ${run} -gt ${Qp} ]];do
@@ -138,7 +138,7 @@ function download_mirror_repository() {
                 sleep 0.1
             done
         else
-            pushd ${git_name}.git > /dev/null
+            pushd "${git_name}".git > /dev/null
             git remote update &
             push $!
             while [[ ${run} -gt ${Qp} ]];do
@@ -206,7 +206,6 @@ function handle_common_variable() {
 function handle_vairable() {
 
     # mirror项目名
-
     build_mirror_debug=${mirror_debug:-false}
     DEBUG=${build_mirror_debug:-false}
 
@@ -216,10 +215,10 @@ function handle_vairable() {
 function print_variable() {
 
     echo
-    echo "JOBS  = " ${JOBS}
-    echo "DEBUG = " ${DEBUG}
+    echo "JOBS  = " "${JOBS}"
+    echo "DEBUG = " "${DEBUG}"
     echo '-----------------------------------------'
-    echo "build_mirror_debug = " ${build_mirror_debug}
+    echo "build_mirror_debug = " "${build_mirror_debug}"
     echo '-----------------------------------------'
     echo
 }
