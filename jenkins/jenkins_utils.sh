@@ -365,3 +365,56 @@ function remove_space_for_vairable()
         echo ${old_v}
     fi
 }
+
+## 网络是否已连接
+function is_connect_netwrok() {
+
+    local target=
+    local timeout=1
+
+    local ret=
+
+    case $# in
+
+        1)
+            case $@ in
+                -h|--help)
+                    echo "${FUNCNAME[0]} args1 args2 args3 ..."
+                    echo
+                    echo "   args1 : target"
+                    echo
+                    echo "    e.g."
+                    echo "        1. ${FUNCNAME[0]}                     # 输出帮助文档"
+                    echo "        1. ${FUNCNAME[0]} [ -h | --help ]     # 输出帮助文档"
+                    echo "        2. ${FUNCNAME[0]} gcs_sz/manifest master"
+                    echo
+                    return 1
+                ;;
+
+                *)
+                    target=${1-}
+                    ;;
+            esac
+            ;;
+
+        *)
+            echo "${FUNCNAME[0]} args1 args2 args3 ..."
+            echo
+            echo "   args1 : target"
+            echo
+            echo "    e.g."
+            echo "        1. ${FUNCNAME[0]}                     # 输出帮助文档"
+            echo "        2. ${FUNCNAME[0]} [ -h | --help ]     # 输出帮助文档"
+            echo "        3. ${FUNCNAME[0]} http://sz.gerrit.tclcom.com:8080"
+            echo
+            return 1
+            ;;
+    esac
+
+    ret=$(curl -I -s --connect-timeout ${timeout} "${target}" -w %{http_code} | head -n1 | awk '{print $(NF-1)}')
+    if [[ x${ret} == x'200' ]]; then
+        echo true
+    else
+        echo false
+    fi
+}
