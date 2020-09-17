@@ -499,6 +499,31 @@ function build241() {
     ssh android-bld@10.128.180.241
 }
 
+function mirror1() {
+    ssh android@10.128.180.22
+}
+
+# sysadmin/Tablet@123
+function mirror2() {
+    ssh android@10.128.180.36
+}
+
+function mirror3() {
+    ssh android@10.129.93.128
+}
+
+function mirror4() {
+    ssh android@10.129.93.129
+}
+
+function mirror5() {
+    ssh android@10.129.93.130
+}
+
+function mirror6() {
+    ssh android@10.129.93.131
+}
+
 function droidyafeng() {
     ssh -l yafeng WS186
 }
