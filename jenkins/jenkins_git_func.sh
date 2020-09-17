@@ -266,6 +266,174 @@ function git_sync_repository()
     fi
 }
 
+#####################################################
+##
+##  函数: repo_sync_repository
+##  功能: 下载android
+##  参数: 1 -u : manifest url
+##        2 -p : project
+##        3 -b : branch
+##        4 -m : name.xml
+##
+##  举栗:
+##      1 repo_sync_repository -m sm6125-r0-portotmo-dint.xml
+##      2 repo_sync_repository -u git@shenzhen.gitweb.com -m sm6125-r0-portotmo-dint.xml
+##      2 repo_sync_repository -u git@shenzhen.gitweb.com -p gcs_sz/manifest -m sm6125-r0-portotmo-dint.xml
+##      2 repo_sync_repository -u git@shenzhen.gitweb.com -p gcs_sz/manifest -b master -m sm6125-r0-portotmo-dint.xml"
+##
+####################################################
+function repo_sync_repository() {
+
+    local manifest project branch name reference_p
+    local cmd=
+
+    while getopts "u:p:b:m:h:" opt;do
+
+        #参数存在$OPTARG中
+        case ${opt} in
+
+             u)
+                manifest=$OPTARG
+                ;;
+
+             p)
+                project=$OPTARG
+                ;;
+
+             b)
+                branch=$OPTARG
+                ;;
+
+             m)
+                name=$OPTARG
+                ;;
+
+             \?)
+                echo ""
+                show_vip "${FUNCNAME[0]} [ -u <manifest url>  -p <project> -b <branch> -m <name>  ] ..."
+                echo "    -u : manifest url"
+                echo "    -p : 项目仓库"
+                echo "    -b : manifest分支"
+                echo "    -h : 帮助"
+                echo
+                echo "    e.g."
+                echo "        0. ${FUNCNAME[0]}"
+                echo "        1. ${FUNCNAME[0]} -m sm6125-r0-portotmo-dint.xml"
+                echo "        2. ${FUNCNAME[0]} -u ${default_gerrit} -m sm6125-r0-portotmo-dint.xml"
+                echo "        3. ${FUNCNAME[0]} -u ${default_gerrit} -p gcs_sz/manifest -m sm6125-r0-portotmo-dint.xml"
+                echo "        4. ${FUNCNAME[0]} -u ${default_gerrit} -p gcs_sz/manifest -b master -m sm6125-r0-portotmo-dint.xml"
+                echo "        5. ${FUNCNAME[0]} -h|--help"
+                echo
+                return 0
+                ;;
+        esac
+    done
+
+    case $# in
+        0)
+            echo ""
+            show_vip "${FUNCNAME[0]} [ -u <manifest url>  -p <project> -b <branch> -m <name>  ] ..."
+            echo "    -u : manifest url"
+            echo "    -p : 项目仓库"
+            echo "    -b : manifest分支"
+            echo "    -h : 帮助"
+            echo
+            echo "    e.g."
+            echo "        0. ${FUNCNAME[0]}"
+            echo "        1. ${FUNCNAME[0]} -m sm6125-r0-portotmo-dint.xml"
+            echo "        2. ${FUNCNAME[0]} -u ${default_gerrit} -m sm6125-r0-portotmo-dint.xml"
+            echo "        3. ${FUNCNAME[0]} -u ${default_gerrit} -p gcs_sz/manifest -m sm6125-r0-portotmo-dint.xml"
+            echo "        4. ${FUNCNAME[0]} -u ${default_gerrit} -p gcs_sz/manifest -b master -m sm6125-r0-portotmo-dint.xml"
+            echo "        5. ${FUNCNAME[0]} -h|--help"
+            echo
+            return 0
+        ;;
+
+        1)
+            case $@ in
+                -h|--help)
+                    echo ""
+                    show_vip "${FUNCNAME[0]} [ -u <manifest url>  -p <project> -b <branch> -m <name>  ] ..."
+                    echo "    -u : manifest url"
+                    echo "    -p : 项目仓库"
+                    echo "    -b : manifest分支"
+                    echo "    -h : 帮助"
+                    echo
+                    echo "    e.g."
+                    echo "        0. ${FUNCNAME[0]}"
+                    echo "        1. ${FUNCNAME[0]} -m sm6125-r0-portotmo-dint.xml"
+                    echo "        2. ${FUNCNAME[0]} -u ${default_gerrit} -m sm6125-r0-portotmo-dint.xml"
+                    echo "        3. ${FUNCNAME[0]} -u ${default_gerrit} -p gcs_sz/manifest -m sm6125-r0-portotmo-dint.xml"
+                    echo "        4. ${FUNCNAME[0]} -u ${default_gerrit} -p gcs_sz/manifest -b master -m sm6125-r0-portotmo-dint.xml"
+                    echo "        5. ${FUNCNAME[0]} -h|--help"
+                    echo
+                    return 0
+                    ;;
+            esac
+            ;;
+    esac
+
+    manifest=${manifest:="${default_gerrit}"}
+    project=${project:='gcs_sz/manifest'}
+    branch=${branch:='master'}
+    name=${name:='sm6125-r0-portotmo-dint.xml'}
+
+    if [[ $(hostname) == "u-yafeng.xing" ]]; then
+        reference_p=~/Android/mirror
+    else
+        reference_p=/home/android/mirror
+    fi
+
+    cmd="repo init -u ${manifest}:${project}.git -b ${branch} -m ${name} --reference=${reference_p}"
+    Command ${cmd}
+
+    echo
+    echo "@@@@"
+    __green__ "cmd: \$ ${cmd}"
+    echo "@@@@"
+
+    echo
+    read -p "请检查下, 上述项目下载命令是否正确? [Yes|No]: " key
+    echo
+
+    case ${key} in
+        [yY][eE][sS]|[yY])
+
+            read -p "是否继续? : yes|no : " Reply
+            echo
+
+            case ${Reply} in
+                [nN][oO]|[nN])
+                    __wrn "已取消执行 ..."
+                    return 0
+                ;;
+
+                [yY][eE][sS]|[yY])
+                    show_vip '  下载中...'
+                ;;
+
+                *)
+                    __wrn "已取消执行 ..."
+                    return 0
+                ;;
+            esac
+
+        ;;
+
+        [nN][oO]|[nN])
+           __wrn "已取消执行 ..."
+           return 0
+        ;;
+
+        *)
+            __wrn "已取消执行 ..."
+            return 0
+        ;;
+    esac
+
+    time repo sync -c -d --prune --force-sync --no-tags -j$(nproc)
+}
+
 function recover_standard_git_project()
 {
 	local tDir=$1
