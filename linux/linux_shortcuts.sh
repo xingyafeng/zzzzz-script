@@ -416,98 +416,87 @@ function copy_to_bak() {
 ## login ssh server shortcuts
 function jenkins
 {
-	ssh jenkins@happysongs
-}
-
-function jsystem
-{
-	ssh jenkins@10.0.0.250
+	ssh android-bld@10.129.93.14 -p 8089
 }
 
 function jenkins1
 {
-	ssh jenkins@s1.y
+	ssh android-bld@10.129.93.30 -p 8089
 }
 
 function jenkins2
 {
-	ssh jenkins@s2.y
+	ssh android-bld@10.129.93.31 -p 8089
 }
 
 function jenkins3
 {
-	ssh jenkins@s3.y
+	ssh android-bld@10.129.93.34 -p 8089
 }
 
 function jenkins4
 {
-	ssh jenkins@s4.y
+	ssh android@10.129.93.104 -p 8089
 }
 
 function jenkins5
 {
-    ssh jenkins@s5.y
+    ssh android@10.129.93.105 -p 8089
 }
 
 function jenkins6
 {
-    ssh jenkins@s6.y
+    ssh android@10.129.93.106 -p 8089
 }
 
 function jenkins7
 {
-    ssh jenkins@s7.y
+    ssh android-bld@10.129.93.107 -p 8089
 }
 
-function jenkinsf1
+function jenkins8
 {
-    ssh jenkins@f1.y
+    ssh android-bld@10.129.93.108 -p 8089
 }
 
-function jenkinsc1
+function jenkins9
 {
-    ssh jenkins@c1.y
+    ssh android-bld@10.129.93.109 -p 8089
 }
 
-function jenkinsc2
+function jenkins10
 {
-    ssh jenkins@c2.y
+    ssh android-bld@10.129.93.110 -p 8089
 }
 
-function jenkinsd1
+function jenkins11
 {
-    ssh jenkins@d1.y
-}
-
-function yafengs5
-{
-    ssh yafeng@s5.y
-}
-
-function zenportal() {
-
-    ssh zenportal@10.0.3.50
-}
-
-function droid20() {
-    ssh android@10.129.46.20
-}
-
-function droid34() {
-    ssh 'android-bld@10.129.93.34' -p 8089
-}
-
-function droid109() {
-    ssh -l android-bld 10.129.93.109 -p 8089
-}
-
-function droid186() {
-    ssh -l android-bld 10.128.180.186
+    ssh android-bld@10.129.93.111 -p 8089
 }
 
 # 编译服务器，密码mobile#3
 function build102() {
     ssh yafeng.xing@10.129.93.102
+}
+
+function build20() {
+    ssh android@10.129.46.20
+}
+
+function build186() {
+    ssh -l android-bld 10.128.180.186
+}
+
+function build227() {
+    ssh -l android-bld 10.128.180.227
+}
+
+function build228() {
+    ssh -l android-bld 10.128.180.228
+}
+
+function build241() {
+    ssh android-bld@10.128.180.241
 }
 
 function droidyafeng() {
