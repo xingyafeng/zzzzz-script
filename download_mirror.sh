@@ -176,6 +176,7 @@ function get_process() {
 
 # 下载话费时间：
 # -j8 线程下载: sm6125-r0-portotmo-dint # real first 91m39.456s; secend 19m7.174s; third 13m2.114s
+# -j40线程下载: sm6125-r0-portotmo-dint # real first 26m40.314s; secend 2m23.212s; 2m25.212s
 function set_manifest_branch() {
 
     manifest_branch[${#manifest_branch[@]}]=mt6762-tf-r0-v1.1-dint
