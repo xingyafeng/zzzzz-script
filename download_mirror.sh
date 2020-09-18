@@ -159,13 +159,23 @@ function download_mirror_repository() {
 
 function get_process() {
 
-    if [[ ${JOBS} -gt 8 ]]; then
-        Qp=$((JOBS/4))
-    else
-        Qp=${JOBS}
-    fi
+    case ${JOBS} in
+
+        8)
+            Qp=${JOBS}
+            ;;
+        *)
+            if [[ ${JOBS} -ge 40 ]]; then
+                Qp=$((JOBS/4))
+            else
+                Qp=$((JOBS/2))
+            fi
+            ;;
+    esac
 }
 
+# 下载话费时间：
+# -j8 线程下载: sm6125-r0-portotmo-dint # real first 91m39.456s; secend 19m7.174s; third 13m2.114s
 function set_manifest_branch() {
 
     manifest_branch[${#manifest_branch[@]}]=mt6762-tf-r0-v1.1-dint
@@ -183,11 +193,8 @@ function set_manifest_branch() {
 
 function handle_common_variable() {
 
-    if [[ ${build_mirror_debug} == "true" ]]; then
-        mirror_p=~/mirror
-    else
-        mirror_p=~/mirror
-    fi
+    # 配置mirror存储路径
+    mirror_p=~/mirror
 
     if [[ ! -d ${mirror_p} ]]; then
         mkdir ${mirror_p}
