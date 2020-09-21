@@ -26,7 +26,8 @@
 #       cur_dir=$(dirname $(readlink -e ${BASH_SOURCE[0]})) # 拿到当前路径
 #   14. set 用来显示本地变量, 特殊的妙用　 set -- "a b c d"
 #   15. env 用来显示环境变量
-#   14. export 用来显示和设置环境变量
+#   16. export 用来显示和设置环境变量
+#   17. xmlstarlet sel -T -t -m /manifest/project -v "concat(@name,' --- ',@revision,' --- ',@groups)" -n ${xml}
 ####################################################################################################
 
 # 返回值的写法
@@ -35,8 +36,8 @@ function return_value()
     local default=
 
     # 脚本中通过python print ，shell echo 将值返回.
-    if (! python $vendor_root/tools/TCTHeaderGen.py -s $vendor_root/Macro_Desc.csv -v $1 -p ${project} -o ${operator}); then
-        echo $default
+    if (! python ${vendor_root}/tools/TCTHeaderGen.py -s ${vendor_root}/Macro_Desc.csv -v $1 -p ${project} -o ${operator}); then
+        echo ${default}
     fi
 }
 
