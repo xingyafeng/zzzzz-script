@@ -42,7 +42,7 @@ if [[ "$(is_build_server)" == "true" ]];then
     set_alias
 
     #配置编码
-    setgitencoding
+    #setgitencoding
 
     #创建文件夹
     init_script_path
