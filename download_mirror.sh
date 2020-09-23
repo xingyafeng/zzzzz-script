@@ -139,7 +139,11 @@ function download_mirror_repository() {
             done
         else
             pushd "${git_name}".git > /dev/null
-            git remote update &
+            if [[ "${DEBUG}" == "true" ]]; then
+                __blue__ "git remote update &"
+            else
+                git remote update &
+            fi
             push $!
             while [[ ${run} -gt ${Qp} ]];do
                 check
