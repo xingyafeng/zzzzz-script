@@ -178,9 +178,19 @@ function get_process() {
     esac
 }
 
-# 下载话费时间：
+# mirror下载好耗费时间：
 # -j8 线程下载: sm6125-r0-portotmo-dint # real first 91m39.456s; secend 19m7.174s; third 13m2.114s
 # -j40线程下载: sm6125-r0-portotmo-dint # real first 26m40.314s; secend 2m23.212s; 2m25.212s
+#
+# 测试下载项目：sm7250-r0-seattletmo-dint.xml
+#
+# 使用mirror下载代码，耗时与正常下载对比
+#   mirror      非mirror
+#   29m31.202s  62m28.636s
+# 使用mirror下载代码，project-objects 占用空间大小与正常下载对比
+#   mirror      非mirror
+#   103M        85G
+# 时间缩短一半时间，节省空间100%
 function set_manifest_branch() {
 
     manifest_branch[${#manifest_branch[@]}]=mt6762-tf-r0-v1.1-dint
