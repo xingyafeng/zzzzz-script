@@ -1294,6 +1294,10 @@ function is_android_project()
             echo true
             ;;
 
+        prebuild.sh)
+            echo true
+            ;;
+
         *)
             echo false
             ;;

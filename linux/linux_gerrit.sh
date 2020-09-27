@@ -23,7 +23,68 @@ function ssh-gerrit-who()
 ## ssh-gerrit
 function ssh-gerrit()
 {
-    ssh -p 29419 ${git_username}@gerrit.y $@
+    # ${git_username}
+    ssh -o ConnectTimeout=32 -p 29418 Integration.tablet@sz.gerrit.tclcom.com gerrit "$@"
+}
+
+## check verified +1
+function check_verified() {
+
+    local patchset=
+    local rowCount=
+
+    case $# in
+
+        1)
+            patchset=${1-}
+            ;;
+
+        *)
+            unset patchset
+            ;;
+    esac
+
+    if [[ -n ${patchset} ]]; then
+        rowCount=$(ssh-gerrit query "status:open --patch-sets=${patchset} label:Verified+1" | egrep 'rowCount:' | awk '{print $NF}')
+    else
+        log error "patch-set is null ..."
+    fi
+
+    if [[ ${rowCount} -eq 0 ]]; then
+        echo false
+    else
+        echo true
+    fi
+}
+
+## check code-review +2
+function check_code-review() {
+
+    local patchset=
+    local rowCount=
+
+    case $# in
+
+        1)
+            patchset=${1-}
+            ;;
+
+        *)
+            unset patchset
+            ;;
+    esac
+
+    if [[ -n ${patchset} ]]; then
+        rowCount=$(ssh-gerrit query "status:open --patch-sets=${patchset} label:code-review+2" | egrep 'rowCount:' | awk '{print $NF}')
+    else
+        log error "patch-set is null ..."
+    fi
+
+    if [[ ${rowCount} -eq 0 ]]; then
+        echo false
+    else
+        echo true
+    fi
 }
 
 ## 创建空的脚本

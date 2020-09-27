@@ -10,11 +10,27 @@ function print_env()
 }
 
 ## 编译android源码前,初始化环境变量
-function source_init()
+function source_init_yunovo()
 {
     local DEVICE_P=""
 
     print-config
+
+    ROOT=$(gettop)
+    OUT=${OUT}
+    DEVICE_PROJECT=`get_build_var TARGET_DEVICE`
+    DEVICE=`get-device-path`
+    print_env
+}
+
+function source_init()
+{
+    local DEVICE_P=""
+
+    #print-config
+
+    source build/envsetup.sh && show_vip "--> source end ..."
+    choosecombo 1 delhitf userdebug false 1 false && show_vip "--> lunch end ..."
 
     ROOT=$(gettop)
     OUT=${OUT}

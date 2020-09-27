@@ -516,12 +516,7 @@ function set_java_home_path()
 {
     unset -v JAVA_HOME
 
-    if [[ "`is_81_android`" == "true" ]];then
-        export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
-    else
-        export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64
-    fi
-
+    export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
     export JRE_HOME=${JAVA_HOME}/jre
     export CLASSPATH=.:${CLASSPATH}:${JAVA_HOME}/lib:${JRE_HOME}/lib
     export PATH=${JAVA_HOME}/bin:${JRE_HOME}/bin:$PATH

@@ -7,10 +7,10 @@ function get_repo_git_path_from_xml()
 
     pushd .repo/manifests > /dev/null
 
-    for xml in `ls`
+    for xml in "${build_manifest}"
     do
         if [[ -f ${xml} ]];then
-            git_path[${#git_path[@]}]=$(xmlstarlet sel -T -t -m /manifest/project -v "concat(@name,' ')" -n ${xml} | sort -u)
+            git_path[${#git_path[@]}]=$(xmlstarlet sel -T -t -m /manifest/project -v "concat(@path,' ')" -n ${xml} | sort -u)
         fi
     done
 
@@ -478,9 +478,10 @@ function recover_standard_android_project()
 {
 	local project=`get_repo_git_path_from_xml`
 
-	if [[ -n "$project" ]]; then
+	if [[ -n "${project}" ]]; then
 		for p in ${project}
 		do
+		    #echo '---- p ' = ${p}
             if [[ -d $(gettop)/${p} ]];then
                 recover_standard_git_project ${p}
             fi

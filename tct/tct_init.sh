@@ -20,6 +20,10 @@ case ${shellfs##*/} in
     build_release.sh)
         ;;
 
+    # 预编译
+    prebuild.sh)
+        ;;
+
     *)
         log error "执行脚本不匹配 ..."
         ;;
