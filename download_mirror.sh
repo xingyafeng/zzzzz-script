@@ -59,10 +59,19 @@ function download_mirror() {
         fi
 
         if [[ -f "${xml}" ]]; then
-            local append=$(xmlstarlet sel -T -t -m /manifest/remote  -v "concat(@fetch,'')" -n "${xml}")
-            if [[ -n "${append}" ]]; then
-                append=$(echo "${append}" | awk -F ':' '{print $NF}' | sort -u)
-            fi
+            local append=$(xmlstarlet sel -T -t -m /manifest/remote  -v "concat(@fetch,'')" -n "${xml}" | sort -u)
+            case ${append} in
+
+                # 存在不同协议，需特别区分　ssh://git@shenzhen.gitweb.com
+                ssh:*)
+                    append=$(echo "${append}" | sed 's#ssh://##' | awk -F: '/'${default_gerrit}':/{print $NF}')
+                    ;;
+
+                # 存在不同协议，需特别区分　git@shenzhen.gitweb.com
+                *)
+                    append=$(echo "${append}" | awk -F: '/'${default_gerrit}':/{print $NF}')
+                    ;;
+            esac
 
             unset tmp
             unset git_prj_name
