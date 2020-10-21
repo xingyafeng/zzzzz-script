@@ -1,7 +1,7 @@
 #!/usr/bin/env groovy
 @Library('share-library@master') _
 
-def labels = ['ws186', 'm1', 'm2', 'm3', 'm4', 'm6', 'gerrit1'] // labels for Jede types we will build on
+def labels = ['ws186', 'm1', 'm3', 'm4', 'm6', 'gerrit1'] // labels for Jede types we will build on
 def builders = [:]
 
 for (x in labels) {
