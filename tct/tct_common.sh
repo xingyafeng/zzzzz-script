@@ -1,7 +1,12 @@
 #!/usr/bin/env bash
 
 ####################################### 公共变量 (全局变量)
+# teleweb path
 teleweb_p=/mfs_tablet/teleweb
+# git username
+username='Integration.tablet'
+# build path
+BUILDDIR=${WORKSPACE}
 
 function gettop() {
 
@@ -157,12 +162,18 @@ function make_android()
 
     ## 编译android
     make_droid
-
-#    auto_create_manifest
 }
 
 function handle_tct_custom() {
 
     # 生成buildlist列表
     generate_buildlist_file
+
+    if [[ -d "out/target/common/jrdResAssetsCust/wimdata" ]];then
+        rm -rf "out/target/common/jrdResAssetsCust/wimdata"
+    fi
+
+    if [[ -f vendor/tct/source/qcn/Android.mk ]]; then
+        mv vendor/tct/source/qcn/Android.mk vendor/tct/source/qcn/Android.mk_bak
+    fi
 }

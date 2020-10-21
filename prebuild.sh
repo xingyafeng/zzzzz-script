@@ -3,20 +3,6 @@
 # if error;then exit
 set -e
 
-unset BUILD_ID
-export PS4="+ [\t] "
-
-SCRIPTS_DIR=$(dirname $(readlink -f $BASH_SOURCE))
-repo_arry=(manifests manifests.git manifest.xml project.list project-objects projects repo)
-buildlist_in_list='development/apps'
-username='Integration.tablet'
-MANIFEST_PROJECT='gcs_sz/manifest.git'
-REPO_MIRROR_PATH='/home/android/mirror'
-GERRIT_SERVER='shenzhen.gitweb.com'
-
-# 编译路径
-BUILDDIR=${WORKSPACE}
-
 # 1. manifest
 build_manifest=
 # 2. 项目名称
@@ -29,25 +15,21 @@ build_clean=
 ## manifest info
 declare -A manifest_info
 
+## --------------------------------
+
 # exec shell
 shellfs=$0
 
 # init function
 . "`dirname $0`/tct/tct_init.sh"
 
-customize_mk_list()
-{
-    #find $@ -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f -iregex '.*android.\(mk\|bp\)' \
-    find $@ \( -ipath '*/out/*' -o  -ipath '*/out_modem/*' -o -ipath '*/temp_modem/*'  -o  -ipath '*test*' -o -ipath '*sdk*' -o -ipath '*pdk*' -o -ipath '*developers*' -o -ipath '*/cts/*' -o -ipath '*support*' -o  -ipath '*.repo' -o -path '*/.git' \)  -a -prune -o -type f -iregex '.*android.\(mk\|bp\)' -print
-}
-
 function android_mk_path() {
 
-    pushd ${BUILDDIR}/${project_path} 1>/dev/null
     local find_androidmk_path_list=""
 
-    m=(`git log --name-only --pretty=format: ${revision} -1 | grep -v "^$" | sort -u`)
+    pushd ${project_path} > /dev/null
 
+    m=(`git log --name-only --pretty=format: ${revision} -1 | grep -v "^$" | sort -u`)
     for i in ${m[@]} ; do
         x=${i%/*}
         if [[ -f ${x}/Android.mk || -f ${x}/Android.bp ]];then
@@ -56,7 +38,6 @@ function android_mk_path() {
             else
                 find_androidmk_path_list="$find_androidmk_path_list $project_path/$x"
             fi
-
             continue
         fi
 
@@ -70,7 +51,6 @@ function android_mk_path() {
                 else
                     find_androidmk_path_list="$find_androidmk_path_list $project_path"
                 fi
-
                 continue
             else
                 x=${i%/*}
@@ -96,7 +76,6 @@ function android_mk_path() {
                      else
                         find_androidmk_path_list="$find_androidmk_path_list $project_path/$x"
                      fi
-
                      continue
                 fi
 
@@ -112,10 +91,9 @@ function android_mk_path() {
         fi
     done
 
-    echo "find_androidmk_path_list: $find_androidmk_path_list"
+    show_vig "find_androidmk_path_list: $find_androidmk_path_list"
     build_path=(`echo ${find_androidmk_path_list} | tr ' ' '\n' |  sort -u | uniq | xargs echo`)
-
-    echo "android_mk_path: ${build_path}"
+    __green__ "android_mk_path: ${build_path}"
 
     popd > /dev/null
 }
@@ -123,8 +101,6 @@ function android_mk_path() {
 verify_submit_patchset()
 {
     show_vip "INFO: Enter ${FUNCNAME[0]}()"
-    pushd ${BUILDDIR}/${project_path} > /dev/null
-    cd ${BUILDDIR}
 
     for args in "${localbuildprj[@]}" ; do
         project="${args%%:*}"
@@ -136,13 +112,13 @@ verify_submit_patchset()
         patchset=${tmp%%:*}
         revision=${tmp##*:}
 
+        echo 'patchset         = ' ${patchset}
+        echo 'BUILD_URL        = ' ${BUILD_URL}
+        echo 'changenumber     = ' ${changenumber}
         echo 'is_build_success = ' ${is_build_success}
-        echo 'BUILD_URL = ' ${BUILD_URL}
-        echo 'changenumber = ' ${changenumber}
-        echo 'patchset = ' ${patchset}
 
         if [[ x"${is_build_success}" == x"1" ]];then
-            ssh -o ConnectTimeout=32 -p 29418 ${username}@${GERRIT_HOST} gerrit review -m '"Build Log_URL:'${BUILD_URL}'"' ${changenumber},${patchset}
+            ssh-gerrit review -m '"Build Log_URL:'${BUILD_URL}'"' ${changenumber},${patchset}
 
             if [[ "$(check_verified ${changenumber})" == "false" ]]; then
                 ssh-gerrit review -m '"this patchset gerrit trigger build successful; --verified +1"' --verified 1 ${changenumber},${patchset}
@@ -155,7 +131,7 @@ verify_submit_patchset()
             fi
 
             if [[ "$(check_code-review ${changenumber})" == "true" ]]; then
-                echo "ssh -o ConnectTimeout=32 -p 29418 ${username}@${GERRIT_HOST} gerrit review -m '"this patchset gerrit trigger build successful; --submit"' --submit ${changenumber},${patchset}"
+                echo "ssh-gerrit review -m '"this patchset gerrit trigger build successful; --submit"' --submit ${changenumber},${patchset}"
             else
                 ssh-gerrit review -m '"can only verify now, need some people to review +2."' ${changenumber},${patchset}
                 log warn "can only verify now, need some people to review +2"
@@ -170,129 +146,114 @@ verify_submit_patchset()
         fi
     done
 
-    popd > /dev/null
     echo "INFO: Exit ${FUNCNAME[0]}()"
 }
 
 check_patchset_status()
 {
     trap 'ERRTRAP ${LINENO} ${FUNCNAME} ${BASH_LINENO}' ERR
-    echo "INFO: Enter ${FUNCNAME[0]}()"
+    show_vip "INFO: Enter ${FUNCNAME[0]}()"
 
-    cd ${BUILDDIR}
-    Is_check_status=true
-    for item in ${change_number_list[@]}
-    do
-        if [[ -z "$GERRIT_TOPIC" ]]; then
+    local Is_check_status=true
+
+    for item in ${change_number_list[@]} ; do
+        if [[ -z "${GERRIT_TOPIC}" ]] ; then
             project=${GERRIT_PROJECT}
             changenumber=${GERRIT_CHANGE_NUMBER}
             patchset=${GERRIT_PATCHSET_NUMBER}
             refspec=${GERRIT_REFSPEC}
             url=${GERRIT_CHANGE_URL}
 
-            ssh_cmd=$(ssh -o ConnectTimeout=32 -p 29418  ${username}@${GERRIT_HOST} gerrit query "--patch-sets=$changenumber status:closed")
+            ssh_cmd=$(ssh-gerrit query "--patch-sets=${changenumber} status:closed")
             if echo ${ssh_cmd} | grep "commitMessage" &>/dev/null; then
                touch aborted_flag
-               echo "$url The patch status is Abandoned or Merged now, no need to build this time."
-               ssh -o ConnectTimeout=32 -p 29418  ${username}@${GERRIT_HOST} gerrit review  -m '"Warning_Log_URL:"'${BUILD_URL}'"/console The patch has been Abandoned or Merged now, so no need to build this time."'  ${changenumber},${patchset}
+               echo "${url} The patch status is Abandoned or Merged now, no need to build this time."
+               ssh-gerrit review -m '"Warning_Log_URL:"'${BUILD_URL}'"/console The patch has been Abandoned or Merged now, so no need to build this time."' ${changenumber},${patchset}
                exit 0
             fi
 
-            ssh_cmd=$(ssh -o ConnectTimeout=32 -p 29418  ${username}@${GERRIT_HOST} gerrit query "--patch-sets=$changenumber label:Verified+1")
+            ssh_cmd=$(ssh-gerrit query "--patch-sets=$changenumber label:Verified+1")
             if echo ${ssh_cmd} | grep "commitMessage" &>/dev/null; then
                touch aborted_flag
-               echo "$url The patch status has been verified by auto compile, no need to build this time."
-               ssh -o ConnectTimeout=32 -p 29418  ${username}@${GERRIT_HOST} gerrit review  -m '"Warning_Log_URL:"'${BUILD_URL}'"/console The patch has been verified +1 by auto compile or somebody, so no need to build this time."'  ${changenumber},${patchset}
-               exit 0
-            fi
-            #ssh_cmd=$(ssh -o ConnectTimeout=32 -p 29418  ${username}@${GERRIT_HOST} gerrit query "--patch-sets=$changenumber label:Verified-1 NOT label:code-review+2")
-            #if echo ${ssh_cmd} | grep "commitMessage" &>/dev/null; then
-            #     touch aborted_flag
-            #     echo "$url The patch status has been verified -1 by auto compile and so The patch status must be code-reviewed +2, no need to build this time."
-            #     ssh -o ConnectTimeout=32 -p 29418  ${username}@${GERRIT_HOST} gerrit review  -m '"Warning_Log_URL:"'${BUILD_URL}'"/console The patchset has been verified -1 by auto compile, and so The patch status must be code-reviewed +2 to start compile again,no need to build this time."'  $changenumber,$patchset
-            #     exit 0
-            #fi
-            ssh_cmd=$(ssh -o ConnectTimeout=32 -p 29418  ${username}@${GERRIT_HOST} gerrit query "--patch-sets=$changenumber label:code-review<0")
-            if echo ${ssh_cmd} | grep "commitMessage" &>/dev/null; then
-               touch aborted_flag
-               echo "$url The patch status has been code-reviewed -1 or -2 by somebody, and so no need to build this time."
-               ssh -o ConnectTimeout=32 -p 29418  ${username}@${GERRIT_HOST} gerrit review  -m '"Warning_Log_URL:"'${BUILD_URL}'"/console The patch has been code-reviewed -1 or -2 by somebody, please check this patchset."'  ${changenumber},${patchset}
+               echo "${url} The patch status has been verified by auto compile, no need to build this time."
+               ssh-gerrit review -m '"Warning_Log_URL:"'${BUILD_URL}'"/console The patch has been verified +1 by auto compile or somebody, so no need to build this time."' ${changenumber},${patchset}
                exit 0
             fi
 
-            patchset_n=$(echo $(ssh -o ConnectTimeout=32 -p 29418 ${username}@${GERRIT_HOST} gerrit query --current-patch-set "change:$changenumber" | grep "   number:" | cut -d":" -f2))
+            ssh_cmd=$(ssh-gerrit query "--patch-sets=${changenumber} label:code-review<0")
+            if echo ${ssh_cmd} | grep "commitMessage" &>/dev/null; then
+               touch aborted_flag
+               echo "${url} The patch status has been code-reviewed -1 or -2 by somebody, and so no need to build this time."
+               ssh-gerrit review -m '"Warning_Log_URL:"'${BUILD_URL}'"/console The patch has been code-reviewed -1 or -2 by somebody, please check this patchset."' ${changenumber},${patchset}
+               exit 0
+            fi
+
+            patchset_n=$(echo $(ssh-gerrit query --current-patch-set "change:$changenumber" | grep "   number:" | cut -d":" -f2))
             if [[  ${patchset_n} -ne ${GERRIT_PATCHSET_NUMBER} ]];then
                touch aborted_flag
                echo "$url This patchset is not the latest, it was rebased or committed again, so no need to build this time."
-               ssh -o ConnectTimeout=32 -p 29418  ${username}@${GERRIT_HOST} gerrit review  -m '"Warning_Log_URL:"'${BUILD_URL}'"/console This patchset is not the latest, it was rebased or committed again, so no need to build this time."'  ${changenumber},${patchset}
+               ssh-gerrit review -m '"Warning_Log_URL:"'${BUILD_URL}'"/console This patchset is not the latest, it was rebased or committed again, so no need to build this time."'  ${changenumber},${patchset}
                exit 0
             fi
         else
-            if [[ -f "${BUILDDIR}/tmp_dir/$item" ]]; then
-                source ${BUILDDIR}/tmp_dir/${item}
+            if [[ -f "${tmpfs}/gerrit/$item" ]]; then
+                source "${tmpfs}/gerrit/${item}"
             else
                 echo "Topic item $item information dropout"
                 exit 1
             fi
 
-            ssh_cmd=$(ssh -o ConnectTimeout=32 -p 29418  ${username}@${GERRIT_HOST} gerrit query "--patch-sets=$changenumber branch:msm7250-q0-seattletmo-dint status:merged")
+            ssh_cmd=$(ssh-gerrit query "--patch-sets=$changenumber branch:msm7250-q0-seattletmo-dint status:merged")
             if echo ${ssh_cmd} | grep "commitMessage" &>/dev/null; then
                echo "$url The patch status is merged now, no need to build this time."
-               ssh -o ConnectTimeout=32 -p 29418  ${username}@${GERRIT_HOST} gerrit review  -m '"Warning_Log_URL:"'${BUILD_URL}'"/console The patch had been merged now, so no need to build this time."'  ${changenumber},${patchset}
-               sed -i -e '/'"$changenumber"'/d' ${BUILDDIR}/tmp_dir/change_number_list.txt  && rm -fv ${changenumber}
+               ssh-gerrit review -m '"Warning_Log_URL:"'${BUILD_URL}'"/console The patch had been merged now, so no need to build this time."'  ${changenumber},${patchset}
+               sed -i -e '/'"$changenumber"'/d' ${tmpfs}/gerrit/change_number_list.txt  && rm -fv ${changenumber}
                continue
             fi
 
-            ssh_cmd=$(ssh -o ConnectTimeout=32 -p 29418  ${username}@${GERRIT_HOST} gerrit query "--patch-sets=$changenumber branch:msm7250-q0-seattletmo-dint status:abandoned")
+            ssh_cmd=$(ssh-gerrit query "--patch-sets=$changenumber branch:msm7250-q0-seattletmo-dint status:abandoned")
             if echo ${ssh_cmd} | grep "commitMessage" &>/dev/null; then
                echo "$url The patch status is abandoned now, no need to build this time."
-               ssh -o ConnectTimeout=32 -p 29418  ${username}@${GERRIT_HOST} gerrit review  -m '"Warning_Log_URL:"'${BUILD_URL}'"/console The patch had been abandoned now, please check this patchset,thanks."'  ${changenumber},${patchset}
-               Is_check_status=false
-               continue
-            fi
-            #ssh_cmd=$(ssh -o ConnectTimeout=32 -p 29418  ${username}@${GERRIT_HOST} gerrit query "--patch-sets=$changenumber label:Verified-1 NOT label:code-review+2")
-            #if echo ${ssh_cmd} | grep "commitMessage" &>/dev/null; then
-            #     echo "$url The patch status has been verified -1 by auto compile and so The patch status must be code-reviewed +2, no need to build this time."
-            #     ssh -o ConnectTimeout=32 -p 29418  ${username}@${GERRIT_HOST} gerrit review  -m '"Warning_Log_URL:"'${BUILD_URL}'"/console The patchset has been verified -1 by auto compile, and so The patch status must be code-reviewed +2 to start compile again,no need to build this time."'  $changenumber,$patchset
-            #     Is_check_status=false
-            #     continue
-            #fi
-            ssh_cmd=$(ssh -o ConnectTimeout=32 -p 29418  ${username}@${GERRIT_HOST} gerrit query "--patch-sets=$changenumber branch:msm7250-q0-seattletmo-dint label:code-review<0")
-            if echo ${ssh_cmd} | grep "commitMessage" &>/dev/null; then
-               echo "$url The patch status has been code-reviewed -1 or -2 by somebody, and so no need to build this time."
-               ssh -o ConnectTimeout=32 -p 29418  ${username}@${GERRIT_HOST} gerrit review  -m '"Warning_Log_URL:"'${BUILD_URL}'"/console The patch has been code-reviewed -1 or -2 by somebody, please check this patchset,thanks."'  ${changenumber},${patchset}
+               ssh-gerrit review -m '"Warning_Log_URL:"'${BUILD_URL}'"/console The patch had been abandoned now, please check this patchset,thanks."'  ${changenumber},${patchset}
                Is_check_status=false
                continue
             fi
 
-            patchset_n=$(echo $(ssh -o ConnectTimeout=32 -p 29418 ${username}@${GERRIT_HOST} gerrit query --current-patch-set "change:$changenumber" | grep "   number:" | cut -d":" -f2))
+            ssh_cmd=$(ssh-gerrit query "--patch-sets=$changenumber branch:msm7250-q0-seattletmo-dint label:code-review<0")
+            if echo ${ssh_cmd} | grep "commitMessage" &>/dev/null; then
+               echo "$url The patch status has been code-reviewed -1 or -2 by somebody, and so no need to build this time."
+               ssh-gerrit review -m '"Warning_Log_URL:"'${BUILD_URL}'"/console The patch has been code-reviewed -1 or -2 by somebody, please check this patchset,thanks."'  ${changenumber},${patchset}
+               Is_check_status=false
+               continue
+            fi
+
+            patchset_n=$(echo $(ssh-gerrit query --current-patch-set "change:$changenumber" | grep "   number:" | cut -d":" -f2))
             if [[  ${patchset_n} -ne ${patchset} ]];then
                echo "$url This patchset is not the latest,the current patchset num is $patchset and the latest is $patchset_n, it was rebased or committed again, so no need to build this time."
-               ssh -o ConnectTimeout=32 -p 29418  ${username}@${GERRIT_HOST} gerrit review  -m '"Warning_Log_URL:"'${BUILD_URL}'"/console This patchset is not the latest, it was rebased or committed again, so no need to build this time."'  ${changenumber},${patchset}
-               sed -i -e  's/^\(patchset=\).*$/\1'"$patchset_n"'/' ${BUILDDIR}/tmp_dir/${changenumber}
+               ssh-gerrit review -m '"Warning_Log_URL:"'${BUILD_URL}'"/console This patchset is not the latest, it was rebased or committed again, so no need to build this time."'  ${changenumber},${patchset}
+               sed -i -e  's/^\(patchset=\).*$/\1'"$patchset_n"'/' ${tmpfs}/gerrit/${changenumber}
                continue
             fi
         fi
     done
 
     if [[ x"$Is_check_status" == "xfalse" ]];then
-        for item in ${change_number_list[@]}
-        do
-            if [[ -f "${BUILDDIR}/tmp_dir/$item" ]]; then
-                source "${BUILDDIR}/tmp_dir/$item"
+        for item in ${change_number_list[@]} ; do
+            if [[ -f "${tmpfs}/gerrit/$item" ]]; then
+                source "${tmpfs}/gerrit/$item"
             else
                 echo "Topic item $item information dropout"
                 exit 1
             fi
 
-            ssh -o ConnectTimeout=32 -p 29418  ${username}@${GERRIT_HOST} gerrit review  -m '"The patchset relation for check failed on the same pr number, please check this patchset for verified -1 or reviewed <0."'  ${changenumber},${patchset}
+            ssh-gerrit review -m '"The patchset relation for check failed on the same pr number, please check this patchset for verified -1 or reviewed <0."' ${changenumber},${patchset}
         done
 
         touch aborted_flag
         exit 1
     fi
- 
-    echo "INFO: Exit ${FUNCNAME[0]}()"
+
+    show_vip "INFO: Exit ${FUNCNAME[0]}()"
     trap - ERR
 }
 
@@ -315,7 +276,7 @@ check_sdmid_duplicate()
     if [[ x"$IS_plf_error" != x"true" ]];then
             echo -e "${PRTGREEN} the define of SDM is OK!! ${PRTOVER}"
     else
-            ssh -o ConnectTimeout=32 -p 29418 ${username}@${GERRIT_HOST} gerrit review --verified -1 -m '"check SDMID definition in the plf files failed, please correct it! Error_Log_URL:"'${BUILD_URL}'"/console"' ${changenum},${patchset}
+            ssh-gerrit review --verified -1 -m '"check SDMID definition in the plf files failed, please correct it! Error_Log_URL:"'${BUILD_URL}'"/console"' ${changenum},${patchset}
             exit 1
     fi
     #SDMS_IN_ROOT=`grep "<SDMID>.*</SDMID>" $ROOTPLF | sed "s/.*<SDMID>\(.*\)<\/SDMID>.*/\1/g"`
@@ -324,6 +285,7 @@ check_sdmid_duplicate()
     echo "INFO: Exit ${FUNCNAME[0]}()"
     trap - ERR
 }
+
 check_sdmid_root_and_project()
 {
     trap 'ERRTRAP ${LINENO} ${FUNCNAME} ${BASH_LINENO}' ERR
@@ -344,7 +306,7 @@ check_sdmid_root_and_project()
     if [[ x"$IS_plf_error" != x"true" ]];then
             echo -e "${PRTGREEN} the define of SDM is OK!! ${PRTOVER}"
     else
-            ssh -o ConnectTimeout=32 -p 29418 ${username}@${GERRIT_HOST} gerrit review --verified -1 -m '"check SDMID definition in the plf files failed, please correct it! Error_Log_URL:"'${BUILD_URL}'"/console"' ${changenum},${patchset}
+            ssh-gerrit review --verified -1 -m '"check SDMID definition in the plf files failed, please correct it! Error_Log_URL:"'${BUILD_URL}'"/console"' ${changenum},${patchset}
             exit 1
     fi
     echo "INFO: Exit ${FUNCNAME[0]}()"
@@ -357,17 +319,17 @@ mergeplf()
     echo "INFO: Enter ${FUNCNAME[0]}()"
     build_project=$1
     pre_wimdata_path=$2
-	if [[ -d "${BUILDDIR}/device/jrdcsz" ]];then
-        merge_plf=${BUILDDIR}/device/jrdcsz/common/jrd_update_plf.py
-        merge_sys_plf=${BUILDDIR}/device/jrdcsz/common/jrd_merge_sys_plf.sh
+	if [[ -d "device/jrdcsz" ]];then
+        merge_plf=device/jrdcsz/common/jrd_update_plf.py
+        merge_sys_plf=device/jrdcsz/common/jrd_merge_sys_plf.sh
 	else
-		merge_plf=${BUILDDIR}/device/jrdcom/common/jrd_update_plf.py
-        merge_sys_plf=${BUILDDIR}/device/jrdcom/common/jrd_merge_sys_plf.sh
+		merge_plf=device/jrdcom/common/jrd_update_plf.py
+        merge_sys_plf=device/jrdcom/common/jrd_merge_sys_plf.sh
 	fi
-    arct_tool_path=${BUILDDIR}/vendor/jrdcom/tool/arct/prebuilt/arct
-    jrd_res_dir=${BUILDDIR}/out/target/common/jrdResAssetsCust
-    plf_common_dir=${BUILDDIR}/${pre_wimdata_path}/wprocedures/plf
-    plf_project_dir=${BUILDDIR}/${pre_wimdata_path}/wprocedures/${build_project}/plf
+    arct_tool_path=vendor/jrdcom/tool/arct/prebuilt/arct
+    jrd_res_dir=out/target/common/jrdResAssetsCust
+    plf_common_dir=${pre_wimdata_path}/wprocedures/plf
+    plf_project_dir=${pre_wimdata_path}/wprocedures/${build_project}/plf
    
     if [[ ! -d "$jrd_res_dir/wimdata/wprocedures/plf" ]];then
         mkdir -p "$jrd_res_dir/wimdata/wprocedures/plf"
@@ -408,7 +370,7 @@ mergeplf()
     if [[ x"$IS_plf_error" != x"true" ]];then
        ${merge_plf} ${build_project} ${jrd_res_dir} ${pre_wimdata_path} ${arct_tool_path} 1>/dev/null
        if [[ "$?" -eq "1" ]]; then
-           ssh -o ConnectTimeout=32 -p 29418 ${username}@${GERRIT_HOST} gerrit review --verified -1 -m '"merge plf file between common and project failed, please correct it! Error_Log_URL:"'${BUILD_URL}'"/console"' ${changenum},${patchset}
+           ssh-gerrit review --verified -1 -m '"merge plf file between common and project failed, please correct it! Error_Log_URL:"'${BUILD_URL}'"/console"' ${changenum},${patchset}
            exit 1
        fi
     fi
@@ -429,13 +391,13 @@ check_PLFfile()
     PRTGREEN="\\033[01;32m"
     PRTRED="\\033[01;31m"
     echo "check PLF files"
-    ssh -o ConnectTimeout=32 -p 29418 ${username}@${GERRIT_HOST} gerrit query --files --patch-sets=${changenum} | grep "file:" > PLFfile.txt
+    ssh-gerrit query --files --patch-sets=${changenum} | grep "file:" > PLFfile.txt
     PLFnum=$(cat PLFfile.txt | grep "plf" | wc -l)
     if [[ ${PLFnum} -eq 0 ]]; then
         echo "no PLF file in the commit..."
     else
         echo "PLF files num: $PLFnum"
-        PLF_PATH=${BUILDDIR}/${project_path}
+        PLF_PATH=${project_path}
         if [[ -d "$PLF_PATH/${build_project}" ]];then
                 SUBPLF=`find ${PLF_PATH}/${build_project}/plf -name '*.plf'`
                 SUBPLF=${SUBPLF}" $PLF_PATH/${build_project}/isdm_sys_makefile.plf $PLF_PATH/${build_project}/isdm_sys_properties.plf"
@@ -447,9 +409,9 @@ check_PLFfile()
                 merge_sys_plf ${build_project} wimdata_ng
         fi
         if [[ x"IS_plf_error" != x"true" ]];then
-           PLF_PARSE_TOOL=${BUILDDIR}/vendor/jrdcom/tool/prd2xml
-           PLF_MERGE_PATH="${BUILDDIR}/out/target/common/jrdResAssetsCust/wimdata/plf"
-           PLF_TARGET_XML_FOLDER="${BUILDDIR}/tmp_plf"
+           PLF_PARSE_TOOL=vendor/jrdcom/tool/prd2xml
+           PLF_MERGE_PATH="out/target/common/jrdResAssetsCust/wimdata/plf"
+           PLF_TARGET_XML_FOLDER="tmp_plf"
            if [[ -d "$PLF_TARGET_XML_FOLDER" ]];then
                 rm -rfv "$PLF_TARGET_XML_FOLDER"
                 mkdir -p ${PLF_TARGET_XML_FOLDER}
@@ -477,7 +439,7 @@ check_PLFfile()
         if [[ x"$IS_plf_error" != x"true" ]];then
                 echo -e "${PRTGREEN} the define of SDM is OK!! ${PRTOVER}"
         else
-                ssh -o ConnectTimeout=32 -p 29418 ${username}@${GERRIT_HOST} gerrit review --verified -1 -m '"check SDMID definition in the plf files failed, please correct it! Error_Log_URL:"'${BUILD_URL}'"/console"' ${changenum},${patchset}
+                ssh-gerrit review --verified -1 -m '"check SDMID definition in the plf files failed, please correct it! Error_Log_URL:"'${BUILD_URL}'"/console"' ${changenum},${patchset}
                 exit 1
         fi
     fi
@@ -487,13 +449,13 @@ check_PLFfile()
 
 check_apkdebugable()
 {
-#    trap 'ERRTRAP ${LINENO} ${FUNCNAME} ${BASH_LINENO}' ERR
     echo "INFO: Enter ${FUNCNAME[0]}()"
+
     local changenum=$1
     local patchset=$2
     local project_path=$3
     local codebuild=true
-    ssh -o ConnectTimeout=32 -p 29418 ${username}@${GERRIT_HOST} gerrit query --files --patch-sets=${changenum} | grep -E -o "file: .*.apk" > checkapk.txt
+    ssh-gerrit query --files --patch-sets=${changenum} | grep -E -o "file: .*.apk" > checkapk.txt
     while read -r item
     do
         filename=${item#file: }
@@ -501,172 +463,169 @@ check_apkdebugable()
         echo ${filename} | grep ' '
         if [[ "$?" -eq 0 ]]; then
             echo "Abandon delivery for \"$filename\" contains blank space"
-            ssh -o ConnectTimeout=32 -p 29418 ${username}@${GERRIT_HOST} gerrit review --verified -1 -m '"Apk '${filename}' contains blank space"' ${changenum},${patchset}
+            ssh-gerrit review --verified -1 -m '"Apk '${filename}' contains blank space"' ${changenum},${patchset}
             codebuild=false
         else
-            debugstatu=$(prebuilts/sdk/tools/linux/bin/aapt d xmltree ${BUILDDIR}/${project_path}/${filename} AndroidManifest.xml | grep debuggable | grep -E -o "[^@]0xffffffff")
+            debugstatu=$(prebuilts/sdk/tools/linux/bin/aapt d xmltree ${project_path}/${filename} AndroidManifest.xml | grep debuggable | grep -E -o "[^@]0xffffffff")
             if [[ -n "$debugstatu" && "$debugstatu" != "0x0" ]]; then
                 echo "Abandon delivery for \"$filename\" is Debuggable"
-                ssh -o ConnectTimeout=32 -p 29418 ${username}@${GERRIT_HOST} gerrit review --verified -1 -m '"Apk '${filename}' is Debuggable"' ${changenum},${patchset}
+                ssh-gerrit review --verified -1 -m '"Apk '${filename}' is Debuggable"' ${changenum},${patchset}
                 codebuild=false
             fi
         fi
         fbasenam=$(basename ${filename})
         if [[ "${#fbasenam}" -gt 98 ]]; then
             echo "String \"$fbasenam\" contains more than 98 character, Please rename apk with a short name."
-            ssh -o ConnectTimeout=32 -p 29418 ${username}@${GERRIT_HOST} gerrit review --verified -1 -m '"String '${fbasenam}' contains more than 98 character, pls rename the apk with a short name."' ${changenum},${patchset}
+            ssh-gerrit review --verified -1 -m '"String '${fbasenam}' contains more than 98 character, pls rename the apk with a short name."' ${changenum},${patchset}
             codebuild=false
         fi
     done < checkapk.txt
     trap 'ERRTRAP ${LINENO} ${FUNCNAME} ${BASH_LINENO}' ERR
     if [[ "$codebuild" == "false" ]]; then
-        #ssh -o ConnectTimeout=32 -p 29418 ${username}@${GERRIT_HOST} gerrit review --abandon ${changenum},${patchset}
+        #ssh-gerrit review --abandon ${changenum},${patchset}
         exit 1
     fi
+
     echo "INFO: Exit ${FUNCNAME[0]}()"
-    trap - ERR
 }
 
+# 解析 patch-set
 parse_all_patchset()
 {
     trap 'ERRTRAP ${LINENO} ${FUNCNAME} ${BASH_LINENO}' ERR
-    echo "INFO: Enter ${FUNCNAME[0]}()"
+    show_vip "INFO: Enter ${FUNCNAME[0]}()"
 
-    pushd ${BUILDDIR} 1>/dev/null
+    local GERRIT_TOPIC_TR=
 
-    if [[ -n "$GERRIT_TOPIC" ]]; then
-        if [[ -f "${BUILDDIR}/tmp_dir/changeid.json" ]]; then
-            rm -vf "${BUILDDIR}/tmp_dir/changeid.json"
-        fi
+    if [[ -n "${GERRIT_TOPIC}" ]]; then
         GERRIT_TOPIC_TR=$(echo ${GERRIT_TOPIC} | tr ';' '.')
+
         ssh-gerrit query \
             --current-patch-set "intopic:^.*${GERRIT_TOPIC_TR}.* branch:${GERRIT_BRANCH} status:open NOT label:code-review-1" \
-            --format json > ${BUILDDIR}/tmp_dir/changeid.json
+            --format json > ${tmpfs}/gerrit/changeid.json
+
         if [[ "$?" -eq 0 ]]; then
-            cd ${BUILDDIR}/tmp_dir && python ${SCRIPTS_DIR}/parse_change_infos.py ${BUILDDIR}/tmp_dir/changeid.json
-            if [[ "$?" -ne 0 ]]; then
-                echo "parse Topic: $GERRIT_TOPIC infomation failed"
-                exit 1
+            pushd ${tmpfs}/gerrit > /dev/null
+
+            python ${script_p}/tools/parse_change_infos.py changeid.json
+            if [[ $? -ne 0 ]]; then
+                log error "parse Topic: ${GERRIT_TOPIC} infomation failed"
             fi
+
+            popd > /dev/null
         else
-            echo "Error occured when link ${GERRIT_HOST}."
-            exit 1
+            log error "Error occured when link ${GERRIT_HOST}."
         fi
     fi
 
-    if [[ -n "$GERRIT_TOPIC" ]]; then
-        if [[ -s "${BUILDDIR}/tmp_dir/change_number_list.txt" ]]; then
-            change_number_list=($(cat ${BUILDDIR}/tmp_dir/change_number_list.txt | sort -n))
+    if [[ -n "${GERRIT_TOPIC}" ]]; then
+        if [[ -s "${tmpfs}/gerrit/change_number_list.txt" ]]; then
+            change_number_list=($(cat ${tmpfs}/gerrit/change_number_list.txt | sort -n))
         else
-            echo "parse Topic: $GERRIT_TOPIC change number list null"
-            echo "${GERRIT_CHANGE_URL} The patch status is Abandoned or Merged or already verified +1 by gerrit trrigger auto compile, no need to build this time."
-            ssh -o ConnectTimeout=32 -p 29418  ${username}@${GERRIT_HOST} gerrit review  -m '"Warning_Log_URL:"'${BUILD_URL}'"/console The patchset has been Abandoned or Merged or already verified +1 by gerrit trigger auto compile, so no need to build this time."'  ${GERRIT_CHANGE_NUMBER},${GERRIT_PATCHSET_NUMBER}
-            exit 0
+            __red__ "parse Topic: ${GERRIT_TOPIC} change number list null"
+            ssh-gerrit review -m '"Warning_Log_URL:"'${BUILD_URL}'"/console The patchset has been Abandoned or Merged or already verified +1 by gerrit trigger auto compile, so no need to build this time."' ${GERRIT_CHANGE_NUMBER},${GERRIT_PATCHSET_NUMBER}
+            log error "${GERRIT_CHANGE_URL} The patch status is Abandoned or Merged or already verified +1 by gerrit trrigger auto compile, no need to build this time."
         fi
     else
         change_number_list=${GERRIT_CHANGE_NUMBER}
     fi
 
-    popd > /dev/null
-    echo "change_number_list = " ${change_number_list[@]}
-    echo "INFO: Exit ${FUNCNAME[0]}()"
+    __green__ "change_number_list = " ${change_number_list[@]}
+
+    show_vip "INFO: Exit ${FUNCNAME[0]}()"
     trap - ERR
 }
 
 function download_all_patchset()
 {
     trap 'ERRTRAP ${LINENO} ${FUNCNAME} ${BASH_LINENO}' ERR
-    echo "INFO: Enter ${FUNCNAME[0]}()"
+    show_vip "INFO: Enter ${FUNCNAME[0]}()"
 
     local project_path=
 
-    pushd ${BUILDDIR} > /dev/null
-
-    for item in ${change_number_list[@]}
-    do
-        if [[ -z "$GERRIT_TOPIC" ]]; then
-            echo 'yafeng: topic is null ...'
+    for item in ${change_number_list[@]} ; do
+        if [[ -z "${GERRIT_TOPIC}" ]]; then
+            url=${GERRIT_CHANGE_URL}
             project=${GERRIT_PROJECT}
-            changenumber=${GERRIT_CHANGE_NUMBER}
+            refspec=${GERRIT_REFSPEC}
             revision=${GERRIT_PATCHSET_REVISION}
             patchset=${GERRIT_PATCHSET_NUMBER}
-            refspec=${GERRIT_REFSPEC}
-            url=${GERRIT_CHANGE_URL}
+            changenumber=${GERRIT_CHANGE_NUMBER}
+
+            log debug "${GERRIT_TOPIC} is null ..."
         else
-            if [[ -f "${BUILDDIR}/tmp_dir/$item" ]]; then
-                source ${BUILDDIR}/tmp_dir/${item}
+            if [[ -f "${tmpfs}/gerrit/$item" ]]; then
+                source ${tmpfs}/gerrit/${item}
             else
-                echo "Topic item $item information dropout"
-                exit 1
+                log error "Topic item $item information dropout"
             fi
         fi
 
-        show_vig 'yafeng: project = ' ${project}
+        echo
+        echo '-------------------------------------'
+        echo 'url          = ' ${url}
+        echo 'project      = ' ${project}
+        echo 'refspec      = ' ${refspec}
+        echo 'revision     = ' ${revision}
+        echo 'patchset     = ' ${patchset}
+        echo 'changenumber = ' ${changenumber}
+        echo '-------------------------------------'
+        echo
 
         project_path=$(get_project_path)
         show_vig "current path: $project_path"
+
+        # 恢复当前干净状态
         recover_standard_git_project ${project_path}
 
-        pushd ${BUILDDIR}/${project_path} > /dev/null
-        repo sync . --no-tags -j$(nproc)
+        pushd ${project_path} > /dev/null
 
-        # 为什么要重名，是解决不编译此模块吗？
-        if [[ -f ${BUILDDIR}/vendor/tct/source/qcn/Android.mk  ]]; then
-            mv ${BUILDDIR}/vendor/tct/source/qcn/Android.mk ${BUILDDIR}/vendor/tct/source/qcn/Android.mk_bak
-        fi
-
+        Command "repo sync . --no-tags -j$(nproc)"
         Command "git fetch ssh://${username}@${GERRIT_HOST}:29418/${project} ${refspec}"
         Command "git cherry-pick FETCH_HEAD"
 
-        if [[ "$?" -eq 0 ]] ; then
-            echo "$project_path download patchset refs/changes/$GERRIT_CHANGE_NUMBER/$GERRIT_PATCHSET_NUMBER sucessful."
-            if [[ -z "$localbuildprj" ]];then
+        if [[ $? -eq 0 ]] ; then
+            show_vig "${project_path} download patchset refs/changes/${GERRIT_CHANGE_NUMBER}/${GERRIT_PATCHSET_NUMBER} sucessful."
+            if [[ -z "${localbuildprj}" ]];then
                   localbuildprj=("$project:$project_path:$changenumber:$patchset:$revision")
             else
                   localbuildprj=(${localbuildprj[*]} "$project:$project_path:$changenumber:$patchset:$revision")
             fi
         else
-            ssh -o ConnectTimeout=32 -p 29418  ${username}@${GERRIT_HOST} gerrit review -m '""'${BUILD_URL}'"\t"'${project_path}'"\t merge the patchset conflict refs/changes/"'${GERRIT_CHANGE_NUMBER}'"/"'${GERRIT_PATCHSET_NUMBER}'" failed,please resubmit code!!!"' --verified -1  ${changenumber},${patchset}
+            ssh-gerrit review -m '""'${BUILD_URL}'"\t"'${project_path}'"\t merge the patchset conflict refs/changes/"'${GERRIT_CHANGE_NUMBER}'"/"'${GERRIT_PATCHSET_NUMBER}'" failed,please resubmit code!!!"' --verified -1  ${changenumber},${patchset}
             git reset --hard
             touch aborted_flag
             exit 1
         fi
 
         if [[ ${project_path} =~ "development" ]];then
-            if [[ -d "${BUILDDIR}/version" ]];then
-                if [[ ! -d "${BUILDDIR}/development/version/include" ]];then
-                    mkdir -p ${BUILDDIR}/development/version/include
+            if [[ -d "version" ]];then
+                if [[ ! -d "development/version/include" ]];then
+                    mkdir -p development/version/include
                 fi
 
-                cp -fv ${BUILDDIR}/version/version.inc ${BUILDDIR}/development/version/include/version.inc
+                cp -fv version/version.inc development/version/include/version.inc
             fi
         fi
 
-        project=
-        changenumber=
-        patchset=
-        refspec=
-        url=
+        unset project changenumber patchset refspec url
+
         popd > /dev/null
     done
 
-    popd > /dev/null
-    echo "INFO: Exit ${FUNCNAME[0]}()"
+    show_vip "INFO: Exit ${FUNCNAME[0]}()"
     trap - ERR
 }
 
 function gerrit_build() {
 
-    #trap 'ERRTRAP ${LINENO} ${FUNCNAME} ${BASH_LINENO}' ERR
-    echo "INFO: Enter ${FUNCNAME[0]}()"
+    show_vip  "INFO: Enter ${FUNCNAME[0]}()"
+
     local is_build_success=0
     local build_path_list=""
     local build_module_list=""
     local build_project_array=()
-    #localbuildprj=("mtk8735a/frameworks:frameworks:222740:1:d1a7aafea09810fd50d2d7a09d1071810ebd77dc" "mtk8735a/frameworks:frameworks:222789:1:01a6ebc80a2484047652a852fb55eba09ea04820" "mtk8735a/vendor/mediatek:vendor/mediatek:2211222:1:c00a31c24fb0c90fbc6c84ff84ec8eef4c798484" "mtk8735a/vendor/mediatek:vendor/mediatek:2211222:1:a69fe425636ba1b37a9b80ba28370cd9a2f54ab1")
-    #BUILDDIR=$(dirname $(readlink -f $BASH_SOURCE))
 
-    cd ${BUILDDIR}
     echo "localbuildprj: ${localbuildprj}"
 
     for args in "${localbuildprj[@]}" ; do
@@ -681,8 +640,7 @@ function gerrit_build() {
         patchset=${tmp%%:*}
         revision=${tmp##*:}
 
-        echo '@@@@@'
-        echo 'project_path = ' ${project_path}
+        show_vig '@@@ project_path = ' ${project_path}
 
         case "${project_path}" in
 
@@ -749,21 +707,17 @@ function gerrit_build() {
             ;;
 
             *)
-                #list=(`customize_mk_list $(cat buildlist | awk -F: '{print $1}' | xargs echo | sort -u)`)
-                list=(`cat ${BUILDDIR}/build/make/tools/buildlist | awk -F: '{print $1}' | sort -u`)
+                list=(`cat build/make/tools/buildlist | awk -F: '{print $1}' | sort -u`)
                 echo 'list = ' ${list}
                 android_mk_path
-                echo 'android_mk_path --------------- end ...'
+                show_vip 'android_mk_path --------------- end ...'
 
-                #if [ -z "${#array[@]}" ];then
                 if [[ ${#build_path[@]} -eq 0 ]]; then
                    is_build_mma=false
                    break
                 else
-                    show_vig '${build_path[@]} = ' ${build_path[@]}
-
-                    for i in ${build_path[@]}
-                    do
+                    show_vig 'yafeng:build path list = ' ${build_path[@]}
+                    for i in ${build_path[@]} ; do
                         if [[ ${i} =~ "lk" ]]; then
                             is_build_mma=true
                             if [[ ${#build_project_array[@]} -eq 0 ]];then
@@ -780,8 +734,7 @@ function gerrit_build() {
                             fi
                         else
                             is_mk_found=false
-                            for j in ${list[@]}
-                            do
+                            for j in ${list[@]} ; do
                                 #dir=${j%/*}
                                 if [[ x"$j" == x"$i" ]];then
                                     is_mk_found=true
@@ -815,7 +768,7 @@ function gerrit_build() {
     if [[ x"$is_build_mma" == "xtrue" ]];then
         if [[ x"$build_path_list" != x ]];then
             for prjitem in ${build_path_list}; do
-                build_module_name=$(cat ${BUILDDIR}/build/make/tools/buildlist | grep "^$prjitem:" | awk -F: '{print $2}' | tr ',' ' ')
+                build_module_name=$(cat build/make/tools/buildlist | grep "^$prjitem:" | awk -F: '{print $2}' | tr ',' ' ')
                 if [[ -z "$build_module_name" ]];then
                     build_path_list=""
                     build_module_list=""
@@ -836,11 +789,9 @@ function gerrit_build() {
         build_project_array=()
     fi
 
-
     if [[ x"true" == x"$is_build_mma" ]];then
         if [[ ${#build_project_array[@]} -ne 0 ]];then
             for prjitem in "${build_project_array[@]}" ; do
-                cd ${BUILDDIR}
                 if echo "${prjitem}" | grep -E ':' &>/dev/null; then
                     changenum=`echo "${prjitem}" | tr -d '"' | awk -F: '{print $1}'`
                     patchset=`echo "${prjitem}" | tr -d '"' |  awk -F: '{print $2}'`
@@ -849,11 +800,6 @@ function gerrit_build() {
                 else
                     prjitem=$(echo "${prjitem}" | tr -d '"' | tr "@" ' ')
                 fi
-
-                ## 增加编译QSSI
-#                if [[ $(is_qssi_product $s) ]]; then
-#                    :
-#                fi
 
                 echo '@@@  prjitem = ' ${prjitem}
                 eval ${prjitem}
@@ -872,49 +818,12 @@ function gerrit_build() {
             fi
         fi
 
-        time_stamp=`date +"%Y%m%d_%H%M%S"`
-        prebuild_log=${time_stamp}"_mma.log"
-
         if [[ -n "$build_module_list" ]];then
-            cd ${BUILDDIR}
+            show_vip "mma -j${JOBS} checkapi ${build_module_list}"
 
-            if [[ -f "${BUILDDIR}/${prebuild_log}" ]]; then
-                rm -fv ${BUILDDIR}/${prebuild_log}
-            fi
-
-            echo "mma -j${JOBS} checkapi $build_module_list"
-            mma -j${JOBS} checkapi ${build_module_list} 2>&1 | tee ${prebuild_log}
-
-            if [[ ${PIPESTATUS[0]} -ne 0 ]] ; then
-                :
-#                if (tail -n 1000 ${prebuild_log} |  grep -q -E "^ninja:[[:space:]]+error:[[:space:]]+unknown[[:space:]]+target.*$|^ninja:[[:space:]]+error:.*needed[[:space:]]+by[[:space:]]+.*[[:space:]]+missing[[:space:]]+and[[:space:]]+no[[:space:]]+known[[:space:]]+rule[[:space:]]+to[[:space:]]+make[[:space:]]+it");then
-#                    make -j${JOBS} 2>&1
-#                    if [[ "$?" -ne "0" ]] ; then
-#                        is_build_success=0 || false
-#                        verify_submit_patchset
-#                        exit 1
-#                    else
-#                        is_build_success=1 || true
-#                    fi
-#                else
-#                    if (tail -n 1000 ${prebuild_log} |  grep -r "FAILED: ninja: unknown target");then
-#                        echo "aaaaaaaaaaaaaaaaaaaaaaaaaaa  $? bbbbbbbbbbbbbbbbbbbbbbbbbbb "
-#                        make -j${JOBS} 2>&1
-#                        if [[ "$?" -ne "0" ]];then
-#                            is_build_success=0 || false
-#                            verify_submit_patchset
-#                            exit 1
-#                        else
-#                            is_build_success=1 || true
-#                        fi
-#                    else
-#                        is_build_success=0 || false
-#                        verify_submit_patchset
-#                        exit 1
-#                    fi
-#                fi
-            else
-                is_build_success=1 || true
+            mma -j${JOBS} ${build_module_list} 2>&1 | tee $(date +"%Y%m%d_%H%M%S")_mma.log
+            if [[ ${PIPESTATUS[0]} -eq 0 ]] ; then
+                is_build_success=1
             fi
         fi
 
@@ -922,20 +831,18 @@ function gerrit_build() {
             verify_submit_patchset
         fi
     else
-        cd ${BUILDDIR}
         Command "make -j${JOBS} 2>&1"
-        if [[ "$?" -ne "0" ]] ; then
-            is_build_success=0 || false
+        if [[ $? -ne 0 ]] ; then
+            is_build_success=0
             verify_submit_patchset
             exit 1
         else
-            is_build_success=1 || true
+            is_build_success=1
             verify_submit_patchset
         fi
     fi
 
-    echo "INFO: Exit ${FUNCNAME[0]}()"
-    #trap - ERR
+    show_vip "INFO: Exit ${FUNCNAME[0]}()"
 }
 
 function handle_common_vairable() {
@@ -976,7 +883,6 @@ function print_variable() {
     echo 'build_update_code  = ' ${build_update_code}
     echo '-------------------------------------'
     echo 'WORKSPACE      = ' ${WORKSPACE}
-    echo 'GERRIT_SERVER  = ' ${GERRIT_SERVER}
     echo 'GERRIT_BRANCH  = ' ${GERRIT_BRANCH}
     echo 'GERRIT_TOPIC   = ' ${GERRIT_TOPIC}
     echo '-------------------------------------'
@@ -988,6 +894,14 @@ function print_variable() {
 function prepare() {
 
     pushd ${WORKSPACE} > /dev/null
+
+    if [[ -f aborted_flag ]]; then
+        rm -fv aborted_flag
+    fi
+
+    if [[ -d ${tmpfs}/gerrit ]]; then
+        rm -rvf ${tmpfs}/gerrit/*
+    fi
 }
 
 function init() {
@@ -1001,23 +915,11 @@ function init() {
 function main() {
 
     trap 'ERRTRAP ${LINENO} ${FUNCNAME} ${BASH_LINENO}' ERR
-
     show_vip "INFO: Enter ${FUNCNAME[0]}()"
 
     ## 记录编译开始时间
     local startT=`date +'%Y-%m-%d %H:%M:%S'`
     local localbuildprj=()
-
-    if [[ -f "$BUILDDIR/aborted_flag" ]]; then
-        rm -fv ${BUILDDIR}/aborted_flag
-    fi
-
-    if [[ -d "${BUILDDIR}/tmp_dir" ]]; then
-        rm -rvf "${BUILDDIR}/tmp_dir"
-        mkdir -p "${BUILDDIR}/tmp_dir"
-    else
-        mkdir -p "${BUILDDIR}/tmp_dir"
-    fi
 
     if [[ "$(is_build_server)" == "true" ]];then
         init
@@ -1053,25 +955,13 @@ function main() {
 
     if [[ "$(is_gerrit_trigger)" == "true" ]];then
 
-        if [[ -f "${BUILDDIR}/modem/mcu/Android.mk" ]]; then
-            rm -vf "${BUILDDIR}/modem/mcu/Android.mk"
-        fi
-
-        if [[ -d "${BUILDDIR}/out/target/common/jrdResAssetsCust/wimdata" ]];then
-            rm -rvf "${BUILDDIR}/out/target/common/jrdResAssetsCust/wimdata"
-        fi
-
-        # 解析gerrit提交
         parse_all_patchset
         check_patchset_status
         download_all_patchset
 
-        echo '---- gerrit build start ... '
-
-        # 单独编译模块
+        show_vip '---- gerrit build start ... '
         gerrit_build
-
-        echo '---- gerrit build end ... '
+        show_vip '---- gerrit build end ... '
     else
 
         # 编译android
@@ -1085,14 +975,13 @@ function main() {
 
         echo
         show_vip "--> make android end ." && log debug "--> make android end ."
-
-        show_vip "INFO: Exit ${FUNCNAME[0]}()"
     else
         log error "The server is not running on build server."
     fi
 
     popd > /dev/null
 
+    show_vip "INFO: Exit ${FUNCNAME[0]}()"
     trap - ERR
 }
 
