@@ -436,17 +436,17 @@ function jenkins3
 
 function jenkins4
 {
-	ssh android@10.129.93.104 -p 8089
+	ssh android@10.129.93.104
 }
 
 function jenkins5
 {
-    ssh android@10.129.93.105 -p 8089
+    ssh android@10.129.93.105
 }
 
 function jenkins6
 {
-    ssh android@10.129.93.106 -p 8089
+    ssh android@10.129.93.106
 }
 
 function jenkins7
