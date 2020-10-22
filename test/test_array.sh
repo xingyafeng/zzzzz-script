@@ -35,6 +35,40 @@ function test_print_ass_array()
 
 # e.g test_print_ass_array "5 6 7" "a b c"
 
+# 列出所有键值对
+function print_key_value() {
+
+    declare -A color
+
+    color["red"]="#ff0000"
+    color["green"]="#00ff00"
+    color["blue"]="#0000ff"
+    color["white"]="#ffffff"
+    color["black"]="#000000"
+
+    #获取所有元素值
+    for value in ${color[*]}
+    do
+        echo ${value}
+    done
+
+    echo "****************"
+
+    #获取所有元素下标（键）
+    for key in ${!color[*]}
+    do
+        echo ${key}
+    done
+
+    echo "****************"
+
+    #列出所有键值对
+    for key in ${!color[@]}
+    do
+        echo "${key} -> ${color[$key]}"
+    done
+}
+
 # 测试数组相加
 function test_array_add() {
 
