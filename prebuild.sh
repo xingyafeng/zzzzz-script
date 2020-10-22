@@ -580,7 +580,7 @@ function download_all_patchset()
 
         pushd ${project_path} > /dev/null
 
-        Command "repo sync . --no-tags -j$(nproc)"
+        Command "repo sync -c -d . --no-tags -j$(nproc)"
         Command "git fetch ssh://${username}@${GERRIT_HOST}:29418/${project} ${refspec}"
         Command "git cherry-pick FETCH_HEAD"
 
