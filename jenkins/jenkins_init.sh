@@ -51,6 +51,9 @@ case ${shellfs##*/} in
         :
         ;;
 
+    get_manifest_info.sh)
+        :
+        ;;
     *)
         log error "执行脚本不匹配 ..."
         ;;
