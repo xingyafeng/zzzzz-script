@@ -656,9 +656,9 @@ function gerrit_build() {
             kernel/msm-4.19)
                 is_build_mma=true
                 if [[ ${#build_project_array[@]} -eq 0 ]];then
-                     build_project_array=("\"m@-j${JOBS}@out/target/product/${build_project}/boot.img\"")
+                     build_project_array=("\"make@-j${JOBS}@kernel\"")
                 else
-                     build_project_array=(${build_project_array[*]} "\"m@-j${JOBS}@out/target/product/${build_project}/boot.img\"")
+                     build_project_array=(${build_project_array[*]} "\"make@-j${JOBS}@kernel\"")
                 fi
             ;;
 
