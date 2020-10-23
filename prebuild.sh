@@ -131,7 +131,7 @@ verify_submit_patchset()
             fi
 
             if [[ "$(check_code-review ${changenumber})" == "true" ]]; then
-                echo "ssh-gerrit review -m '"this patchset gerrit trigger build successful; --submit"' --submit ${changenumber},${patchset}"
+                ssh-gerrit review -m '"this patchset gerrit trigger build successful; --submit"' --submit ${changenumber},${patchset}
             else
                 ssh-gerrit review -m '"can only verify now, need some people to review +2."' ${changenumber},${patchset}
                 log warn "can only verify now, need some people to review +2"
