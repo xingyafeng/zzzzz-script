@@ -95,6 +95,15 @@ function android_mk_path() {
     build_path=(`echo ${find_androidmk_path_list} | tr ' ' '\n' |  sort -u | uniq | xargs echo`)
     __green__ "android_mk_path: ${build_path}"
 
+    #check qssi project
+    for build in ${build_path[@]} ; do
+        if [[ "$(is_qssi_product ${build})" == "true" ]]; then
+            export TARGET_PRODUCT=qssi
+
+            log warn "This module is qssi project."
+        fi
+    done
+
     popd > /dev/null
 }
 
