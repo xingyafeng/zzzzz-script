@@ -833,6 +833,8 @@ function gerrit_build() {
             mma -j${JOBS} ${build_module_list} 2>&1 | tee $(date +"%Y%m%d_%H%M%S")_mma.log
             if [[ ${PIPESTATUS[0]} -eq 0 ]] ; then
                 is_build_success=1
+            else
+                log error "mma -j${JOBS} ${build_module_list} 2>&1  failed ..."
             fi
         fi
 
