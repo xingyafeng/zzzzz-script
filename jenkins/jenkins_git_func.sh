@@ -489,6 +489,52 @@ function recover_standard_android_project()
 	fi
 }
 
+# only checkout -- file
+function checkout_standard_git_project()
+{
+	local tDir=$1
+	local OPWD=$(pwd)
+
+	if [[ ! "$tDir" ]]; then
+		tDir=.
+	fi
+
+	if [[ -d ${tDir}/.git ]]; then
+
+		cd ${tDir} > /dev/null
+
+        if [[ -n "`git status -s`" ]];then
+            echo "---- checkout ${tDir}"
+        else
+            cd ${OPWD} > /dev/null
+            return 0
+        fi
+
+		thisFiles=`git diff --name-only`
+		if [[ -n "$thisFiles" ]]; then
+			git checkout HEAD ${thisFiles}
+		fi
+
+		cd ${OPWD} > /dev/null
+	fi
+}
+
+### checkout file, android目录下所有的git仓库.
+function checkout_standard_android_project()
+{
+	local project=`get_repo_git_path_from_xml`
+
+	if [[ -n "${project}" ]]; then
+		for p in ${project}
+		do
+		    #echo '---- p ' = ${p}
+            if [[ -d $(gettop)/${p} ]];then
+                checkout_standard_git_project ${p}
+            fi
+		done
+	fi
+}
+
 ### 备份APP
 function auto_create_refs_branch_for_app()
 {

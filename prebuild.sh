@@ -552,6 +552,10 @@ function download_all_patchset()
 
     local project_path=
 
+    # 恢复当前干净状态
+    checkout_standard_android_project
+    Command "repo sync -c -d --no-tags -j$(nproc)"
+
     for item in ${change_number_list[@]} ; do
         if [[ -z "${GERRIT_TOPIC}" ]]; then
             url=${GERRIT_CHANGE_URL}
@@ -584,14 +588,10 @@ function download_all_patchset()
         project_path=$(get_project_path)
         show_vig "current path: $project_path"
 
-        # 恢复当前干净状态
-        recover_standard_git_project ${project_path}
-
         pushd ${project_path} > /dev/null
 
-        Command "repo sync -c -d . --no-tags -j$(nproc)"
         Command "git fetch ssh://${username}@${GERRIT_HOST}:29418/${project} ${refspec}"
-        Command "git cherry-pick FETCH_HEAD"
+        Command "git checkout FETCH_HEAD"
 
         if [[ $? -eq 0 ]] ; then
             show_vig "${project_path} download patchset refs/changes/${GERRIT_CHANGE_NUMBER}/${GERRIT_PATCHSET_NUMBER} sucessful."
@@ -842,7 +842,7 @@ function gerrit_build() {
             verify_submit_patchset
         fi
     else
-        Command "make -j${JOBS} 2>&1"
+        Command "bash build.sh -j${JOBS}"
         if [[ $? -ne 0 ]] ; then
             is_build_success=0
             verify_submit_patchset
