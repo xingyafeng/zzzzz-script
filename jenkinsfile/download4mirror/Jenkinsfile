@@ -2,7 +2,7 @@
 @Library('share-library@master') _
 
 // def labels = ['m1'] // labels for Jede types we will build on
-def labels = ['m1', 'm3', 'm4', 'm6'] // labels for Jede types we will build on
+def labels = ['m1', 'm3', 'm4', 'm6', 'm10', 'm11', 'm12', 'm13'] // labels for Jede types we will build on
 def builders = [:]
 
 for (x in labels) {
