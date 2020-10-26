@@ -151,6 +151,7 @@ function download_mirror_repository() {
             if [[ "${DEBUG}" == "true" ]]; then
                 __blue__ "git remote update &"
             else
+                __green__ $(pwd)
                 git remote update &
             fi
             push $!
