@@ -834,7 +834,7 @@ function gerrit_build() {
             if [[ ${PIPESTATUS[0]} -eq 0 ]] ; then
                 is_build_success=1
             else
-                log error "mma -j${JOBS} ${build_module_list} 2>&1  failed ..."
+                log error "mma -j${JOBS} ${build_module_list} failed ..."
             fi
         fi
 
@@ -842,7 +842,7 @@ function gerrit_build() {
             verify_submit_patchset
         fi
     else
-        Command "bash build.sh -j${JOBS}"
+        Command "bash build.sh --target_only -j${JOBS}"
         if [[ $? -ne 0 ]] ; then
             is_build_success=0
             verify_submit_patchset
