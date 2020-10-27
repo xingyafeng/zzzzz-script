@@ -1,0 +1,81 @@
+@Library('share-library@master') _
+
+pipeline {
+    agent {
+        node {
+            label "s3"
+        }
+    }
+
+    environment {
+        CC = 'clang'
+    }
+
+    stages {
+
+        stage('Build Launcher3') {
+            failFast true
+            parallel {
+                stage('sm7250-r0-seattletmo-dint') {
+                    steps {
+                        script {
+                            utils.command("~/workspace/script/zzzzz-script/apk_prebuild.sh sm7250-r0-seattletmo-dint")
+                        }
+                    }
+                }
+
+                stage('sm6125-r0-portotmo-dint') {
+                    steps {
+                        script {
+                            utils.command("sleep 15")
+                            utils.command("~/workspace/script/zzzzz-script/apk_prebuild.sh sm6125-r0-portotmo-dint")
+                        }
+                    }
+                }
+
+                stage('mt6762-tf-r0-v1.1-dint') {
+                    steps {
+                        script {
+                            utils.command("sleep 30")
+                            utils.command("~/workspace/script/zzzzz-script/apk_prebuild.sh mt6762-tf-r0-v1.1-dint")
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // 编译结束后问题的处理
+    post {
+        always {
+            script {
+                log.d 'This will <always> run ...'
+            }
+        }
+
+        success {
+            script {
+                utils.command("~/workspace/script/zzzzz-script/apk_prebuild.sh verified+1")
+            }
+        }
+
+        failure {
+            script {
+                utils.command("~/workspace/script/zzzzz-script/apk_prebuild.sh verified-1")
+            }
+        }
+
+        unstable {
+            script {
+                log.w 'This will run only if the run was marked as <unstable>'
+            }
+        }
+
+        changed {
+            script {
+                log.d 'This will run only if the state of the Pipeline has <changed>'
+                log.d 'For example, if the Pipeline was previously failing but is now successful'
+            }
+        }
+    }
+}

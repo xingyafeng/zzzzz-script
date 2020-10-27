@@ -21,11 +21,40 @@ function generate_manifest_list() {
     done < ${manifest_list_p}
 }
 
+# 生成manifest中name对于的path列表
+function generate_module_list() {
+
+    local result_installed=result_installed.txt
+
+    if [[ ! -f ${result_installed} ]]; then
+        generate_buildlist_file
+    fi
+
+    while IFS=":" read -r _path _target _;do
+        #echo ${_path} '---' ${_target}
+        moudule_list[${_path}]=${_target}
+    done < ${result_installed}
+}
+
 # 拿到项目路径
 function get_project_path() {
 
     if [[ -n ${project} ]]; then
         echo ${manifest_info[${project}]}
+    elif [[ -n ${GERRIT_PROJECT} ]] ; then
+        echo ${manifest_info[${GERRIT_PROJECT}]}
+    else
+        log error "get project path failed ..."
+    fi
+}
+
+# 拿到目标模块名
+function get_project_module() {
+
+    if [[ -n ${project} ]]; then
+        echo ${moudule_list[${project}]}
+    elif [[ -n ${GERRIT_PROJECT} ]] ; then
+        echo ${moudule_list[${GERRIT_PROJECT}]}
     else
         log error "get project path failed ..."
     fi

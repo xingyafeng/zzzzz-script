@@ -8,6 +8,11 @@ username='Integration.tablet'
 # build path
 BUILDDIR=${WORKSPACE}
 
+## manifest info
+declare -A manifest_info
+## module list
+declare -A module_list
+
 function gettop() {
 
     if [[ -n "${WORKSPACE}" ]]; then

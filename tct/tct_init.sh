@@ -21,9 +21,12 @@ case ${shellfs##*/} in
         ;;
 
     # 预编译
-    prebuild.sh)
+    prebuild.sh|apk_prebuild.sh)
         ;;
 
+    demo.sh)
+        :
+        ;;
     *)
         log error "执行脚本不匹配 ..."
         ;;

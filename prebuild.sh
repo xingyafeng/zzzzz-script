@@ -12,9 +12,6 @@ build_update_code=
 # 4. 是否清除编译
 build_clean=
 
-## manifest info
-declare -A manifest_info
-
 ## --------------------------------
 
 # exec shell
