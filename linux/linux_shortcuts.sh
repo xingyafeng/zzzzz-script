@@ -474,6 +474,11 @@ function jenkins11
     ssh android-bld@10.129.93.111 -p 8089
 }
 
+function jenkinscd
+{
+    ssh jenkins@10.89.32.110 -p 8087
+}
+
 # 编译服务器，密码mobile#3
 function build102() {
     ssh yafeng.xing@10.129.93.102
