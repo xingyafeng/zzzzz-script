@@ -142,6 +142,27 @@ function init() {
     generate_manifest_list
 }
 
+function filter() {
+
+    case ${project_name} in
+        sm7250-r0-seattletmo-dint)
+            case ${GERRIT_PROJECT} in
+                genericapp/JrdSetupWizard)
+                    echo true
+                ;;
+
+                *)
+                    echo false
+                    ;;
+            esac
+            ;;
+
+        *)
+            echo false
+            ;;
+    esac
+}
+
 function main() {
 
     trap 'ERRTRAP ${LINENO} ${FUNCNAME} ${BASH_LINENO}' ERR
@@ -161,6 +182,10 @@ function main() {
                     local root_p=~/jobs/apk_prebuild/${project_name}
 
                     pushd ${root_p} > /dev/null
+
+                    if [[ $(filter) == "true" ]]; then
+                        return 0
+                    fi
 
                     init
 
