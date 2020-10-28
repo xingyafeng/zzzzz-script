@@ -533,6 +533,22 @@ function mirror6() {
     ssh android@10.129.93.131
 }
 
+function mirror10() {
+    ssh android@10.129.93.164
+}
+
+function mirror11() {
+    ssh android@10.129.93.165
+}
+
+function mirror12() {
+    ssh android@10.129.93.166
+}
+
+function mirror13() {
+    ssh android@10.129.93.167
+}
+
 function droidyafeng() {
     ssh -l yafeng WS186
 }
