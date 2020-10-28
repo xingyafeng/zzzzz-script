@@ -809,6 +809,7 @@ function gerrit_build() {
                     prjitem=$(echo "${prjitem}" | tr -d '"' | tr "@" ' ')
                 fi
 
+                set +e
                 echo '@@@  prjitem = ' ${prjitem}
                 eval ${prjitem}
 
@@ -818,6 +819,7 @@ function gerrit_build() {
                 else
                     is_build_success=1 || true
                 fi
+                set -e
             done
 
             if [[ x"$is_build_success" == x"0" ]];then
