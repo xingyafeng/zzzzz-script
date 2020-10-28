@@ -34,6 +34,20 @@ function set_project_info() {
     prj_info[${#prj_info[@]}]=mt6762-tf-r0-v1.1-dint
 }
 
+function get_cpu_core() {
+
+    case ${JOBS} in
+
+        8)
+            JOBS=${JOBS}
+            ;;
+
+        *)
+            JOBS=$((JOBS/3))
+            ;;
+    esac
+}
+
 function make_app() {
 
     Command "source build/envsetup.sh"
@@ -56,19 +70,19 @@ function make_app() {
     case ${GERRIT_PROJECT} in
 
         genericapp/gcs_Settings)
-            Command "mma -j$(nproc) Settings"
+            Command "mma -j${JOBS} Settings"
             ;;
 
         genericapp/gcs_SystemUI)
-            Command "mma -j$(nproc) SystemUI"
+            Command "mma -j${JOBS} SystemUI"
             ;;
 
         genericapp/gcs_Launcher3)
-            Command "mma -j$(nproc) Launcher3QuickStep"
+            Command "mma -j${JOBS} Launcher3QuickStep"
             ;;
 
         genericapp/JrdSetupWizard)
-            Command "mma -j$(nproc) TctSetupWizard"
+            Command "mma -j${JOBS} TctSetupWizard"
             ;;
     esac
 }
@@ -138,6 +152,7 @@ function handle_print() {
 
 function init() {
 
+    get_cpu_core
     handle_print
     generate_manifest_list
 }
