@@ -123,12 +123,20 @@ function verified-1() {
 
 function download_patchset() {
 
-    show_vig 'project path : ' $(get_project_path)
+    local project_path=
+
+    if [[ -n "$(get_project_path)" ]]; then
+        project_path=$(get_project_path)
+    else
+        log error 'get project path is null ...'
+    fi
+
+    show_vig 'project path : ' ${project_path}
 
     # 恢复现场
-    recover_standard_git_project $(get_project_path)
+    recover_standard_git_project ${project_path}
 
-    pushd $(get_project_path) > /dev/null
+    pushd ${project_path} > /dev/null
     Command "repo sync . -c -d --no-tags -j$(nproc)"
     Command "git fetch ssh://${username}@${GERRIT_HOST}:29418/${GERRIT_PROJECT} ${GERRIT_REFSPEC} && git checkout FETCH_HEAD"
 
