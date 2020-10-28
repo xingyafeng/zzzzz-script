@@ -19,6 +19,7 @@ pipeline {
                 stage('sm7250-r0-seattletmo-dint') {
                     steps {
                         script {
+                            utils.command("sleep 5")
                             utils.command("~/workspace/script/zzzzz-script/apk_prebuild.sh sm7250-r0-seattletmo-dint")
                         }
                     }
