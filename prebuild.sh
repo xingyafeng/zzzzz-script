@@ -845,7 +845,13 @@ function gerrit_build() {
         fi
     else
         export WITHOUT_CHECK_API=false
-        Command "bash build.sh --target_only -j${JOBS}"
+
+        if [[ "${TARGET_PRODUCT}" == "qssi" ]]; then
+            Command "bash build.sh --qssi_only -j${JOBS}"
+        else
+            Command "bash build.sh --target_only -j${JOBS}"
+        fi
+
         if [[ $? -ne 0 ]] ; then
             is_build_success=0
             verify_submit_patchset
