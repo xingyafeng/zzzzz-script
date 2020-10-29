@@ -11,11 +11,17 @@ shellfs=$0
 # --------------------
 project_name=$1
 
+# 更新代码
+build_update_code=
+
 # init function
 . "`dirname $0`/tct/tct_init.sh"
 
 declare -a app_info
 declare -a prj_info
+
+# manifest分支
+build_manifest=
 
 # 配置app信息
 function set_app_info() {
@@ -46,6 +52,17 @@ function get_cpu_core() {
             JOBS=$((JOBS/3))
             ;;
     esac
+}
+
+function set_manifest_xml() {
+
+    if [[ -n ${project_name} ]]; then
+        if [[ ${project_name} =~ '.xml' ]]; then
+            build_manifest=${project_name}
+        else
+            build_manifest=${project_name}.xml
+        fi
+    fi
 }
 
 function make_app() {
@@ -143,12 +160,34 @@ function download_patchset() {
     popd > /dev/null
 }
 
-function handle_print() {
+function handle_common() {
+
+    # 拿到JOBS
+    get_cpu_core
+
+    # 配置manifest.xml
+    set_manifest_xml
+
+    # 生成manifest列表
+    generate_manifest_list
+}
+
+function handle_variable() {
+
+    # 1. 更新代码
+    build_update_code=${tct_update_code:-false}
+
+    handle_common
+}
+
+function print_variable() {
 
     echo
     echo "JOBS = " ${JOBS}
     echo '-----------------------------------------'
-    echo "project_name = " ${project_name}
+    echo "project_name            = " ${project_name}
+    echo "build_manifest          = " ${build_manifest}
+    echo "build_update_code       = " ${build_update_code}
     echo '-----------------------------------------'
     echo 'GERRIT_PROJECT          = ' ${GERRIT_PROJECT}
     echo 'GERRIT_HOST             = ' ${GERRIT_HOST}
@@ -160,9 +199,8 @@ function handle_print() {
 
 function init() {
 
-    get_cpu_core
-    handle_print
-    generate_manifest_list
+    handle_variable
+    print_variable
 }
 
 function filter() {
@@ -171,7 +209,7 @@ function filter() {
         sm7250-r0-seattletmo-dint)
             case ${GERRIT_PROJECT} in
                 genericapp/JrdSetupWizard)
-                    echo true
+                    echo false
                 ;;
 
                 *)
@@ -216,6 +254,13 @@ function main() {
                         download_patchset
                         make_app
                     else
+                        if [[ "${build_update_code}" == "true" ]];then
+                            # 下载，更新源代码
+                            download_android_source_code
+                        else
+                            log warn "This time you don't update the source code."
+                        fi
+
                         log warn "Manual trigger ..."
                     fi
 

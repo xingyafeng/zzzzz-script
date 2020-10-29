@@ -184,7 +184,7 @@ function repo_sync_for_code()
     ## 更新repo仓库
     repo selfupdate
 
-    if repo sync -d --prune --no-tags --force-sync;then
+    if repo sync -c -d --prune --no-tags --force-sync;then
         echo
         show_vip "---- repo sync code successful ..."
     else
