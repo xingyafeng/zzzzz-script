@@ -276,6 +276,112 @@ function __white__
     fi
 }
 
+########### 新增背景颜色输出. 按照顺序 30~37
+
+### color bg black
+function show_bgbk
+{
+    if [[ "$@" ]];then
+        for ret in "$@"; do
+            echo -e -n "\e[1;40m$ret \e[0m"
+        done
+
+        echo
+        echo
+    fi
+}
+
+### color bg red
+function show_bgr
+{
+    if [[ "$@" ]];then
+        for ret in "$@"; do
+            echo -e -n "\e[1;41m$ret \e[0m"
+        done
+
+        echo
+        echo
+    fi
+}
+
+### color green
+function show_bgg
+{
+    if [[ "$@" ]];then
+        for ret in "$@"; do
+            echo -e -n "\e[1;42m$ret \e[0m"
+        done
+
+        echo
+        echo
+    fi
+}
+
+### color yellow
+function show_bgy
+{
+    if [[ "$@" ]];then
+        for ret in "$@"; do
+            echo -e -n "\e[1;43m$ret \e[0m"
+        done
+
+        echo
+        echo
+    fi
+}
+
+### color blue
+function show_bgb
+{
+    if [[ "$@" ]];then
+        for ret in "$@"; do
+            echo -e -n "\e[1;44m$ret \e[0m"
+        done
+
+        echo
+        echo
+    fi
+}
+
+### color purple
+function show_bgp
+{
+    if [[ "$@" ]];then
+        for ret in "$@"; do
+            echo -e -n "\e[1;45m$ret \e[0m"
+        done
+
+        echo
+        echo
+    fi
+}
+
+### color dark green
+function show_bgdg
+{
+    if [[ "$@" ]];then
+        for ret in "$@"; do
+            echo -e -n "\e[1;46m$ret \e[0m"
+        done
+
+        echo
+        echo
+    fi
+}
+
+### color white
+function show_bgw
+{
+    if [[ "$@" ]];then
+        for ret in "$@"; do
+            echo -e -n "\e[1;47m$ret \e[0m"
+        done
+
+        echo
+        echo
+    fi
+}
+
 #######################
 ###    file EOF    ###
 ######################

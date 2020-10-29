@@ -94,31 +94,41 @@ function log {
                 [[ ${loglevel} -le 4 ]] && show_vir "${logformat}"
                 ;;
 
+            quit)
+                [[ ${loglevel} -le 5 ]] && show_bgg "${logformat}"
+                ;;
+
             *) # printf
                 [[ -n ${loglevel} ]] && show_vip "${logformat}"
                 ;;
         esac
     } 2>&1 | tee -a ${logfile}
 
-    if [[ "${logtype}" == "error" ]]; then
+    case ${logtype} in
 
-        # 在出现错误的时候,删除待上传的文件.
-        if [[ -d ${version_p} ]]; then
-            rm -rf ${version_p}/*
-        fi
+        quit)
+            exit 0
+            ;;
 
-        if [[ -d ${rom_path} ]]; then
-            rm -rf ${rom_path}/*
-        fi
+        error)
+            # 在出现错误的时候,删除待上传的文件.
+            if [[ -d ${version_p} ]]; then
+                rm -rf ${version_p}/*
+            fi
 
-        if [[ "`is_4_return`" == "true" ]]; then
-            __return__ 4
-        elif [[ "`is_5_return`" == "true" ]];then
-            __return__ 5
-        else
-            __return__
-        fi
-    fi
+            if [[ -d ${rom_path} ]]; then
+                rm -rf ${rom_path}/*
+            fi
+
+            if [[ "`is_4_return`" == "true" ]]; then
+                __return__ 4
+            elif [[ "`is_5_return`" == "true" ]];then
+                __return__ 5
+            else
+                __return__
+            fi
+            ;;
+    esac
 }
 
 #######################

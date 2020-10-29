@@ -531,9 +531,9 @@ parse_all_patchset()
         if [[ -s "${tmpfs}/gerrit/change_number_list.txt" ]]; then
             change_number_list=($(cat ${tmpfs}/gerrit/change_number_list.txt | sort -n))
         else
-            __red__ "parse Topic: ${GERRIT_TOPIC} change number list null"
+            show_vir "THe parse Topic: ${GERRIT_TOPIC} change number list null ..."
             ssh-gerrit review -m '"Warning_Log_URL:"'${BUILD_URL}'"/console The patchset has been Abandoned or Merged or already verified +1 by gerrit trigger auto compile, so no need to build this time."' ${GERRIT_CHANGE_NUMBER},${GERRIT_PATCHSET_NUMBER}
-            log error "${GERRIT_CHANGE_URL} The patch status is Abandoned or Merged or already verified +1 by gerrit trrigger auto compile, no need to build this time."
+            log quit "${GERRIT_CHANGE_URL} The patch status is Abandoned or Merged or already verified +1 by gerrit trrigger auto compile, no need to build this time."
         fi
     else
         change_number_list=${GERRIT_CHANGE_NUMBER}
