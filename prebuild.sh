@@ -504,18 +504,19 @@ parse_all_patchset()
     show_vip "INFO: Enter ${FUNCNAME[0]}()"
 
     local GERRIT_TOPIC_TR=
+    local branchs="development_dint@jrdapp-android-r-dint@qct-sm4250-tf-r-v1.0-dint@TCT-ROM-4.0-AOSP-GCS-OP@TCTROM-R-QCT-V4.1-dev_gcs@TCTROM-R-QTI-OP@TCTROM-R-V4.0-dev_gcs"
 
     if [[ -n "${GERRIT_TOPIC}" ]]; then
         GERRIT_TOPIC_TR=$(echo ${GERRIT_TOPIC} | tr ';' '.')
 
         ssh-gerrit query \
-            --current-patch-set "intopic:^.*${GERRIT_TOPIC_TR}.* branch:${GERRIT_BRANCH} status:open NOT label:code-review-1" \
+            --current-patch-set "intopic:^.*${GERRIT_TOPIC_TR}.* status:open NOT label:code-review-1" \
             --format json > ${tmpfs}/gerrit/changeid.json
 
         if [[ "$?" -eq 0 ]]; then
             pushd ${tmpfs}/gerrit > /dev/null
 
-            python ${script_p}/tools/parse_change_infos.py changeid.json
+            python ${script_p}/tools/parse_change_infos.py changeid.json "${branchs}"
             if [[ $? -ne 0 ]]; then
                 log error "parse Topic: ${GERRIT_TOPIC} infomation failed"
             fi
