@@ -843,6 +843,7 @@ function gerrit_build() {
             verify_submit_patchset
         fi
     else
+        export WITHOUT_CHECK_API=false
         Command "bash build.sh --target_only -j${JOBS}"
         if [[ $? -ne 0 ]] ; then
             is_build_success=0
