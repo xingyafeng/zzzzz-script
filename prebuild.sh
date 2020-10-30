@@ -811,6 +811,7 @@ function gerrit_build() {
                 fi
 
                 set +e
+                echo 'yafeng:'
                 echo '@@@  prjitem = ' ${prjitem}
                 eval ${prjitem}
 
@@ -846,6 +847,7 @@ function gerrit_build() {
     else
         export WITHOUT_CHECK_API=false
 
+        echo 'yafeng:'
         if [[ "${TARGET_PRODUCT}" == "qssi" ]]; then
             Command "bash build.sh --qssi_only -j${JOBS}"
         else
