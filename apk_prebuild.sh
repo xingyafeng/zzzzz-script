@@ -151,7 +151,7 @@ function download_patchset() {
     show_vig 'project path : ' ${project_path}
 
     # 恢复现场
-    recover_standard_git_project ${project_path}
+    checkout_standard_git_project
     # 同步更新源代码
     Command "repo sync -c -d --no-tags -j$(nproc)"
 
