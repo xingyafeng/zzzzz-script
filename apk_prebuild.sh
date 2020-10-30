@@ -65,7 +65,7 @@ function set_manifest_xml() {
     fi
 }
 
-function make_app() {
+function source_init_project() {
 
     Command "source build/envsetup.sh"
 
@@ -83,6 +83,11 @@ function make_app() {
             Command "choosecombo 1 full_Tokyo_Lite_TMO userdebug 2 1"
             ;;
     esac
+}
+
+function make_app() {
+
+    source_init_project
 
     case ${GERRIT_PROJECT} in
 
@@ -170,6 +175,9 @@ function handle_common() {
 
     # 生成manifest列表
     generate_manifest_list
+
+    # 配置WORKSPACE
+    WORKSPACE=$(pwd)
 }
 
 function handle_variable() {
