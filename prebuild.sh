@@ -924,6 +924,8 @@ function prepare() {
     if [[ -d ${tmpfs}/gerrit ]]; then
         rm -rvf ${tmpfs}/gerrit/*
     fi
+
+    gettop_p=$(pwd)
 }
 
 function init() {

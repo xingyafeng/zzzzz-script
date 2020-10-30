@@ -88,6 +88,7 @@ function source_init_project() {
 function make_app() {
 
     source_init_project
+    handle_tct_custom
 
     case ${GERRIT_PROJECT} in
 
@@ -143,6 +144,20 @@ function verified-1() {
     fi
 }
 
+function is_clean_project() {
+
+    case ${JOB_NAME} in
+
+        SystemUI)
+            echo false
+            ;;
+
+        *)
+            echo false
+            ;;
+    esac
+}
+
 function download_patchset() {
 
     local project_path=
@@ -155,10 +170,17 @@ function download_patchset() {
 
     show_vig 'project path : ' ${project_path}
 
-    # 恢复现场
-    checkout_standard_android_project
-    # 同步更新源代码
-    Command "repo sync -c -d --no-tags -j$(nproc)"
+    if [[ "$(is_clean_project)" == 'false' ]]; then
+        # 恢复现场
+        recover_standard_git_project ${project_path}
+        # 同步更新源代码
+        Command "repo sync ${project_path} -c -d --no-tags -j$(nproc)"
+    else
+        # 恢复现场
+        checkout_standard_android_project
+        # 同步更新源代码
+        Command "repo sync -c -d --no-tags -j$(nproc)"
+    fi
 
     pushd ${project_path} > /dev/null
     Command "git fetch ssh://${username}@${GERRIT_HOST}:29418/${GERRIT_PROJECT} ${GERRIT_REFSPEC} && git checkout FETCH_HEAD"
@@ -177,7 +199,7 @@ function handle_common() {
     generate_manifest_list
 
     # 配置WORKSPACE
-    WORKSPACE=$(pwd)
+    gettop_p=$(pwd)
 }
 
 function handle_variable() {

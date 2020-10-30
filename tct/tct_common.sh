@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 ####################################### 公共变量 (全局变量)
+gettop_p=
 # teleweb path
 teleweb_p=/mfs_tablet/teleweb
 # git username
@@ -15,8 +16,8 @@ declare -A module_list
 
 function gettop() {
 
-    if [[ -n "${WORKSPACE}" ]]; then
-        (cd ${WORKSPACE}; PWD= /bin/pwd)
+    if [[ -n "${gettop_p}" ]]; then
+        (cd ${gettop_p}; PWD= /bin/pwd)
     else
         log error "Don't get the gettop, please check it ..."
     fi
