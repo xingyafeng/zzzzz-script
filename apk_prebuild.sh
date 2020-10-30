@@ -152,11 +152,11 @@ function download_patchset() {
 
     # 恢复现场
     recover_standard_git_project ${project_path}
+    # 同步更新源代码
+    Command "repo sync -c -d --no-tags -j$(nproc)"
 
     pushd ${project_path} > /dev/null
-    Command "repo sync . -c -d --no-tags -j$(nproc)"
     Command "git fetch ssh://${username}@${GERRIT_HOST}:29418/${GERRIT_PROJECT} ${GERRIT_REFSPEC} && git checkout FETCH_HEAD"
-
     popd > /dev/null
 }
 
