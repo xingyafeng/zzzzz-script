@@ -128,7 +128,9 @@ function download_source_code()
 
     ## 第一次下载完成后，需要初始化环境变量
     if [[ -d .repo && -f build/core/envsetup.mk && -f Makefile && "`is_android_project`" == "true" ]];then
-        source_init
+        if [[ "$(is_apk_prebuild)" == 'false' ]]; then
+            source_init
+        fi
     else
         log error "The (.repo) not found!"
     fi

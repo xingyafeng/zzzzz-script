@@ -13,7 +13,7 @@ pipeline {
 
     stages {
 
-        stage('Build Launcher3') {
+        stage('Build Download Source Code') {
             failFast true
             parallel {
                 stage('sm7250-r0-seattletmo-dint') {

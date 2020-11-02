@@ -158,6 +158,20 @@ function is_clean_project() {
     esac
 }
 
+function is_apk_prebuild() {
+
+    case ${JOB_NAME} in
+
+        JrdSetupWizard|Launcher3|Settings|SystemUI)
+            echo true
+            ;;
+
+        *)
+            echo false
+        ;;
+    esac
+}
+
 function download_patchset() {
 
     local project_path=
@@ -262,11 +276,15 @@ function main() {
         1)
             case $1 in
                 verified+1)
-                    verified+1
+                    if [[ "${build_update_code}" == "false" ]];then
+                        verified+1
+                    fi
                 ;;
 
                 verified-1)
-                    verified-1
+                    if [[ "${build_update_code}" == "false" ]];then
+                        verified-1
+                    fi
                     ;;
 
                 *)
