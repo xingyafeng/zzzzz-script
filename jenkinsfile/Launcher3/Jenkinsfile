@@ -3,7 +3,7 @@
 pipeline {
     agent {
         node {
-            label "s3"
+            label "s0"
         }
     }
 
