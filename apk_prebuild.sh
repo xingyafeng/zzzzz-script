@@ -162,6 +162,9 @@ function download_patchset() {
 
     local project_path=
 
+    # 生成manifest列表
+    generate_manifest_list
+
     if [[ -n "$(get_project_path)" ]]; then
         project_path=$(get_project_path)
     else
@@ -194,9 +197,6 @@ function handle_common() {
 
     # 配置manifest.xml
     set_manifest_xml
-
-    # 生成manifest列表
-    generate_manifest_list
 
     # 配置WORKSPACE
     gettop_p=$(pwd)
