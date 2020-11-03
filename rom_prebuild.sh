@@ -12,6 +12,10 @@ build_update_code=
 # 4. 是否清除编译
 build_clean=
 
+
+# 调试开关
+build_debug=
+
 ## --------------------------------
 
 # exec shell
@@ -545,12 +549,21 @@ parse_all_patchset()
     trap - ERR
 }
 
+# print env
+function pint_env_ini() {
+
+    while IFS=":" read -r project project_path changenumber patchset revision _;do
+        echo ${project} '==' ${project_path} '==' ${changenumber} '==' ${patchset} '==' ${revision}
+    done < ${tmpfs}/env.ini
+}
+
 function download_all_patchset()
 {
     trap 'ERRTRAP ${LINENO} ${FUNCNAME} ${BASH_LINENO}' ERR
     show_vip "INFO: Enter ${FUNCNAME[0]}()"
 
     local project_path=
+    :> ${tmpfs}/env.ini
 
     # 恢复当前干净状态
     checkout_standard_android_project
@@ -585,8 +598,14 @@ function download_all_patchset()
         echo '-------------------------------------'
         echo
 
+        # 拿到项目路径
         project_path=$(get_project_path)
+
         show_vig "current path: $project_path"
+
+        # 缓存环境变量
+        show_vip ${project}:${project_path}:${changenumber}:${patchset}:${revision}
+        echo ${project}:${project_path}:${changenumber}:${patchset}:${revision} >> ${tmpfs}/env.ini
 
         pushd ${project_path} > /dev/null
 
@@ -890,6 +909,15 @@ function handle_vairable() {
     # 4. 清除编译
     build_clean=${tct_clean:=false}
 
+    # --------------------------------
+
+    build_debug=${tct_clean:-true}
+    if [[ "${tct_clean}" == "true" ]]; then
+        build_debug=false
+    else
+        build_debug=true
+    fi
+
     handle_common_vairable
 }
 
@@ -899,6 +927,7 @@ function print_variable() {
     echo '-------------------------------------'
     echo 'JOBS = ' ${JOBS}
     echo '-------------------------------------'
+    echo 'build_debug        = ' ${build_debug}
     echo 'build_clean        = ' ${build_clean}
     echo 'build_project      = ' ${build_project}
     echo 'build_manifest     = ' ${build_manifest}
@@ -915,7 +944,13 @@ function print_variable() {
 
 function prepare() {
 
-    pushd ${WORKSPACE} > /dev/null
+    local workspace=${WORKSPACE}/${JOB_NAME}
+
+    if [[ ! -d ${workspace} && -n ${workspace} ]]; then
+        mkdir -p ${workspace}
+    fi
+
+    pushd ${workspace} > /dev/null
 
     if [[ -f aborted_flag ]]; then
         rm -fv aborted_flag
@@ -925,6 +960,7 @@ function prepare() {
         rm -rvf ${tmpfs}/gerrit/*
     fi
 
+    # 配置根路径
     gettop_p=$(pwd)
 }
 
@@ -982,14 +1018,18 @@ function main() {
         parse_all_patchset
         check_patchset_status
         download_all_patchset
+        pint_env_ini
 
-        show_vip '---- gerrit build start ... '
-        gerrit_build
-        show_vip '---- gerrit build end ... '
+        if ${build_debug} ; then
+            show_vip '---- gerrit build start ... '
+            gerrit_build
+            show_vip '---- gerrit build end ... '
+        fi
     else
-
-        # 编译android
-        make_android
+        if ${build_debug} ; then
+            # 编译android
+            make_android
+        fi
     fi
 
     if [[ "$(is_build_server)" == "true" ]];then
