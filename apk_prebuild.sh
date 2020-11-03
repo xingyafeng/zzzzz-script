@@ -281,13 +281,13 @@ function main() {
         1)
             case $1 in
                 verified+1)
-                    if [[ "${build_update_code}" == "false" ]];then
+                    if [[ "${tct_update_code}" == "false" ]];then
                         verified+1
                     fi
                 ;;
 
                 verified-1)
-                    if [[ "${build_update_code}" == "false" ]];then
+                    if [[ "${tct_update_code}" == "false" ]];then
                         verified-1
                     fi
                     ;;
