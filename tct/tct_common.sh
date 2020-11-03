@@ -42,13 +42,17 @@ function use_ccache() {
 # 检查mirror服务器
 function is_check_mirror() {
 
-    local mirror_servre='10.128.180.22'
+    local mirror_servre=(10.129.93.164 10.129.93.165 10.129.93.167 10.129.93.167)
 
-    if [[ $(showmount -e ${mirror_servre}) ]]; then
-        echo true
-    else
-        echo false
-    fi
+    for mirror in ${mirror_servre[@]} ; do
+        if [[ $(showmount -e ${mirror} 2> /dev/null) ]]; then
+            continue
+        else
+            echo false && return 0
+        fi
+    done
+
+    echo true
 }
 
 # 下载与更新Android源代码
