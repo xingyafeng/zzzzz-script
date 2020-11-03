@@ -101,10 +101,6 @@ function update_source_code()
         ## 更新源代码
         repo_sync_for_code
     else
-
-        ## 下载中断处理,需要重新下载代码
-        rm .repo/ -rfv
-
         download_source_code
     fi
 }
@@ -115,6 +111,11 @@ function download_source_code()
     local manifest_project_p='gcs_sz/manifest.git'
 
     if [[ -n "${build_manifest}" ]];then
+
+        # 1. 下载保证当前没有旧的.repo文件夹
+        if [[ -d .repo ]]; then
+            rm .repo/ -rf
+        fi
 
         if [[ "$(is_check_mirror)" == "true" ]]; then
             Command "repo init -u ${default_gerrit}:${manifest_project_p} -m ${build_manifest} --reference=${reference_p}"

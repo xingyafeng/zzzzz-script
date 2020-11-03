@@ -162,7 +162,7 @@ function is_apk_prebuild() {
 
     case ${JOB_NAME} in
 
-        JrdSetupWizard|Launcher3|Settings|SystemUI)
+        JrdSetupWizard|Launcher3|Settings|SystemUI|ApkPrebuild)
             echo true
             ;;
 
@@ -233,12 +233,17 @@ function print_variable() {
     echo "build_manifest          = " ${build_manifest}
     echo "build_update_code       = " ${build_update_code}
     echo '-----------------------------------------'
-    echo 'GERRIT_PROJECT          = ' ${GERRIT_PROJECT}
-    echo 'GERRIT_HOST             = ' ${GERRIT_HOST}
-    echo 'GERRIT_REFSPEC          = ' ${GERRIT_REFSPEC}
-    echo 'GERRIT_CHANGE_NUMBER    = ' ${GERRIT_CHANGE_NUMBER}
-    echo 'GERRIT_PATCHSET_NUMBER  = ' ${GERRIT_PATCHSET_NUMBER}
-    echo '-----------------------------------------'
+
+    if [[ "$(is_gerrit_trigger)" == "true" ]];then
+        echo 'GERRIT_PROJECT          = ' ${GERRIT_PROJECT}
+        echo 'GERRIT_HOST             = ' ${GERRIT_HOST}
+        echo 'GERRIT_REFSPEC          = ' ${GERRIT_REFSPEC}
+        echo 'GERRIT_CHANGE_NUMBER    = ' ${GERRIT_CHANGE_NUMBER}
+        echo 'GERRIT_PATCHSET_NUMBER  = ' ${GERRIT_PATCHSET_NUMBER}
+        echo '-----------------------------------------'
+    fi
+
+    echo
 }
 
 function init() {
@@ -289,6 +294,10 @@ function main() {
 
                 *)
                     local root_p=~/jobs/apk_prebuild/${project_name}
+
+                    if [[ ! -d ${root_p} ]]; then
+                        mkdir -p ${root_p}
+                    fi
 
                     pushd ${root_p} > /dev/null
 
