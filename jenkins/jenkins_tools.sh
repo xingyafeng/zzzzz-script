@@ -1294,7 +1294,7 @@ function is_android_project()
             echo true
             ;;
 
-        prebuild.sh|apk_prebuild.sh)
+        rom_prebuild.sh|apk_prebuild.sh)
             echo true
             ;;
 

@@ -21,7 +21,7 @@ case ${shellfs##*/} in
         ;;
 
     # 预编译
-    prebuild.sh|apk_prebuild.sh)
+    rom_prebuild.sh|apk_prebuild.sh)
         ;;
 
     demo.sh)
