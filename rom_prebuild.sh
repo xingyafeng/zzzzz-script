@@ -675,7 +675,7 @@ function gerrit_build() {
             amss_4250_spf1.0)
                 is_build_mma=true
                 if [[ ${#build_project_array[@]} -eq 0 ]];then
-                     build_project_array=("\"cd@amss_4250_spf1.0@&&@./linux_build.sh@-a@delhitf@tf\"")
+                     build_project_array=("\"unset@WORKSPACE@&&@cd@amss_4250_spf1.0@&&@./linux_build.sh@-a@delhitf@tf\"")
                 else
                      build_project_array=(${build_project_array[*]} "\"cd@amss_4250_spf1.0@&&@./linux_build.sh@-a@delhitf@tf\"")
                 fi
