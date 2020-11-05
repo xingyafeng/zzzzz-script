@@ -129,7 +129,7 @@ verify_submit_patchset()
         if [[ x"${is_build_success}" == x"1" ]];then
             ssh-gerrit review -m '"Build Log_URL:'${BUILD_URL}'"' ${changenumber},${patchset}
 
-            if [[ "$(check_verified ${changenumber})" == "false" ]]; then
+            if [[ "$(check-gerrit 'verified+1' ${changenumber})" == "false" ]]; then
                 ssh-gerrit review -m '"this patchset gerrit trigger build successful; --verified +1"' --verified 1 ${changenumber},${patchset}
                 if [[ $? -eq 0 ]];then
                     echo "this patchset build successfully, --verified +1"
@@ -139,7 +139,7 @@ verify_submit_patchset()
                 fi
             fi
 
-            if [[ "$(check_code-review ${changenumber})" == "true" ]]; then
+            if [[ "$(check-gerrit 'code-review+2' ${changenumber})" == "true" ]]; then
                 set +e
                 ssh-gerrit review -m '"this patchset gerrit trigger build successful; --submit"' --submit ${changenumber},${patchset} 2>&1 | tee ${tmpfs}/submit.log
                 set -e

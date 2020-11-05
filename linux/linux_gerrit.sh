@@ -27,29 +27,68 @@ function ssh-gerrit()
     ssh -o ConnectTimeout=32 -p 29418 Integration.tablet@sz.gerrit.tclcom.com gerrit "$@"
 }
 
-## check verified +1
-function check_verified() {
+# 校验提交的patch
+function check-gerrit() {
 
+    local check_type=
     local patchset=
-    local rowCount=
 
     case $# in
 
-        1)
-            patchset=${1-}
+        2)
+            check_type=${1:-}
+            if [[ -z ${check_type} ]]; then
+                log error "The check_type is null ..."
+            fi
+
+            patchset=${2:-}
+            if [[ -z ${patchset} ]]; then
+                log error "The patchset is null ..."
+            fi
             ;;
 
         *)
+            unset check_type
             unset patchset
+
+            log error "incorrect parameter ..."
             ;;
     esac
 
-    if [[ -n ${patchset} ]]; then
-        rowCount=$(ssh-gerrit query "status:open --patch-sets=${patchset} label:Verified+1" | egrep 'rowCount:' | awk '{print $NF}')
-    else
-        log error "patch-set is null ..."
-    fi
+    case ${check_type} in
 
+        'open'|'closed'|'merged'|'rebased'|'abandoned')
+            check_status
+            ;;
+
+        'verified+1')
+            check_verified '+1'
+            ;;
+
+        'verified-1')
+            check_verified '-1'
+            ;;
+
+        'code-review<0')
+            check_code-review '<0'
+            ;;
+
+        'code-review+2')
+            check_code-review '+2'
+            ;;
+
+        *)
+            log warn '未知类型...'
+            ;;
+    esac
+}
+
+## check close
+function check_status() {
+
+    local rowCount=
+
+    rowCount=$(ssh-gerrit query "--patch-sets=${patchset} status:${check_type}" | egrep 'rowCount:' | awk '{print $NF}')
     if [[ ${rowCount} -eq 0 ]]; then
         echo false
     else
@@ -57,29 +96,59 @@ function check_verified() {
     fi
 }
 
-## check code-review +2
-function check_code-review() {
+## check verified +1/-1
+function check_verified() {
 
-    local patchset=
+    local number=
     local rowCount=
 
     case $# in
 
         1)
-            patchset=${1-}
+            number=${1-}
+            if [[ -z ${number} ]]; then
+                log error "The verified number is null ..."
+            fi
             ;;
 
         *)
-            unset patchset
+            unset number
+
+            log error "incorrect parameter ..."
             ;;
     esac
 
-    if [[ -n ${patchset} ]]; then
-        rowCount=$(ssh-gerrit query "status:open --patch-sets=${patchset} label:code-review+2" | egrep 'rowCount:' | awk '{print $NF}')
+    rowCount=$(ssh-gerrit query "status:open --patch-sets=${patchset} label:Verified${number}" | egrep 'rowCount:' | awk '{print $NF}')
+    if [[ ${rowCount} -eq 0 ]]; then
+        echo false
     else
-        log error "patch-set is null ..."
+        echo true
     fi
+}
 
+## check code-review +2/<0
+function check_code-review() {
+
+    local number=
+    local rowCount=
+
+    case $# in
+
+        1)
+            number=${1-}
+            if [[ -z ${number} ]]; then
+                log error "The verified number is null ..."
+            fi
+            ;;
+
+        *)
+            unset number
+
+            log error "incorrect parameter ..."
+            ;;
+    esac
+
+    rowCount=$(ssh-gerrit query "status:open --patch-sets=${patchset} label:code-review${number}" | egrep 'rowCount:' | awk '{print $NF}')
     if [[ ${rowCount} -eq 0 ]]; then
         echo false
     else
