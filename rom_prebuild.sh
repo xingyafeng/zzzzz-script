@@ -912,7 +912,7 @@ function handle_vairable() {
     # --------------------------------
 
     build_debug=${tct_debug:-true}
-    if [[ "${tct_clean}" == "true" ]]; then
+    if [[ "${tct_debug}" == "true" ]]; then
         build_debug=false
     else
         build_debug=true
