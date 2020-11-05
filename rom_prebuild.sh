@@ -93,7 +93,7 @@ function android_mk_path() {
     done
 
     build_path=(`echo ${find_androidmk_path_list} | tr ' ' '\n' |  sort -u | uniq | xargs echo`)
-    __green__ "android_mk_path: ${build_path}"
+    __green__ "android mk path : ${build_path}"
 
     popd > /dev/null
 
@@ -741,7 +741,7 @@ function gerrit_build() {
                    is_build_mma=false
                    break
                 else
-                    show_vig 'yafeng:build path list = ' ${build_path[@]}
+                    show_vig 'build path list = ' ${build_path[@]}
                     for i in ${build_path[@]} ; do
                         if [[ ${i} =~ "lk" ]]; then
                             is_build_mma=true
