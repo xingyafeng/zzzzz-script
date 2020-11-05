@@ -92,7 +92,6 @@ function android_mk_path() {
         fi
     done
 
-    show_vig "find_androidmk_path_list: $find_androidmk_path_list"
     build_path=(`echo ${find_androidmk_path_list} | tr ' ' '\n' |  sort -u | uniq | xargs echo`)
     __green__ "android_mk_path: ${build_path}"
 
@@ -736,9 +735,7 @@ function gerrit_build() {
 
             *)
                 list=(`cat build/make/tools/buildlist | awk -F: '{print $1}' | sort -u`)
-                echo 'list = ' ${list}
                 android_mk_path
-                show_vip 'android_mk_path --------------- end ...'
 
                 if [[ ${#build_path[@]} -eq 0 ]]; then
                    is_build_mma=false
@@ -830,7 +827,7 @@ function gerrit_build() {
                 fi
 
                 set +e
-                echo 'yafeng:'
+                echo 'yafeng: build other'
                 echo '@@@  prjitem = ' ${prjitem}
                 eval ${prjitem}
 
@@ -851,7 +848,6 @@ function gerrit_build() {
 
         if [[ -n "$build_module_list" ]];then
             show_vip "mma -j${JOBS} ${build_module_list}"
-
             mma -j${JOBS} ${build_module_list} 2>&1 | tee $(date +"%Y%m%d_%H%M%S")_mma.log
             if [[ ${PIPESTATUS[0]} -eq 0 ]] ; then
                 is_build_success=1
@@ -866,7 +862,7 @@ function gerrit_build() {
     else
         export WITHOUT_CHECK_API=false
 
-        echo 'yafeng:'
+        echo 'yafeng: build target or qssi ...'
         if [[ "${TARGET_PRODUCT}" == "qssi" ]]; then
             Command "bash build.sh --qssi_only -j${JOBS}"
         else
@@ -953,7 +949,7 @@ function prepare() {
     pushd ${workspace} > /dev/null
 
     if [[ -f aborted_flag ]]; then
-        rm -fv aborted_flag
+        rm -vf aborted_flag
     fi
 
     if [[ -d ${tmpfs}/gerrit ]]; then
