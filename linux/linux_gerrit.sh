@@ -48,9 +48,6 @@ function check-gerrit() {
             ;;
 
         *)
-            unset check_type
-            unset patchset
-
             log error "incorrect parameter ..."
             ;;
     esac
@@ -77,10 +74,25 @@ function check-gerrit() {
             check_code-review '+2'
             ;;
 
+        'amend')
+            check_amend
+            ;;
+
         *)
             log warn '未知类型...'
             ;;
     esac
+}
+
+## check amend
+function check_amend() {
+
+    latest_patchset=$(ssh-gerrit query --current-patch-set "status:open change:${GERRIT_CHANGE_NUMBER}" | grep "    number:" | awk -F: '{print $NF}')
+    if [[ "${latest_patchset}" -ne "${GERRIT_PATCHSET_NUMBER}" ]]; then
+        echo true
+    else
+        echo false
+    fi
 }
 
 ## check close
@@ -112,8 +124,6 @@ function check_verified() {
             ;;
 
         *)
-            unset number
-
             log error "incorrect parameter ..."
             ;;
     esac
@@ -142,8 +152,6 @@ function check_code-review() {
             ;;
 
         *)
-            unset number
-
             log error "incorrect parameter ..."
             ;;
     esac

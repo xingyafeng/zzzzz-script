@@ -110,40 +110,6 @@ function make_app() {
     esac
 }
 
-function verified+1() {
-
-    ssh-gerrit review -m '"Build Log_URL:'${BUILD_URL}'"' ${GERRIT_CHANGE_NUMBER},${GERRIT_PATCHSET_NUMBER}
-
-    if [[ "$(check-gerrit 'verified+1' ${GERRIT_CHANGE_NUMBER})" == "false" ]]; then
-        ssh-gerrit review -m '"this patchset gerrit trigger build successful; --verified +1"' --verified 1 ${GERRIT_CHANGE_NUMBER},${GERRIT_PATCHSET_NUMBER}
-        if [[ $? -eq 0 ]];then
-            echo "this patchset build successfully, --verified +1"
-        else
-            ssh-gerrit review -m '"jenkins --verified +1 failed ..."' ${GERRIT_CHANGE_NUMBER},${GERRIT_PATCHSET_NUMBER}
-            log error "jenkins --verified +1 failed ..."
-        fi
-    fi
-
-    if [[ "$(check-gerrit 'code-review+2' ${GERRIT_CHANGE_NUMBER})" == "true" ]]; then
-        set +e
-        ssh-gerrit review -m '"this patchset gerrit trigger build successful; --submit"' --submit ${GERRIT_CHANGE_NUMBER},${GERRIT_PATCHSET_NUMBER} 2>&1 | tee ${tmpfs}/submit.log
-        set -e
-    else
-        ssh-gerrit review -m '"can only verify now, need some people to review +2."' ${GERRIT_CHANGE_NUMBER},${GERRIT_PATCHSET_NUMBER}
-        log warn "can only verify now, need some people to review +2"
-    fi
-}
-
-function verified-1() {
-
-    ssh-gerrit review -m '"Build Error_Log_URL:"'${BUILD_URL}'"/console"' --verified -1 ${GERRIT_CHANGE_NUMBER},${GERRIT_PATCHSET_NUMBER}
-    if [[ $? -eq 0 ]];then
-        echo "this patchset gerrit trigger build failed.\nError_Log_URL:${BUILD_URL}/console."
-    else
-        echo "verify_submit_patchset failed,please check."
-    fi
-}
-
 function is_clean_project() {
 
     case ${JOB_NAME} in

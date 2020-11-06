@@ -8,6 +8,8 @@ teleweb_p=/mfs_tablet/teleweb
 username='Integration.tablet'
 # build path
 BUILDDIR=${WORKSPACE}
+# gerrit path
+gerrit_p=${tmpfs}/gerrit
 
 ## manifest info
 declare -A manifest_info
