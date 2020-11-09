@@ -193,7 +193,7 @@ function get_process() {
 #
 # 测试下载项目：sm7250-r0-seattletmo-dint.xml
 #
-# 使用mirror下载代码，耗时与正常下载对比
+# 使用mirror下载代码，耗时与正常下载对比 代码大小 88G
 #   mirror      非mirror
 #   29m31.202s  62m28.636s
 # 使用mirror下载代码，project-objects 占用空间大小与正常下载对比

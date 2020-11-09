@@ -410,7 +410,7 @@ function gerrit_build() {
                    is_build_mma=false
                    break
                 else
-                    show_vig 'build path list : ' ${build_path[@]}
+                    show_vig 'build path list :' ${build_path[@]}
                     for i in ${build_path[@]} ; do
                         if [[ ${i} =~ "lk" ]]; then
                             is_build_mma=true
