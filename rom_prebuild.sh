@@ -143,7 +143,7 @@ function check_patchset_status()
         # 检查PATCH状态， closed|merged|abandoned|amend
         if [[ "$(check-gerrit 'closed' ${GERRIT_CHANGE_NUMBER})" == "true" ]]; then
            ssh-gerrit review -m '"Warning_Log_URL:"'${BUILD_URL}'"/console The patch has been Abandoned or Merged now, so no need to build this time."' ${GERRIT_CHANGE_NUMBER},${GERRIT_PATCHSET_NUMBER}
-           log warn "${GERRIT_CHANGE_URL} The patch status is Abandoned or Merged now, no need to build this time."
+           log warn "${GERRIT_CHANGE_URL} The patch status is closed now, no need to build this time."
 
            check_status=false
         fi
@@ -172,7 +172,7 @@ function check_patchset_status()
         # 检查 verified+1|code-review<0
         if [[ "$(check-gerrit 'verified+1' ${GERRIT_CHANGE_NUMBER})" == "true" ]]; then
            ssh-gerrit review -m '"Warning_Log_URL:"'${BUILD_URL}'"/console The patch has been verified +1 by auto compile or somebody, so no need to build this time."' ${GERRIT_CHANGE_NUMBER},${GERRIT_PATCHSET_NUMBER}
-           log warn "${GERRIT_CHANGE_URL} The patch status has been verified by auto compile, no need to build this time."
+           log warn "${GERRIT_CHANGE_URL} The patch status has been verified+1 by auto compile, no need to build this time."
 
            check_status=false
         fi
