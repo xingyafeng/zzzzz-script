@@ -32,7 +32,9 @@ function generate_module_list() {
 
     while IFS=":" read -r _path _target _;do
         #echo ${_path} '---' ${_target}
-        moudule_list[${_path}]=${_target}
+        if [[ -n ${_target} ]]; then
+            moudule_list[${_path}]=${_target}
+        fi
     done < ${result_installed}
 }
 
