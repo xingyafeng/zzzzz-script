@@ -255,7 +255,7 @@ function parse_all_patchset() {
     :> ${tmpfs}/env.ini
     for item in ${change_number_list[@]} ; do
         if [[ -z "${GERRIT_TOPIC}" ]]; then
-            echo ${GERRIT_CHANGE_URL}@${GERRIT_PROJECT}@${GERRIT_REFSPEC}@${GERRIT_PATCHSET_NUMBER}@${GERRIT_PATCHSET_REVISION}@{GERRIT_CHANGE_NUMBER} >> ${tmpfs}/env.ini
+            echo ${GERRIT_CHANGE_URL}@${GERRIT_PROJECT}@${GERRIT_REFSPEC}@${GERRIT_PATCHSET_NUMBER}@${GERRIT_PATCHSET_REVISION}@${GERRIT_CHANGE_NUMBER} >> ${tmpfs}/env.ini
         else
             if [[ -f "${gerrit_p}/${item}" ]]; then
                 source ${gerrit_p}/${item}
