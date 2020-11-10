@@ -97,7 +97,7 @@ function verified+1() {
 
 function verified-1() {
 
-    ssh-gerrit review -m '"Build Error_Log_URL:"'${BUILD_URL}'"/console"' --verified -1 ${GERRIT_CHANGE_NUMBER},${GERRIT_PATCHSET_NUMBER}
+    ssh-gerrit review -m '"Build Error_Log_URL:"'${BUILD_URL}'"/console; --verified -1"' ${GERRIT_CHANGE_NUMBER},${GERRIT_PATCHSET_NUMBER}
     if [[ $? -eq 0 ]];then
         show_vip "This patchset gerrit trigger build failed.\nError_Log_URL:${BUILD_URL}/console."
     else
