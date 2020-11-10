@@ -207,10 +207,12 @@ function print_variable() {
 
     if [[ "$(is_gerrit_trigger)" == "true" ]];then
         echo 'GERRIT_PROJECT          = ' ${GERRIT_PROJECT}
-        echo 'GERRIT_HOST             = ' ${GERRIT_HOST}
+        echo 'GERRIT_BRANCH           = ' ${GERRIT_BRANCH}
         echo 'GERRIT_REFSPEC          = ' ${GERRIT_REFSPEC}
         echo 'GERRIT_CHANGE_NUMBER    = ' ${GERRIT_CHANGE_NUMBER}
         echo 'GERRIT_PATCHSET_NUMBER  = ' ${GERRIT_PATCHSET_NUMBER}
+        echo 'GERRIT_HOST             = ' ${GERRIT_HOST}
+        echo 'GERRIT_CHANGE_URL       = ' ${GERRIT_CHANGE_URL}
         echo '-----------------------------------------'
     fi
 
