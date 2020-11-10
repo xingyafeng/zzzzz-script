@@ -322,7 +322,7 @@ function main() {
 
                     pushd ${root_p} > /dev/null
 
-                    if [[ $(filter) == "true" ]]; then
+                    if [[ "$(filter)" == "true" ]]; then
                         return 0
                     fi
 
