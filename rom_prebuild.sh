@@ -514,7 +514,7 @@ function gerrit_build() {
         fi
 
         if [[ -n "$build_module_list" ]];then
-            show_vip "mma -j${JOBS} ${build_module_list}"
+            show_vip "[tct]: mma -j${JOBS} ${build_module_list}"
             mma -j${JOBS} ${build_module_list} 2>&1 | tee $(date +"%Y%m%d_%H%M%S")_mma.log
             if [[ ${PIPESTATUS[0]} -eq 0 ]] ; then
                 is_build_success=1
