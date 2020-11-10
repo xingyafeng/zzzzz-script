@@ -113,7 +113,7 @@ function verify_patchset_submit() {
 
     check_patchset_status
 
-    while IFS="@" read -r GERRIT_CHANGE_URL GERRIT_PROJECT GERRIT_REFSPEC GERRIT_PATCHSET_NUMBER GERRIT_PATCHSET_REVISION GERRIT_CHANGE_NUMBER _;do
+    while IFS="@" read -r GERRIT_CHANGE_URL GERRIT_PROJECT GERRIT_REFSPEC GERRIT_PATCHSET_NUMBER GERRIT_PATCHSET_REVISION GERRIT_CHANGE_NUMBER GERRIT_BRANCH _;do
         echo ${GERRIT_CHANGE_URL}:${GERRIT_PROJECT}:${GERRIT_REFSPEC}:${GERRIT_PATCHSET_NUMBER}:${GERRIT_PATCHSET_REVISION}:{GERRIT_CHANGE_NUMBER} >> ${tmpfs}/env.ini
 
         case ${is_build_success} in
@@ -138,7 +138,7 @@ function check_patchset_status()
     local check_status=true
     local latest_patchset=
 
-    while IFS="@" read -r GERRIT_CHANGE_URL GERRIT_PROJECT GERRIT_REFSPEC GERRIT_PATCHSET_NUMBER GERRIT_PATCHSET_REVISION GERRIT_CHANGE_NUMBER _;do
+    while IFS="@" read -r GERRIT_CHANGE_URL GERRIT_PROJECT GERRIT_REFSPEC GERRIT_PATCHSET_NUMBER GERRIT_PATCHSET_REVISION GERRIT_CHANGE_NUMBER GERRIT_BRANCH _;do
 
         # 检查PATCH状态， closed|merged|abandoned|amend
         if [[ "$(check-gerrit 'closed' ${GERRIT_CHANGE_NUMBER})" == "true" ]]; then
@@ -187,7 +187,7 @@ function check_patchset_status()
     done < ${tmpfs}/env.ini
 
     if [[ "${check_status}" == "false" ]];then
-        while IFS="@" read -r GERRIT_CHANGE_URL GERRIT_PROJECT GERRIT_REFSPEC GERRIT_PATCHSET_NUMBER GERRIT_PATCHSET_REVISION GERRIT_CHANGE_NUMBER _;do
+        while IFS="@" read -r GERRIT_CHANGE_URL GERRIT_PROJECT GERRIT_REFSPEC GERRIT_PATCHSET_NUMBER GERRIT_PATCHSET_REVISION GERRIT_CHANGE_NUMBER GERRIT_BRANCH _;do
             ssh-gerrit review -m '"The patchset relation for check failed on the same pr number, please check this patchset for verified -1 or reviewed <0."' ${GERRIT_CHANGE_NUMBER},${GERRIT_PATCHSET_NUMBER}
         done < ${tmpfs}/env.ini
 
@@ -255,12 +255,13 @@ function parse_all_patchset() {
     :> ${tmpfs}/env.ini
     for item in ${change_number_list[@]} ; do
         if [[ -z "${GERRIT_TOPIC}" ]]; then
-            echo ${GERRIT_CHANGE_URL}@${GERRIT_PROJECT}@${GERRIT_REFSPEC}@${GERRIT_PATCHSET_NUMBER}@${GERRIT_PATCHSET_REVISION}@${GERRIT_CHANGE_NUMBER} >> ${tmpfs}/env.ini
+            show_vip ${GERRIT_CHANGE_URL}@${GERRIT_PROJECT}@${GERRIT_REFSPEC}@${GERRIT_PATCHSET_NUMBER}@${GERRIT_PATCHSET_REVISION}@${GERRIT_CHANGE_NUMBER}@${GERRIT_BRANCH}
+            echo ${GERRIT_CHANGE_URL}@${GERRIT_PROJECT}@${GERRIT_REFSPEC}@${GERRIT_PATCHSET_NUMBER}@${GERRIT_PATCHSET_REVISION}@${GERRIT_CHANGE_NUMBER}@${GERRIT_BRANCH} >> ${tmpfs}/env.ini
         else
             if [[ -f "${gerrit_p}/${item}" ]]; then
                 source ${gerrit_p}/${item}
-                echo ${url}@${project}@${refspec}@${patchset}@${revision}@${changenumber}
-                echo ${url}@${project}@${refspec}@${patchset}@${revision}@${changenumber} >> ${tmpfs}/env.ini
+                show_vip ${url}@${project}@${refspec}@${patchset}@${revision}@${changenumber}@${branch}
+                echo ${url}@${project}@${refspec}@${patchset}@${revision}@${changenumber}@${branch} >> ${tmpfs}/env.ini
             else
                 log error "The topic item ${item} information dropout."
             fi
@@ -273,8 +274,8 @@ function parse_all_patchset() {
 
 function pint_env_ini() {
 
-    while IFS="@" read -r GERRIT_CHANGE_URL GERRIT_PROJECT GERRIT_REFSPEC GERRIT_PATCHSET_NUMBER GERRIT_PATCHSET_REVISION GERRIT_CHANGE_NUMBER _;do
-        echo ${GERRIT_CHANGE_URL} "==" ${GERRIT_PROJECT} "==" ${GERRIT_REFSPEC} "==" ${GERRIT_PATCHSET_NUMBER} "==" ${GERRIT_PATCHSET_REVISION} "==" ${GERRIT_CHANGE_NUMBER}
+    while IFS="@" read -r GERRIT_CHANGE_URL GERRIT_PROJECT GERRIT_REFSPEC GERRIT_PATCHSET_NUMBER GERRIT_PATCHSET_REVISION GERRIT_CHANGE_NUMBER GERRIT_BRANCH _;do
+        echo ${GERRIT_CHANGE_URL} "==" ${GERRIT_PROJECT} "==" ${GERRIT_REFSPEC} "==" ${GERRIT_PATCHSET_NUMBER} "==" ${GERRIT_PATCHSET_REVISION} "==" ${GERRIT_CHANGE_NUMBER} "==" ${GERRIT_BRANCH}
     done < ${tmpfs}/env.ini
 }
 
@@ -288,7 +289,7 @@ function download_all_patchset()
     checkout_standard_android_project
     Command "repo sync -c -d --no-tags -j$(nproc)"
 
-    while IFS="@" read -r GERRIT_CHANGE_URL GERRIT_PROJECT GERRIT_REFSPEC GERRIT_PATCHSET_NUMBER GERRIT_PATCHSET_REVISION GERRIT_CHANGE_NUMBER _;do
+    while IFS="@" read -r GERRIT_CHANGE_URL GERRIT_PROJECT GERRIT_REFSPEC GERRIT_PATCHSET_NUMBER GERRIT_PATCHSET_REVISION GERRIT_CHANGE_NUMBER GERRIT_BRANCH _;do
 
         project_path=$(get_project_path)
         show_vig "@@@ project path: " ${project_path}
@@ -326,7 +327,7 @@ function gerrit_build() {
 
     local project_path=
 
-    while IFS="@" read -r GERRIT_CHANGE_URL GERRIT_PROJECT GERRIT_REFSPEC GERRIT_PATCHSET_NUMBER GERRIT_PATCHSET_REVISION GERRIT_CHANGE_NUMBER _;do
+    while IFS="@" read -r GERRIT_CHANGE_URL GERRIT_PROJECT GERRIT_REFSPEC GERRIT_PATCHSET_NUMBER GERRIT_PATCHSET_REVISION GERRIT_CHANGE_NUMBER GERRIT_BRANCH _;do
         project=${GERRIT_PROJECT}
         project_path=$(get_project_path)
         changenum=${GERRIT_CHANGE_NUMBER}

@@ -87,7 +87,7 @@ function check-gerrit() {
 ## check amend
 function check_amend() {
 
-    latest_patchset=$(ssh-gerrit query --current-patch-set "status:open change:${GERRIT_CHANGE_NUMBER}" | grep "    number:" | awk -F: '{print $NF}')
+    latest_patchset=$(ssh-gerrit query --current-patch-set "status:open project:${GERRIT_PROJECT} branch:${GERRIT_BRANCH} change:${GERRIT_CHANGE_NUMBER}" | grep "    number:" | awk -F: '{print $NF}')
     if [[ "${latest_patchset}" -ne "${GERRIT_PATCHSET_NUMBER}" ]]; then
         echo true
     else
@@ -100,7 +100,7 @@ function check_status() {
 
     local rowCount=
 
-    rowCount=$(ssh-gerrit query "--patch-sets=${patchset} status:${check_type}" | egrep 'rowCount:' | awk '{print $NF}')
+    rowCount=$(ssh-gerrit query "status:${check_type} --patch-sets=${patchset} project:${GERRIT_PROJECT} branch:${GERRIT_BRANCH}" | egrep 'rowCount:' | awk '{print $NF}')
     if [[ ${rowCount} -eq 0 ]]; then
         echo false
     else
@@ -128,7 +128,7 @@ function check_verified() {
             ;;
     esac
 
-    rowCount=$(ssh-gerrit query "status:open --patch-sets=${patchset} label:Verified${number}" | egrep 'rowCount:' | awk '{print $NF}')
+    rowCount=$(ssh-gerrit query "status:open project:${GERRIT_PROJECT} branch:${GERRIT_BRANCH} --patch-sets=${patchset} label:Verified${number}" | egrep 'rowCount:' | awk '{print $NF}')
     if [[ ${rowCount} -eq 0 ]]; then
         echo false
     else
@@ -156,7 +156,7 @@ function check_code-review() {
             ;;
     esac
 
-    rowCount=$(ssh-gerrit query "status:open --patch-sets=${patchset} label:code-review${number}" | egrep 'rowCount:' | awk '{print $NF}')
+    rowCount=$(ssh-gerrit query "status:open project:${GERRIT_PROJECT} branch:${GERRIT_BRANCH} --patch-sets=${patchset} label:code-review${number}" | egrep 'rowCount:' | awk '{print $NF}')
     if [[ ${rowCount} -eq 0 ]]; then
         echo false
     else
