@@ -21,29 +21,32 @@ function generate_manifest_list() {
     done < ${manifest_list_p}
 }
 
-# 生成manifest中name对于的path列表
-function generate_module_list() {
+# 生成目标列表
+function generate_module_target() {
 
-    local result_installed=result_installed.txt
+    local buildlist=build/make/tools/buildlist
 
-    if [[ ! -f ${result_installed} ]]; then
+    if [[ ! -f ${buildlist} ]]; then
         generate_buildlist_file
     fi
 
-    while IFS=":" read -r _path _target _;do
-        #echo ${_path} '---' ${_target}
-        if [[ -n ${_target} ]]; then
-            moudule_list[${_path}]=${_target}
-        fi
-    done < ${result_installed}
+    if [[ -f ${buildlist} ]]; then
+        while IFS=":" read -r _path _target _;do
+            #echo ${_path} '---' ${_target}
+            if [[ -n ${_target} ]]; then
+                module_target[${_path}]=${_target}
+            fi
+        done < ${buildlist}
+    else
+        log warn "The ${buildlist} has no found!"
+    fi
+
 }
 
 # 拿到项目路径
 function get_project_path() {
 
-    if [[ -n ${project} ]]; then
-        echo ${manifest_info[${project}]}
-    elif [[ -n ${GERRIT_PROJECT} ]] ; then
+    if [[ -n ${GERRIT_PROJECT} ]] ; then
         echo ${manifest_info[${GERRIT_PROJECT}]}
     else
         log error "get project path failed ..."
@@ -53,9 +56,7 @@ function get_project_path() {
 # 拿到目标模块名
 function get_project_module() {
 
-    if [[ -n ${project} ]]; then
-        echo ${moudule_list[${project}]}
-    elif [[ -n ${GERRIT_PROJECT} ]] ; then
+    if [[ -n ${GERRIT_PROJECT} ]] ; then
         echo ${moudule_list[${GERRIT_PROJECT}]}
     else
         log error "get project path failed ..."
@@ -171,6 +172,43 @@ function is_qssi_product() {
         echo true
     else
         echo false
+    fi
+}
+
+# 获取正确的编译路径
+function getdir() {
+
+    local prjdir=${1:-}
+    local tmpdir=
+
+    if [[ ${project_path} == ${prjdir} ]]; then
+        if [[ -n ${module_target[${prjdir}]} ]]; then
+            echo ${prjdir}
+
+            return 0
+        else
+            return 0
+        fi
+    else
+        tmpdir=$(dirname ${prjdir})
+#        echo '@@ tmpdir: ' ${tmpdir}
+        while IFS=':' read -r k v ; do
+#            echo 'k : ' ${k} ' --- ' 'v : ' ${v}
+            if [[ -n ${v} ]]; then
+#                echo 'k : ' ${k}
+                if [[ ${k} == "${tmpdir}" ]]; then
+                    if [[ ${tmpdir} != ${project_path} ]]; then
+                        if [[ -n ${module_target[${tmpdir}]} ]]; then
+                            echo ${tmpdir}
+
+                            return 0
+                        fi
+                    fi
+                fi
+            fi
+        done < build/make/tools/buildlist
+
+        getdir ${tmpdir}
     fi
 }
 

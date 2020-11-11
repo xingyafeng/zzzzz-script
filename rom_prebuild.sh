@@ -18,109 +18,34 @@ build_debug=
 
 ## --------------------------------
 
+declare -a build_path
+declare -a build_module_list
+declare -a change_number_list
+
 # exec shell
 shellfs=$0
 
 # init function
 . "`dirname $0`/tct/tct_init.sh"
 
-function android_mk_path() {
-
-    local find_androidmk_path_list=""
-
-    pushd ${project_path} > /dev/null
-
-    m=(`git log --name-only --pretty=format: ${revision} -1 | grep -v "^$" | sort -u`)
-    for i in ${m[@]} ; do
-        x=${i%/*}
-        if [[ -f ${x}/Android.mk || -f ${x}/Android.bp ]];then
-            if [[ -z "$find_androidmk_path_list" ]];then
-                find_androidmk_path_list="$project_path/$x"
-            else
-                find_androidmk_path_list="$find_androidmk_path_list $project_path/$x"
-            fi
-            continue
-        fi
-
-        if [[ -f ${i} ]] ; then
-            y=${project_path}/${i}
-            z=${y%/*}
-
-            if [[ n"$project_path" = n"${z}" ]] ; then
-                if [[ -z "$find_androidmk_path_list" ]];then
-                    find_androidmk_path_list="$project_path"
-                else
-                    find_androidmk_path_list="$find_androidmk_path_list $project_path"
-                fi
-                continue
-            else
-                x=${i%/*}
-                j=${i%%/*}
-
-                while [[ z"$x" != z"$j" ]]
-                do
-                    if [[ -f ${x}/Android.mk || -f ${x}/Android.bp ]] ; then
-                        if [[ -z "$find_androidmk_path_list" ]];then
-                            find_androidmk_path_list="$project_path/$x"
-                        else
-                            find_androidmk_path_list="$find_androidmk_path_list $project_path/$x"
-                        fi
-                        break
-                    else
-                        x=${x%/*}
-                    fi
-                done
-
-                if [[ -f ${x}/Android.mk || -f ${x}/Android.bp ]] ; then
-                     if [[ -z "$find_androidmk_path_list" ]];then
-                        find_androidmk_path_list="$project_path/$x"
-                     else
-                        find_androidmk_path_list="$find_androidmk_path_list $project_path/$x"
-                     fi
-                     continue
-                fi
-
-                if [[ -f Android.mk || -f Android.bp ]] ; then
-                     if [[ -z "$find_androidmk_path_list" ]];then
-                        find_androidmk_path_list="$project_path"
-                     else
-                        find_androidmk_path_list="$find_androidmk_path_list $project_path"
-                     fi
-                     continue
-                fi
-            fi
-        fi
-    done
-
-    build_path=(`echo ${find_androidmk_path_list} | tr ' ' '\n' |  sort -u | uniq | xargs echo`)
-    __green__ "android mk path : ${build_path}"
-
-    popd > /dev/null
-
-    #check qssi project
-    for build in ${build_path[@]} ; do
-        if [[ "$(is_qssi_product ${build})" == "true" ]]; then
-            export TARGET_PRODUCT=qssi
-
-            log warn "This module is qssi project."
-        fi
-    done
-}
-
 function verify_patchset_submit() {
 
     show_vip "INFO: Enter ${FUNCNAME[0]}()"
 
-    check_patchset_status
+    local is_build_success=${1-}
+
+    if [[ ${is_build_success} -eq 0 ]]; then
+        check_patchset_status
+    fi
 
     while IFS="@" read -r GERRIT_CHANGE_URL GERRIT_PROJECT GERRIT_REFSPEC GERRIT_PATCHSET_NUMBER GERRIT_PATCHSET_REVISION GERRIT_CHANGE_NUMBER GERRIT_BRANCH _;do
         case ${is_build_success} in
             0)
-                verified-1
+                verified+1
                 ;;
 
             1)
-                verified+1
+                verified-1
                 ;;
         esac
     done < ${tmpfs}/env.ini
@@ -133,8 +58,8 @@ function check_patchset_status()
     trap 'ERRTRAP ${LINENO} ${FUNCNAME} ${BASH_LINENO}' ERR
     show_vip "INFO: Enter ${FUNCNAME[0]}()"
 
-    local check_status=true
     local latest_patchset=
+    local check_status=true
 
     while IFS="@" read -r GERRIT_CHANGE_URL GERRIT_PROJECT GERRIT_REFSPEC GERRIT_PATCHSET_NUMBER GERRIT_PATCHSET_REVISION GERRIT_CHANGE_NUMBER GERRIT_BRANCH _;do
 
@@ -248,23 +173,29 @@ function parse_all_patchset() {
         change_number_list=${GERRIT_CHANGE_NUMBER}
     fi
 
-    __green__ "[tct] change_number_list = " ${change_number_list[@]}
+    show_vig "[tct] change_number_list = " ${change_number_list[@]}
 
     :> ${tmpfs}/env.ini
     for item in ${change_number_list[@]} ; do
         if [[ -z "${GERRIT_TOPIC}" ]]; then
-            show_vip ${GERRIT_CHANGE_URL}@${GERRIT_PROJECT}@${GERRIT_REFSPEC}@${GERRIT_PATCHSET_NUMBER}@${GERRIT_PATCHSET_REVISION}@${GERRIT_CHANGE_NUMBER}@${GERRIT_BRANCH}
+#            show_vip ${GERRIT_CHANGE_URL}@${GERRIT_PROJECT}@${GERRIT_REFSPEC}@${GERRIT_PATCHSET_NUMBER}@${GERRIT_PATCHSET_REVISION}@${GERRIT_CHANGE_NUMBER}@${GERRIT_BRANCH}
             echo ${GERRIT_CHANGE_URL}@${GERRIT_PROJECT}@${GERRIT_REFSPEC}@${GERRIT_PATCHSET_NUMBER}@${GERRIT_PATCHSET_REVISION}@${GERRIT_CHANGE_NUMBER}@${GERRIT_BRANCH} >> ${tmpfs}/env.ini
         else
             if [[ -f "${gerrit_p}/${item}" ]]; then
                 source ${gerrit_p}/${item}
-                show_vip ${url}@${project}@${refspec}@${patchset}@${revision}@${changenumber}@${branch}
+#                show_vip ${url}@${project}@${refspec}@${patchset}@${revision}@${changenumber}@${branch}
                 echo ${url}@${project}@${refspec}@${patchset}@${revision}@${changenumber}@${branch} >> ${tmpfs}/env.ini
             else
                 log error "The topic item ${item} information dropout."
             fi
         fi
     done
+
+    #　重置变量
+    unset url project refspec patchset revision changenumber branch
+
+    # 输出环境参数
+    pint_env_ini
 
     show_vip "INFO: Exit ${FUNCNAME[0]}()"
     trap - ERR
@@ -273,7 +204,14 @@ function parse_all_patchset() {
 function pint_env_ini() {
 
     while IFS="@" read -r GERRIT_CHANGE_URL GERRIT_PROJECT GERRIT_REFSPEC GERRIT_PATCHSET_NUMBER GERRIT_PATCHSET_REVISION GERRIT_CHANGE_NUMBER GERRIT_BRANCH _;do
-        echo ${GERRIT_CHANGE_URL} "==" ${GERRIT_PROJECT} "==" ${GERRIT_REFSPEC} "==" ${GERRIT_PATCHSET_NUMBER} "==" ${GERRIT_PATCHSET_REVISION} "==" ${GERRIT_CHANGE_NUMBER} "==" ${GERRIT_BRANCH}
+        __blue__ 'GERRIT_CHANGE_URL         = ' ${GERRIT_CHANGE_URL}
+        __blue__ 'GERRIT_PROJECT            = ' ${GERRIT_PROJECT}
+        __blue__ 'GERRIT_REFSPEC            = ' ${GERRIT_REFSPEC}
+        __blue__ 'GERRIT_PATCHSET_NUMBER    = ' ${GERRIT_PATCHSET_NUMBER}
+        __blue__ 'GERRIT_PATCHSET_REVISION  = ' ${GERRIT_PATCHSET_REVISION}
+        __blue__ 'GERRIT_CHANGE_NUMBER      = ' ${GERRIT_CHANGE_NUMBER}
+        __blue__ 'GERRIT_BRANCH             = ' ${GERRIT_BRANCH}
+        echo
     done < ${tmpfs}/env.ini
 }
 
@@ -318,230 +256,164 @@ function gerrit_build() {
     trap 'ERRTRAP ${LINENO} ${FUNCNAME} ${BASH_LINENO}' ERR
     show_vip  "INFO: Enter ${FUNCNAME[0]}()"
 
-    local is_build_success=0
-    local build_path_list=""
-    local build_module_list=""
-    local build_project_array=()
-
     local project_path=
+    declare -a build_case
 
     while IFS="@" read -r GERRIT_CHANGE_URL GERRIT_PROJECT GERRIT_REFSPEC GERRIT_PATCHSET_NUMBER GERRIT_PATCHSET_REVISION GERRIT_CHANGE_NUMBER GERRIT_BRANCH _;do
-        project=${GERRIT_PROJECT}
+
         project_path=$(get_project_path)
-        changenum=${GERRIT_CHANGE_NUMBER}
-        patchset=${GERRIT_PATCHSET_NUMBER}
-        revision=${GERRIT_PATCHSET_REVISION}
 
-        echo "project: $project"
         show_vig '@@@ project_path = ' ${project_path}
-
         case "${project_path}" in
 
             amss_4250_spf1.0)
-                is_build_mma=true
-                if [[ ${#build_project_array[@]} -eq 0 ]];then
-                     build_project_array=("\"unset@WORKSPACE@&&@cd@amss_4250_spf1.0@&&@./linux_build.sh@-a@delhitf@tf\"")
-                else
-                     build_project_array=(${build_project_array[*]} "\"cd@amss_4250_spf1.0@&&@./linux_build.sh@-a@delhitf@tf\"")
-                fi
+                build_case[${#build_case[@]}]=build_moden
             ;;
 
             kernel/msm-4.19)
-                is_build_mma=true
-                if [[ ${#build_project_array[@]} -eq 0 ]];then
-                     build_project_array=("\"make@-j${JOBS}@kernel\"")
-                else
-                     build_project_array=(${build_project_array[*]} "\"make@-j${JOBS}@kernel\"")
-                fi
-            ;;
-
-            bootable/bootloader/edk2)
-                is_build_mma=true
-                if [[ ${#build_project_array[@]} -eq 0 ]];then
-                     build_project_array=("\"m@-j${JOBS}@out/target/product/${build_project}/abl.elf\"")
-                else
-                     build_project_array=(${build_project_array[*]} "\"m@-j${JOBS}@out/target/product/${build_project}/abl.elf\"")
-                fi
-            ;;
-
-            vendor/mediatek/proprietary/bootable/bootloader/lk)
-                is_build_mma=true
-                if [[ ${#build_project_array[@]} -eq 0 ]];then
-                     build_project_array=("\"m@-j${JOBS}@out/target/product/${build_project}/lk.img\"")
-                else
-                     build_project_array=(${build_project_array[*]} "\"m@-j${JOBS}@out/target/product/${build_project}/lk.img\"")
-                fi
-            ;;
-
-            cust_wimdata_ng/liv)
-                is_build_mma=true
-            ;;
-
-            cust_wimdata_ng/wprocedures)
-                is_build_mma=true
-                if [[ ${#build_project_array[@]} -eq 0 ]];then
-                     build_project_array=("\"${changenum}:${patchset}:${project_path}:check_PLFfile\"")
-                else
-                     build_project_array=(${build_project_array[*]} "\"${changenum}:${patchset}:${project_path}:check_PLFfile\"")
-                fi
-            ;;
-
-            cust_wimdata_ng/wlanguage)
-                is_build_mma=true
-            ;;
-
-            cust_wimdata_ng/wcustores)
-                is_build_mma=true
-                if [[ ${#build_project_array[@]} -eq 0 ]];then
-                     build_project_array=("\"${changenum}:${patchset}:${project_path}:check_apkdebugable\"")
-                else
-                     build_project_array=(${build_project_array[*]} "\"${changenum}:${patchset}:${project_path}:check_apkdebugable\"")
-                fi
+                build_case[${#build_case[@]}]=build_kernel
             ;;
 
             *)
-                list=(`cat build/make/tools/buildlist | awk -F: '{print $1}' | sort -u`)
-                android_mk_path
+                local tmpath
+                # 查询提交文件
+                listfs=(`git --git-dir=${project_path}/.git log --name-only --pretty=format: ${GERRIT_PATCHSET_REVISION} -1 | grep -v "^$" | sort -u`)
+                for fs in ${listfs[@]} ; do
+                    tmpath=$(getdir ${project_path}/${fs})
+                    if [[ -n ${tmpath} ]]; then
+                        case ${tmpath} in
+                           amss_4250_spf1.0/TZ.APPS.2.0/qtee_tas) # 过滤错误选项
+                                continue;
+                            ;;
 
+                            *)
+                                build_path[${#build_path[@]}]=${tmpath}
+                            ;;
+                        esac
+                    fi
+                done
+
+                # 判断当前的提交是否需要全编译
                 if [[ ${#build_path[@]} -eq 0 ]]; then
-                   is_build_mma=false
-                   break
+                    unset build_path
+                    break;
                 else
-                    show_vig 'build path list :' ${build_path[@]}
-                    for i in ${build_path[@]} ; do
-                        if [[ ${i} =~ "lk" ]]; then
-                            is_build_mma=true
-                            if [[ ${#build_project_array[@]} -eq 0 ]];then
-                                build_project_array=("\"m@-j${JOBS}@out/target/product/${build_project}/lk.img\"")
-                            else
-                                build_project_array=(${build_project_array[*]} "\"m@-j${JOBS}@out/target/product/${build_project}/lk.img\"")
-                            fi
-                        elif [[ ${i} =~ "preloader" ]]; then
-                            is_build_mma=true
-                            if [[ ${#build_project_array[@]} -eq 0 ]];then
-                                build_project_array=("\"m@-j${JOBS}@out/target/product/${build_project}/preloader_${build_project}.bin\"")
-                            else
-                                build_project_array=(${build_project_array[*]} "\"m@-j${JOBS}@out/target/product/${build_project}/preloader_${build_project}.bin\"")
-                            fi
-                        else
-                            is_mk_found=false
-                            for j in ${list[@]} ; do
-                                #dir=${j%/*}
-                                if [[ x"$j" == x"$i" ]];then
-                                    is_mk_found=true
-                                    if [[ -z "$build_path_list" ]];then
-                                       build_path_list="$j"
-                                    else
-                                       build_path_list="$build_path_list $j"
-                                       build_path_list=`echo ${build_path_list} | tr ' ' '\n' |  sort -u | uniq | xargs echo`
-                                    fi
-                                    break
-                                fi
-                            done
+                    for bp in ${build_path[@]} ; do
+                        case ${bp} in
+                            device/qcom/*|device/sample/*|device/google/*|device/linaro/*)
+                                export TARGET_PRODUCT=qssi
+                                unset build_path
+                                break;
+                            ;;
 
-                            if [[ x"$is_mk_found" != x"true" ]];then
-                                is_build_mma=false
-                                break
-                            else
-                                is_build_mma=true
-                            fi
-                        fi
+                            build/soong/*|build/make/*)
+                                export TARGET_PRODUCT=qssi
+                                unset build_path
+                                break;
+                            ;;
+                        esac
                     done
-                fi
-                ;;
-        esac
 
-        if [[ x"$is_build_mma" != x"true" ]];then
-            break
-        fi
+                    __green__ '[tct]: The build path list count : ' ${#build_path[@]}
+                    show_vig "The once, build path : " ${build_path[@]}
+                    break;
+                fi
+            ;;
+        esac
     done < ${tmpfs}/env.ini
 
-    if [[ x"$is_build_mma" == "xtrue" ]];then
-        if [[ x"$build_path_list" != x ]];then
-            for prjitem in ${build_path_list}; do
-                build_module_name=$(cat build/make/tools/buildlist | grep "^$prjitem:" | awk -F: '{print $2}' | tr ',' ' ')
-                if [[ -z "$build_module_name" ]];then
-                    build_path_list=""
-                    build_module_list=""
-                    is_build_mma=false
-                    break
-                fi
-
-                if [[ -z "$build_module_list" ]];then
-                    build_module_list=${build_module_name}
-                else
-                    build_module_list="$build_module_list $build_module_name"
-                fi
-            done
-        fi
-    else 
-        build_path_list=""  
-        build_module_list=""
-        build_project_array=()
+    # 去重
+    if [[ -n ${build_path[@]} ]]; then
+        build_path=($(awk -vRS=' ' '!a[$1]++' <<< ${build_path[@]}))
     fi
 
-    if [[ x"true" == x"$is_build_mma" ]];then
-        if [[ ${#build_project_array[@]} -ne 0 ]];then
-            for prjitem in "${build_project_array[@]}" ; do
-                if echo "${prjitem}" | grep -E ':' &>/dev/null; then
-                    changenum=`echo "${prjitem}" | tr -d '"' | awk -F: '{print $1}'`
-                    patchset=`echo "${prjitem}" | tr -d '"' |  awk -F: '{print $2}'`
-                    project_path=`echo "${prjitem}" | tr -d '"' | awk -F: '{print $3}'`
-                    prjitem="$(echo "${prjitem}" | tr -d '"' | awk -F: '{print $4}') ${changenum} ${patchset} ${project_path}"
-                else
-                    prjitem=$(echo "${prjitem}" | tr -d '"' | tr "@" ' ')
-                fi
+    __green__ "[tct]: build path = ${build_path[@]}"
 
-                set +e
-                echo '[tct]: build other'
-                echo '@@@  prjitem = ' ${prjitem}
-                eval ${prjitem}
-
-                if [[ "$?" -ne "0" ]] ; then
-                    is_build_success=0 || false
-                    break
-                else
-                    is_build_success=1 || true
-                fi
-                set -e
-            done
-
-            if [[ x"$is_build_success" == x"0" ]];then
-                verify_patchset_submit
-                exit 1
+    # check qssi project
+    if [[ -n "${build_path}" ]]; then
+        for build in ${build_path[@]} ; do
+            if [[ "$(is_qssi_product ${build})" == "true" ]]; then
+                export TARGET_PRODUCT=qssi
+                log warn "This module is qssi project."
+                break;
             fi
-        fi
+        done
+    fi
 
-        if [[ -n "$build_module_list" ]];then
-            show_vip "[tct]: mma -j${JOBS} ${build_module_list}"
-            mma -j${JOBS} ${build_module_list} 2>&1 | tee $(date +"%Y%m%d_%H%M%S")_mma.log
-            if [[ ${PIPESTATUS[0]} -eq 0 ]] ; then
-                is_build_success=1
-            else
-                log error "mma -j${JOBS} ${build_module_list} failed ..."
+    __green__ "[tct]: build case = ${build_case[@]}"
+
+    # build case
+    if [[ -n "${build_case[@]}" ]]; then
+        for bcase in ${build_case[@]} ; do
+
+            case ${bcase} in
+                'exclude')
+                    Command ${bcase}
+                    if [[ $? -eq 0 ]]; then
+                        if [[ ${#change_number_list[@]} -eq 1 ]]; then
+                            verify_patchset_submit 0
+                        fi
+                    else
+                        if [[ ${#change_number_list[@]} -eq 1 ]]; then
+                            verify_patchset_submit 1
+                        fi
+                    fi
+
+                    return 0
+                ;;
+
+                *)
+                    Command ${bcase}
+                    if [[ $? -eq 0 ]]; then
+                        if [[ ${#change_number_list[@]} -eq 1 ]]; then
+                            verify_patchset_submit 0
+                        fi
+                    else
+                        if [[ ${#change_number_list[@]} -eq 1 ]]; then
+                            verify_patchset_submit 1
+                        fi
+                    fi
+                ;;
+            esac
+        done
+    fi
+
+    # rom prebuild
+    if [[ ${#build_path[@]} -ne 0 ]]; then
+        for bp in ${build_path[@]} ; do
+            if [[ -n ${module_target[${bp}]} ]]; then
+                build_module_list[${#build_module_list[@]}]=${module_target[${bp}]}
             fi
-        fi
+        done
 
-        if [[ x"$is_build_success" == x"1" ]];then
-            verify_patchset_submit
+        if [[ ${#build_module_list[@]} -ne 0 ]];then
+            show_vip "[tct]: mma -j${JOBS} ${build_module_list[@]}"
+            if ${build_debug};then
+                mma -j${JOBS} ${build_module_list[@]}
+                if [[ ${PIPESTATUS[0]} -eq 0 ]] ; then
+                    verify_patchset_submit 0
+                else
+                    verify_patchset_submit 1
+                    log error "mma -j${JOBS} ${build_module_list[@]} failed ..."
+                fi
+            fi
         fi
     else
         export WITHOUT_CHECK_API=false
 
-        echo '[tct]: build target or qssi ...'
-        if [[ "${TARGET_PRODUCT}" == "qssi" ]]; then
-            Command "bash build.sh --qssi_only -j${JOBS}"
-        else
-            Command "bash build.sh --target_only -j${JOBS}"
-        fi
+        show_vip '[tct]: --> make android start ...'
+        if ${build_debug};then
+            if [[ "${TARGET_PRODUCT}" == "qssi" ]]; then
+                Command "bash build.sh --qssi_only -j${JOBS}"
+            else
+                Command "bash build.sh --target_only -j${JOBS}"
+            fi
 
-        if [[ $? -ne 0 ]] ; then
-            is_build_success=0
-            verify_patchset_submit
-            exit 1
-        else
-            is_build_success=1
-            verify_patchset_submit
+            if [[ $? -eq 0 ]] ; then
+                verify_patchset_submit 0
+            else
+                verify_patchset_submit 1
+            fi
         fi
     fi
 
@@ -673,15 +545,10 @@ function main() {
     fi
 
     if [[ "$(is_gerrit_trigger)" == "true" ]];then
-
         parse_all_patchset
-        pint_env_ini
         check_patchset_status
         download_all_patchset
-
-        if ${build_debug} ; then
-            gerrit_build
-        fi
+        gerrit_build
     else
         if ${build_debug} ; then
             # 编译android

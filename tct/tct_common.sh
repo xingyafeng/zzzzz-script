@@ -16,6 +16,8 @@ declare -A manifest_info
 ## module list
 declare -A module_list
 
+declare -A module_target
+
 function gettop() {
 
     if [[ -n "${gettop_p}" ]]; then
@@ -181,8 +183,8 @@ function make_android()
 
 function handle_tct_custom() {
 
-    # 生成buildlist列表
-    generate_buildlist_file
+    # 建立构建目标关系
+    generate_module_target
 
     if [[ -d "out/target/common/jrdResAssetsCust/wimdata" ]];then
         rm -rf "out/target/common/jrdResAssetsCust/wimdata"
