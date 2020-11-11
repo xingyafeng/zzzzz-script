@@ -114,8 +114,6 @@ function verify_patchset_submit() {
     check_patchset_status
 
     while IFS="@" read -r GERRIT_CHANGE_URL GERRIT_PROJECT GERRIT_REFSPEC GERRIT_PATCHSET_NUMBER GERRIT_PATCHSET_REVISION GERRIT_CHANGE_NUMBER GERRIT_BRANCH _;do
-        echo ${GERRIT_CHANGE_URL}:${GERRIT_PROJECT}:${GERRIT_REFSPEC}:${GERRIT_PATCHSET_NUMBER}:${GERRIT_PATCHSET_REVISION}:{GERRIT_CHANGE_NUMBER} >> ${tmpfs}/env.ini
-
         case ${is_build_success} in
             0)
                 verified-1
