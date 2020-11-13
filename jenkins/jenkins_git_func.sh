@@ -469,11 +469,13 @@ function recover_standard_git_project()
 			git checkout HEAD ${thisFiles}
 		fi
 
-        # 同步最新
-        Command "repo sync . -c -d --no-tags -j$(nproc)"
-
 		cd ${OPWD} > /dev/null
 	fi
+
+    if [[ -d .repo && -f build/core/envsetup.mk && -f Makefile ]];then
+        # 同步最新
+        Command "repo sync ${tDir} -c -d --no-tags -j$(nproc)"
+    fi
 }
 
 ### 恢复到干净工作区, android目录下所有的git仓库.
