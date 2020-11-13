@@ -129,20 +129,6 @@ function is_clean_project() {
     esac
 }
 
-function is_apk_prebuild() {
-
-    case ${JOB_NAME} in
-
-        JrdSetupWizard|Launcher3|Settings|SystemUI|ApkPrebuild|HiddenMenu)
-            echo true
-            ;;
-
-        *)
-            echo false
-        ;;
-    esac
-}
-
 function download_patchset() {
 
     local project_path=

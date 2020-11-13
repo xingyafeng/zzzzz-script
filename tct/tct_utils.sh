@@ -298,6 +298,21 @@ function check_if_vendor_exists() {
     esac
 }
 
+# 探测预编译apk
+function is_apk_prebuild() {
+
+    case ${JOB_NAME} in
+
+        JrdSetupWizard|Launcher3|Settings|SystemUI|ApkPrebuild|HiddenMenu)
+            echo true
+            ;;
+
+        *)
+            echo false
+        ;;
+    esac
+}
+
 # 探测MTK芯片
 function is_mtk_board() {
 
