@@ -148,6 +148,7 @@ function download_source_code()
 function make_droid() {
 
     source_init
+    show_vip '[tct]: --> make dist ...'
     Command "bash build.sh dist -j$(nproc)"
     if [[ $? -eq 0 ]];then
         echo
@@ -160,6 +161,7 @@ function make_droid() {
 function make_android()
 {
     if [[ "${build_clean}" == "true" ]];then
+        show_vip '[tct]: --> make clean ...'
         Command "make -j${JOBS} clean"
         if [[ $? -eq 0 ]];then
             echo
@@ -168,6 +170,7 @@ function make_android()
             log error "--> make clean fail ..."
         fi
     else
+        show_vip '[tct]: --> make installclean ...'
         Command "make -j${JOBS} installclean"
         if [[ $? -eq 0 ]];then
             echo
