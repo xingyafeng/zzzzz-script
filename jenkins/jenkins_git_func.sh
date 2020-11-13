@@ -469,6 +469,9 @@ function recover_standard_git_project()
 			git checkout HEAD ${thisFiles}
 		fi
 
+        # 同步最新
+        Command "repo sync . -c -d --no-tags -j$(nproc)"
+
 		cd ${OPWD} > /dev/null
 	fi
 }
