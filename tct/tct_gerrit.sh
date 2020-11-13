@@ -400,10 +400,10 @@ function download_all_patchset()
         project_path=$(get_project_path)
         show_vig "@@@ project path: " ${project_path}
 
-        # 恢复当前干净状态
-        recover_standard_git_project ${project_path}
-
         pushd ${project_path} > /dev/null
+
+        # 恢复当前干净状态
+        recover_standard_git_project
 
         # download patchset
         Command "git fetch ssh://${username}@${GERRIT_HOST}:29418/${GERRIT_PROJECT} ${GERRIT_REFSPEC} && git checkout FETCH_HEAD"
