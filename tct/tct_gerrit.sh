@@ -519,7 +519,7 @@ function gerrit_build() {
                     done
 
                     __green__ '[tct]: The build path list count : ' ${#build_path[@]}
-                    show_vig "The once, build path : " ${build_path[@]}
+                    show_vig "The once, build path : " $(awk -vRS=' ' '!a[$1]++' <<< ${build_path[@]})
 
                     if [[ ${#build_path[@]} -eq 0 ]]; then
                         break;
