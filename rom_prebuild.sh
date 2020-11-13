@@ -12,7 +12,6 @@ build_update_code=
 # 4. 是否清除编译
 build_clean=
 
-
 # 调试开关
 build_debug=
 
@@ -21,6 +20,9 @@ build_debug=
 declare -a build_path
 declare -a build_module_list
 declare -a change_number_list
+
+# 本次触发PATCHSET
+gerrit_patchset_revision=
 
 # exec shell
 shellfs=$0
@@ -39,15 +41,17 @@ function verify_patchset_submit() {
     fi
 
     while IFS="@" read -r GERRIT_CHANGE_URL GERRIT_PROJECT GERRIT_REFSPEC GERRIT_PATCHSET_NUMBER GERRIT_PATCHSET_REVISION GERRIT_CHANGE_NUMBER GERRIT_BRANCH _;do
-        case ${is_build_success} in
-            0)
-                verified+1
-                ;;
+        if [[ "${gerrit_patchset_revision}" == "${GERRIT_PATCHSET_REVISION}" ]]; then
+            case ${is_build_success} in
+                0)
+                    verified+1
+                    ;;
 
-            1)
-                verified-1
-                ;;
-        esac
+                1)
+                    verified-1
+                    ;;
+            esac
+        fi
     done < ${tmpfs}/env.ini
 
     show_vip "INFO: Exit ${FUNCNAME[0]}()"
@@ -92,10 +96,10 @@ function check_patchset_status()
            check_status=false
         fi
 
-        # 检查 verified+1|code-review<0
-        if [[ "$(check-gerrit 'verified+1' ${GERRIT_CHANGE_NUMBER})" == "true" ]]; then
-           ssh-gerrit review -m '"Warning_Log_URL:"'${BUILD_URL}'"/console The patch has been verified +1 by auto compile or somebody, so no need to build this time."' ${GERRIT_CHANGE_NUMBER},${GERRIT_PATCHSET_NUMBER}
-           log warn "${GERRIT_CHANGE_URL} The patch status has been verified+1 by auto compile, no need to build this time."
+        # 检查 verified-1|code-review<0
+        if [[ "$(check-gerrit 'verified-1' ${GERRIT_CHANGE_NUMBER})" == "true" ]]; then
+           ssh-gerrit review -m '"Warning_Log_URL:"'${BUILD_URL}'"/console The patch has been verified -1 by auto compile or somebody, so no need to build this time."' ${GERRIT_CHANGE_NUMBER},${GERRIT_PATCHSET_NUMBER}
+           log warn "${GERRIT_CHANGE_URL} The patch status has been verified-1 by auto compile, no need to build this time."
 
            check_status=false
         fi
@@ -106,7 +110,6 @@ function check_patchset_status()
 
            check_status=false
         fi
-
     done < ${tmpfs}/env.ini
 
     if [[ "${check_status}" == "false" ]];then
@@ -468,9 +471,18 @@ function print_variable() {
     echo 'build_manifest     = ' ${build_manifest}
     echo 'build_update_code  = ' ${build_update_code}
     echo '-------------------------------------'
-    echo 'WORKSPACE      = ' ${WORKSPACE}
-    echo 'GERRIT_BRANCH  = ' ${GERRIT_BRANCH}
-    echo 'GERRIT_TOPIC   = ' ${GERRIT_TOPIC}
+    echo 'WORKSPACE          = ' ${WORKSPACE}
+    echo 'GERRIT_TOPIC       = ' ${GERRIT_TOPIC}
+    echo '-------------------------------------'
+    echo 'GERRIT_PROJECT            = ' ${GERRIT_PROJECT}
+    echo 'GERRIT_BRANCH             = ' ${GERRIT_BRANCH}
+    echo 'GERRIT_CHANGE_URL         = ' ${GERRIT_CHANGE_URL}
+    echo 'GERRIT_REFSPEC            = ' ${GERRIT_REFSPEC}
+    echo 'GERRIT_CHANGE_NUMBER      = ' ${GERRIT_CHANGE_NUMBER}
+    echo 'GERRIT_PATCHSET_NUMBER    = ' ${GERRIT_PATCHSET_NUMBER}
+    echo 'GERRIT_PATCHSET_REVISION  = ' ${GERRIT_PATCHSET_REVISION}
+    echo '-------------------------------------'
+    echo 'gerrit_patchset_revision  = ' ${gerrit_patchset_revision}
     echo '-------------------------------------'
     echo
 }
@@ -495,6 +507,9 @@ function prepare() {
 
     # 配置根路径
     gettop_p=$(pwd)
+
+    # 记录 current patchset
+    gerrit_patchset_revision=${GERRIT_PATCHSET_REVISION}
 }
 
 function init() {
