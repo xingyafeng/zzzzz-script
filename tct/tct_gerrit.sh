@@ -520,7 +520,10 @@ function gerrit_build() {
 
                     __green__ '[tct]: The build path list count : ' ${#build_path[@]}
                     show_vig "The once, build path : " ${build_path[@]}
-                    break;
+
+                    if [[ ${#build_path[@]} -eq 0 ]]; then
+                        break;
+                    fi
                 fi
             ;;
         esac
