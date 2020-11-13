@@ -461,13 +461,15 @@ function gerrit_build() {
     show_vip  "INFO: Enter ${FUNCNAME[0]}()"
 
     local project_path=
+    local count=0
     declare -a build_case
 
     while IFS="@" read -r GERRIT_CHANGE_URL GERRIT_PROJECT GERRIT_REFSPEC GERRIT_PATCHSET_NUMBER GERRIT_PATCHSET_REVISION GERRIT_CHANGE_NUMBER GERRIT_BRANCH _;do
 
+        let count+=1
         project_path=$(get_project_path)
 
-        show_vig '@@@ project_path = ' ${project_path}
+        show_vig "@@@ <${count}> : project_path = " ${project_path}
         case "${project_path}" in
 
             amss_4250_spf1.0)
