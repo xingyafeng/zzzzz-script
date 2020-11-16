@@ -425,6 +425,10 @@ function verify_patchset_submit() {
 
     local is_build_success=${1-}
 
+    if [[ "$(is_gerrit_trigger)" == 'false' ]];then
+        return 0
+    fi
+
     if [[ ${is_build_success} -eq 0 ]]; then
         check_patchset_status
     fi
