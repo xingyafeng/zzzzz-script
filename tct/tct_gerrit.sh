@@ -12,7 +12,6 @@ function generate_manifest_list() {
     fi
 
     while IFS=":" read -r _name _path _;do
-        #echo ${_name} '---' ${_path}
         if [[ -z ${_path} ]]; then
             _path=${_name}
         fi
@@ -32,7 +31,6 @@ function generate_module_target() {
 
     if [[ -f ${buildlist} ]]; then
         while IFS=":" read -r _path _target _;do
-            #echo ${_path} '---' ${_target}
             if [[ -n ${_target} ]]; then
                 module_target[${_path}]=${_target}
             fi
@@ -40,7 +38,6 @@ function generate_module_target() {
     else
         log warn "The ${buildlist} has no found!"
     fi
-
 }
 
 # 拿到项目路径
@@ -59,7 +56,7 @@ function get_project_module() {
     if [[ -n ${GERRIT_PROJECT} ]] ; then
         echo ${moudule_list[${GERRIT_PROJECT}]}
     else
-        log error "get project path failed ..."
+        log error "Get project path failed ..."
     fi
 }
 
@@ -69,7 +66,7 @@ function generate_buildlist_file() {
     local path_py=${script_p}/tools/pathJson.py
 
     if [[ -f ${path_py} && -f out/target/product/qssi/module-info.json ]]; then
-        Command "python ${path_py} out/target/product/qssi/module-info.json build/make/tools/buildlist"
+        python ${path_py} out/target/product/qssi/module-info.json build/make/tools/buildlist
     else
         log warn "${path_py} or out/target/product/qssi/module-info.json has no found!"
     fi
@@ -146,7 +143,6 @@ function is_qssi_product() {
     fi
 
     while IFS=":" read -r _path _target _;do
-        #echo ${_path} '---' ${_target}
         moudule_info[${_path}]=${_target}
     done < ${result_installed}
 
@@ -299,12 +295,10 @@ function parse_all_patchset() {
     :> ${tmpfs}/env.ini
     for item in ${change_number_list[@]} ; do
         if [[ -z "${GERRIT_TOPIC}" ]]; then
-#            show_vip ${GERRIT_CHANGE_URL}@${GERRIT_PROJECT}@${GERRIT_REFSPEC}@${GERRIT_PATCHSET_NUMBER}@${GERRIT_PATCHSET_REVISION}@${GERRIT_CHANGE_NUMBER}@${GERRIT_BRANCH}
             echo ${GERRIT_CHANGE_URL}@${GERRIT_PROJECT}@${GERRIT_REFSPEC}@${GERRIT_PATCHSET_NUMBER}@${GERRIT_PATCHSET_REVISION}@${GERRIT_CHANGE_NUMBER}@${GERRIT_BRANCH} >> ${tmpfs}/env.ini
         else
             if [[ -f "${gerrit_p}/${item}" ]]; then
                 source ${gerrit_p}/${item}
-#                show_vip ${url}@${project}@${refspec}@${patchset}@${revision}@${changenumber}@${branch}
                 echo ${url}@${project}@${refspec}@${patchset}@${revision}@${changenumber}@${branch} >> ${tmpfs}/env.ini
             else
                 log error "The topic item ${item} information dropout."
@@ -396,9 +390,6 @@ function download_all_patchset()
 
     local project_path=
 
-#    checkout_standard_android_project
-#    Command "repo sync -c -d --no-tags -j$(nproc)"
-
     while IFS="@" read -r GERRIT_CHANGE_URL GERRIT_PROJECT GERRIT_REFSPEC GERRIT_PATCHSET_NUMBER GERRIT_PATCHSET_REVISION GERRIT_CHANGE_NUMBER GERRIT_BRANCH _;do
 
         project_path=$(get_project_path)
@@ -469,7 +460,12 @@ function gerrit_build() {
         let count+=1
         project_path=$(get_project_path)
 
-        show_vig "@@@ <${count}> : project_path = " ${project_path}
+        if [[ -n ${project_path} ]]; then
+            show_vig "@@@ <${count}> : project_path = " ${project_path}
+        else
+            log error 'Get project path failed ...'
+        fi
+
         case "${project_path}" in
 
             amss_4250_spf1.0)
@@ -536,7 +532,9 @@ function gerrit_build() {
         build_path=($(awk -vRS=' ' '!a[$1]++' <<< ${build_path[@]}))
     fi
 
-    __green__ "[tct]: build path = ${build_path[@]}"
+    if [[ -n ${build_path[@]}  ]]; then
+        __green__ "[tct]: build path = ${build_path[@]}"
+    fi
 
     # check qssi project
     if [[ -n "${build_path}" ]]; then
@@ -549,7 +547,9 @@ function gerrit_build() {
         done
     fi
 
-    __green__ "[tct]: build case = ${build_case[@]}"
+    if [[ -n ${build_case[@]}  ]]; then
+        __green__ "[tct]: build case = ${build_case[@]}"
+    fi
 
     # build case
     if [[ -n "${build_case[@]}" ]]; then
