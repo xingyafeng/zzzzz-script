@@ -466,6 +466,23 @@ function verify_patchset_submit() {
     show_vip "INFO: Exit ${FUNCNAME[0]}()"
 }
 
+function get_invalid_module() {
+
+    invalid_module[${#invalid_module[@]}]=sensors_list
+}
+
+# 过滤无效目标
+function module_filter() {
+
+    for bml in ${build_module_list[@]} ; do
+        for im in ${invalid_module[@]} ; do
+            if [[ "${bml}" == "${im}" ]]; then
+                build_module_list=(${build_module_list[@]/$im})
+            fi
+        done
+    done
+}
+
 function gerrit_build() {
 
     trap 'ERRTRAP ${LINENO} ${FUNCNAME} ${BASH_LINENO}' ERR
@@ -612,6 +629,13 @@ function gerrit_build() {
         for bp in ${build_path[@]} ; do
             if [[ -n ${module_target[${bp}]} ]]; then
                 build_module_list[${#build_module_list[@]}]=${module_target[${bp}]}
+
+                # 解决无效目标导致的编译失败
+                case ${bp} in
+                    vendor/qcom/proprietary/sensors-see/sensors-hal-2.0)
+                        module_filter
+                    ;;
+                esac
             fi
         done
 

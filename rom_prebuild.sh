@@ -21,6 +21,9 @@ declare -a build_path
 declare -a build_module_list
 declare -a change_number_list
 
+# 无效的模块
+declare -a invalid_module
+
 # 本次触发PATCHSET
 gerrit_patchset_revision=
 
@@ -90,6 +93,8 @@ function print_variable() {
     echo '-------------------------------------'
     echo 'gerrit_patchset_revision  = ' ${gerrit_patchset_revision}
     echo '-------------------------------------'
+    echo '${invalid_module[@]}      = ' ${invalid_module[@]}
+    echo '-------------------------------------'
     echo
 }
 
@@ -116,6 +121,7 @@ function prepare() {
 
     # 记录 current patchset
     gerrit_patchset_revision=${GERRIT_PATCHSET_REVISION}
+    get_invalid_module
 }
 
 function init() {
