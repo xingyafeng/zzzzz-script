@@ -223,6 +223,7 @@ function restore_git_repository() {
 
 function pint_env_ini() {
 
+    log print 'print env ini ...'
     while IFS="@" read -r GERRIT_CHANGE_URL GERRIT_PROJECT GERRIT_REFSPEC GERRIT_PATCHSET_NUMBER GERRIT_PATCHSET_REVISION GERRIT_CHANGE_NUMBER GERRIT_BRANCH _;do
         __blue__ 'GERRIT_CHANGE_URL         = ' ${GERRIT_CHANGE_URL}
         __blue__ 'GERRIT_PROJECT            = ' ${GERRIT_PROJECT}
@@ -257,6 +258,7 @@ function parse_all_patchset() {
     # 恢复上次构建下载的PATCH
     restore_git_repository
 
+    show_vir 'GERRIT_TOPIC = ' ${GERRIT_TOPIC}
     if [[ -n "${GERRIT_TOPIC}" ]]; then
 
         # 查询所以的TOPIC信息，保存至changeid.json中
@@ -287,7 +289,9 @@ function parse_all_patchset() {
             log quit "${GERRIT_CHANGE_URL} The patch status is Abandoned or Merged or already verified +1 by gerrit trrigger auto compile, no need to build this time."
         fi
     else
-        change_number_list=${GERRIT_CHANGE_NUMBER}
+        show_vig 'GERRIT_CHANGE_NUMBER = ' ${GERRIT_CHANGE_NUMBER}
+        change_number_list=(${GERRIT_CHANGE_NUMBER})
+        show_vig 'change_number_list = ' ${change_number_list[@]}
     fi
 
     show_vig "[tct] change_number_list = " ${change_number_list[@]}
