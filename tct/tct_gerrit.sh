@@ -171,6 +171,7 @@ function parse_all_patchset() {
 
     # 恢复上次构建下载的PATCH
     restore_git_repository
+    pint_env_ini
 
     show_vir 'GERRIT_TOPIC = ' ${GERRIT_TOPIC}
     if [[ -n "${GERRIT_TOPIC}" ]]; then
