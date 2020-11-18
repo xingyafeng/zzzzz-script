@@ -384,6 +384,8 @@ function gerrit_build() {
 
     local project_path=
     local count=0
+    local index=$(cat ${tmpfs}/env.ini | wc -l)
+    local is_full_build=false # 默认不是增加构建
     declare -a build_case
 
     while IFS="@" read -r GERRIT_CHANGE_URL GERRIT_PROJECT GERRIT_REFSPEC GERRIT_PATCHSET_NUMBER GERRIT_PATCHSET_REVISION GERRIT_CHANGE_NUMBER GERRIT_BRANCH _;do
@@ -428,21 +430,24 @@ function gerrit_build() {
 
                 # 判断当前的提交是否需要全编译
                 if [[ ${#build_path[@]} -eq 0 ]]; then
-                    unset build_path
+                    is_full_build=true
                     log print '[1] 本次构建设置为增量构建...'
-                    break;
+
+                    if [[ ${index} -eq 1 ]]; then
+                        break;
+                    fi
                 else
                     for bp in ${build_path[@]} ; do
                         case ${bp} in
                             device/qcom/*|device/sample/*|device/google/*|device/linaro/*)
                                 export TARGET_PRODUCT=qssi
-                                unset build_path
+                                is_full_build=true
                                 break;
                             ;;
 
                             build/soong/*|build/make/*)
                                 export TARGET_PRODUCT=qssi
-                                unset build_path
+                                is_full_build=true
                                 break;
                             ;;
                         esac
@@ -451,9 +456,12 @@ function gerrit_build() {
                     __green__ '[tct]: The build path list count : ' ${#build_path[@]} ', build path : ' ${build_path[@]}
                     show_vig "For the first time, build path : " $(awk -vRS=' ' '!a[$1]++' <<< ${build_path[@]})
 
-                    if [[ ${#build_path[@]} -eq 0 ]]; then
+                    if [[ ${is_full_build} == "true" ]]; then
                         log print '[2] 本次构建设置为增量构建...'
-                        break;
+
+                        if [[ ${index} -eq 1 ]]; then
+                            break;
+                        fi
                     else
                         log print '[0] 本次构建设置为单编构建...'
                     fi
@@ -480,6 +488,10 @@ function gerrit_build() {
                 break;
             fi
         done
+    fi
+
+    if [[ ${is_full_build} == "true" ]]; then
+        unset build_path
     fi
 
     if [[ -n ${build_case[@]}  ]]; then
