@@ -429,6 +429,7 @@ function gerrit_build() {
                 # 判断当前的提交是否需要全编译
                 if [[ ${#build_path[@]} -eq 0 ]]; then
                     unset build_path
+                    log print '[1] 本次构建设置为增量构建...'
                     break;
                 else
                     for bp in ${build_path[@]} ; do
@@ -447,12 +448,14 @@ function gerrit_build() {
                         esac
                     done
 
-                    __green__ '[tct]: The build path list count : ' ${#build_path[@]}
-                    __green__ '[tct]: The build path : ' ${build_path[@]}
-                    show_vig "The once, build path : " $(awk -vRS=' ' '!a[$1]++' <<< ${build_path[@]})
+                    __green__ '[tct]: The build path list count : ' ${#build_path[@]} ', build path : ' ${build_path[@]}
+                    show_vig "For the first time, build path : " $(awk -vRS=' ' '!a[$1]++' <<< ${build_path[@]})
 
                     if [[ ${#build_path[@]} -eq 0 ]]; then
+                        log print '[2] 本次构建设置为增量构建...'
                         break;
+                    else
+                        log print '[0] 本次构建设置为单编构建...'
                     fi
                 fi
             ;;
