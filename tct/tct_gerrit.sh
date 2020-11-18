@@ -504,9 +504,11 @@ function gerrit_build() {
 
         make_android_for_single
     else
-        show_vip '[tct]: --> make android start ...'
+        if [[ ${is_full_build} == "true" ]]; then
+            show_vip '[tct]: --> make android start ...'
 
-        make_android_for_whole
+            make_android_for_whole
+        fi
     fi
 
     show_vip "INFO: Exit ${FUNCNAME[0]}()"
