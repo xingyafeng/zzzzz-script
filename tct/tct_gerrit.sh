@@ -331,31 +331,19 @@ function verify_patchset_submit() {
         check_patchset_status
     fi
 
-    if [[ -z ${GERRIT_TOPIC} ]]; then
-        case ${is_build_success} in
-            0)
-                verified+1
-                ;;
+    while IFS="@" read -r GERRIT_CHANGE_URL GERRIT_PROJECT GERRIT_REFSPEC GERRIT_PATCHSET_NUMBER GERRIT_PATCHSET_REVISION GERRIT_CHANGE_NUMBER GERRIT_BRANCH _;do
+        if [[ "${gerrit_patchset_revision}" == "${GERRIT_PATCHSET_REVISION}" ]]; then
+            case ${is_build_success} in
+                0)
+                    verified+1
+                    ;;
 
-            1)
-                verified-1
-                ;;
-        esac
-    else
-        while IFS="@" read -r GERRIT_CHANGE_URL GERRIT_PROJECT GERRIT_REFSPEC GERRIT_PATCHSET_NUMBER GERRIT_PATCHSET_REVISION GERRIT_CHANGE_NUMBER GERRIT_BRANCH _;do
-            if [[ "${gerrit_patchset_revision}" == "${GERRIT_PATCHSET_REVISION}" ]]; then
-                case ${is_build_success} in
-                    0)
-                        verified+1
-                        ;;
-
-                    1)
-                        verified-1
-                        ;;
-                esac
-            fi
-        done < ${tmpfs}/env.ini
-    fi
+                1)
+                    verified-1
+                    ;;
+            esac
+        fi
+    done < ${tmpfs}/env.ini
 
     show_vip "INFO: Exit ${FUNCNAME[0]}()"
 }
