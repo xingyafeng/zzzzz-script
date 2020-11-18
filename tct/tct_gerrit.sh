@@ -74,7 +74,6 @@ function generate_buildlist_file() {
 
 function verified+1() {
 
-    log print "--> start verified+1"
     if [[ "$(check-gerrit 'verified+1' ${GERRIT_CHANGE_NUMBER})" == "false" ]]; then
         ssh-gerrit review -m '"This patchset gerrit trigger build successful ..."' --verified 1 ${GERRIT_CHANGE_NUMBER},${GERRIT_PATCHSET_NUMBER}
         if [[ $? -eq 0 ]];then
@@ -84,17 +83,16 @@ function verified+1() {
             log error "Jenkins --verified +1 failed ..."
         fi
     else
-        log warn "Unable to Verified+1, because of it hava been Verified+1 ..."
+        log print "Unable to Verified+1, because of it hava been Verified+1 ..."
     fi
 
-    log print "--> start code-review+2"
     if [[ "$(check-gerrit 'code-review+2' ${GERRIT_CHANGE_NUMBER})" == "true" ]]; then
         set +e
         ssh-gerrit review -m '"this patchset gerrit trigger build successful; --submit"' --submit ${GERRIT_CHANGE_NUMBER},${GERRIT_PATCHSET_NUMBER} 2>&1 | tee ${tmpfs}/submit.log
         set -e
     else
         ssh-gerrit review -m '"Unable to submit, can only Verified+1 now, need some people to Code-Revire+2 ..."' ${GERRIT_CHANGE_NUMBER},${GERRIT_PATCHSET_NUMBER}
-        log warn "Unable to submit, can only Verified+1 now, need some people to Code-Revire+2 ..."
+        log print "Unable to submit, can only Verified+1 now, need some people to Code-Revire+2 ..."
     fi
 }
 
@@ -304,7 +302,7 @@ function download_all_patchset()
         # download patchset
         Command "git fetch ssh://${username}@${GERRIT_HOST}:29418/${GERRIT_PROJECT} ${GERRIT_REFSPEC} && git checkout FETCH_HEAD"
         if [[ $? -eq 0 ]] ; then
-            show_vig "${project_path} download patchset refs/changes/${GERRIT_CHANGE_NUMBER}/${GERRIT_PATCHSET_NUMBER} sucessful."
+            show_vip "${project_path} download patchset refs/changes/${GERRIT_CHANGE_NUMBER}/${GERRIT_PATCHSET_NUMBER} sucessful."
         else
             # git仓库恢复至干净状态
             recover_standard_git_project
