@@ -60,6 +60,14 @@ function get_project_module() {
     fi
 }
 
+function modify_buildlist() {
+
+    # 1. frameworks/base 只单编译 framework
+    sed -i "s#^frameworks/base:.*#frameworks/base:framework#" build/make/tools/buildlist
+
+    # 2. xx
+}
+
 # 生成result_installed.txt
 function generate_buildlist_file() {
 
@@ -69,6 +77,10 @@ function generate_buildlist_file() {
         python ${path_py} out/target/product/qssi/module-info.json build/make/tools/buildlist
     else
         log warn "${path_py} or out/target/product/qssi/module-info.json has no found!"
+    fi
+
+    if [[ -f build/make/tools/buildlist ]]; then
+        modify_buildlist
     fi
 }
 
