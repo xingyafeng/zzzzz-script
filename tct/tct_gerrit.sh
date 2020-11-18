@@ -109,7 +109,7 @@ function restore_git_repository() {
 
     if [[ -f ${tmpfs}/env.ini ]]; then
         while IFS="@" read -r GERRIT_CHANGE_URL GERRIT_PROJECT GERRIT_REFSPEC GERRIT_PATCHSET_NUMBER GERRIT_PATCHSET_REVISION GERRIT_CHANGE_NUMBER GERRIT_BRANCH _;do
-            log debug 'The project path is : ' $(get_project_path)
+            log debug "The project path is :  $(get_project_path)"
             recover_standard_git_project $(get_project_path)
         done < ${tmpfs}/env.ini
     fi
