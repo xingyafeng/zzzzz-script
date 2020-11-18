@@ -74,7 +74,7 @@ function generate_buildlist_file() {
 
 function verified+1() {
 
-#    ssh-gerrit review -m '"Build Log_URL:'${BUILD_URL}'"' ${GERRIT_CHANGE_NUMBER},${GERRIT_PATCHSET_NUMBER}
+    log print "--> start verified+1"
     if [[ "$(check-gerrit 'verified+1' ${GERRIT_CHANGE_NUMBER})" == "false" ]]; then
         ssh-gerrit review -m '"This patchset gerrit trigger build successful ..."' --verified 1 ${GERRIT_CHANGE_NUMBER},${GERRIT_PATCHSET_NUMBER}
         if [[ $? -eq 0 ]];then
@@ -83,8 +83,11 @@ function verified+1() {
             ssh-gerrit review -m '"jenkins --verified +1 failed ..."' ${GERRIT_CHANGE_NUMBER},${GERRIT_PATCHSET_NUMBER}
             log error "Jenkins --verified +1 failed ..."
         fi
+    else
+        log warn "Unable to Verified+1, because of it hava been Verified+1 ..."
     fi
 
+    log print "--> start code-review+2"
     if [[ "$(check-gerrit 'code-review+2' ${GERRIT_CHANGE_NUMBER})" == "true" ]]; then
         set +e
         ssh-gerrit review -m '"this patchset gerrit trigger build successful; --submit"' --submit ${GERRIT_CHANGE_NUMBER},${GERRIT_PATCHSET_NUMBER} 2>&1 | tee ${tmpfs}/submit.log
