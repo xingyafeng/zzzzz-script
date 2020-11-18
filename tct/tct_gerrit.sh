@@ -120,7 +120,7 @@ function verified-1() {
 
 function restore_git_repository() {
 
-    if [[ -f ${tmpfs}/env.ini ]]; then
+    if [[ -s ${tmpfs}/env.ini ]]; then
         while IFS="@" read -r GERRIT_CHANGE_URL GERRIT_PROJECT GERRIT_REFSPEC GERRIT_PATCHSET_NUMBER GERRIT_PATCHSET_REVISION GERRIT_CHANGE_NUMBER GERRIT_BRANCH _;do
             log debug "The project path is :  $(get_project_path)"
             recover_standard_git_project $(get_project_path)
@@ -132,7 +132,6 @@ function restore_git_repository() {
             log error "--> 已恢上次下载的仓库失败."
         fi
     fi
-
 }
 
 function pint_env_ini() {
@@ -169,9 +168,13 @@ function parse_all_patchset() {
 
     local branchs="development_dint@jrdapp-android-r-dint@qct-sm4250-tf-r-v1.0-dint@TCT-ROM-4.0-AOSP-GCS-OP@TCTROM-R-QCT-V4.1-dev_gcs@TCTROM-R-QTI-OP@TCTROM-R-V4.0-dev_gcs"
 
+    :> ${tmpfs}/noenv.ini
+    if [[ -z ${GERRIT_TOPIC} ]]; then
+        echo ${GERRIT_CHANGE_URL}@${GERRIT_PROJECT}@${GERRIT_REFSPEC}@${GERRIT_PATCHSET_NUMBER}@${GERRIT_PATCHSET_REVISION}@${GERRIT_CHANGE_NUMBER}@${GERRIT_BRANCH} >> ${tmpfs}/noenv.ini
+    fi
+
     # 恢复上次构建下载的PATCH
     restore_git_repository
-    pint_env_ini
 
     show_vir 'GERRIT_TOPIC = ' ${GERRIT_TOPIC}
     if [[ -n "${GERRIT_TOPIC}" ]]; then
@@ -204,9 +207,11 @@ function parse_all_patchset() {
             log quit "${GERRIT_CHANGE_URL} The patch status is Abandoned or Merged or already verified +1 by gerrit trrigger auto compile, no need to build this time."
         fi
     else
-        show_vig 'GERRIT_CHANGE_NUMBER = ' ${GERRIT_CHANGE_NUMBER}
-        change_number_list=(${GERRIT_CHANGE_NUMBER})
-        show_vig 'change_number_list = ' ${change_number_list[@]}
+        while IFS="@" read -r GERRIT_CHANGE_URL GERRIT_PROJECT GERRIT_REFSPEC GERRIT_PATCHSET_NUMBER GERRIT_PATCHSET_REVISION GERRIT_CHANGE_NUMBER GERRIT_BRANCH _;do
+            show_vig 'GERRIT_CHANGE_NUMBER = ' ${GERRIT_CHANGE_NUMBER}
+            change_number_list=(${GERRIT_CHANGE_NUMBER})
+            show_vig 'change_number_list = ' ${change_number_list[@]}
+        done < ${tmpfs}/noenv.ini
     fi
 
     show_vig "[tct] change_number_list = " ${change_number_list[@]}
@@ -214,7 +219,9 @@ function parse_all_patchset() {
     :> ${tmpfs}/env.ini
     for item in ${change_number_list[@]} ; do
         if [[ -z "${GERRIT_TOPIC}" ]]; then
-            echo ${GERRIT_CHANGE_URL}@${GERRIT_PROJECT}@${GERRIT_REFSPEC}@${GERRIT_PATCHSET_NUMBER}@${GERRIT_PATCHSET_REVISION}@${GERRIT_CHANGE_NUMBER}@${GERRIT_BRANCH} >> ${tmpfs}/env.ini
+            while IFS="@" read -r GERRIT_CHANGE_URL GERRIT_PROJECT GERRIT_REFSPEC GERRIT_PATCHSET_NUMBER GERRIT_PATCHSET_REVISION GERRIT_CHANGE_NUMBER GERRIT_BRANCH _;do
+                echo ${GERRIT_CHANGE_URL}@${GERRIT_PROJECT}@${GERRIT_REFSPEC}@${GERRIT_PATCHSET_NUMBER}@${GERRIT_PATCHSET_REVISION}@${GERRIT_CHANGE_NUMBER}@${GERRIT_BRANCH} >> ${tmpfs}/env.ini
+            done < ${tmpfs}/noenv.ini
         else
             if [[ -f "${gerrit_p}/${item}" ]]; then
                 source ${gerrit_p}/${item}
