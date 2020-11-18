@@ -90,8 +90,8 @@ function verified+1() {
         ssh-gerrit review -m '"this patchset gerrit trigger build successful; --submit"' --submit ${GERRIT_CHANGE_NUMBER},${GERRIT_PATCHSET_NUMBER} 2>&1 | tee ${tmpfs}/submit.log
         set -e
     else
-        ssh-gerrit review -m '"Unable to submit, can only verify now, need some people to review +2"' ${GERRIT_CHANGE_NUMBER},${GERRIT_PATCHSET_NUMBER}
-        log warn "Unable to submit, can only verify now, need some people to review +2"
+        ssh-gerrit review -m '"Unable to submit, can only Verified+1 now, need some people to Code-Revire+2 ..."' ${GERRIT_CHANGE_NUMBER},${GERRIT_PATCHSET_NUMBER}
+        log warn "Unable to submit, can only Verified+1 now, need some people to Code-Revire+2 ..."
     fi
 }
 
