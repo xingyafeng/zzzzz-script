@@ -114,6 +114,8 @@ function restore_git_repository() {
             recover_standard_git_project $(get_project_path)
         done < ${tmpfs}/env.ini
     fi
+
+    log print "--> 已恢上次下载的仓库至最新状态."
 }
 
 function pint_env_ini() {
@@ -289,6 +291,8 @@ function download_all_patchset()
 
     local project_path=
 
+    log print "--> download patchset start ..."
+
     while IFS="@" read -r GERRIT_CHANGE_URL GERRIT_PROJECT GERRIT_REFSPEC GERRIT_PATCHSET_NUMBER GERRIT_PATCHSET_REVISION GERRIT_CHANGE_NUMBER GERRIT_BRANCH _;do
 
         project_path=$(get_project_path)
@@ -302,7 +306,7 @@ function download_all_patchset()
         # download patchset
         Command "git fetch ssh://${username}@${GERRIT_HOST}:29418/${GERRIT_PROJECT} ${GERRIT_REFSPEC} && git checkout FETCH_HEAD"
         if [[ $? -eq 0 ]] ; then
-            show_vip "${project_path} download patchset refs/changes/${GERRIT_CHANGE_NUMBER}/${GERRIT_PATCHSET_NUMBER} sucessful."
+            log print "--> download patchset sucessful ..."
         else
             # git仓库恢复至干净状态
             recover_standard_git_project
@@ -377,6 +381,7 @@ function gerrit_build() {
     local is_full_build=false # 默认不是增加构建
     declare -a build_case
 
+    log print "--> gerrit build start ..."
     while IFS="@" read -r GERRIT_CHANGE_URL GERRIT_PROJECT GERRIT_REFSPEC GERRIT_PATCHSET_NUMBER GERRIT_PATCHSET_REVISION GERRIT_CHANGE_NUMBER GERRIT_BRANCH _;do
 
         let count+=1
@@ -442,8 +447,7 @@ function gerrit_build() {
                         esac
                     done
 
-                    __green__ '[tct]: The build path list count : ' ${#build_path[@]} ', build path : ' ${build_path[@]}
-                    show_vig "For the first time, build path : " $(awk -vRS=' ' '!a[$1]++' <<< ${build_path[@]})
+                    show_vig '[tct]: The build path list count : ' ${#build_path[@]} '; build path : ' $(awk -vRS=' ' '!a[$1]++' <<< ${build_path[@]})
 
                     if [[ ${is_full_build} == "true" ]]; then
                         log print '[2] 本次构建设置为增量构建...'
@@ -463,7 +467,7 @@ function gerrit_build() {
     if [[ -n ${build_path[@]} ]]; then
         build_path=($(awk -vRS=' ' '!a[$1]++' <<< ${build_path[@]}))
 
-        __green__ "[tct]: build path = ${build_path[@]}"
+        show_vir "[tct]: build path = ${build_path[@]}"
     fi
 
     # 2. check qssi project
@@ -471,7 +475,7 @@ function gerrit_build() {
         for build in ${build_path[@]} ; do
             if [[ "$(is_qssi_product ${build})" == "true" ]]; then
                 export TARGET_PRODUCT=qssi
-                log warn "This module is qssi project."
+                log debug "This module is qssi project."
                 break;
             fi
         done

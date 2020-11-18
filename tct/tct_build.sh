@@ -84,7 +84,7 @@ function make_android_for_single() {
     done
 
     if [[ ${#build_module_list[@]} -ne 0 ]];then
-        show_vip "[tct]: mma -j${JOBS} ${build_module_list[@]}"
+        show_vir "[tct]: mma -j${JOBS} ${build_module_list[@]}"
         if ${build_debug};then
             mma -j${JOBS} ${build_module_list[@]}
             if [[ ${PIPESTATUS[0]} -eq 0 ]] ; then
