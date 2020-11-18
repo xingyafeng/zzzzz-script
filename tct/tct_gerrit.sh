@@ -470,16 +470,14 @@ function gerrit_build() {
         esac
     done < ${tmpfs}/env.ini
 
-    # 去重
+    # 1. 去重
     if [[ -n ${build_path[@]} ]]; then
         build_path=($(awk -vRS=' ' '!a[$1]++' <<< ${build_path[@]}))
-    fi
 
-    if [[ -n ${build_path[@]}  ]]; then
         __green__ "[tct]: build path = ${build_path[@]}"
     fi
 
-    # check qssi project
+    # 2. check qssi project
     if [[ -n "${build_path}" ]]; then
         for build in ${build_path[@]} ; do
             if [[ "$(is_qssi_product ${build})" == "true" ]]; then
@@ -490,94 +488,25 @@ function gerrit_build() {
         done
     fi
 
+    # 3. 检查是否需要整编
     if [[ ${is_full_build} == "true" ]]; then
         unset build_path
     fi
 
-    if [[ -n ${build_case[@]}  ]]; then
-        __green__ "[tct]: build case = ${build_case[@]}"
-    fi
+    # ----------------------------------------------------------------- 编译规则
 
-    # build case
-    if [[ -n "${build_case[@]}" ]]; then
-        for bcase in ${build_case[@]} ; do
+    # 一、特殊处理 build case, e.g. 1、moden 2、kernel etc
+    make_android_for_case
 
-            case ${bcase} in
-                'exclude')
-                    Command ${bcase}
-                    if [[ $? -eq 0 ]]; then
-                        if [[ ${#change_number_list[@]} -eq 1 ]]; then
-                            verify_patchset_submit 0
-                        fi
-                    else
-                        if [[ ${#change_number_list[@]} -eq 1 ]]; then
-                            verify_patchset_submit 1
-                        fi
-                    fi
-
-                    return 0
-                ;;
-
-                *)
-                    Command ${bcase}
-                    if [[ $? -eq 0 ]]; then
-                        if [[ ${#change_number_list[@]} -eq 1 ]]; then
-                            verify_patchset_submit 0
-                        fi
-                    else
-                        if [[ ${#change_number_list[@]} -eq 1 ]]; then
-                            verify_patchset_submit 1
-                        fi
-                    fi
-                ;;
-            esac
-        done
-    fi
-
-    # rom prebuild
+    # 二、正常构建 1. mma/mmma 单编译　2. 增量编译,其实整编译
     if [[ ${#build_path[@]} -ne 0 ]]; then
-        for bp in ${build_path[@]} ; do
-            if [[ -n ${module_target[${bp}]} ]]; then
-                build_module_list[${#build_module_list[@]}]=${module_target[${bp}]}
+        show_vip '[tct]: --> mma modules start ...'
 
-                # 解决无效目标导致的编译失败
-                case ${bp} in
-                    vendor/qcom/proprietary/sensors-see/sensors-hal-2.0)
-                        module_filter
-                    ;;
-                esac
-            fi
-        done
-
-        if [[ ${#build_module_list[@]} -ne 0 ]];then
-            show_vip "[tct]: mma -j${JOBS} ${build_module_list[@]}"
-            if ${build_debug};then
-                mma -j${JOBS} ${build_module_list[@]}
-                if [[ ${PIPESTATUS[0]} -eq 0 ]] ; then
-                    verify_patchset_submit 0
-                else
-                    verify_patchset_submit 1
-                    log error "mma -j${JOBS} ${build_module_list[@]} failed ..."
-                fi
-            fi
-        fi
+        make_android_for_single
     else
-        export WITHOUT_CHECK_API=false
-
         show_vip '[tct]: --> make android start ...'
-        if ${build_debug};then
-            if [[ "${TARGET_PRODUCT}" == "qssi" ]]; then
-                Command "bash build.sh --qssi_only -j${JOBS}"
-            else
-                Command "bash build.sh --target_only -j${JOBS}"
-            fi
 
-            if [[ $? -eq 0 ]] ; then
-                verify_patchset_submit 0
-            else
-                verify_patchset_submit 1
-            fi
-        fi
+        make_android_for_whole
     fi
 
     show_vip "INFO: Exit ${FUNCNAME[0]}()"
