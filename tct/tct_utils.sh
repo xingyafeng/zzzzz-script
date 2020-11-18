@@ -313,6 +313,113 @@ function is_apk_prebuild() {
     esac
 }
 
+# 区分由时间触发
+function is_gerrit_trigger() {
+
+    case ${GERRIT_VERSION} in
+
+        '2.15.7')
+            echo true
+            ;;
+
+        *)
+            echo false
+            ;;
+    esac
+}
+
+# 是否为QSSI编译
+function is_qssi_product() {
+
+    local path=
+    local count=0
+    local result_installed=result_installed.txt
+
+    declare -A moudule_info
+
+    case $# in
+        1)
+            path=${1-}
+            ;;
+        *)
+            retrun 1
+            ;;
+    esac
+
+    if [[ ! -f result_installed.txt ]]; then
+        generate_buildlist_file
+    fi
+
+    while IFS=":" read -r _path _target _;do
+        moudule_info[${_path}]=${_target}
+    done < ${result_installed}
+
+    for tgt in ${moudule_info[${path}]} ; do
+
+        case ${tgt} in
+
+            out/target/product/qssi/system/*)
+                let count++
+                ;;
+
+            out/target/product/qssi/system_ext/*)
+                let count++
+                ;;
+
+            out/target/product/qssi/product/*)
+                let count++
+                ;;
+        esac
+    done
+
+    if [[ ${count} -gt 0 ]]; then
+        echo true
+    else
+        echo false
+    fi
+}
+
+# 获取正确的编译路径
+function getdir() {
+
+    local prjdir=${1:-}
+    local tmpdir=
+
+    if [[ ! -f build/make/tools/buildlist ]]; then
+        log error "The build/make/tools/buildlist file has no found!"
+    fi
+
+    if [[ ${project_path} == ${prjdir} ]]; then
+        if [[ -n ${module_target[${prjdir}]} ]]; then
+            echo ${prjdir}
+
+            return 0
+        else
+            return 0
+        fi
+    else
+        tmpdir=$(dirname ${prjdir})
+#        echo '@@ tmpdir: ' ${tmpdir}
+        while IFS=':' read -r k v ; do
+#            echo 'k : ' ${k} ' --- ' 'v : ' ${v}
+            if [[ -n ${v} ]]; then
+#                echo 'k : ' ${k}
+                if [[ ${k} == "${tmpdir}" ]]; then
+                    if [[ ${tmpdir} != ${project_path} ]]; then
+                        if [[ -n ${module_target[${tmpdir}]} ]]; then
+                            echo ${tmpdir}
+
+                            return 0
+                        fi
+                    fi
+                fi
+            fi
+        done < build/make/tools/buildlist
+
+        getdir ${tmpdir}
+    fi
+}
+
 # 探测MTK芯片
 function is_mtk_board() {
 
