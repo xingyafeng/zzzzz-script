@@ -113,9 +113,14 @@ function restore_git_repository() {
             log debug "The project path is :  $(get_project_path)"
             recover_standard_git_project $(get_project_path)
         done < ${tmpfs}/env.ini
+
+        if [[ $? -eq 0 ]]; then
+            log print "--> 已恢上次下载的仓库至最新状态."
+        else
+            log error "--> 已恢上次下载的仓库失败."
+        fi
     fi
 
-    log print "--> 已恢上次下载的仓库至最新状态."
 }
 
 function pint_env_ini() {
@@ -296,7 +301,7 @@ function download_all_patchset()
     while IFS="@" read -r GERRIT_CHANGE_URL GERRIT_PROJECT GERRIT_REFSPEC GERRIT_PATCHSET_NUMBER GERRIT_PATCHSET_REVISION GERRIT_CHANGE_NUMBER GERRIT_BRANCH _;do
 
         project_path=$(get_project_path)
-        show_vig "@@@ project path: " ${project_path}
+        __green__ "@@@ project path: " ${project_path}
 
         pushd ${project_path} > /dev/null
 
@@ -493,12 +498,12 @@ function gerrit_build() {
 
     # 二、正常构建 1. mma/mmma 单编译　2. 增量编译,其实整编译
     if [[ ${#build_path[@]} -ne 0 ]]; then
-        show_vip '[tct]: --> mma modules start ...'
+        __pruple__ '[tct]: --> mma modules start ...'
 
         make_android_for_single
     else
         if [[ ${is_full_build} == "true" ]]; then
-            show_vip '[tct]: --> make android start ...'
+            __pruple__ '[tct]: --> make android start ...'
 
             make_android_for_whole
         fi
