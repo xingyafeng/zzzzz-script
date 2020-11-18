@@ -83,7 +83,7 @@ function verified+1() {
             log error "Jenkins --verified +1 failed ..."
         fi
     else
-        log print "Unable to Verified+1, because of it hava been Verified+1 ..."
+        show_vir "Unable to Verified+1, because of it hava been Verified+1 ..."
     fi
 
     if [[ "$(check-gerrit 'code-review+2' ${GERRIT_CHANGE_NUMBER})" == "true" ]]; then
@@ -92,7 +92,7 @@ function verified+1() {
         set -e
     else
         ssh-gerrit review -m '"Unable to submit, can only Verified+1 now, need some people to Code-Revire+2 ..."' ${GERRIT_CHANGE_NUMBER},${GERRIT_PATCHSET_NUMBER}
-        log print "Unable to submit, can only Verified+1 now, need some people to Code-Revire+2 ..."
+        show_vir "Unable to submit, can only Verified+1 now, need some people to Code-Revire+2 ..."
     fi
 }
 
