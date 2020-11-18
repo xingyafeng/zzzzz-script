@@ -148,7 +148,7 @@ function pint_env_ini() {
 function parse_all_patchset() {
 
     trap 'ERRTRAP ${LINENO} ${FUNCNAME} ${BASH_LINENO}' ERR
-    show_vip "INFO: Enter ${FUNCNAME[0]}()"
+#    show_vip "INFO: Enter ${FUNCNAME[0]}()"
 
     local branchs="development_dint@jrdapp-android-r-dint@qct-sm4250-tf-r-v1.0-dint@TCT-ROM-4.0-AOSP-GCS-OP@TCTROM-R-QCT-V4.1-dev_gcs@TCTROM-R-QTI-OP@TCTROM-R-V4.0-dev_gcs"
 
@@ -213,14 +213,14 @@ function parse_all_patchset() {
     # 输出环境参数
     pint_env_ini
 
-    show_vip "INFO: Exit ${FUNCNAME[0]}()"
+#    show_vip "INFO: Exit ${FUNCNAME[0]}()"
     trap - ERR
 }
 
 function check_patchset_status()
 {
     trap 'ERRTRAP ${LINENO} ${FUNCNAME} ${BASH_LINENO}' ERR
-    show_vip "INFO: Enter ${FUNCNAME[0]}()"
+#    show_vip "INFO: Enter ${FUNCNAME[0]}()"
 
     local latest_patchset=
     local check_status=true
@@ -280,14 +280,14 @@ function check_patchset_status()
         log quit "check status failed, please check this patchset for verified -1 or reviewed <0  or closed|merged|abandoned|amend ..."
     fi
 
-    show_vip "INFO: Exit ${FUNCNAME[0]}()"
+#    show_vip "INFO: Exit ${FUNCNAME[0]}()"
     trap - ERR
 }
 
 function download_all_patchset()
 {
     trap 'ERRTRAP ${LINENO} ${FUNCNAME} ${BASH_LINENO}' ERR
-    show_vip "INFO: Enter ${FUNCNAME[0]}()"
+#    show_vip "INFO: Enter ${FUNCNAME[0]}()"
 
     local project_path=
 
@@ -316,13 +316,13 @@ function download_all_patchset()
         popd > /dev/null
     done < ${tmpfs}/env.ini
 
-    show_vip "INFO: Exit ${FUNCNAME[0]}()"
+#    show_vip "INFO: Exit ${FUNCNAME[0]}()"
     trap - ERR
 }
 
 function verify_patchset_submit() {
 
-    show_vip "INFO: Enter ${FUNCNAME[0]}()"
+#    show_vip "INFO: Enter ${FUNCNAME[0]}()"
 
     local is_build_success=${1-}
 
@@ -348,7 +348,7 @@ function verify_patchset_submit() {
         fi
     done < ${tmpfs}/env.ini
 
-    show_vip "INFO: Exit ${FUNCNAME[0]}()"
+#    show_vip "INFO: Exit ${FUNCNAME[0]}()"
 }
 
 function get_invalid_module() {
@@ -371,7 +371,7 @@ function module_filter() {
 function gerrit_build() {
 
     trap 'ERRTRAP ${LINENO} ${FUNCNAME} ${BASH_LINENO}' ERR
-    show_vip  "INFO: Enter ${FUNCNAME[0]}()"
+#    show_vip "INFO: Enter ${FUNCNAME[0]}()"
 
     local project_path=
     local count=0
@@ -502,7 +502,7 @@ function gerrit_build() {
         fi
     fi
 
-    show_vip "INFO: Exit ${FUNCNAME[0]}()"
+#    show_vip "INFO: Exit ${FUNCNAME[0]}()"
     trap - ERR
 }
 
