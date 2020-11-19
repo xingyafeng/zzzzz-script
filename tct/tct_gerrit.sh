@@ -370,6 +370,8 @@ function verify_patchset_submit() {
                     verified-1
                     ;;
             esac
+        else
+            log debug "--> ${gerrit_patchset_revision} == ${GERRIT_PATCHSET_REVISION} ???"
         fi
     done < ${tmpfs}/env.ini
 
