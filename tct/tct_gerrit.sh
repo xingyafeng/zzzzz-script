@@ -469,6 +469,12 @@ function gerrit_build() {
                                 is_full_build=true
                                 break;
                             ;;
+
+                            vendor/tct/frameworks/base/services)
+                                export TARGET_PRODUCT=qssi
+                                is_full_build=true
+                                break;
+                            ;;
                         esac
                     done
 
