@@ -25,6 +25,48 @@ function is_full_build_project() {
     fi
 }
 
+# 编译boot
+function make_boot() {
+
+    bash linux_build.sh -b delhitf tf
+}
+
+# 编译modem
+function make_modem() {
+
+    bash linux_build.sh -m delhitf tf
+}
+
+# 编译rpm
+function make_rpm() {
+
+    bash linux_build.sh -r delhitf tf
+}
+
+# # 编译adsp
+function make_adsp() {
+
+    bash linux_build.sh -d delhitf tf
+}
+
+# 编译cdsp
+function make_cdsp() {
+
+    bash linux_build.sh -s delhitf tf
+}
+
+# 编译tz
+function make_tz() {
+
+    bash linux_build.sh -t delhitf tf
+}
+
+# 编译all
+function make_all() {
+
+    bash linux_build.sh -a delhitf tf
+}
+
 # 编译moden模块
 function build_moden() {
 
@@ -39,31 +81,31 @@ function build_moden() {
         if [[ -n ${tmpath} ]]; then
             case ${tmpath} in
                 BOOT.XF.4.1) # 过滤错误选项
-                    build_modem[${#build_modem[@]}]="unset WORKSPACE && bash linux_build.sh -b delhitf tf"
+                    build_modem[${#build_modem[@]}]=make_boot
                 ;;
 
                 MPSS.HA.1.0)
-                    build_modem[${#build_modem[@]}]="unset WORKSPACE && bash linux_build.sh -m delhitf tf"
+                    build_modem[${#build_modem[@]}]=make_modem
                 ;;
 
                 RPM.BF.1.10)
-                    build_modem[${#build_modem[@]}]="unset WORKSPACE && bash linux_build.sh -r delhitf tf"
+                    build_modem[${#build_modem[@]}]=make_rpm
                 ;;
 
                 ADSP.VT.5.4.1)
-                    build_modem[${#build_modem[@]}]="unset WORKSPACE && bash linux_build.sh -d delhitf tf"
+                    build_modem[${#build_modem[@]}]=make_adsp
                 ;;
 
                 CDSP.VT.2.4.1)
-                    build_modem[${#build_modem[@]}]="unset WORKSPACE && bash linux_build.sh -s delhitf tf"
+                    build_modem[${#build_modem[@]}]=make_cdsp
                 ;;
 
                 TZ.XF.5.1)
-                    build_modem[${#build_modem[@]}]="unset WORKSPACE && bash linux_build.sh -t delhitf tf"
+                    build_modem[${#build_modem[@]}]=make_tz
                 ;;
 
                 *)
-                    build_modem[${#build_modem[@]}]="unset WORKSPACE && bash linux_build.sh -a delhitf tf"
+                    build_modem[${#build_modem[@]}]=make_all
                 ;;
             esac
         fi
@@ -76,6 +118,9 @@ function build_moden() {
         show_vir "[tct]: build modem = ${build_modem[@]}"
 
         pushd ${project_path} > /dev/null
+
+        # 置空WORKSPACE
+        unset WORKSPACE
 
         if [[ -f linux_build.sh ]]; then
             Command ${build_modem[@]}
