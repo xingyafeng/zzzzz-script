@@ -1,5 +1,30 @@
 #!/usr/bin/env bash
 
+# 需要整编译的工程
+function is_full_build_project() {
+
+    case ${bp} in
+        device/qcom/*|device/sample/*|device/google/*|device/linaro/*)
+            is_full_build=true
+            break;
+        ;;
+
+        build/soong/*|build/make/*)
+            is_full_build=true
+            break;
+        ;;
+
+        vendor/tct/frameworks/base/services)
+            is_full_build=true
+            break;
+        ;;
+    esac
+
+    if [[ ${is_full_build} == "true" ]]; then
+        export TARGET_PRODUCT=qssi
+    fi
+}
+
 # 编译moden模块
 function build_moden() {
 

@@ -457,25 +457,7 @@ function gerrit_build() {
                     fi
                 else
                     for bp in ${build_path[@]} ; do
-                        case ${bp} in
-                            device/qcom/*|device/sample/*|device/google/*|device/linaro/*)
-                                export TARGET_PRODUCT=qssi
-                                is_full_build=true
-                                break;
-                            ;;
-
-                            build/soong/*|build/make/*)
-                                export TARGET_PRODUCT=qssi
-                                is_full_build=true
-                                break;
-                            ;;
-
-                            vendor/tct/frameworks/base/services)
-                                export TARGET_PRODUCT=qssi
-                                is_full_build=true
-                                break;
-                            ;;
-                        esac
+                        is_full_build_project
                     done
 
                     show_vig '[tct]: The build path list count : ' ${#build_path[@]} '; build path : ' $(awk -vRS=' ' '!a[$1]++' <<< ${build_path[@]})
