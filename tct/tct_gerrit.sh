@@ -208,9 +208,7 @@ function parse_all_patchset() {
         fi
     else
         while IFS="@" read -r GERRIT_CHANGE_URL GERRIT_PROJECT GERRIT_REFSPEC GERRIT_PATCHSET_NUMBER GERRIT_PATCHSET_REVISION GERRIT_CHANGE_NUMBER GERRIT_BRANCH _;do
-            show_vig 'GERRIT_CHANGE_NUMBER = ' ${GERRIT_CHANGE_NUMBER}
             change_number_list=(${GERRIT_CHANGE_NUMBER})
-            show_vig 'change_number_list = ' ${change_number_list[@]}
         done < ${tmpfs}/noenv.ini
     fi
 
