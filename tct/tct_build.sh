@@ -70,6 +70,11 @@ function build_moden() {
     done
 
     if [[ -n ${build_modem[@]} ]]; then
+
+        # 去重
+        build_modem=($(awk -vRS=' ' '!a[$1]++' <<< ${build_modem[@]}))
+        show_vir "[tct]: build modem = ${build_modem[@]}"
+
         pushd ${project_path} > /dev/null
 
         if [[ -f linux_build.sh ]]; then
