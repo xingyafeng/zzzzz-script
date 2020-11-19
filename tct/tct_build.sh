@@ -115,7 +115,7 @@ function build_moden() {
 
         # 去重
         build_modem=($(awk -vRS=' ' '!a[$1]++' <<< ${build_modem[@]}))
-        show_vir "[tct]: build modem = ${build_modem[@]}"
+        __red__ "[tct]: build modem = ${build_modem[@]}"
 
         pushd ${project_path} > /dev/null
 
