@@ -29,17 +29,57 @@ function is_full_build_project() {
 function build_moden() {
 
     # 记录变量WORKSPACE
-    tmpworkspace=${WORKSPACE}
+    local tmpworkspace=${WORKSPACE}
+    local tmpath=
 
-    pushd ${project_path} > /dev/null
+    # 查询提交文件
+    listfs=(`git --git-dir=${project_path}/.git log --name-only --pretty=format: ${GERRIT_PATCHSET_REVISION} -1 | grep -v "^$" | sort -u`)
+    for fs in ${listfs[@]} ; do
+        tmpath=$(gotdir ${fs})
+        if [[ -n ${tmpath} ]]; then
+            case ${tmpath} in
+                BOOT.XF.4.1) # 过滤错误选项
+                    build_modem[${#build_modem[@]}]="unset WORKSPACE && bash linux_build.sh -b delhitf tf"
+                ;;
 
-    if [[ -f linux_build.sh ]]; then
-        unset WORKSPACE && bash linux_build.sh -a delhitf tf
-    else
-        log error "The linux_build.sh has no found ..."
+                MPSS.HA.1.0)
+                    build_modem[${#build_modem[@]}]="unset WORKSPACE && bash linux_build.sh -m delhitf tf"
+                ;;
+
+                RPM.BF.1.10)
+                    build_modem[${#build_modem[@]}]="unset WORKSPACE && bash linux_build.sh -r delhitf tf"
+                ;;
+
+                ADSP.VT.5.4.1)
+                    build_modem[${#build_modem[@]}]="unset WORKSPACE && bash linux_build.sh -d delhitf tf"
+                ;;
+
+                CDSP.VT.2.4.1)
+                    build_modem[${#build_modem[@]}]="unset WORKSPACE && bash linux_build.sh -s delhitf tf"
+                ;;
+
+                TZ.XF.5.1)
+                    build_modem[${#build_modem[@]}]="unset WORKSPACE && bash linux_build.sh -t delhitf tf"
+                ;;
+
+                *)
+                    build_modem[${#build_modem[@]}]="unset WORKSPACE && bash linux_build.sh -a delhitf tf"
+                ;;
+            esac
+        fi
+    done
+
+    if [[ -n ${build_modem[@]} ]]; then
+        pushd ${project_path} > /dev/null
+
+        if [[ -f linux_build.sh ]]; then
+            Command ${build_modem[@]}
+        else
+            log error "The linux_build.sh has no found ..."
+        fi
+
+        popd > /dev/null
     fi
-
-    popd > /dev/null
 
     export WORKSPACE=${tmpworkspace}
 }

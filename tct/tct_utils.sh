@@ -420,6 +420,21 @@ function getdir() {
     fi
 }
 
+# 获取最顶层路径
+function gotdir() {
+
+    local prjdir=${1:-}
+    local tmpdir=
+
+    tmpdir=$(dirname ${prjdir})
+
+    if [[ -z $(echo ${tmpdir} | egrep '/') ]]; then
+        echo ${tmpdir}
+    else
+        gotdir ${tmpdir}
+    fi
+}
+
 # 探测MTK芯片
 function is_mtk_board() {
 

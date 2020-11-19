@@ -18,6 +18,7 @@ build_debug=
 ## --------------------------------
 
 declare -a build_path
+declare -a build_modem
 declare -a build_module_list
 declare -a change_number_list
 
