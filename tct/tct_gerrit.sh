@@ -456,13 +456,15 @@ function gerrit_build() {
                         break;
                     fi
                 else
-                    for bp in ${build_path[@]} ; do
-                        is_full_build_project
-                    done
+                    if [[ $(is_full_build_project) == "true" ]]; then
+                        is_full_build=true
+                    fi
 
                     show_vig '[tct]: The build path list count : ' ${#build_path[@]} '; build path : ' $(awk -vRS=' ' '!a[$1]++' <<< ${build_path[@]})
 
                     if [[ ${is_full_build} == "true" ]]; then
+                        export TARGET_PRODUCT=qssi
+
                         log print '[2] 本次构建设置为增量构建...'
 
                         if [[ ${index} -eq 1 ]]; then

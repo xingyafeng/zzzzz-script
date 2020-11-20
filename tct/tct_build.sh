@@ -3,26 +3,26 @@
 # 需要整编译的工程
 function is_full_build_project() {
 
-    case ${bp} in
+    case ${project_path} in
         device/qcom/*|device/sample/*|device/google/*|device/linaro/*)
-            is_full_build=true
-            break;
+            echo true
         ;;
 
         build/soong/*|build/make/*)
-            is_full_build=true
-            break;
+            echo true
         ;;
 
-        vendor/tct/frameworks/base/services)
-            is_full_build=true
-            break;
+        *)
+            for bp in ${build_path[@]} ; do
+                case ${bp} in
+                    vendor/tct/frameworks/base/services)
+                        echo true
+                        break;
+                    ;;
+                esac
+            done
         ;;
     esac
-
-    if [[ ${is_full_build} == "true" ]]; then
-        export TARGET_PRODUCT=qssi
-    fi
 }
 
 # 编译boot
