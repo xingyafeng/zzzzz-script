@@ -150,29 +150,15 @@ function make_android_for_case() {
         for bcase in ${build_case[@]} ; do
 
             case ${bcase} in
-                'exclude')
-                    Command ${bcase}
-                    if [[ $? -eq 0 ]]; then
-                        if [[ ${#change_number_list[@]} -eq 1 ]]; then
-                            verify_patchset_submit 0
-                        fi
-                    else
-                        if [[ ${#change_number_list[@]} -eq 1 ]]; then
-                            verify_patchset_submit 1
-                        fi
-                    fi
-
-                    return 0
-                ;;
 
                 *)
                     Command ${bcase}
                     if [[ $? -eq 0 ]]; then
-                        if [[ ${#change_number_list[@]} -eq 1 ]]; then
+                        if [[ ${build_case[${#build_case[@]}-1]} == ${bcase} ]]; then
                             verify_patchset_submit 0
                         fi
                     else
-                        if [[ ${#change_number_list[@]} -eq 1 ]]; then
+                        if [[ ${build_case[${#build_case[@]}-1]} == ${bcase} ]]; then
                             verify_patchset_submit 1
                         fi
                     fi
