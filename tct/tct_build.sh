@@ -115,7 +115,17 @@ function build_moden() {
 
         # 去重
         build_modem=($(awk -vRS=' ' '!a[$1]++' <<< ${build_modem[@]}))
-        __red__ "[tct]: build modem = ${build_modem[@]}"
+        __red__ "[tct]: 1. build modem = ${build_modem[@]}"
+
+        # 当需要全编译,就无需进行单编译.
+        for bm in ${build_modem[@]} ; do
+            if [[ ${bm} == "make_all" ]]; then
+                unset build_modem && build_modem[${#build_modem[@]}]=make_all
+                break;
+            fi
+        done
+
+        __red__ "[tct]: 2. build modem = ${build_modem[@]}"
 
         pushd ${moden_path} > /dev/null
 
