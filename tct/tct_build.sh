@@ -117,7 +117,7 @@ function build_moden() {
         build_modem=($(awk -vRS=' ' '!a[$1]++' <<< ${build_modem[@]}))
         __red__ "[tct]: build modem = ${build_modem[@]}"
 
-        pushd ${project_path} > /dev/null
+        pushd ${moden_path} > /dev/null
 
         # 置空WORKSPACE
         unset WORKSPACE

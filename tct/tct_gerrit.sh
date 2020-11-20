@@ -401,6 +401,7 @@ function gerrit_build() {
 #    show_vip "INFO: Enter ${FUNCNAME[0]}()"
 
     local project_path=
+    local moden_path=
     local count=0
     local index=$(cat ${tmpfs}/env.ini | wc -l)
     local is_full_build=false # 默认不是增加构建
@@ -421,6 +422,7 @@ function gerrit_build() {
         case "${project_path}" in
 
             amss_4250_spf1.0)
+                moden_path=${project_path}
                 build_case[${#build_case[@]}]=build_moden
             ;;
 
