@@ -22,6 +22,9 @@ declare -a build_modem
 declare -a build_module_list
 declare -a change_number_list
 
+# 统计项目
+declare -a project_paths
+
 # 无效的模块
 declare -a invalid_module
 

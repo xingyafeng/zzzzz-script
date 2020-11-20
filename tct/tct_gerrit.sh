@@ -433,6 +433,9 @@ function gerrit_build() {
 
             *)
                 local tmpath
+
+                # 记录编译的工程
+                project_paths[${#project_paths[@]}]=${project_path}
                 # 查询提交文件
                 listfs=(`git --git-dir=${project_path}/.git log --name-only --pretty=format: ${GERRIT_PATCHSET_REVISION} -1 | grep -v "^$" | sort -u`)
                 for fs in ${listfs[@]} ; do
@@ -484,8 +487,9 @@ function gerrit_build() {
     # 1. 去重
     if [[ -n ${build_path[@]} ]]; then
         build_path=($(awk -vRS=' ' '!a[$1]++' <<< ${build_path[@]}))
-
         show_vir "[tct]: build path = ${build_path[@]}"
+
+        statistical_compilation_project
     fi
 
     # 2. check qssi project
