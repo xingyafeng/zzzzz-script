@@ -510,6 +510,9 @@ function gerrit_build() {
 
     # ----------------------------------------------------------------- 编译规则
 
+    ### 初始化环境变量
+    source_init
+
     # 一、特殊处理 build case, e.g. 1、moden 2、kernel etc
     make_android_for_case
 
