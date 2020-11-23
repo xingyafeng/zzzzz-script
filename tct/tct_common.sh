@@ -188,6 +188,9 @@ function handle_tct_custom() {
 
     # 建立构建目标关系
     generate_module_target
+}
+
+function wimdataclean() {
 
     if [[ -d "out/target/common/jrdResAssetsCust/wimdata" ]];then
         rm -rf "out/target/common/jrdResAssetsCust/wimdata"
