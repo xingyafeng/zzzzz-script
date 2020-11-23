@@ -164,12 +164,20 @@ function make_android_for_case() {
                 *)
                     Command ${bcase}
                     if [[ $? -eq 0 ]]; then
-                        if [[ ${build_case[${#build_case[@]}-1]} == ${bcase} ]]; then
-                            verify_patchset_submit 0
+                        if [[ ${is_full_build} == "false" ]]; then # 非全编译
+                            if [[ ${#build_path[@]} -eq 0 ]]; then # 非单编译
+                                if [[ ${build_case[${#build_case[@]}-1]} == ${bcase} ]]; then # 最后个单编译Moden
+                                    verify_patchset_submit 0
+                                fi
+                            fi
                         fi
                     else
-                        if [[ ${build_case[${#build_case[@]}-1]} == ${bcase} ]]; then
-                            verify_patchset_submit 1
+                        if [[ ${is_full_build} == "false" ]]; then
+                            if [[ ${#build_path[@]} -eq 0 ]]; then
+                                if [[ ${build_case[${#build_case[@]}-1]} == ${bcase} ]]; then
+                                    verify_patchset_submit 1
+                                fi
+                            fi
                         fi
                     fi
                 ;;
