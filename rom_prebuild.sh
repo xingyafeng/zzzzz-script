@@ -165,14 +165,14 @@ function main() {
 
     if [[ -d .repo && -f build/core/envsetup.mk && -f Makefile ]];then
 
+        handle_tct_custom
+
         ### 初始化环境变量
         if [[ "`is_check_lunch`" == "no lunch" ]];then
             source_init
         else
             print_env
         fi
-
-        handle_tct_custom
     fi
 
     if [[ "$(is_gerrit_trigger)" == "true" ]];then

@@ -192,10 +192,6 @@ function handle_tct_custom() {
     if [[ -d "out/target/common/jrdResAssetsCust/wimdata" ]];then
         rm -rf "out/target/common/jrdResAssetsCust/wimdata"
     fi
-
-    if [[ -f vendor/tct/source/qcn/Android.mk ]]; then
-        mv vendor/tct/source/qcn/Android.mk vendor/tct/source/qcn/Android.mk_bak
-    fi
 }
 
 # 过滤不进行编译的项目或分支
