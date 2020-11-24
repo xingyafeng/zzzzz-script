@@ -32,10 +32,8 @@ function fix_incorrect_module() {
     for bm in ${build_module_list[@]} ; do
         case ${bm} in
             lights.msmnile)
-                tmp[${#tmp[@]}]=${build_module_list[@]#${bm}}
-                unset build_module_list
-                build_module_list=${tmp[@]}
-                build_module_list[${#build_module_list[@]}]=lights.bengal
+                tmp=${build_module_list[@]//${bm}/lights.bengal}
+                unset build_module_list && build_module_list=${tmp[@]}
                 ;;
         esac
     done
