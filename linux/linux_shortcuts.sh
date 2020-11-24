@@ -421,7 +421,11 @@ function jenkins
 
 function jenkins1
 {
-	ssh android-bld@10.129.93.30 -p 8089
+    if [[ -n ${1:-} ]]; then
+        ssh android-bld@10.129.93.30
+    else
+        ssh android-bld@10.129.93.30 -p 8089
+    fi
 }
 
 function jenkins2
@@ -431,7 +435,11 @@ function jenkins2
 
 function jenkins3
 {
-	ssh android-bld@10.129.93.34 -p 8089
+    if [[ -n ${1:-} ]]; then
+        ssh android-bld@10.129.93.34
+    else
+        ssh android-bld@10.129.93.34 -p 8089
+    fi
 }
 
 function jenkins4
