@@ -487,10 +487,6 @@ function get_perso_img() {
 # 统计编译的工程
 function statistical_compilation_project() {
 
-    if [[ ! -f ${tmpfs}/tmp.txt ]]; then
-        :> ${tmpfs}/tmp.txt
-    fi
-
     if [[ ! -f ${tmpfs}/bpath.txt ]]; then
         :> ${tmpfs}/bpath.txt
     fi
@@ -499,23 +495,30 @@ function statistical_compilation_project() {
         :> ${tmpfs}/bproject.txt
     fi
 
+    :> ${tmpfs}/tmp.txt
     # 统计build path
     if [[ -n ${build_path[@]} ]]; then
-        echo ${build_path[@]} > ${tmpfs}/tmp.txt
+        for bp in ${build_path[@]}; do
+            echo ${bp} >> ${tmpfs}/tmp.txt
+        done
+
         cat ${tmpfs}/tmp.txt | sort -u >> ${tmpfs}/bpath.txt
         __pruple__ "build path:"
         cat ${tmpfs}/bpath.txt | sort -u
         cat ${tmpfs}/bpath.txt | sort -u > ${tmpfs}/tmp.txt
-        cat ${tmpfs}/tmp.txt | sort -u > ${tmpfs}/bpath.txt
+        cat ${tmpfs}/tmp.txt   | sort -u > ${tmpfs}/bpath.txt
     fi
 
     # 统计build project
     if [[ -n ${project_paths[@]} ]]; then
-        echo ${project_paths[@]} > ${tmpfs}/tmp.txt
+        for pp in ${project_paths[@]}; do
+            echo ${pp} >> ${tmpfs}/tmp.txt
+        done
+
         cat ${tmpfs}/tmp.txt | sort -u >> ${tmpfs}/bproject.txt
         __pruple__ "project path:"
         cat ${tmpfs}/bproject.txt | sort -u
         cat ${tmpfs}/bproject.txt | sort -u > ${tmpfs}/tmp.txt
-        cat ${tmpfs}/tmp.txt | sort -u > ${tmpfs}/bproject.txt
+        cat ${tmpfs}/tmp.txt      | sort -u > ${tmpfs}/bproject.txt
     fi
 }
