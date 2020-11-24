@@ -25,6 +25,22 @@ function is_full_build_project() {
     esac
 }
 
+# 修正错误的模块名
+function fix_incorrect_module() {
+
+    tmp=()
+    for bm in ${build_module_list[@]} ; do
+        case ${bm} in
+            lights.msmnile)
+                tmp[${#tmp[@]}]=${build_module_list[@]#${bm}}
+                unset build_module_list
+                build_module_list=${tmp[@]}
+                build_module_list[${#build_module_list[@]}]=lights.bengal
+                ;;
+        esac
+    done
+}
+
 # 编译boot
 function make_boot() {
 
@@ -191,6 +207,7 @@ function make_android_for_single() {
 
     for bp in ${build_path[@]} ; do
         if [[ -n ${module_target[${bp}]} ]]; then
+
             build_module_list[${#build_module_list[@]}]=${module_target[${bp}]}
 
             # 解决无效目标导致的编译失败
@@ -203,6 +220,7 @@ function make_android_for_single() {
     done
 
     if [[ ${#build_module_list[@]} -ne 0 ]];then
+        fix_incorrect_module
         show_vir "[tct]: mma -j${JOBS} ${build_module_list[@]}"
         if ${build_debug};then
             mma -j${JOBS} ${build_module_list[@]}
