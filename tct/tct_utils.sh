@@ -506,7 +506,7 @@ function statistical_compilation_project() {
         __pruple__ "build path:"
         cat ${tmpfs}/bpath.txt | sort -u
         cat ${tmpfs}/bpath.txt | sort -u > ${tmpfs}/tmp.txt
-        cat ${tmpfs}/tmp.txt | sort -u >> ${tmpfs}/bpath.txt
+        cat ${tmpfs}/tmp.txt | sort -u > ${tmpfs}/bpath.txt
     fi
 
     # 统计build project
@@ -516,6 +516,6 @@ function statistical_compilation_project() {
         __pruple__ "project path:"
         cat ${tmpfs}/bproject.txt | sort -u
         cat ${tmpfs}/bproject.txt | sort -u > ${tmpfs}/tmp.txt
-        cat ${tmpfs}/tmp.txt | sort -u >> ${tmpfs}/bproject.txt
+        cat ${tmpfs}/tmp.txt | sort -u > ${tmpfs}/bproject.txt
     fi
 }
