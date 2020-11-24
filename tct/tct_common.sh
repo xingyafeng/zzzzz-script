@@ -187,7 +187,7 @@ function make_android()
 function handle_tct_custom() {
 
     # 更新module-info.json
-    update_module_target
+#    update_module_target
 
     # 建立构建目标关系
     generate_module_target
