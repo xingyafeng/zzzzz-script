@@ -20,6 +20,16 @@ function generate_manifest_list() {
     done < ${manifest_list_p}
 }
 
+# 更新目标列表
+function update_module_target() {
+
+    local target_product=TARGET_PRODUCT
+
+    export TARGET_PRODUCT=qssi
+    make -j$(nproc) out/target/product/qssi/module-info.json
+    export TARGET_PRODUCT=${target_product}
+}
+
 # 生成目标列表
 function generate_module_target() {
 
