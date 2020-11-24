@@ -10,6 +10,8 @@ username='Integration.tablet'
 BUILDDIR=${WORKSPACE}
 # gerrit path
 gerrit_p=${tmpfs}/gerrit
+# build list info
+buildlist=${tmpfs}/buildlist.ini
 
 ## manifest info
 declare -A manifest_info

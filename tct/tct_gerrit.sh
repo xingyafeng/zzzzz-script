@@ -33,8 +33,6 @@ function update_module_target() {
 # 生成目标列表
 function generate_module_target() {
 
-    local buildlist=build/make/tools/buildlist
-
     if [[ ! -f ${buildlist} ]]; then
         generate_buildlist_file
     fi
@@ -73,7 +71,7 @@ function get_project_module() {
 function modify_buildlist() {
 
     # 1. frameworks/base 只单编译 framework
-    sed -i "s#^frameworks/base:.*#frameworks/base:framework#" build/make/tools/buildlist
+    sed -i "s#^frameworks/base:.*#frameworks/base:framework#" ${buildlist}
 
     # 2. xx
 }
@@ -84,12 +82,12 @@ function generate_buildlist_file() {
     local path_py=${script_p}/tools/pathJson.py
 
     if [[ -f ${path_py} && -f out/target/product/qssi/module-info.json ]]; then
-        python ${path_py} out/target/product/qssi/module-info.json build/make/tools/buildlist
+        python ${path_py} out/target/product/qssi/module-info.json ${buildlist}
     else
         log warn "${path_py} or out/target/product/qssi/module-info.json has no found!"
     fi
 
-    if [[ -f build/make/tools/buildlist ]]; then
+    if [[ -f ${buildlist} ]]; then
         modify_buildlist
     fi
 }

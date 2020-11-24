@@ -385,8 +385,8 @@ function getdir() {
     local prjdir=${1:-}
     local tmpdir=
 
-    if [[ ! -f build/make/tools/buildlist ]]; then
-        log error "The build/make/tools/buildlist file has no found!"
+    if [[ ! -f ${buildlist} ]]; then
+        log error "The ${buildlist} file has no found!"
     fi
 
     if [[ ${project_path} == ${prjdir} ]]; then
@@ -414,7 +414,7 @@ function getdir() {
                     fi
                 fi
             fi
-        done < build/make/tools/buildlist
+        done < ${buildlist}
 
         getdir ${tmpdir}
     fi
