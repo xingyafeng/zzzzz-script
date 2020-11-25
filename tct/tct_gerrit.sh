@@ -209,8 +209,11 @@ function parse_all_patchset() {
         if [[ -s "${gerrit_p}/change_number_list.txt" ]]; then
             change_number_list=($(cat ${gerrit_p}/change_number_list.txt | sort -n))
         else
-            show_vir "THe parse Topic: ${GERRIT_TOPIC} change number list null. And the patchset has been Abandoned or Merged."
-            ssh-gerrit review -m '"Warning_Log_URL:"'${BUILD_URL}'"/console The patchset has been Abandoned or Merged or already verified +1 by gerrit trigger auto compile, so no need to build this time."' ${GERRIT_CHANGE_NUMBER},${GERRIT_PATCHSET_NUMBER}
+            show_vir "The parse Topic: ${GERRIT_TOPIC} change number list null. And the patchset has been Abandoned or Merged."
+
+            if [[ -n ${GERRIT_PATCHSET_NUMBER} && -n ${GERRIT_CHANGE_NUMBER} ]]; then
+                ssh-gerrit review -m '"Warning_Log_URL:"'${BUILD_URL}'"/console The patchset has been Abandoned or Merged or already verified +1 by gerrit trigger auto compile, so no need to build this time."' ${GERRIT_CHANGE_NUMBER},${GERRIT_PATCHSET_NUMBER}
+            fi
 
             # 正常退出
             log quit "${GERRIT_CHANGE_URL} The patch status is Abandoned or Merged or already verified +1 by gerrit trrigger auto compile, no need to build this time."
