@@ -509,6 +509,7 @@ function statistical_compilation_project() {
         cat ${tmpfs}/tmp.txt   | sort -u > ${tmpfs}/bpath.txt
     fi
 
+    :> ${tmpfs}/tmp.txt
     # 统计build project
     if [[ -n ${project_paths[@]} ]]; then
         for pp in ${project_paths[@]}; do
