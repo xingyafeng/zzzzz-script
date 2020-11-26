@@ -17,7 +17,7 @@ function main() {
 
     log debug "start ..."
 
-    _echo "main"
+    Command _echo 'main'
 
     log debug "end ..."
 
