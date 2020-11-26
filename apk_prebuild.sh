@@ -147,8 +147,6 @@ function download_patchset() {
     if [[ "$(is_clean_project)" == 'false' ]]; then
         # 恢复现场
         recover_standard_git_project ${project_path}
-        # 同步更新源代码
-        Command "repo sync ${project_path} -c -d --no-tags -j$(nproc)"
     else
         # 恢复现场
         checkout_standard_android_project
