@@ -15,7 +15,7 @@ function is_full_build_project() {
         *)
             for bp in ${build_path[@]} ; do
                 case ${bp} in
-                    vendor/tct/frameworks/base/services)
+                    vendor/tct/frameworks/base/services|vendor/qcom/proprietary/prebuilt_HY11/target/product/qssi)
                         echo true
                         break;
                     ;;
