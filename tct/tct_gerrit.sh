@@ -478,7 +478,7 @@ function gerrit_build() {
                         is_full_build=true
                     fi
 
-                    show_vig '[tct]: The build path list count : ' ${#build_path[@]} '; build path : ' $(awk -vRS=' ' '!a[$1]++' <<< ${build_path[@]})
+                    show_vig '[build]: The build path list count : ' ${#build_path[@]} '; build path : ' $(awk -vRS=' ' '!a[$1]++' <<< ${build_path[@]})
 
                     if [[ ${is_full_build} == "true" ]]; then
                         export TARGET_PRODUCT=qssi
