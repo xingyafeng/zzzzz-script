@@ -40,6 +40,7 @@ function select_choice()
 }
 
 function Command() {
+
     local command="$@"
 
     echo
