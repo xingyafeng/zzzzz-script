@@ -368,6 +368,7 @@ function verify_patchset_submit() {
     fi
 
     if [[ ${is_build_success} -eq 0 ]]; then
+        statistical_compilation_project
         check_patchset_status
     fi
 
@@ -499,8 +500,6 @@ function gerrit_build() {
     if [[ -n ${build_path[@]} ]]; then
         build_path=($(awk -vRS=' ' '!a[$1]++' <<< ${build_path[@]}))
         show_vir "[tct]: build path = ${build_path[@]}"
-
-        statistical_compilation_project
     fi
 
     # 2. check qssi project
