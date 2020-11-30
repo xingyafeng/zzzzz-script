@@ -12,7 +12,7 @@ function test_while() {
 
     local fs=config/test_while.log
 
-    while read -r field1 field2 field3 field4 throwaway;do
+    while IFS=" " read -r field1 field2 field3 field4 throwaway;do
         echo ${field1} '---' ${field2} '---' ${field3} ==== ${field4}
     done < ${fs}
 }
