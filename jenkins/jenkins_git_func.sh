@@ -431,7 +431,7 @@ function repo_sync_repository() {
         ;;
     esac
 
-    time repo sync -c -d --prune --force-sync --no-tags -j$(nproc)
+    time repo sync -c -d --no-tags -j$(nproc)
 }
 
 function recover_standard_git_project()
