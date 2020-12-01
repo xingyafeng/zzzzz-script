@@ -264,46 +264,43 @@ function check_patchset_status()
 
         # 检查PATCH状态， closed|merged|abandoned|amend
         if [[ "$(check-gerrit 'closed' ${GERRIT_CHANGE_NUMBER})" == "true" ]]; then
-           ssh-gerrit review -m '"Warning_Log_URL:"'${BUILD_URL}'"/console The patch has been Abandoned or Merged now, so no need to build this time."' ${GERRIT_CHANGE_NUMBER},${GERRIT_PATCHSET_NUMBER}
-           log warn "${GERRIT_CHANGE_URL} The patch status is closed now, no need to build this time."
+            log warn "${GERRIT_CHANGE_URL} The patch status is closed now, no need to build this time."
 
-           check_status=false
+            check_status=false
         fi
 
         if [[ "$(check-gerrit 'merged' ${GERRIT_CHANGE_NUMBER})" == "true" ]]; then
-           ssh-gerrit review -m '"Warning_Log_URL:"'${BUILD_URL}'"/console The patch had been merged now, so no need to build this time."'  ${GERRIT_CHANGE_NUMBER},${GERRIT_PATCHSET_NUMBER}
-           log warn "${GERRIT_CHANGE_URL} The patch status is merged now, no need to build this time."
+            log warn "${GERRIT_CHANGE_URL} The patch status is merged now, no need to build this time."
 
-           check_status=false
+            check_status=false
         fi
 
         if [[ "$(check-gerrit 'abandoned' ${GERRIT_CHANGE_NUMBER})" == "true" ]]; then
-           ssh-gerrit review -m '"Warning_Log_URL:"'${BUILD_URL}'"/console The patch had been abandoned now, please check this patchset,thanks."'  ${GERRIT_CHANGE_NUMBER},${GERRIT_PATCHSET_NUMBER}
-           log warn "${GERRIT_CHANGE_URL} The patch status is abandoned now, no need to build this time."
+            log warn "${GERRIT_CHANGE_URL} The patch status is abandoned now, no need to build this time."
 
-           check_status=false
+            check_status=false
         fi
 
         if [[ "$(check-gerrit 'amend' ${GERRIT_CHANGE_NUMBER})" == "true" ]]; then
-           ssh-gerrit review -m '"Warning_Log_URL:"'${BUILD_URL}'"/console This patchset is not the latest, it was rebased or committed again, so no need to build this time."'  ${GERRIT_CHANGE_NUMBER},${GERRIT_PATCHSET_NUMBER}
-           log warn "${GERRIT_CHANGE_URL} This patchset is not the latest,the current patchset num is ${GERRIT_PATCHSET_NUMBER} and the latest is ${latest_patchset}, it was rebased or committed again, so no need to build this time."
+            show_vig "@@@ latest_patchset = ${latest_patchset}"
+            show_vig "@@@ latest_patchset = $(ssh-gerrit query --current-patch-set "status:open project:${GERRIT_PROJECT} branch:${GERRIT_BRANCH} change:${GERRIT_CHANGE_NUMBER}" | grep "    number:" | awk -F: '{print $NF}')"
 
-           check_status=false
+            log warn "${GERRIT_CHANGE_URL} This patchset is not the latest,the current patchset num is ${GERRIT_PATCHSET_NUMBER} and the latest is ${latest_patchset}, it was rebased or committed again, so no need to build this time."
+
+            check_status=false
         fi
 
         # 检查 verified-1|code-review<0
         if [[ "$(check-gerrit 'verified-1' ${GERRIT_CHANGE_NUMBER})" == "true" ]]; then
-           ssh-gerrit review -m '"Warning_Log_URL:"'${BUILD_URL}'"/console The patch has been verified -1 by auto compile or somebody, so no need to build this time."' ${GERRIT_CHANGE_NUMBER},${GERRIT_PATCHSET_NUMBER}
-           log warn "${GERRIT_CHANGE_URL} The patch status has been verified-1 by auto compile, no need to build this time."
+            log warn "${GERRIT_CHANGE_URL} The patch status has been verified-1 by auto compile, no need to build this time."
 
-           check_status=false
+            check_status=false
         fi
 
         if [[ "$(check-gerrit 'code-review<0' ${GERRIT_CHANGE_NUMBER})" == "true" ]]; then
-           ssh-gerrit review -m '"Warning_Log_URL:"'${BUILD_URL}'"/console The patch has been code-reviewed -1 or -2 by somebody, please check this patchset."' ${GERRIT_CHANGE_NUMBER},${GERRIT_PATCHSET_NUMBER}
-           log warn "${GERRIT_CHANGE_URL} The patch status has been code-reviewed -1 or -2 by somebody, and so no need to build this time."
+            log warn "${GERRIT_CHANGE_URL} The patch status has been code-reviewed -1 or -2 by somebody, and so no need to build this time."
 
-           check_status=false
+            check_status=false
         fi
     done < ${tmpfs}/env.ini
 
