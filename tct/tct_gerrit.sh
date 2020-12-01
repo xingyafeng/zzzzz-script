@@ -143,7 +143,7 @@ function restore_git_repository() {
     fi
 }
 
-function pint_env_ini() {
+function print_env_ini() {
 
     log print 'print env ini ...'
     while IFS="@" read -r GERRIT_CHANGE_URL GERRIT_PROJECT GERRIT_REFSPEC GERRIT_PATCHSET_NUMBER GERRIT_PATCHSET_REVISION GERRIT_CHANGE_NUMBER GERRIT_BRANCH _;do
@@ -246,7 +246,7 @@ function parse_all_patchset() {
     unset url project refspec patchset revision changenumber branch
 
     # 输出环境参数
-    pint_env_ini
+    print_env_ini
 
 #    show_vip "INFO: Exit ${FUNCNAME[0]}()"
     trap - ERR
