@@ -282,9 +282,7 @@ function check_patchset_status()
         fi
 
         if [[ "$(check-gerrit 'amend' ${GERRIT_CHANGE_NUMBER})" == "true" ]]; then
-            show_vig "@@@ latest_patchset = ${latest_patchset}"
-            show_vig "@@@ latest_patchset = $(ssh-gerrit query --current-patch-set "status:open project:${GERRIT_PROJECT} branch:${GERRIT_BRANCH} change:${GERRIT_CHANGE_NUMBER}" | grep "    number:" | awk -F: '{print $NF}')"
-
+            latest_patchset=$(ssh-gerrit query --current-patch-set "status:open project:${GERRIT_PROJECT} branch:${GERRIT_BRANCH} change:${GERRIT_CHANGE_NUMBER}" | grep "    number:" | awk -F: '{print $NF}')
             log warn "${GERRIT_CHANGE_URL} This patchset is not the latest,the current patchset num is ${GERRIT_PATCHSET_NUMBER} and the latest is ${latest_patchset}, it was rebased or committed again, so no need to build this time."
 
             check_status=false
