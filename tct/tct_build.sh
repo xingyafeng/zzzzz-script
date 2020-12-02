@@ -39,6 +39,24 @@ function fix_incorrect_module() {
     done
 }
 
+# 设置无效的目标
+function set_invalid_module() {
+
+    invalid_module[${#invalid_module[@]}]=sensors_list
+}
+
+# 过滤无效目标
+function module_filter() {
+
+    for bml in ${build_module_list[@]} ; do
+        for im in ${invalid_module[@]} ; do
+            if [[ "${bml}" == "${im}" ]]; then
+                build_module_list=(${build_module_list[@]/$im})
+            fi
+        done
+    done
+}
+
 # 编译boot
 function make_boot() {
 

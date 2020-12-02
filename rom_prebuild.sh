@@ -125,7 +125,7 @@ function prepare() {
 
     # 记录 current patchset
     gerrit_patchset_revision=${GERRIT_PATCHSET_REVISION}
-    get_invalid_module
+    set_invalid_module
 }
 
 function init() {
