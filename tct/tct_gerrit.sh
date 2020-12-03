@@ -426,8 +426,14 @@ function gerrit_build() {
 
                 # 记录编译的工程
                 project_paths[${#project_paths[@]}]=${project_path}
+
                 # 查询提交文件
                 listfs=(`git --git-dir=${project_path}/.git log --name-only --pretty=format: ${GERRIT_PATCHSET_REVISION} -1 | grep -v "^$" | sort -u`)
+                if [[ ${#listfs[@]} -gt 120 ]]; then
+                    is_full_build=true
+                    break;
+                fi
+
                 for fs in ${listfs[@]} ; do
                     tmpath=$(getdir ${project_path}/${fs})
                     if [[ -n ${tmpath} ]]; then
