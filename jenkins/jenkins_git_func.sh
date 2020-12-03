@@ -373,10 +373,15 @@ function repo_sync_repository() {
             ;;
     esac
 
-    manifest=${manifest:="${default_gerrit}"}
-    project=${project:='gcs_sz/manifest'}
-    branch=${branch:='master'}
-    name=${name:='sm6125-r0-portotmo-dint.xml'}
+    manifest=${manifest:-"${default_gerrit}"}
+    project=${project:-'gcs_sz/manifest'}
+    branch=${branch:-'master'}
+    name=${name:-}
+
+    if [[ -z ${name} ]]; then
+        log error "The manifest.xml is null"
+        return 0
+    fi
 
     if [[ $(hostname) == "u-yafeng.xing" ]]; then
         reference_p=~/Android/mirror
