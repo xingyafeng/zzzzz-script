@@ -24,8 +24,10 @@ case ${shellfs##*/} in
     rom_prebuild.sh|apk_prebuild.sh)
         ;;
 
+    rom_build.sh)
+        ;;
+
     demo.sh)
-        :
         ;;
     *)
         log error "执行脚本不匹配 ..."

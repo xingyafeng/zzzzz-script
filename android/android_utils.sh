@@ -40,6 +40,22 @@ function source_init()
     print_env
 }
 
+function source_init_tct()
+{
+    local DEVICE_P=""
+
+    #print-config
+
+    source build/envsetup.sh && show_vip "--> source end ..."
+    choosecombo 1 portotmo userdebug portotmo 1 false false && show_vip "--> lunch end ..."
+
+    ROOT=$(gettop)
+    OUT=${OUT}
+    DEVICE_PROJECT=`get_build_var TARGET_DEVICE`
+    DEVICE=`get-device-path`
+    print_env
+}
+
 ## 更新文件时间轴
 function update_all_type_file_time_stamp()
 {

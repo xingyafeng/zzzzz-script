@@ -186,6 +186,104 @@ function make_android()
     make_droid
 }
 
+function init_copy_image_for_qssi() {
+
+    unset copyfs
+
+    copyfs[${#copyfs[@]}]=system.img
+    copyfs[${#copyfs[@]}]=product.img
+    copyfs[${#copyfs[@]}]=system_ext.img
+    copyfs[${#copyfs[@]}]=vbmeta_system.img
+}
+
+# backup qssi image
+function imgbackup() {
+
+    local DEST_PATH=${tmpfs}/jenkins
+    local OUT=$(get_product_out)
+
+    log debug "The OUT is ${OUT}"
+
+    init_copy_image_for_qssi
+    enhance_copy_file ${OUT} ${DEST_PATH}
+
+    if [[ -n "`ls out/dist/qssi*-target_files-*.zip`" ]]; then
+        cp -vf out/dist/qssi*-target_files-*.zip ${DEST_PATH}
+    fi
+}
+
+# 备份qssi image
+function cpimage() {
+
+    local SRC_PATH=${tmpfs}/jenkins
+    local OUT=$(get_product_out)
+
+    log debug "The OUT is ${OUT}"
+
+    init_copy_image_for_qssi
+    enhance_copy_file ${SRC_PATH} ${OUT}
+
+    if [[ -n "`ls ${SRC_PATH}/qssi*-target_files-*.zip`" ]]; then
+        cp -vf ${SRC_PATH}/qssi*-target_files-*.zip out/dist
+    fi
+}
+
+function make_android_tct() {
+
+    case ${object} in
+
+        qssi)
+            Command TCT_EFUSE=false ANTI_ROLLBACK=2 SIGN_SECIMAGE_USEKEY=portotmo ./build.sh dist -j32 --qssi_only 2>&1 | tee qssi_only.log
+            if [[ $? -eq 0 ]];then
+                echo
+                show_vip "--> make qssi end ..."
+
+                imgbackup
+            else
+                log error "--> make android qssi failed !"
+            fi
+
+            ;;
+
+        target)
+            Command TCT_EFUSE=false ANTI_ROLLBACK=2 SIGN_SECIMAGE_USEKEY=portotmo ./build.sh dist -j32 --target_only 2>&1 | tee target_only.log
+            if [[ $? -eq 0 ]];then
+                echo
+                show_vip "--> make target end ..."
+            else
+                log error "--> make android target failed !"
+            fi
+            ;;
+
+        merge)
+            cpimage
+            Command TCT_EFUSE=false ANTI_ROLLBACK=2 SIGN_SECIMAGE_USEKEY=portotmo ./build.sh dist -j32 --merge_only 2>&1 | tee merge_only.log
+            if [[ $? -eq 0 ]];then
+                echo
+                show_vip "--> make merge end ..."
+            else
+                log error "--> make android merge failed !"
+            fi
+            ;;
+
+        moden)
+            pushd amss_nicobar_la2.0.1 > /dev/null
+            Command bash linux_build.sh -a portotmo tmo
+            if [[ $? -eq 0 ]];then
+                echo
+                show_vip "--> make moden end ..."
+            else
+                log error "--> make android moden failed !"
+            fi
+            popd > /dev/null
+            ;;
+
+        *)
+            log debug 'no target build ...'
+            ;;
+    esac
+}
+
 function handle_tct_custom() {
 
     # 更新module-info.json

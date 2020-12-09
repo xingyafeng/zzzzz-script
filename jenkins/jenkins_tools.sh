@@ -1298,6 +1298,10 @@ function is_android_project()
             echo true
             ;;
 
+        rom_build.sh)
+            echo true
+        ;;
+
         *)
             echo false
             ;;

@@ -61,5 +61,6 @@ function init_script_path() {
     pathfs[${#pathfs[@]}]=${tmpfs}/ota
     pathfs[${#pathfs[@]}]=${tmpfs}/zip
     pathfs[${#pathfs[@]}]=${tmpfs}/gerrit
+    pathfs[${#pathfs[@]}]=${tmpfs}/jenkins
     pathfs[${#pathfs[@]}]=${apk_release_p}
 }

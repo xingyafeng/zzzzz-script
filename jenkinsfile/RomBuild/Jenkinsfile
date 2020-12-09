@@ -13,7 +13,7 @@ pipeline {
 
     stages {
 
-        stage('Build Android Rom One') {
+        stage('Build Android Rom Part One') {
             failFast true
             parallel {
                 stage('build qssi') {
@@ -31,24 +31,24 @@ pipeline {
                         }
                     }
                 }
+
+                stage('build moden') {
+                    steps {
+                        script {
+                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh moden")
+                        }
+                    }
+                }
             }
         }
 
-        stage('Build Android Rom Two') {
+        stage('Build Android Rom Part Two') {
             failFast true
             parallel {
                 stage('build merge') {
                     steps {
                         script {
                             utils.command("~/workspace/script/zzzzz-script/rom_build.sh merge")
-                        }
-                    }
-                }
-
-                stage('build moden') {
-                    steps {
-                        script {
-                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh moden")
                         }
                     }
                 }
