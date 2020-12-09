@@ -267,15 +267,25 @@ function make_android_tct() {
             ;;
 
         moden)
+            # 记录变量WORKSPACE
+            local tmpworkspace=${WORKSPACE}
+
             pushd amss_nicobar_la2.0.1 > /dev/null
-            Command bash linux_build.sh -a portotmo tmo
+
+            # 置空WORKSPACE
+            unset WORKSPACE
+
+            Command TCT_EFUSE=false ANTI_ROLLBACK=2 bash linux_build.sh -s -a portotmo tmo
             if [[ $? -eq 0 ]];then
                 echo
                 show_vip "--> make moden end ..."
             else
                 log error "--> make android moden failed !"
             fi
+
             popd > /dev/null
+
+            export WORKSPACE=${tmpworkspace}
             ;;
 
         *)
