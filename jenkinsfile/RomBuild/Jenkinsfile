@@ -1,0 +1,92 @@
+@Library('share-library@master') _
+
+pipeline {
+    agent {
+        node {
+            label "s0"
+        }
+    }
+
+    environment {
+        CC = 'clang'
+    }
+
+    stages {
+
+        stage('Build Android Rom One') {
+            failFast true
+            parallel {
+                stage('build qssi') {
+                    steps {
+                        script {
+                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh qssi")
+                        }
+                    }
+                }
+
+                stage('build target') {
+                    steps {
+                        script {
+                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh target")
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Build Android Rom Two') {
+            failFast true
+            parallel {
+                stage('build merge') {
+                    steps {
+                        script {
+                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh merge")
+                        }
+                    }
+                }
+
+                stage('build moden') {
+                    steps {
+                        script {
+                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh moden")
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // 编译结束后问题的处理
+    post {
+        always {
+            script {
+                log.d 'This will <always> run ...'
+            }
+        }
+
+        success {
+            script {
+                log.d 'This will <success> run ...'
+            }
+        }
+
+        failure {
+            script {
+                log.e 'This will <failure> run ...'
+            }
+        }
+
+        unstable {
+            script {
+                log.w 'This will run only if the run was marked as <unstable>'
+            }
+        }
+
+        changed {
+            script {
+                log.d 'This will run only if the state of the Pipeline has <changed>'
+                log.d 'For example, if the Pipeline was previously failing but is now successful'
+            }
+        }
+    }
+}
