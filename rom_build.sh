@@ -182,7 +182,7 @@ function main() {
                     popd > /dev/null
                     ;;
 
-                target|merge|moden)
+                target|merge|modem)
                     local build_p=${root_p}/${job_name}Y/${tct_manifest}
 
                     if [[ ! -d ${build_p} ]]; then

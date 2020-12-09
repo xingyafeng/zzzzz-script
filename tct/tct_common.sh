@@ -266,7 +266,7 @@ function make_android_tct() {
             fi
             ;;
 
-        moden)
+        modem)
             # 记录变量WORKSPACE
             local tmpworkspace=${WORKSPACE}
 

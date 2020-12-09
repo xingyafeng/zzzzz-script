@@ -32,10 +32,11 @@ pipeline {
                     }
                 }
 
-                stage('build moden') {
+                stage('build modem') {
                     steps {
                         script {
-                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh moden")
+                            utils.command("sleep 30")
+                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh modem")
                         }
                     }
                 }
