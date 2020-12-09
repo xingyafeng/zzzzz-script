@@ -16,9 +16,6 @@ build_update_code=
 # init function
 . "$(dirname "$0")/tct/tct_init.sh"
 
-declare -a app_info
-declare -a prj_info
-
 function get_cpu_core() {
 
     case ${JOBS} in
@@ -44,56 +41,6 @@ function set_manifest_xml() {
     fi
 }
 
-function source_init_project() {
-
-    Command "source build/envsetup.sh"
-
-    case ${project_name} in
-
-        sm7250-r0-seattletmo-dint) # seattletmo R
-            Command "choosecombo 1 seattletmo userdebug false false 1"
-            ;;
-
-        sm6125-r0-portotmo-dint) # portotmo R
-            Command "choosecombo 1 portotmo userdebug portotmo 1 false false"
-            ;;
-
-        mt6762-tf-r0-v1.1-dint) # Tokyo Lite TMO R
-            Command "choosecombo 1 full_Tokyo_Lite_TMO userdebug 2 1"
-            ;;
-    esac
-}
-
-function make_app() {
-
-    source_init_project
-    handle_tct_custom
-
-    case ${GERRIT_PROJECT} in
-
-        genericapp/gcs_Settings)
-            Command "mma -j${JOBS} Settings"
-            ;;
-
-        genericapp/gcs_SystemUI)
-            Command "mma -j${JOBS} SystemUI"
-            ;;
-
-        genericapp/gcs_Launcher3)
-            Command "mma -j${JOBS} Launcher3QuickStep"
-            ;;
-
-        genericapp/JrdSetupWizard)
-            Command "mma -j${JOBS} TctSetupWizard"
-            ;;
-
-        genericapp/gcs_HiddenMenu)
-            Command "mma -j${JOBS} HiddenMenu"
-            ;;
-
-    esac
-}
-
 function handle_common() {
 
     # 拿到JOBS
@@ -110,6 +57,9 @@ function handle_variable() {
 
     # 1. manifest
     build_manifest=${tct_manifest:-}
+    if [[ -z ${build_manifest} ]]; then
+        log error 'The manifest is null ...'
+    fi
 
     # 2. 更新代码
     build_update_code=${tct_update_code:-false}
@@ -125,18 +75,6 @@ function print_variable() {
     echo "build_manifest          = " ${build_manifest}
     echo "build_update_code       = " ${build_update_code}
     echo '-----------------------------------------'
-
-    if [[ "$(is_gerrit_trigger)" == "true" ]];then
-        echo 'GERRIT_PROJECT          = ' ${GERRIT_PROJECT}
-        echo 'GERRIT_BRANCH           = ' ${GERRIT_BRANCH}
-        echo 'GERRIT_REFSPEC          = ' ${GERRIT_REFSPEC}
-        echo 'GERRIT_CHANGE_NUMBER    = ' ${GERRIT_CHANGE_NUMBER}
-        echo 'GERRIT_PATCHSET_NUMBER  = ' ${GERRIT_PATCHSET_NUMBER}
-        echo 'GERRIT_HOST             = ' ${GERRIT_HOST}
-        echo 'GERRIT_CHANGE_URL       = ' ${GERRIT_CHANGE_URL}
-        echo '-----------------------------------------'
-    fi
-
     echo
 }
 
