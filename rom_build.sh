@@ -43,6 +43,9 @@ function set_manifest_xml() {
 
 function handle_common() {
 
+    unset BUILD_NUMBER
+    unset BUILD_ID
+
     # 拿到JOBS
     get_cpu_core
 

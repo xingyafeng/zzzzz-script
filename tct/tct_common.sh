@@ -204,6 +204,10 @@ function imgbackup() {
 
     log debug "The OUT is ${OUT}"
 
+    if [[ -d ${tmpfs}/jenkins ]]; then
+        rm ${tmpfs}/jenkins/*
+    fi
+
     init_copy_image_for_qssi
     enhance_copy_file ${OUT} ${DEST_PATH}
 
