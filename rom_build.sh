@@ -12,6 +12,8 @@ shellfs=$0
 build_manifest=
 # 2. 更新代码
 build_update_code=
+# 3. clean
+build_clean=
 
 # init function
 . "$(dirname "$0")/tct/tct_init.sh"
@@ -67,6 +69,9 @@ function handle_variable() {
     # 2. 更新代码
     build_update_code=${tct_update_code:-false}
 
+    # 3. 清除编译
+    build_clean=${tct_clean:-false}
+
     handle_common
 }
 
@@ -77,6 +82,7 @@ function print_variable() {
     echo '-----------------------------------------'
     echo "build_manifest          = " ${build_manifest}
     echo "build_update_code       = " ${build_update_code}
+    echo "build_clean             = " ${build_clean}
     echo '-----------------------------------------'
     echo
 }

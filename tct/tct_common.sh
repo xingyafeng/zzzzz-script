@@ -110,6 +110,9 @@ function update_source_code()
 
         ## 更新源代码
         repo_sync_for_code
+
+        ## 清除OUT
+        outclean
     else
         download_source_code
     fi
@@ -160,8 +163,9 @@ function make_droid() {
     fi
 }
 
-function make_android()
-{
+# 清除OUT目录
+function outclean() {
+
     if [[ "${build_clean}" == "true" ]];then
         show_vip '[tct]: --> make clean ...'
         Command "make -j${JOBS} clean"
@@ -181,7 +185,10 @@ function make_android()
             log error "--> make installclean fail ..."
         fi
     fi
+}
 
+function make_android()
+{
     ## 编译android
     make_droid
 }
