@@ -212,7 +212,7 @@ function imgbackup() {
     log debug "The OUT is ${OUT}"
 
     if [[ -d ${tmpfs}/jenkins ]]; then
-        rm ${tmpfs}/jenkins/*
+        rm -vf ${tmpfs}/jenkins
     fi
 
     init_copy_image_for_qssi
