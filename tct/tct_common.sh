@@ -110,9 +110,6 @@ function update_source_code()
 
         ## 更新源代码
         repo_sync_for_code
-
-        ## 清除OUT
-        outclean
     else
         download_source_code
     fi
@@ -189,6 +186,9 @@ function outclean() {
 
 function make_android()
 {
+    # 清除编译
+    outclean
+
     ## 编译android
     make_droid
 }

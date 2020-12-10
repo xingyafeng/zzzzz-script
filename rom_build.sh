@@ -119,6 +119,8 @@ function main() {
                     if [[ "${build_update_code}" == "true" ]];then
                         # 下载，更新源代码
                         download_android_source_code
+                        source_init_tct
+                        outclean
                     else
                         log warn "This time you don't update the source code."
                     fi
@@ -140,6 +142,8 @@ function main() {
                     if [[ "${build_update_code}" == "true" ]];then
                         # 下载，更新源代码
                         download_android_source_code
+                        source_init_tct
+                        outclean
                     else
                         log warn "This time you don't update the source code."
                     fi
