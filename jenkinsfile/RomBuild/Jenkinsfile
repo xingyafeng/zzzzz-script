@@ -13,7 +13,30 @@ pipeline {
 
     stages {
 
+        stage('Build Android Rom Part Zero') {
+
+            failFast true
+            parallel {
+                stage('clean qssi') {
+                    steps {
+                        script {
+                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh qssi_clean")
+                        }
+                    }
+                }
+
+                stage('clean target') {
+                    steps {
+                        script {
+                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh target_clean")
+                        }
+                    }
+                }
+            }
+        }
+
         stage('Build Android Rom Part One') {
+
             failFast true
             parallel {
                 stage('build qssi') {
@@ -49,6 +72,19 @@ pipeline {
                     steps {
                         script {
                             utils.command("~/workspace/script/zzzzz-script/rom_build.sh merge")
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Build Android Rom Part Three') {
+            failFast true
+            parallel {
+                stage('backup rom iamge files') {
+                    steps {
+                        script {
+                            log.d("backup rom iamge files ...")
                         }
                     }
                 }

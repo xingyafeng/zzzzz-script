@@ -99,7 +99,7 @@ function main() {
 
             case ${object} in
 
-                qssi)
+                qssi_clean)
                     local build_p=${root_p}/${job_name}X/${tct_manifest}
 
                     if [[ ! -d ${build_p} ]]; then
@@ -117,6 +117,41 @@ function main() {
                         log warn "This time you don't update the source code."
                     fi
 
+                    popd > /dev/null
+                    ;;
+
+                target_clean)
+                    local build_p=${root_p}/${job_name}Y/${tct_manifest}
+
+                    if [[ ! -d ${build_p} ]]; then
+                        mkdir -p ${build_p}
+                    fi
+
+                    pushd ${build_p} > /dev/null
+
+                    init
+
+                    if [[ "${build_update_code}" == "true" ]];then
+                        # 下载，更新源代码
+                        download_android_source_code
+                    else
+                        log warn "This time you don't update the source code."
+                    fi
+
+                    popd > /dev/null
+                    ;;
+
+                qssi)
+                    local build_p=${root_p}/${job_name}X/${tct_manifest}
+
+                    if [[ ! -d ${build_p} ]]; then
+                        mkdir -p ${build_p}
+                    fi
+
+                    pushd ${build_p} > /dev/null
+
+                    init
+
                     source_init_tct
                     make_android_tct
 
@@ -133,17 +168,6 @@ function main() {
                     pushd ${build_p} > /dev/null
 
                     init
-
-                    if [[ ${object} == 'target' ]]; then
-                        if [[ "${build_update_code}" == "true" ]];then
-                            # 下载，更新源代码
-                            download_android_source_code
-                        else
-                            log warn "This time you don't update the source code."
-                        fi
-                    else
-                        log warn "The ${object} don't download the source code."
-                    fi
 
                     source_init_tct
                     make_android_tct
