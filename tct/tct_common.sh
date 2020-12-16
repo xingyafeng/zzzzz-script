@@ -209,11 +209,11 @@ function imgbackup() {
     local DEST_PATH=${tmpfs}/jenkins
     local OUT='out/target/product/qssi'
 
-    log debug "The OUT is ${OUT}"
-
-    if [[ -d ${tmpfs}/jenkins ]]; then
-        rm -vf ${tmpfs}/jenkins
-    fi
+    for i in `ls ${tmpfs}/jenkins` ; do
+        if [[ -f ${tmpfs}/jenkins/${i} ]]; then
+            rm -rvf ${tmpfs}/jenkins/${i}
+         fi
+    done
 
     init_copy_image_for_qssi
     enhance_copy_file ${OUT} ${DEST_PATH}
