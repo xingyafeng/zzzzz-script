@@ -17,28 +17,6 @@ pipeline {
 
             failFast true
             parallel {
-                stage('clean qssi') {
-                    steps {
-                        script {
-                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh qssi_clean")
-                        }
-                    }
-                }
-
-                stage('clean target') {
-                    steps {
-                        script {
-                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh target_clean")
-                        }
-                    }
-                }
-            }
-        }
-
-        stage('Build Android Rom Part One') {
-
-            failFast true
-            parallel {
                 stage('download qssi') {
                     steps {
                         script {
@@ -51,6 +29,28 @@ pipeline {
                     steps {
                         script {
                             utils.command("~/workspace/script/zzzzz-script/rom_build.sh target_download")
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Build Android Rom Part One') {
+
+            failFast true
+            parallel {
+                stage('clean qssi') {
+                    steps {
+                        script {
+                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh qssi_clean")
+                        }
+                    }
+                }
+
+                stage('clean target') {
+                    steps {
+                        script {
+                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh target_clean")
                         }
                     }
                 }
