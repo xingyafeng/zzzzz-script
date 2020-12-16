@@ -157,8 +157,14 @@ function main() {
                     pushd ${build_p} > /dev/null
 
                     init
-                    source_init_tct
-                    outclean
+                    if [[ -d .repo && -f build/core/envsetup.mk && -f Makefile ]];then
+                        source_init_tct
+                        if [[ $? -eq 0 ]]; then
+                            outclean
+                        fi
+                    else
+                        log warn "The (.repo) not found ! please download android source code !"
+                    fi
 
                     popd > /dev/null
                     ;;
@@ -173,8 +179,14 @@ function main() {
                     pushd ${build_p} > /dev/null
 
                     init
-                    source_init_tct
-                    outclean
+                    if [[ -d .repo && -f build/core/envsetup.mk && -f Makefile ]];then
+                        source_init_tct
+                        if [[ $? -eq 0 ]]; then
+                            outclean
+                        fi
+                    else
+                        log warn "The (.repo) not found ! please download android source code !"
+                    fi
 
                     popd > /dev/null
                     ;;
