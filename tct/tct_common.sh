@@ -227,9 +227,7 @@ function imgbackup() {
 function cpimage() {
 
     local SRC_PATH=${tmpfs}/jenkins
-    local OUT=$(get_product_out)
-
-    log debug "The OUT is ${OUT}"
+    local OUT='out/target/product/qssi'
 
     init_copy_image_for_qssi
     enhance_copy_file ${SRC_PATH} ${OUT}
