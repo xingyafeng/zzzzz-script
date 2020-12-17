@@ -242,7 +242,7 @@ function make_android_tct() {
     case ${object} in
 
         qssi)
-            Command TCT_EFUSE=false ANTI_ROLLBACK=2 SIGN_SECIMAGE_USEKEY=portotmo ./build.sh dist -j32 --qssi_only
+            Command TCT_EFUSE=false ANTI_ROLLBACK=2 SIGN_SECIMAGE_USEKEY=portotmo bash build.sh dist -j$(nproc) --qssi_only
             if [[ $? -eq 0 ]];then
                 echo
                 show_vip "--> make qssi end ..."
@@ -255,7 +255,7 @@ function make_android_tct() {
             ;;
 
         target)
-            Command TCT_EFUSE=false ANTI_ROLLBACK=2 SIGN_SECIMAGE_USEKEY=portotmo ./build.sh dist -j32 --target_only
+            Command TCT_EFUSE=false ANTI_ROLLBACK=2 SIGN_SECIMAGE_USEKEY=portotmo bash build.sh dist -j$(nproc) --target_only
             if [[ $? -eq 0 ]];then
                 echo
                 show_vip "--> make target end ..."
@@ -266,7 +266,7 @@ function make_android_tct() {
 
         merge)
             cpimage
-            Command TCT_EFUSE=false ANTI_ROLLBACK=2 SIGN_SECIMAGE_USEKEY=portotmo bash build.sh dist -j32 --merge_only
+            Command TCT_EFUSE=false ANTI_ROLLBACK=2 SIGN_SECIMAGE_USEKEY=portotmo bash build.sh dist -j$(nproc) --merge_only
             if [[ $? -eq 0 ]];then
                 echo
                 show_vip "--> make merge end ..."
