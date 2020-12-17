@@ -199,9 +199,9 @@ function repo_sync_for_mirror()
 function repo_sync_for_code()
 {
     ## 更新repo仓库
-    repo selfupdate
+    time repo selfupdate
 
-    if repo sync -c -d --prune --no-tags --force-sync;then
+    if time repo sync -c -d --prune --no-tags --force-sync -j$(nproc);then
         echo
         show_vip "---- repo sync code successful ..."
     else
