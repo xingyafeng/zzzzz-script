@@ -210,6 +210,7 @@ function set_manifest_branch() {
     manifest_branch[${#manifest_branch[@]}]=q6125_portotmo
     manifest_branch[${#manifest_branch[@]}]=qct-sm4350-r-tf-v0.1-dint.xml
     manifest_branch[${#manifest_branch[@]}]=msm7250-q0-seattlevzw-la1.1.xml
+    manifest_branch[${#manifest_branch[@]}]=mt6761-r0-tokyolitetmo-dint
 
     for branch in ${mirror_branch} ; do
         manifest_branch[${#manifest_branch[@]}]=${branch}
