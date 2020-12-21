@@ -18,6 +18,10 @@ pipeline {
             failFast true
             parallel {
                 stage('download qssi') {
+                    agent {
+                        label "${tct_server_x}"
+                    }
+
                     steps {
                         script {
                             utils.command("~/workspace/script/zzzzz-script/rom_build.sh qssi_download")
@@ -26,6 +30,10 @@ pipeline {
                 }
 
                 stage('download target') {
+                    agent {
+                        label "${tct_server_y}"
+                    }
+
                     steps {
                         script {
                             utils.command("~/workspace/script/zzzzz-script/rom_build.sh target_download")
@@ -40,6 +48,10 @@ pipeline {
             failFast true
             parallel {
                 stage('clean qssi') {
+                    agent {
+                        label "${tct_server_x}"
+                    }
+
                     steps {
                         script {
                             utils.command("~/workspace/script/zzzzz-script/rom_build.sh qssi_clean")
@@ -48,6 +60,10 @@ pipeline {
                 }
 
                 stage('clean target') {
+                    agent {
+                        label "${tct_server_y}"
+                    }
+
                     steps {
                         script {
                             utils.command("~/workspace/script/zzzzz-script/rom_build.sh target_clean")
@@ -62,6 +78,10 @@ pipeline {
             failFast true
             parallel {
                 stage('build qssi') {
+                    agent {
+                        label "${tct_server_x}"
+                    }
+
                     steps {
                         script {
                             utils.command("~/workspace/script/zzzzz-script/rom_build.sh qssi")
@@ -71,6 +91,10 @@ pipeline {
 
                 stage('build target') {
                     steps {
+                        agent {
+                            label "${tct_server_y}"
+                        }
+
                         script {
                             utils.command("~/workspace/script/zzzzz-script/rom_build.sh target")
                         }
@@ -78,6 +102,10 @@ pipeline {
                 }
 
                 stage('build modem') {
+                    agent {
+                        label "${tct_server_y}"
+                    }
+
                     steps {
                         script {
                             utils.command("~/workspace/script/zzzzz-script/rom_build.sh modem")
@@ -92,6 +120,10 @@ pipeline {
             parallel {
                 stage('build merge') {
                     steps {
+                        agent {
+                            label "${tct_server_y}"
+                        }
+
                         script {
                             utils.command("~/workspace/script/zzzzz-script/rom_build.sh merge")
                         }
@@ -105,6 +137,10 @@ pipeline {
             parallel {
                 stage('backup rom iamge files') {
                     steps {
+                        agent {
+                            label "${tct_server_y}"
+                        }
+
                         script {
                             log.d("backup rom iamge files ...")
                         }

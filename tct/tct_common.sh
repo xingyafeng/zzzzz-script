@@ -230,6 +230,11 @@ function cpimage() {
     local OUT='out/target/product/qssi'
 
     init_copy_image_for_qssi
+
+    if [[ $(is_thesame_server) == 'false' ]]; then
+        rsync -e 'ssh -p8089' -av --delete android-bld@$(get_server_ip):${SRC_PATH}/ ${SRC_PATH}
+    fi
+
     enhance_copy_file ${SRC_PATH} ${OUT}
 
     if [[ -n "`ls ${SRC_PATH}/qssi*-target_files-*.zip`" ]]; then

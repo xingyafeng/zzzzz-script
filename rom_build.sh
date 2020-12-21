@@ -14,6 +14,10 @@ build_manifest=
 build_update_code=
 # 3. clean
 build_clean=
+# 4. tct_server_x
+build_server_x=
+# 5. tct_server_y
+build_server_y=
 
 # init function
 . "$(dirname "$0")/tct/tct_init.sh"
@@ -72,6 +76,12 @@ function handle_variable() {
     # 3. 清除编译
     build_clean=${tct_clean:-false}
 
+    # 4.
+    build_server_x=${tct_server_x:-s0}
+
+    # 5.
+    build_server_y=${tct_server_y:-s0}
+
     handle_common
 }
 
@@ -81,6 +91,8 @@ function print_variable() {
     echo "JOBS = " ${JOBS}
     echo '-----------------------------------------'
     echo "build_manifest          = " ${build_manifest}
+    echo "build_server_x          = " ${build_server_x}
+    echo "build_server_y          = " ${build_server_y}
     echo "build_update_code       = " ${build_update_code}
     echo "build_clean             = " ${build_clean}
     echo '-----------------------------------------'

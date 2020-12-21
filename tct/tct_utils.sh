@@ -447,6 +447,71 @@ function is_mtk_board() {
     fi
 }
 
+# 探测是否在同一台服务器构建
+function is_thesame_server() {
+
+    if [[ ${build_server_x} == ${build_server_y} ]]; then
+        echo true
+    else
+        echo false
+    fi
+}
+
+# 映射ip
+function get_server_ip() {
+
+    case ${build_server_x} in
+
+        s0|WS8SZ14-8089)
+            echo '10.129.93.14'
+        ;;
+
+        s1|WS74930-8089)
+            echo '10.129.93.30'
+        ;;
+
+        s2|WS73J31-8089)
+            echo '10.129.93.31'
+        ;;
+
+        s3|WS92434-8089)
+            echo '10.129.93.34'
+        ;;
+
+        s4|WS104)
+            echo '10.129.93.104'
+        ;;
+
+        s5|WS105)
+            echo '10.129.93.105'
+        ;;
+
+        s6|WS106)
+            echo '10.129.93.106'
+        ;;
+
+        s7|WS107)
+            echo '10.129.93.107'
+        ;;
+
+        s8|WS108)
+            echo '10.129.93.108'
+        ;;
+
+        s9|WS109)
+            echo '10.129.93.109'
+        ;;
+
+        s10|WS110)
+            echo '10.129.93.110'
+        ;;
+
+        s11|WS111)
+            echo '10.129.93.111'
+        ;;
+    esac
+}
+
 # 拿到perso号
 function get_perso_num() {
 
