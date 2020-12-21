@@ -90,11 +90,11 @@ pipeline {
                 }
 
                 stage('build target') {
-                    steps {
-                        agent {
-                            label "${tct_server_y}"
-                        }
+                    agent {
+                        label "${tct_server_y}"
+                    }
 
+                    steps {
                         script {
                             utils.command("~/workspace/script/zzzzz-script/rom_build.sh target")
                         }
@@ -119,11 +119,11 @@ pipeline {
             failFast true
             parallel {
                 stage('build merge') {
-                    steps {
-                        agent {
-                            label "${tct_server_y}"
-                        }
+                    agent {
+                        label "${tct_server_y}"
+                    }
 
+                    steps {
                         script {
                             utils.command("~/workspace/script/zzzzz-script/rom_build.sh merge")
                         }
@@ -136,11 +136,11 @@ pipeline {
             failFast true
             parallel {
                 stage('backup rom iamge files') {
-                    steps {
-                        agent {
-                            label "${tct_server_y}"
-                        }
+                    agent {
+                        label "${tct_server_y}"
+                    }
 
+                    steps {
                         script {
                             log.d("backup rom iamge files ...")
                         }
