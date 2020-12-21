@@ -3,7 +3,7 @@
 pipeline {
     agent {
         node {
-            label "s0"
+            label ${tct_server_y}
         }
     }
 
@@ -30,9 +30,6 @@ pipeline {
                 }
 
                 stage('download target') {
-                    agent {
-                        label "${tct_server_y}"
-                    }
 
                     steps {
                         script {
@@ -60,9 +57,6 @@ pipeline {
                 }
 
                 stage('clean target') {
-                    agent {
-                        label "${tct_server_y}"
-                    }
 
                     steps {
                         script {
@@ -90,9 +84,6 @@ pipeline {
                 }
 
                 stage('build target') {
-                    agent {
-                        label "${tct_server_y}"
-                    }
 
                     steps {
                         script {
@@ -102,9 +93,6 @@ pipeline {
                 }
 
                 stage('build modem') {
-                    agent {
-                        label "${tct_server_y}"
-                    }
 
                     steps {
                         script {
@@ -119,9 +107,6 @@ pipeline {
             failFast true
             parallel {
                 stage('build merge') {
-                    agent {
-                        label "${tct_server_y}"
-                    }
 
                     steps {
                         script {
@@ -136,9 +121,6 @@ pipeline {
             failFast true
             parallel {
                 stage('backup rom iamge files') {
-                    agent {
-                        label "${tct_server_y}"
-                    }
 
                     steps {
                         script {
