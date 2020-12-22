@@ -29,6 +29,7 @@ function source_init()
 
     #print-config
 
+    export SIGN_SECIMAGE_USEKEY=delhitf
     source build/envsetup.sh && show_vip "--> source end ..."
     wimdataclean
     choosecombo 1 delhitf userdebug false 1 false && show_vip "--> lunch end ..."
