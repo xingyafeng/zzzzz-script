@@ -43,6 +43,7 @@ function fix_incorrect_module() {
 function set_invalid_module() {
 
     invalid_module[${#invalid_module[@]}]=sensors_list
+    invalid_module[${#invalid_module[@]}]=audio.primary.msmnile
 }
 
 # 过滤无效目标
@@ -228,7 +229,7 @@ function make_android_for_single() {
 
             # 解决无效目标导致的编译失败
             case ${bp} in
-                vendor/qcom/proprietary/sensors-see/sensors-hal-2.0)
+                vendor/qcom/proprietary/sensors-see/sensors-hal-2.0|vendor/qcom/opensource/audio-hal/primary-hal/hal)
                     module_filter
                 ;;
             esac
