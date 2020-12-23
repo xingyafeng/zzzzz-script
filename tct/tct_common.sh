@@ -163,9 +163,16 @@ function make_droid() {
 # 清除OUT目录
 function outclean() {
 
+    local outdir=$(mktemp -d -p ${tmpfs})
+
     if [[ "${build_clean}" == "true" ]];then
         show_vip '[tct]: --> make clean ...'
-        Command "make -j${JOBS} clean"
+
+        if [[ -d out/ ]]; then
+            Command mv out ${outdir}
+        fi
+
+        Command "rm -rf ${outdir} &"
         if [[ $? -eq 0 ]];then
             echo
             show_vip "--> make clean end ..."
