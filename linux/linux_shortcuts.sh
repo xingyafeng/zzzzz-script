@@ -416,7 +416,11 @@ function copy_to_bak() {
 ## login ssh server shortcuts
 function jenkins
 {
-	ssh android-bld@10.129.93.14 -p 8089
+    if [[ -n ${1:-} ]]; then
+        ssh android-bld@10.129.93.14
+    else
+        ssh android-bld@10.129.93.14 -p 8089
+    fi
 }
 
 function jenkins1
@@ -430,7 +434,11 @@ function jenkins1
 
 function jenkins2
 {
-	ssh android-bld@10.129.93.31 -p 8089
+    if [[ -n ${1:-} ]]; then
+        ssh android-bld@10.129.93.31
+    else
+        ssh android-bld@10.129.93.31 -p 8089
+    fi
 }
 
 function jenkins3
