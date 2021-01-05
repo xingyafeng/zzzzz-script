@@ -32,7 +32,9 @@ function source_init()
     export SIGN_SECIMAGE_USEKEY=delhitf
     source build/envsetup.sh && show_vip "--> source end ..."
     wimdataclean
-    choosecombo 1 delhitf userdebug false 1 false && show_vip "--> lunch end ..."
+    #choosecombo 1 delhitf userdebug false 1 false && show_vip "--> lunch end ..."
+    #add choosecombo option for delhitf
+    choosecombo 1 delhitf userdebug false 1 false 1 0 && show_vip "--> lunch end ..."
 
     ROOT=$(gettop)
     OUT=${OUT}
