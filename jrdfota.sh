@@ -338,7 +338,7 @@ function get_project_name() {
 function handle_common_variable() {
 
     # 下载仓库
-    git_sync_repository jrd/JrdDiffTool thor84g_vzw_1.0
+    git_sync_repository tools/JrdDiffTool thor84g_vzw_1.0
 
     # 获取项目名和更新设备名
     get_project_name
