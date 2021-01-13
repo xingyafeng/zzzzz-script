@@ -53,7 +53,7 @@ function auto_start_jenkins
 ####################################################
 function init_script_path() {
 
-    unset pathfs
+    pathfs=()
 
     pathfs[${#pathfs[@]}]=${tmpfs}
     pathfs[${#pathfs[@]}]=${version_p}

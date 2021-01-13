@@ -7,7 +7,7 @@ teleweb_p=/mfs_tablet/teleweb
 # git username
 username='Integration.tablet'
 # build path
-BUILDDIR=${WORKSPACE}
+BUILDDIR=${WORKSPACE:-}
 # gerrit path
 gerrit_p=${tmpfs}/gerrit
 # build list info

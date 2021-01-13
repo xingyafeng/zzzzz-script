@@ -7,7 +7,7 @@
 # Jenkins工作空间
 workspace=""
 # Jenkins项目名称
-job_name=${JOB_NAME}
+job_name=${JOB_NAME:-}
 # CPU线程数
 JOBS=`cat /proc/cpuinfo  | egrep 'processor' | wc -l`
 
