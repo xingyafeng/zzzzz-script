@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 
-# if error;then exit
-set -e
+# Common utilities, variables and checks for all build scripts.
+set -o errexit
+set -o nounset
+set -o pipefail
 
 # TODO 临时的、短期解决方案的、或者足够好但不够完美的代码
 
