@@ -21,6 +21,8 @@ function main() {
 
     Command _echo 'main'
 
+    git_sync_repository gcs_sz/pipeline master
+
     log debug "end ..."
 
     trap - ERR
