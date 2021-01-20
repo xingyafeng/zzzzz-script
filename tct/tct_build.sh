@@ -44,6 +44,7 @@ function set_invalid_module() {
 
     invalid_module[${#invalid_module[@]}]=sensors_list
     invalid_module[${#invalid_module[@]}]=audio.primary.msmnile
+    invalid_module[${#invalid_module[@]}]=msmnile_ak991x_0.json
 }
 
 # 过滤无效目标
