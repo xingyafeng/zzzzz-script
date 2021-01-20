@@ -185,9 +185,13 @@ sudo yum install bind-utils
 
 #正向查找
 nslookup host1
+dig -t A s4.tct.com +short <==> dig s4.tct.com +short
 
 #反向查找
 nslookup 10.129.46.47
+dig -x 10.129.93.104 +short
+
+
 
 
 # 参考资料
