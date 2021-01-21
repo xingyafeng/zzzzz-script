@@ -44,7 +44,7 @@ function set_invalid_module() {
 
     invalid_module[${#invalid_module[@]}]=sensors_list
     invalid_module[${#invalid_module[@]}]=audio.primary.msmnile
-    invalid_module[${#invalid_module[@]}]=msmnile_ak991x_0.json
+    invalid_module[${#invalid_module[@]}]=msmnile_
 }
 
 # 过滤无效目标
@@ -54,6 +54,10 @@ function module_filter() {
         for im in ${invalid_module[@]} ; do
             if [[ "${bml}" == "${im}" ]]; then
                 build_module_list=(${build_module_list[@]/$im})
+            else
+                if [[ "${bml}" =~ "${im}" ]]; then
+                    build_module_list=(${build_module_list[@]/$bml})
+                fi
             fi
         done
     done
@@ -231,6 +235,10 @@ function make_android_for_single() {
             # 解决无效目标导致的编译失败
             case ${bp} in
                 vendor/qcom/proprietary/sensors-see/sensors-hal-2.0|vendor/qcom/opensource/audio-hal/primary-hal/hal)
+                    module_filter
+                ;;
+
+                vendor/qcom/proprietary/sensors-see/registry)
                     module_filter
                 ;;
             esac
