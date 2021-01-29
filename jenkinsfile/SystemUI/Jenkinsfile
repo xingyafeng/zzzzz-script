@@ -33,11 +33,11 @@ pipeline {
                     }
                 }
 
-                stage('mt6762-tf-r0-v1.1-dint') {
+                stage('mt6761-r0-tokyolitetmo-dint') {
                     steps {
                         script {
                             utils.command("sleep 30")
-                            utils.command("~/workspace/script/zzzzz-script/apk_prebuild.sh mt6762-tf-r0-v1.1-dint")
+                            utils.command("~/workspace/script/zzzzz-script/apk_prebuild.sh mt6761-r0-tokyolitetmo-dint")
                         }
                     }
                 }

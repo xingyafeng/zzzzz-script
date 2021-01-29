@@ -79,7 +79,7 @@ function source_init_project() {
             Command "choosecombo 1 portotmo userdebug portotmo 1 false false"
             ;;
 
-        mt6762-tf-r0-v1.1-dint) # Tokyo Lite TMO R
+        mt6762-tf-r0-v1.1-dint|mt6761-r0-tokyolitetmo-dint) # Tokyo Lite TMO R
             Command "choosecombo 1 full_Tokyo_Lite_TMO userdebug 2 1"
             ;;
     esac
