@@ -8,7 +8,7 @@ from email.header import Header
 
 
 def send_mail(subject, content):
-    mail_host = 'mailsz.tct.tcl.com'
+    mail_host = 'EXM.TCL.COM'
     mail_user = 'Integration.tablet'
     mail_pass = 'mobile#1'
     #    receivers=getConfig('mail','mailto').split(',')
