@@ -44,6 +44,42 @@ function check() {
 	run=${#Qarr[@]}
 }
 
+# 侦测惠州mirror服务器
+function is_hz_mirror() {
+
+    case $(hostname) in
+
+        mirror20|mirro21|mirro22)
+            echo true
+            ;;
+        *)
+            echo false
+            ;;
+    esac
+}
+
+function download_hz_mirror() {
+
+    pushd "${tmpfs}"/manifest > /dev/null
+
+    for mb in ${manifest_branch[@]} ; do
+        if [[ ${mb} =~ '.xml' ]]; then
+            xml=${mb}
+        else
+            xml=${mb}.xml
+        fi
+    done
+
+    if [[ -f ${xml}  ]]; then
+        repo init -u ${default_gerrit}:mtk/manifest -m ${xml} --mirror
+        repo_sync_for_mirror
+    fi
+
+    popd > /dev/null
+
+    echo "Running time is $SECONDS."
+}
+
 function download_mirror() {
 
     local xml=
@@ -202,16 +238,20 @@ function get_process() {
 # 时间缩短一半时间，节省空间100%
 function set_manifest_branch() {
 
-    manifest_branch[${#manifest_branch[@]}]=mt6762-tf-r0-v1.1-dint
-    manifest_branch[${#manifest_branch[@]}]=sm7250-r0-seattletmo-dint
-    manifest_branch[${#manifest_branch[@]}]=sm6125-r0-portotmo-dint
-    manifest_branch[${#manifest_branch[@]}]=qct-sm4250-tf-r-v1.0-dint
-    manifest_branch[${#manifest_branch[@]}]=mtk6761-q0-tokyolitetmo-dint
-    manifest_branch[${#manifest_branch[@]}]=q6125_portotmo
-    manifest_branch[${#manifest_branch[@]}]=qct-sm4350-r-tf-v0.1-dint.xml
-    manifest_branch[${#manifest_branch[@]}]=msm7250-q0-seattlevzw-la1.1.xml
-    manifest_branch[${#manifest_branch[@]}]=mt6761-r0-tokyolitetmo-dint
-    manifest_branch[${#manifest_branch[@]}]=r6350_dev_ottawa.xml
+    if [[ $(is_hz_mirror) == "true" ]]; then
+        manifest_branch[${#manifest_branch[@]}]=mirror.xml
+    else
+        manifest_branch[${#manifest_branch[@]}]=mt6762-tf-r0-v1.1-dint
+        manifest_branch[${#manifest_branch[@]}]=sm7250-r0-seattletmo-dint
+        manifest_branch[${#manifest_branch[@]}]=sm6125-r0-portotmo-dint
+        manifest_branch[${#manifest_branch[@]}]=qct-sm4250-tf-r-v1.0-dint
+        manifest_branch[${#manifest_branch[@]}]=mtk6761-q0-tokyolitetmo-dint
+        manifest_branch[${#manifest_branch[@]}]=q6125_portotmo
+        manifest_branch[${#manifest_branch[@]}]=qct-sm4350-r-tf-v0.1-dint.xml
+        manifest_branch[${#manifest_branch[@]}]=msm7250-q0-seattlevzw-la1.1.xml
+        manifest_branch[${#manifest_branch[@]}]=mt6761-r0-tokyolitetmo-dint
+        manifest_branch[${#manifest_branch[@]}]=r6350_dev_ottawa.xml
+    fi
 
     for branch in ${mirror_branch} ; do
         manifest_branch[${#manifest_branch[@]}]=${branch}
@@ -276,7 +316,11 @@ function main() {
     init
 
     # 下载、更新mirror
-    download_mirror
+    if [[ "$(is_hz_mirror)" == 'true' ]]; then
+        download_hz_mirror
+    else
+        download_mirror
+    fi
 }
 
 main "$@"
