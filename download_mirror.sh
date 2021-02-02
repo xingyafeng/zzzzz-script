@@ -261,7 +261,18 @@ function set_manifest_branch() {
     manifest_branch=($(awk -vRS=' ' '!a[$1]++' <<< ${manifest_branch[@]}))
 }
 
+function set_manifest_project() {
+
+    if [[ "$(is_hz_mirror)" == 'true' ]]; then
+        project_p='mtk/manifest'
+    else
+        project_p='gcs_sz/manifest'
+    fi
+}
+
 function handle_common_variable() {
+
+    local project_p=
 
     # 配置mirror存储路径
     mirror_p=~/mirror
@@ -276,8 +287,11 @@ function handle_common_variable() {
     # 设置要下载的分支名
     set_manifest_branch
 
+    # 设置manifest仓库
+    set_manifest_project
+
     # 下载 manifest
-    git_sync_repository gcs_sz/manifest master
+    git_sync_repository ${project_p} master
 }
 
 function handle_vairable() {
@@ -296,6 +310,8 @@ function print_variable() {
     echo "DEBUG = " "${DEBUG}"
     echo '-----------------------------------------'
     echo "build_mirror_debug = " "${build_mirror_debug}"
+    echo '-----------------------------------------'
+    echo "is_hz_mirror = " "$(is_hz_mirror)"
     echo '-----------------------------------------'
     echo
 }
