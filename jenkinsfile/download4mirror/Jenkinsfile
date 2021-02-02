@@ -2,9 +2,9 @@
 @Library('share-library@master') _
 
 // def labels = ['m1'] // labels for Jede types we will build on
-//def labels = ['m1', 'm3', 'm4', 'm6', 'm10', 'm11', 'm12', 'm13', 'm20', 'm21', 'm22'] // labels for Jede types we will build on
-def labels = ['m20', 'm21', 'm22'] // labels for Jede types we will build on
+//def labels = ['m20', 'm21', 'm22'] // labels for Jede types we will build on
 def builders = [:]
+def labels = ['m1', 'm3', 'm4', 'm6', 'm10', 'm11', 'm12', 'm13', 'm20', 'm21', 'm22'] // labels for Jede types we will build on
 
 for (x in labels) {
     def label = x // Need to bind the label variable before the closure - can't do 'for (label in labels)'
