@@ -49,7 +49,7 @@ function is_hz_mirror() {
 
     case $(hostname) in
 
-        mirror20|mirro21|mirro22)
+        mirror20|mirror21|mirror22)
             echo true
             ;;
         *)
