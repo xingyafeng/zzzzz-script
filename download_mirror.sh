@@ -71,20 +71,10 @@ function download_hz_mirror() {
     done
 
     if [[ ! -d .repo && ! -d git-repo.git ]];then
-        if [[ -f ${xml} ]]; then
-            Command repo init -u ${default_gerrit}:mtk/manifest -m ${xml} --mirror
-        else
-            log error "The ${xml} has no found!"
-        fi
-
+        Command repo init -u ${default_gerrit}:mtk/manifest -m ${xml} --mirror
         repo_sync_for_mirror
     else
-        if [[ -f ${xml} ]]; then
-            Command repo init -m ${xml} --mirror
-        else
-            log error "The ${xml} has no found!"
-        fi
-
+        Command repo init -m ${xml} --mirror
         repo_sync_for_mirror
     fi
 
