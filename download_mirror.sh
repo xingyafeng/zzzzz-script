@@ -74,7 +74,6 @@ function download_hz_mirror() {
         Command repo init -u ${default_gerrit}:mtk/manifest -m ${xml} --mirror
         repo_sync_for_mirror
     else
-        Command repo init -m ${xml} --mirror
         repo_sync_for_mirror
     fi
 
