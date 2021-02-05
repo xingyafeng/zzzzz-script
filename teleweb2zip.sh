@@ -119,7 +119,7 @@ function zip_rom() {
     if [[ -d ${zip_path} && -n ${zip_name} ]]; then
 
         #处理压缩包名称,后面增加Teleweb字眼
-        zip_name=${zip_name}-Teleweb
+        zip_name=_${zip_name}-Teleweb
 
         time enhance_zip
     else
