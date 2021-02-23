@@ -161,13 +161,23 @@ tail /var/log/syslog
 
 Ubuntu客户端
 
-/etc/network/interfaces
-
+vi /etc/network/interfaces
 dns-nameservers 10.129.46.47
 dns-search tct.com
 
 cat /etc/resolv.conf
 cat /etc/resolvconf/resolv.conf.d/base
+
+# 配置客户端
+
+# /etc/resolvconf/resolv.conf.d/tail 
+
+# /etc/resolvconf/resolv.conf.d/head
+nameserver 10.128.180.22
+
+# /etc/resolvconf/resolv.conf.d/base
+nameserver 10.129.72.132
+search hq.ta-mp.com tct.com
 
 sudo resolvconf -u
 sudo /etc/init.d/networking restart
