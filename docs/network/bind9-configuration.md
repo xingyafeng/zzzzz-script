@@ -1,3 +1,10 @@
+# 日志配置　logging
+http://www.jquerycn.cn/a_7595
+https://www.jianshu.com/p/b5302409e9ed
+https://blog.csdn.net/yockie/article/details/8350229
+
+# bind9配置
+https://blog.csdn.net/zmnbehappy/article/details/85157911
 
 如何在Ubuntu16.04上将BIND配置为专用网络DNS服务器
 
@@ -144,8 +151,8 @@ $TTL	604800
 47.46   IN      PTR     ns1.tct.com.
 104.93  IN      PTR     host4
 
-sudo named-checkzone tct.com db.tct.com
-sudo named-checkzone 129.10.in-addr.arpa /etc/bind/zones/db.10.129
+sudo named-checkzone tct.com /etc/bind/zones/db.tct.com
+sudo named-checkzone 128.10.in-addr.arpa /etc/bind/zones/db.10.128
 
 # 重启BIND：
 sudo systemctl restart bind9
@@ -156,6 +163,9 @@ sudo ufw allow Bind9
 
 #查看启动日志文件
 tail /var/log/syslog
+
+# 配置bind　日志
+/var/cache/bind/query.log
 
 |---------------------------------------------------------------------------------------------------
 
