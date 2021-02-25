@@ -57,6 +57,27 @@ cat /etc/hostname
 
 # 配置ssh
 
+# ubuntu16.04 android编译环境
+
+sudo apt-get install -y git flex bison gperf build-essential libncurses5-dev:i386 \
+libx11-dev:i386 libreadline6-dev:i386 libgl1-mesa-dev g++-multilib \
+tofrodos python-markdown libxml2-utils xsltproc zlib1g-dev:i386 \
+dpkg-dev libsdl1.2-dev libesd0-dev \
+git-core gnupg flex bison gperf build-essential  \
+zip curl zlib1g-dev gcc-multilib g++-multilib \
+libc6-dev-i386 \
+lib32ncurses5-dev x11proto-core-dev libx11-dev \
+lib32z-dev ccache \
+libgl1-mesa-dev libxml2-utils xsltproc unzip m4
+
+
+# ubuntu14.04 android编译环境
+
+sudo apt-get install build-essential make gcc g++ libc6-dev texinfo libncurses-dev git git-core gnupg flex bison zip unzip curl ncurses-dev libsdl-dev zlib1g-dev libxml2-utils lzma m4 tree sendemail
+sudo apt-get install gcc-multilib gperf  g++-multilib g++-4.4-multilib x11proto-core-dev libx11-dev  lib32z1-dev lib32z1 wine mingw32 tofrodos libgl1-mesa-dev lib32readline-gplv2-dev      
+sudo apt-get install libncurses5-dev:i386 libx11-dev:i386 libreadline6-dev:i386 zlib1g-dev:i386 libc6-dev-i386 python-markdown xsltproc 
+sudo apt-get install gcc bc
+
 
 # 配置vim插件　https://github.com/hominlinx/vim
 sudo apt-get install zlib1g-dev libbz2-dev libssl-dev libncurses5-dev libsqlite3-dev libreadline-dev tk-dev libgdbm-dev libdb-dev libpcap-dev xz-utils libexpat1-dev liblzma-dev libffi-dev libc6-dev
