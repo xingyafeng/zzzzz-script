@@ -1,0 +1,176 @@
+@Library('share-library@master') _
+
+pipeline {
+    agent {
+        node {
+            label "${tct_server_y}"
+        }
+    }
+
+    environment {
+        TCT_CC = 'clang'
+    }
+
+    stages {
+
+        stage('Build Android Rom Part Zero') {
+
+            failFast true
+            parallel {
+                stage('download qssi') {
+                    agent {
+                        label "${tct_server_x}"
+                    }
+
+                    steps {
+                        script {
+                            log.d("qssi download ...")
+//                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh qssi_download")
+                        }
+                    }
+                }
+
+                stage('download target') {
+
+                    steps {
+                        script {
+                            log.d("target download ...")
+//                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh target_download")
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Build Android Rom Part One') {
+
+            failFast true
+            parallel {
+                stage('clean qssi') {
+                    agent {
+                        label "${tct_server_x}"
+                    }
+
+                    steps {
+                        script {
+                            log.d("qssi clean ...")
+//                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh qssi_clean")
+                        }
+                    }
+                }
+
+                stage('clean target') {
+
+                    steps {
+                        script {
+                            log.d("target clean ...")
+//                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh target_clean")
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Build Android Rom Part Two') {
+
+            failFast true
+            parallel {
+                stage('build qssi') {
+                    agent {
+                        label "${tct_server_x}"
+                    }
+
+                    steps {
+                        script {
+                            log.d("qssi ...")
+//                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh qssi")
+                        }
+                    }
+                }
+
+                stage('build target') {
+
+                    steps {
+                        script {
+                            log.d("target ...")
+//                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh target")
+                        }
+                    }
+                }
+
+                stage('build modem') {
+
+                    steps {
+                        script {
+                            log.d("modem ...")
+//                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh modem")
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Build Android Rom Part Three') {
+            failFast true
+            parallel {
+                stage('build merge') {
+
+                    steps {
+                        script {
+                            log.d("merge ...")
+//                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh merge")
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Build Android Rom Part Four') {
+            failFast true
+            parallel {
+                stage('backup rom iamge files') {
+
+                    steps {
+                        script {
+                            log.d("backup rom iamge files ...")
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // 编译结束后问题的处理
+    post {
+        always {
+            script {
+                log.d 'This will <always> run ...'
+            }
+        }
+
+        success {
+            script {
+                log.d 'This will <success> run ...'
+            }
+        }
+
+        failure {
+            script {
+                log.e 'This will <failure> run ...'
+            }
+        }
+
+        unstable {
+            script {
+                log.w 'This will run only if the run was marked as <unstable>'
+            }
+        }
+
+        changed {
+            script {
+                log.d 'This will run only if the state of the Pipeline has <changed>'
+                log.d 'For example, if the Pipeline was previously failing but is now successful'
+            }
+        }
+    }
+}
