@@ -208,10 +208,9 @@ nslookup host1
 dig -t A s4.tct.com +short <==> dig s4.tct.com +short
 
 #反向查找
-nslookup 10.129.46.47
+nslookup 10.129.46.53
+dig -x 10.128.180.22 +short
 dig -x 10.129.93.104 +short
-
-
 
 
 # 参考资料
