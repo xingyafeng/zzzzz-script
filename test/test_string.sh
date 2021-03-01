@@ -25,6 +25,7 @@ function test_string_cut() {
     echo 'url:' ${url}
     echo 'length : ' ${#url}
     echo '-------------'
+    echo '${url:0:3} : ' ${url:0:3}
     echo '${url:2:4} : ' ${url:2:4}
     echo '${url:6:5} : ' ${url:6:5}
     echo '${url:0:1} : ' ${url:0:1}
