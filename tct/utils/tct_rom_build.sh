@@ -4,10 +4,10 @@ function tct::utils::get_manifest_branch() {
 
     local branch=
 
-    if [[ -n ${tct_tmpbranch} ]]; then
-        branch=${tct_tmpbranch}
+    if [[ -n ${build_tmpbranch} ]]; then
+        branch=${build_tmpbranch}
     else
-        branch=$(${tmpfs}/tools_int/bin/Qcom_C_GetVerInfo ${PLATFORM} ${tct_version:0:3}X -Branch)
+        branch=$(${tmpfs}/tools_int/bin/Qcom_C_GetVerInfo ${PLATFORM} ${build_version:0:3}X -Branch)
     fi
 
     echo ${branch}
@@ -16,21 +16,21 @@ function tct::utils::get_manifest_branch() {
 function tct::utils::get_build_project() {
 
     local build_project=
-    build_project=$(${tmpfs}/tools_int/bin/Qcom_C_GetVerInfo ${PLATFORM} ${tct_version:0:3}X -QcomProject)
+    build_project=$(${tmpfs}/tools_int/bin/Qcom_C_GetVerInfo ${PLATFORM} ${build_version:0:3}X -QcomProject)
     echo ${build_project}
 }
 
 function tct::utils::get_project_name() {
 
     local project_name=
-    project_name=$(${tmpfs}/tools_int/bin/Qcom_C_GetVerInfo ${PLATFORM} ${tct_version:0:3}X -Project)
+    project_name=$(${tmpfs}/tools_int/bin/Qcom_C_GetVerInfo ${PLATFORM} ${build_version:0:3}X -Project)
     echo ${project_name}
 }
 
 function tct::utils::get_modem_project() {
 
     local modem_project=
-    modem_project=$(${tmpfs}/tools_int/bin/Qcom_C_GetVerInfo QC4350 ${tct_version:0:3}X -SignScript)
+    modem_project=$(${tmpfs}/tools_int/bin/Qcom_C_GetVerInfo QC4350 ${build_version:0:3}X -SignScript)
     echo ${modem_project}
 }
 
@@ -38,7 +38,7 @@ function tct::utils::get_version_variant()
 {
     local variant=
 
-    case ${tct_version:2:1} in
+    case ${build_version:2:1} in
 
         'R')
             variant=driveronly
@@ -53,7 +53,7 @@ function tct::utils::get_version_variant()
         ;;
 
         *)
-            case ${#tct_version} in
+            case ${#build_version} in
 
                 4)
                     variant=appli
@@ -62,7 +62,7 @@ function tct::utils::get_version_variant()
                     variant=daily
                     ;;
                 *)
-                    log error "***** Not a valid version number: ${tct_version}"
+                    log error "***** Not a valid version number: ${build_version}"
                     ;;
             esac
         ;;
@@ -73,25 +73,25 @@ function tct::utils::get_version_variant()
 
 function tct::utils::create_version_info() {
 
-    echo 'ceate vesion ...'
+    local tmpversion=${tmpfs}/jenkins/${JOB_NAME}_${build_version}_tmpvesion.inc
 
-    local tmpversion=/${tmpfs}/jenkins/${JOB_NAME}_${VERSION}_tmp_vesion.inc
+    local security_efuse_flag=
 
-    local main=${VERSION:0:4}
+    local main=${build_version:0:4}
     local security=0
     #local efuse=0
     local perso=${PERSONUM}
     local platform=DQ
     local extension=00
 
-    if [[ ${ISEFUSE} == "true" ]]; then
+    if [[ ${build_efuse} == "true" ]]; then
         security_efuse_flag=1
     else
         security_efuse_flag=0
     fi
 
     if [[ ${VER_VARIANT} == "daily" ]]; then
-        sub=${VERSION:5:1}
+        sub=${build_version:5:1}
         perso=0
     else
         sub=0
@@ -121,7 +121,7 @@ function tct::utils::create_version_info() {
     echo "#define SIMLOCK_VER         \"X${main}${security_efuse_flag}${perso}${sub}${platform}${extension}\"" >> ${tmpversion}
     echo "#define PRODUCT_VER         \"O${main}${security_efuse_flag}${perso}${sub}${platform}${extension}\"" >> ${tmpversion}
 
-#    if [[ ${#VERSION} == "6" ]] || [[ ${PERSONUM} == "0" ]];then
+#    if [[ ${#build_version} == "6" ]] || [[ ${PERSONUM} == "0" ]];then
 #    	echo "#define vendor              \"Q${main}${security}${perso}${sub}${platform}${extension}\"" >> $tmpversion
 #        echo "#define SIMLOCK_VER         \"X${main}${security}${perso}${sub}${platform}${extension}\"" >> $tmpversion
 #        echo "#define LOGO_VER            \"L${main}${security}${perso}${sub}${platform}${extension}\"" >> $tmpversion
@@ -131,9 +131,7 @@ function tct::utils::create_version_info() {
 #        echo "#define LOGO_VER            \"L${main:0:3}ML${perso}${sub}${platform}${extension}\"" >> $tmpversion
 #    fi
 
-    git_sync_repository qualcomm/version master
-
-    pushd ${tmpfs}qualcomm/version > /dev/null
+    pushd ${tmpfs}/version > /dev/null
 
     if [[ -f version.inc ]]; then
         cp -vf ${tmpversion} version.inc
@@ -141,7 +139,7 @@ function tct::utils::create_version_info() {
 
     if [[ "`git status -s`" ]];then
         git add version.inc
-        git commit -m "Release ${VERSION}"
+        git commit -m "Release ${build_version}"
         git push `git remote` HEAD:master
     else
         log error 'The version.inc do not update.'
@@ -154,12 +152,26 @@ function tct::utils::create_version_info() {
     fi
 }
 
+# 效验version.inc的正确性
+function tct::utils::tct_check_version.inc() {
+
+    local version_inc=
+
+    if [[ -d .repo && -f build/core/envsetup.mk && -f Makefile ]];then
+        repo sync -c -d --no-tags version
+    fi
+
+    version_inc=$(cat version/version.inc | awk '/ANDROID_SYS_VER/{ print $NF }')
+    if [[ ${version_inc:2:4} != ${build_version:0:4} ]]; then
+        log error "The version.inc file is error."
+    fi
+}
+
 function tct::utils::create_manifest()
 {
     PojectName=`tr '[A-Z]' '[a-z]' <<<${PROJECTNAME}`
-    comment="create int/${PojectName}/v${VERSION}.xml by int_tool create_manifest"
+    comment="create int/${PojectName}/v${build_version}.xml by int_tool create_manifest"
     echo "comment:$comment"
-
 
     repo manifest -r -o .repo/manifests/default.xml
 
@@ -176,6 +188,35 @@ function tct::utils::create_manifest()
 	pushd > /dev/null
 }
 
+# 备份版本
+function tct::utils::backup_image_version() {
+
+    if true; then
+        log debug "start backup image version ..."
+    else
+        source_init
+
+        sh copyimgs.sh
+
+        releasedir=/local/release/${JOB_NAME}/v${VERSION}
+        creat_time=`date +%Y%m%d%H%M -r /teleweb/${PROJECTNAME}/tmp/v${VERSION}`
+        telewebdir_bak=/teleweb/${PROJECTNAME}/tmp/v${version}_${creat_time}
+        telewebdir=/teleweb/${PROJECTNAME}/tmp/v${VERSION}
+
+        if [[ -d ${telewebdir} ]]; then
+            sudo mv ${telewebdir} ${telewebdir_bak}
+        fi
+
+        rm -rf ${releasedir}
+        mkdir -vp ${releasedir}
+        sudo mkdir -vp ${telewebdir}
+        cp -rfv ${TOPDIR}/build/${JOB_NAME}/v${VERSION}/out/target/product/holi/Teleweb/* ${releasedir}
+        sudo cp -rfv ${TOPDIR}/build/${JOB_NAME}/v${VERSION}/out/target/product/holi/Teleweb/* ${telewebdir}
+        chmod -R 0755 ${releasedir}
+        sudo chmod -R 0755 ${telewebdir}
+    fi
+}
+
 function tct::utils::get_perso_num() {
 
     local perso_num=
@@ -183,7 +224,7 @@ function tct::utils::get_perso_num() {
     case ${VER_VARIANT} in
 
         appli)
-            perso_num=${VERSION:3:1}
+            perso_num=${build_version:3:1}
         ;;
 
         *)

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# 探测预编译apk
+# 探测预编译apk项目
 function is_apk_prebuild() {
 
     case ${JOB_NAME} in
@@ -12,6 +12,43 @@ function is_apk_prebuild() {
         *)
             echo false
         ;;
+    esac
+}
+
+# 探测预编译rom项目
+function is_rom_prebuild() {
+
+    case ${JOB_NAME} in
+
+        DelhiTF_Gerrit_Build)
+            echo true
+        ;;
+
+        *)
+            echo false
+        ;;
+    esac
+}
+
+# 探测是否不需要创建versioninfo
+function is_create_versioninfo() {
+
+    case ${VER_VARIANT} in
+
+        appli)
+            echo false
+            ;;
+        *)
+            case ${build_type} in
+                userdebug)
+                    echo false
+                ;;
+
+                *)
+                    echo true
+                ;;
+            esac
+            ;;
     esac
 }
 

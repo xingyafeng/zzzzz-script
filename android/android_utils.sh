@@ -29,12 +29,29 @@ function source_init()
 
     #print-config
 
-    export SIGN_SECIMAGE_USEKEY=delhitf
-    source build/envsetup.sh && show_vip "--> source end ..."
-    wimdataclean
-    #choosecombo 1 delhitf userdebug false 1 false && show_vip "--> lunch end ..."
-    #add choosecombo option for delhitf
-    choosecombo 1 delhitf userdebug false 1 false 1 0 && show_vip "--> lunch end ..."
+    if [[ $(is_rom_prebuild) == 'true' ]]; then
+
+        case ${JOB_NAME} in
+
+            DelhiTF_Gerrit_Build)
+                export SIGN_SECIMAGE_USEKEY=delhitf
+                source build/envsetup.sh && show_vip "--> source end ..."
+                wimdataclean
+                #choosecombo 1 delhitf userdebug false 1 false && show_vip "--> lunch end ..."
+                #add choosecombo option for delhitf
+                choosecombo 1 delhitf userdebug false 1 false 1 0 && show_vip "--> lunch end ..."
+            ;;
+        esac
+    else
+        case ${JOB_NAME} in
+
+            transformervzw)
+                source build/envsetup.sh && show_vip "--> source end ..."
+                Command choosecombo 1 ${PROJECTNAME} ${build_type} ${PROJECTNAME} 1 ${mini} 0 ${build_anti_rollback} && show_vip "--> lunch end ..."
+#                choosecombo 1 transformervzw user transformervzw 1 false 0 0
+            ;;
+        esac
+    fi
 
     ROOT=$(gettop)
     OUT=${OUT}

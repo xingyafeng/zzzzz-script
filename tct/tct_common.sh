@@ -83,6 +83,15 @@ function download_android_source_code()
 
     # 生成manifest列表
     generate_manifest_list
+
+    if [[ $(is_rom_prebuild) == 'false' ]]; then
+        # 生成version info
+        if [[ $(is_create_versioninfo) == 'true' ]]; then
+            :
+#            tct::utils::create_version_info
+#            tct::utils::tct_check_version.inc
+        fi
+    fi
 }
 
 ## 更新源代码
@@ -147,16 +156,106 @@ function download_source_code()
     fi
 }
 
+function tct::build_ap() {
+
+    local para=
+
+    case ${object} in
+
+        ap)
+            para=''
+        ;;
+
+        qssi)
+            para='--qssi_only'
+        ;;
+
+        target)
+            para='--target_only'
+        ;;
+
+        merge)
+            para='--merge_only'
+        ;;
+    esac
+
+    show_vip ${compile_para[@]} build.sh dist -j$(nproc) ${para}
+    if [[ $? -eq 0 ]];then
+        echo
+        show_vip "--> make qssi end ..."
+
+#        imgbackup
+    else
+        log error "--> make android qssi failed !"
+    fi
+}
+
+
+function tct::build_cp() {
+
+    # 记录变量WORKSPACE
+    local tmpworkspace=${WORKSPACE}
+
+    pushd amss_4350_spf1.0 > /dev/null
+
+    # 置空WORKSPACE
+    unset WORKSPACE
+
+    show_vip bash linux_build.sh -a ${PROJECTNAME} ${modem_type}
+    if [[ $? -eq 0 ]];then
+        echo
+        show_vip "--> make moden end ..."
+    else
+        log error "--> make android moden failed !"
+    fi
+
+    popd > /dev/null
+
+    export WORKSPACE=${tmpworkspace}
+}
+
 function make_droid() {
 
     source_init
-    show_vip '[tct]: --> make dist ...'
-    Command "bash build.sh dist -j$(nproc)"
-    if [[ $? -eq 0 ]];then
-        echo
-        show_vip "--> make project end ..."
+
+    if [[ $(is_rom_prebuild) == 'true' ]]; then
+
+        case ${JOB_NAME} in
+
+            DelhiTF_Gerrit_Build)
+                show_vip '[tct]: --> make dist ...'
+                Command "bash build.sh dist -j$(nproc)"
+                ;;
+            *)
+                log warn 'no things build ...'
+            ;;
+        esac
+
+        if [[ $? -eq 0 ]];then
+            echo
+            show_vip "--> make project end ..."
+        else
+            log error "--> make android failed !"
+        fi
     else
-        log error "--> make android failed !"
+        case ${object} in
+
+            ap|qssi|target|merge)
+                tct::build_ap
+                ;;
+
+            cp|modem)
+                tct::build_cp
+                ;;
+
+            backup)
+                tct::utils::backup_image_version
+                ;;
+
+            *)
+                log debug 'no target build ...'
+                ;;
+        esac
     fi
 }
 
@@ -172,12 +271,14 @@ function outclean() {
             Command mv out ${outdir}
         fi
 
-        Command "rm -rf ${outdir} &"
-        if [[ $? -eq 0 ]];then
-            echo
-            show_vip "--> make clean end ..."
-        else
-            log error "--> make clean fail ..."
+        if [[ -d ${outdir} ]]; then
+            Command "rm -rf ${outdir} &"
+            if [[ $? -eq 0 ]];then
+                echo
+                show_vip "--> make clean end ..."
+            else
+                log error "--> make clean fail ..."
+            fi
         fi
     else
         show_vip '[tct]: --> make installclean ...'
