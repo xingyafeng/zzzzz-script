@@ -24,8 +24,7 @@ pipeline {
 
                     steps {
                         script {
-                            log.d("qssi download ...")
-//                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh qssi_download")
+                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh qssi_download")
                         }
                     }
                 }
@@ -34,8 +33,7 @@ pipeline {
 
                     steps {
                         script {
-                            log.d("target download ...")
-//                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh target_download")
+                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh target_download")
                         }
                     }
                 }
