@@ -331,72 +331,65 @@ function wimdataclean() {
     fi
 }
 
-# 过滤不进行编译的项目或分支
-function filter() {
+# 映射ip
+function get_server_ip() {
 
-    case ${project_name} in
-        sm7250-r0-seattletmo-dint) # seattletmo R
-            case ${GERRIT_PROJECT} in
-                genericapp/gcs_HiddenMenu)
-                    case ${GERRIT_BRANCH} in
-                        Gcs_HiddenMenu_Common_mtk)
-                            echo true
-                        ;;
+    case ${build_server_x} in
 
-                        *)
-                            echo false
-                        ;;
-                    esac
-                ;;
-
-                *)
-                    echo false
-                ;;
-            esac
+        s0|WS8SZ14-8089)
+            echo '10.129.93.14'
         ;;
 
-        sm6125-r0-portotmo-dint) # portotmo R
-            case ${GERRIT_PROJECT} in
-                genericapp/gcs_HiddenMenu)
-                    case ${GERRIT_BRANCH} in
-                        Gcs_HiddenMenu_Common_mtk)
-                            echo true
-                        ;;
-
-                        *)
-                            echo false
-                        ;;
-                    esac
-                ;;
-
-                *)
-                    echo false
-                ;;
-            esac
+        s1|WS74930-8089)
+            echo '10.129.93.30'
         ;;
 
-        mt6762-tf-r0-v1.1-dint) # Tokyo Lite TMO R
-            case ${GERRIT_PROJECT} in
-                genericapp/gcs_HiddenMenu)
-                    case ${GERRIT_BRANCH} in
-                        Gcs_HiddenMenu_Common)
-                            echo true
-                        ;;
+        s2|WS73J31-8089)
+            echo '10.129.93.31'
+        ;;
 
-                        *)
-                            echo false
-                        ;;
-                    esac
-                ;;
+        s3|WS92434-8089)
+            echo '10.129.93.34'
+        ;;
 
-                *)
-                    echo false
-                ;;
-            esac
-            ;;
+        s4|WS104)
+            echo '10.129.93.104'
+        ;;
 
-        *)
-            echo false
+        s5|WS105)
+            echo '10.129.93.105'
+        ;;
+
+        s6|WS106)
+            echo '10.129.93.106'
+        ;;
+
+        s7|WS107)
+            echo '10.129.93.107'
+        ;;
+
+        s8|WS108)
+            echo '10.129.93.108'
+        ;;
+
+        s9|WS109)
+            echo '10.129.93.109'
+        ;;
+
+        s10|WS110)
+            echo '10.129.93.110'
+        ;;
+
+        s11|WS111)
+            echo '10.129.93.111'
         ;;
     esac
+}
+
+# 拿到perso号
+function get_perso_num() {
+
+    local mbn=${1-}
+
+    echo ${mbn: -5:1}
 }
