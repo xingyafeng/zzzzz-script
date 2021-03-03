@@ -51,8 +51,7 @@ pipeline {
 
                     steps {
                         script {
-                            log.d("qssi clean ...")
-//                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh qssi_clean")
+                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh qssi_clean")
                         }
                     }
                 }
@@ -61,8 +60,7 @@ pipeline {
 
                     steps {
                         script {
-                            log.d("target clean ...")
-//                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh target_clean")
+                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh target_clean")
                         }
                     }
                 }
@@ -80,8 +78,7 @@ pipeline {
 
                     steps {
                         script {
-                            log.d("qssi ...")
-//                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh qssi")
+                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh qssi")
                         }
                     }
                 }
@@ -90,8 +87,7 @@ pipeline {
 
                     steps {
                         script {
-                            log.d("target ...")
-//                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh target")
+                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh target")
                         }
                     }
                 }
@@ -100,8 +96,7 @@ pipeline {
 
                     steps {
                         script {
-                            log.d("modem ...")
-//                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh modem")
+                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh modem")
                         }
                     }
                 }
@@ -115,8 +110,7 @@ pipeline {
 
                     steps {
                         script {
-                            log.d("merge ...")
-//                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh merge")
+                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh merge")
                         }
                     }
                 }
