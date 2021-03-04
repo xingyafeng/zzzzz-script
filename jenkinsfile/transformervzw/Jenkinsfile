@@ -3,7 +3,7 @@
 pipeline {
     agent {
         node {
-            label "${tct_server_x}"
+            label "${tct_server_y}"
         }
     }
 
