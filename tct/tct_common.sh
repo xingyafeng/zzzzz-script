@@ -179,7 +179,7 @@ function tct::build_ap() {
         ;;
     esac
 
-    Command ${compile_para[@]} build.sh dist -j$(nproc) ${para}
+    Command ${compile_para[@]} bash build.sh dist -j$(nproc) ${para}
     if [[ $? -eq 0 ]];then
         echo
         show_vip "--> make ${object} end ..."
