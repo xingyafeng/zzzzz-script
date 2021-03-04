@@ -3,7 +3,7 @@
 pipeline {
     agent {
         node {
-            label "${tct_server_y}"
+            label "${tct_server_x}"
         }
     }
 
@@ -17,23 +17,11 @@ pipeline {
 
             failFast true
             parallel {
-                stage('download qssi') {
-                    agent {
-                        label "${tct_server_x}"
-                    }
+                stage('download') {
 
                     steps {
                         script {
-                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh qssi_download")
-                        }
-                    }
-                }
-
-                stage('download target') {
-
-                    steps {
-                        script {
-                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh target_download")
+                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh download")
                         }
                     }
                 }
@@ -44,23 +32,11 @@ pipeline {
 
             failFast true
             parallel {
-                stage('clean qssi') {
-                    agent {
-                        label "${tct_server_x}"
-                    }
+                stage('clean') {
 
                     steps {
                         script {
-                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh qssi_clean")
-                        }
-                    }
-                }
-
-                stage('clean target') {
-
-                    steps {
-                        script {
-                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh target_clean")
+                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh clean")
                         }
                     }
                 }
@@ -71,32 +47,20 @@ pipeline {
 
             failFast true
             parallel {
-                stage('build qssi') {
-                    agent {
-                        label "${tct_server_x}"
-                    }
+                stage('build ap') {
 
                     steps {
                         script {
-                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh qssi")
+                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh ap")
                         }
                     }
                 }
 
-                stage('build target') {
+                stage('build cp') {
 
                     steps {
                         script {
-                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh target")
-                        }
-                    }
-                }
-
-                stage('build modem') {
-
-                    steps {
-                        script {
-                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh modem")
+                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh cp")
                         }
                     }
                 }
@@ -106,25 +70,11 @@ pipeline {
         stage('Build Android Rom Part Three') {
             failFast true
             parallel {
-                stage('build merge') {
-
-                    steps {
-                        script {
-                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh merge")
-                        }
-                    }
-                }
-            }
-        }
-
-        stage('Build Android Rom Part Four') {
-            failFast true
-            parallel {
                 stage('backup rom iamge files') {
 
                     steps {
                         script {
-                            log.d("backup rom iamge files ...")
+                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh backup")
                         }
                     }
                 }
