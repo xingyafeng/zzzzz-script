@@ -107,7 +107,7 @@ function handle_compile_para() {
             fi
         ;;
 
-        portotmo)
+        portotmo-r)
             if [[ -n "${build_efuse}" ]]; then
                 compile_para[${#compile_para[@]}]="TCT_EFUSE=${build_efuse}"
             fi
@@ -202,27 +202,12 @@ function print_variable() {
     echo
 }
 
-function downlolad_tools() {
-
-    # 下载 tools_int and version
-    if [[ $(is_thesame_server) == 'true' ]]; then
-        case ${object} in
-            'target_download'|'ap')
-                git_sync_repository alps/tools_int master
-                git_sync_repository qualcomm/version master
-            ;;
-        esac
-    else
-        git_sync_repository alps/tools_int master
-        git_sync_repository qualcomm/version master
-    fi
-}
-
 function perpare() {
 
-    local PLATFORM=QC4350
+    local PLATFORM=
 
-    downlolad_tools
+    tct::utils::downlolad_tools
+    tct::utils::get_platform_info
 
     # 1. 版本号
     build_version=${tct_version:-}

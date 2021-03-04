@@ -30,7 +30,7 @@ function tct::utils::get_project_name() {
 function tct::utils::get_modem_project() {
 
     local modem_project=
-    modem_project=$(${tmpfs}/tools_int/bin/Qcom_C_GetVerInfo QC4350 ${build_version:0:3}X -SignScript)
+    modem_project=$(${tmpfs}/tools_int/bin/Qcom_C_GetVerInfo ${PLATFORM} ${build_version:0:3}X -SignScript)
     echo ${modem_project}
 }
 
@@ -215,6 +215,41 @@ function tct::utils::backup_image_version() {
         chmod -R 0755 ${releasedir}
         sudo chmod -R 0755 ${telewebdir}
     fi
+}
+
+function tct::utils::downlolad_tools() {
+
+    # 下载 tools_int and version
+    if [[ $(is_thesame_server) == 'true' ]]; then
+        case ${object} in
+            'target_download'|'ap')
+                git_sync_repository alps/tools_int master
+                git_sync_repository qualcomm/version master
+            ;;
+        esac
+    else
+        git_sync_repository alps/tools_int master
+        git_sync_repository qualcomm/version master
+    fi
+}
+
+# 拿到平台信息
+function tct::utils::get_platform_info() {
+
+    case ${JOB_NAME} in
+
+        transformervzw)
+            PLATFORM=QC4350
+        ;;
+
+        portotmo-r)
+            PLATFORM=QC6125
+        ;;
+
+        *)
+            PLATFORM=''
+        ;;
+    esac
 }
 
 function tct::utils::get_perso_num() {
