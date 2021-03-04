@@ -46,8 +46,6 @@ PROJECTNAME=
 # modem项目
 MODEMPROJECT=
 
-# is mini
-is_mini=false
 # modem type
 modem_type=
 # sign apk
@@ -191,7 +189,6 @@ function print_variable() {
     echo "BUILDPROJ               = " ${BUILDPROJ}
     echo "PROJECTNAME             = " ${PROJECTNAME}
     echo "MODEMPROJECT            = " ${MODEMPROJECT}
-    echo "is_mini                 = " ${is_mini}
     echo "modem_type              = " ${modem_type}
     echo "signapk                 = " ${signapk}
     echo '-----------------------------------------'
@@ -218,6 +215,8 @@ function perpare() {
     build_baseversion=${tct_baseversion:-}
 
     VER_VARIANT=$(tct::utils::get_version_variant)
+    tct::utils::get_moden_type
+    tct::utils::get_signapk_para
 
     # 编译项目
     BUILDPROJ=$(tct::utils::get_build_project)
@@ -237,24 +236,6 @@ function perpare() {
 
     # -------------------------------------------------------
 
-    case ${VER_VARIANT} in
-
-        # handle other
-        appli)
-            signapk="SIGNAPK_USE_RELEASEKEY=transformervzw"
-            modem_type=vzw
-            ;;
-
-        mini)
-            is_mini=true
-            modem_type=${VER_VARIANT}
-        ;;
-
-        *)
-            is_mini=false
-            modem_type=vzw
-        ;;
-    esac
 }
 
 function init() {

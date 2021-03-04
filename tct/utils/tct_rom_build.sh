@@ -31,7 +31,7 @@ function tct::utils::get_modem_project() {
 
     local modem_project=
     modem_project=$(${tmpfs}/tools_int/bin/Qcom_C_GetVerInfo ${PLATFORM} ${build_version:0:3}X -SignScript)
-    echo ${modem_project}
+    echo ${modem_project} | sed "s#${modem_type}##"
 }
 
 function tct::utils::get_version_variant()
@@ -69,6 +69,58 @@ function tct::utils::get_version_variant()
     esac
 
     echo ${variant}
+}
+
+# 拿到编译modem类型
+function tct::utils::get_moden_type() {
+
+    case ${JOB_NAME} in
+
+        transformervzw)
+            case ${VER_VARIANT} in
+
+                appli)
+                    modem_type=vzw
+                    ;;
+
+                mini)
+                    modem_type=mini
+                ;;
+
+                *)
+                    modem_type=vzw
+                ;;
+            esac
+        ;;
+
+        *)
+            :
+            ;;
+    esac
+}
+
+# 拿到apk签名
+function tct::utils::get_signapk_para() {
+
+    case ${JOB_NAME} in
+
+        transformervzw)
+            case ${VER_VARIANT} in
+
+                appli)
+                    signapk="SIGNAPK_USE_RELEASEKEY=transformervzw"
+                    ;;
+
+                *)
+                    :
+                ;;
+            esac
+        ;;
+
+        *)
+            :
+            ;;
+    esac
 }
 
 function tct::utils::create_version_info() {

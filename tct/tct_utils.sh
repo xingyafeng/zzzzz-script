@@ -150,3 +150,18 @@ function is_perso_project() {
             ;;
     esac
 }
+
+# 探测mini版本
+function is_mini_version() {
+
+    case ${VER_VARIANT} in
+
+        mini)
+            echo true
+            ;;
+
+        *)
+            echo false
+            ;;
+    esac
+}
