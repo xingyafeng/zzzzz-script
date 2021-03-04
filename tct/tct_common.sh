@@ -179,17 +179,16 @@ function tct::build_ap() {
         ;;
     esac
 
-    show_vip ${compile_para[@]} build.sh dist -j$(nproc) ${para}
+    Command ${compile_para[@]} build.sh dist -j$(nproc) ${para}
     if [[ $? -eq 0 ]];then
         echo
-        show_vip "--> make qssi end ..."
+        show_vip "--> make ${object} end ..."
 
 #        imgbackup
     else
-        log error "--> make android qssi failed !"
+        log error "--> make android ${object} failed !"
     fi
 }
-
 
 function tct::build_cp() {
 
@@ -201,7 +200,7 @@ function tct::build_cp() {
     # 置空WORKSPACE
     unset WORKSPACE
 
-    show_vip bash linux_build.sh -a ${PROJECTNAME} ${modem_type}
+    Command bash linux_build.sh -a ${MODEMPROJECT} ${modem_type}
     if [[ $? -eq 0 ]];then
         echo
         show_vip "--> make moden end ..."
