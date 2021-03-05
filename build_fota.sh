@@ -3,15 +3,17 @@
 # if error;then exit
 set -e
 
-# 1. src version
-build_source_version=
-# 2. tgt version
-build_target_version=
-# 3. src more
-build_source_more=
-# 4. tgt sore
-build_target_more=
-# 5. oem type
+# 项目名
+build_project=
+# 项目类型
+build_type=
+# 项目待升级版本
+build_from_version=
+build_from_more=
+# 项目升级版本
+build_to_version=
+build_to_more=
+# oem type
 build_oem_type=
 
 # exec shell
@@ -48,10 +50,9 @@ function backup_oem() {
 
 function prepare() {
 
-    local rom_p=${mfs_p}/teleweb/thor84gvzw
-
-    local GET_VERSION_SRC_PATH=
-    local GET_VERSION_TGT_PATH=
+    local rom_p=${mfs_p}/teleweb/${build_project}
+    local pre_ota_p=
+    local curr_ota_p=
 
     if [[ ! -d tmp ]]; then
         mkdir -p tmp
@@ -62,33 +63,20 @@ function prepare() {
     fi
 
     if ${userdebug}; then
-        GET_VERSION_SRC_PATH=originfiles/userdebug
-        GET_VERSION_TGT_PATH=originfiles/userdebug
-    else
-        if [[ -n "${build_source_more}" ]]; then
-            GET_VERSION_SRC_PATH=${build_source_more}
-        fi
-
-        if [[ -n "${build_target_more}" ]]; then
-            GET_VERSION_TGT_PATH=${build_target_more}
-        fi
+        build_from_more=originfiles/userdebug
+        build_to_more=originfiles/userdebug
     fi
 
-    log debug "------------------- ${GET_VERSION_SRC_PATH} -------------------"
-    if [[ -d ${rom_p}/appli/${build_source_version}/${GET_VERSION_SRC_PATH} ]]; then
-        cp ${rom_p}/appli/${build_source_version}/${GET_VERSION_SRC_PATH}/*.mbn data/src
-        backup_oem src
-    elif [[ -d ${rom_p}/tmp/${build_source_version}/${GET_VERSION_SRC_PATH} ]]; then
-        cp ${rom_p}/tmp/${build_source_version}/${GET_VERSION_SRC_PATH}/*.mbn data/src
+    pre_ota_p=${rom_p}/${build_type}/${build_from_version}/${build_from_more}
+    curr_ota_p=${rom_p}/${build_type}/${build_to_version}/${build_to_more}
+
+    if [[ -d ${pre_ota_p} ]]; then
+        cp ${pre_ota_p}/*.mbn data/src
         backup_oem src
     fi
 
-    log debug "------------------- ${GET_VERSION_TGT_PATH} -------------------"
-    if [[ -d ${rom_p}/appli/${build_target_version}/${GET_VERSION_TGT_PATH} ]]; then
-        cp ${rom_p}/appli/${build_target_version}/${GET_VERSION_TGT_PATH}/*.mbn data/tgt -fv
-        backup_oem tgt
-    elif [[ -d ${rom_p}/tmp/${build_target_version}/${GET_VERSION_TGT_PATH} ]]; then
-        cp ${rom_p}/tmp/${build_target_version}/${GET_VERSION_TGT_PATH}/*.mbn data/tgt -fv
+    if [[ -d ${curr_ota_p} ]]; then
+        cp ${curr_ota_p}/*.mbn data/tgt -fv
         backup_oem tgt
     fi
 }
@@ -105,8 +93,7 @@ function dowork() {
 
     for script in ${scripts[@]};do
         if [[ -f ${script} && -x ${script} ]]; then
-            log print "------ exec ${script}"
-            ./${script}
+            Command bash ${script}
         else
             log error "脚本文件不存在或者没有权限."
         fi
@@ -119,11 +106,11 @@ function handle_xml() {
 
     local xml=TCL_9048S_1.xml
     local xml2=TCL_9048S_2.xml
-    local remove_v_build_source_version=`echo ${build_source_version} | sed s/"[v|V]"//`
-    local remove_v_build_target_version=`echo ${build_target_version} | sed s/"[v|V]"//`
+    local remove_v_build_from_version=`echo ${build_from_version} | sed s/"[v|V]"//`
+    local remove_v_build_to_version=`echo ${build_to_version} | sed s/"[v|V]"//`
 
-    __green__ "remove_v_build_source_version = ${remove_v_build_source_version}"
-    __green__ "remove_v_build_target_version = ${remove_v_build_target_version}"
+    __green__ "remove_v_build_from_version = ${remove_v_build_from_version}"
+    __green__ "remove_v_build_to_version = ${remove_v_build_to_version}"
 
     pushd data > /dev/null
 
@@ -133,15 +120,15 @@ function handle_xml() {
 
     if [[ -f ${xml} ]]; then
         git checkout -- ${xml}
-        sed -i s/8.1.0/${remove_v_build_source_version}/g ${xml}
-        sed -i s/8.2.3/${remove_v_build_target_version}/g ${xml}
+        sed -i s/8.1.0/${remove_v_build_from_version}/g ${xml}
+        sed -i s/8.2.3/${remove_v_build_to_version}/g ${xml}
         size=`ls -al update_rkey.zip | awk '{print $5}'`
         sed -i s/2862528/${size}/g ${xml}
         sed -i s/2018-05-23/`date +"%Y-%m-%d"`/g ${xml}
         sed -i s/9048S/${device_name}/g ${xml}
     fi
 
-    head -c -1 -q ${xml} update_rkey.zip__base64 ${xml2} > TCL_${device_name}_${build_source_version}_${build_target_version}_upgrade.xml
+    head -c -1 -q ${xml} update_rkey.zip__base64 ${xml2} > TCL_${device_name}_${build_from_version}_${build_to_version}_upgrade.xml
 
     # 2. downgrade <降级包>
     python File2Base64.py -b downgrade_rkey.zip
@@ -150,15 +137,15 @@ function handle_xml() {
     if [[ -f ${xml} ]]; then
         git checkout -- ${xml}
         sed -i s/TCL_9048S_8.1.0_8.2.3/TCL_9048S_8.1.0_8.2.3_downgrade/g ${xml}
-        sed -i s/8.1.0/${remove_v_build_target_version}/g ${xml}
-        sed -i s/8.2.3/${remove_v_build_source_version}/g ${xml}
+        sed -i s/8.1.0/${remove_v_build_to_version}/g ${xml}
+        sed -i s/8.2.3/${remove_v_build_from_version}/g ${xml}
         size=`ls -al downgrade_rkey.zip | awk '{print $5}'`
         sed -i s/2862528/${size}/g ${xml}
         sed -i s/2018-05-23/`date +"%Y-%m-%d"`/g ${xml}
         sed -i s/9048S/${device_name}/g ${xml}
     fi
 
-    head -c -1 -q ${xml} downgrade_rkey.zip__base64 ${xml2} > TCL_${device_name}_${build_target_version}_${build_source_version}_downgrade.xml
+    head -c -1 -q ${xml} downgrade_rkey.zip__base64 ${xml2} > TCL_${device_name}_${build_to_version}_${build_from_version}_downgrade.xml
 
     # 3. bad_integrity_9.19.3 <testkey>
     python File2Base64.py -b update_tkey.zip
@@ -167,29 +154,29 @@ function handle_xml() {
     if [[ -f ${xml} ]]; then
         git checkout -- ${xml}
         sed -i s/TCL_9048S_8.1.0_8.2.3/TCL_9048S_8.1.0_8.2.3_bad_integrity/g ${xml}
-        sed -i s/8.1.0/${remove_v_build_source_version}/g ${xml}
-        sed -i s/8.2.3/${remove_v_build_target_version}/g ${xml}
+        sed -i s/8.1.0/${remove_v_build_from_version}/g ${xml}
+        sed -i s/8.2.3/${remove_v_build_to_version}/g ${xml}
         size=`ls -al update_tkey.zip | awk '{print $5}'`
         sed -i s/2862528/${size}/g ${xml}
         sed -i s/2018-05-23/`date +"%Y-%m-%d"`/g ${xml}
         sed -i s/9048S/${device_name}/g ${xml}
     fi
 
-    head -c -1 -q ${xml} update_tkey.zip__base64 ${xml2} > TCL_${device_name}_${build_source_version}_${build_target_version}_bad_integrity_9.19.3.xml
+    head -c -1 -q ${xml} update_tkey.zip__base64 ${xml2} > TCL_${device_name}_${build_from_version}_${build_to_version}_bad_integrity_9.19.3.xml
 
     # 4. invalid_9.19.1 <error > 升级包中使用降级包
     if [[ -f ${xml} ]]; then
         git checkout -- ${xml}
         sed -i s/TCL_9048S_8.1.0_8.2.3/TCL_9048S_8.1.0_8.2.3_invalid/g ${xml}
-        sed -i s/8.1.0/${remove_v_build_source_version}/g ${xml}
-        sed -i s/8.2.3/${remove_v_build_target_version}/g ${xml}
+        sed -i s/8.1.0/${remove_v_build_from_version}/g ${xml}
+        sed -i s/8.2.3/${remove_v_build_to_version}/g ${xml}
         size=`ls -al downgrade_rkey.zip | awk '{print $5}'`
         sed -i s/2862528/${size}/g ${xml}
         sed -i s/2018-05-23/`date +"%Y-%m-%d"`/g ${xml}
         sed -i s/9048S/${device_name}/g ${xml}
     fi
 
-    head -c -1 -q ${xml} downgrade_rkey.zip__base64 ${xml2} > TCL_${device_name}_${build_source_version}_${build_target_version}_invalid_9.19.1.xml
+    head -c -1 -q ${xml} downgrade_rkey.zip__base64 ${xml2} > TCL_${device_name}_${build_from_version}_${build_to_version}_invalid_9.19.1.xml
 
     # 5. size_over_1.5G_9.19.4 升级包中添加了大文件fillfile
     if ${ADD_BIG_UPC}; then
@@ -202,15 +189,15 @@ function handle_xml() {
         if [[ -f ${xml} ]]; then
             git checkout -- ${xml}
             sed -i s/TCL_9048S_8.1.0_8.2.3/TCL_9048S_8.1.0_8.2.3_size_over_1.5G/g ${xml}
-            sed -i s/8.1.0/${remove_v_build_source_version}/g ${xml}
-            sed -i s/8.2.3/${remove_v_build_target_version}/g ${xml}
+            sed -i s/8.1.0/${remove_v_build_from_version}/g ${xml}
+            sed -i s/8.2.3/${remove_v_build_to_version}/g ${xml}
             size=`ls -al bigupdate_rkey.zip | awk '{print $5}'`
             sed -i s/2862528/${size}/g ${xml}
             sed -i s/2018-05-23/`date +"%Y-%m-%d"`/g ${xml}
             sed -i s/9048S/${device_name}/g ${xml}
         fi
 
-        head -c -1 -q ${xml} bigupdate_rkey.zip__base64 ${xml2} > TCL_${device_name}_${build_source_version}_${build_target_version}_size_over_1.5G_9.19.4.xml
+        head -c -1 -q ${xml} bigupdate_rkey.zip__base64 ${xml2} > TCL_${device_name}_${build_from_version}_${build_to_version}_size_over_1.5G_9.19.4.xml
     else
         echo "------------------ADD_BIG_UPC = $ADD_BIG_UPC------------------"
     fi
@@ -225,9 +212,9 @@ function backup_fota() {
     local ota_path=/mfs_tablet/teleweb/thor84gvzw/fota
 
     if ${userdebug}; then
-        local prj_path=${build_source_version}_${build_target_version}_userdebug_fota_`date +"%Y-%m-%d_%H-%M-%S"`
+        local prj_path=${build_from_version}_${build_to_version}_userdebug_fota_`date +"%Y-%m-%d_%H-%M-%S"`
     else
-        local prj_path=${build_source_version}_${build_target_version}_fota_`date +"%Y-%m-%d_%H-%M-%S"`
+        local prj_path=${build_from_version}_${build_to_version}_fota_`date +"%Y-%m-%d_%H-%M-%S"`
     fi
 
     if [[ ! -d ${ota_path}/${prj_path} ]]; then
@@ -246,9 +233,9 @@ function backup_fota() {
         sudo cp -vf update_tkey.zip ${ota_path}/${prj_path}
     fi
 
-    if [[ -n "`ls TCL_${device_name}_${build_source_version}_${build_target_version}_*.xml`" ]]; then
-        sudo cp -vf TCL_${device_name}_${build_source_version}_${build_target_version}_*.xml ${ota_path}/${prj_path}
-        sudo cp -vf TCL_${device_name}_${build_target_version}_${build_source_version}_*.xml ${ota_path}/${prj_path}
+    if [[ -n "`ls TCL_${device_name}_${build_from_version}_${build_to_version}_*.xml`" ]]; then
+        sudo cp -vf TCL_${device_name}_${build_from_version}_${build_to_version}_*.xml ${ota_path}/${prj_path}
+        sudo cp -vf TCL_${device_name}_${build_to_version}_${build_from_version}_*.xml ${ota_path}/${prj_path}
     fi
 
     echo
@@ -257,35 +244,49 @@ function backup_fota() {
 
 function handle_vairable() {
 
-    # 1. src version
-    build_source_version=${ota_src_version:=}
-    if [[ -z "`echo ${build_source_version} | sed -n '/^[v|V]/p'`" ]]; then
-        build_source_version=v${build_source_version}
-        if [[ -z ${build_source_version} ]]; then
-            log error "The build_source_version is null, please check it."
+
+    # 项目名
+    build_project=${foat_project:-}
+    if [[ -z ${build_project} ]]; then
+        log error 'The build project is null ...'
+    fi
+
+    # 项目类型
+    build_type=${foat_type:-}
+    if [[ -z ${build_type} ]]; then
+        log error 'The build type is null ...'
+    fi
+
+    # 待升级版本号
+    build_from_version=${fota_from_version:-}
+    if [[ -z "`echo ${build_from_version} | sed -n '/^[v|V]/p'`" ]]; then
+
+        build_from_version=v${build_from_version}
+        if [[ -z ${build_from_version} ]]; then
+            log error "The build_from_version is null, please check it."
         fi
     fi
 
-    # 2. tgt version
-    build_target_version=${ota_tgt_version:=}
-    if [[ -z "`echo ${build_target_version} | sed -n '/^[v|V]/p'`" ]]; then
-        build_target_version=v${build_target_version}
+    # 升级版本号
+    build_to_version=${fota_to_version:=}
+    if [[ -z "`echo ${build_to_version} | sed -n '/^[v|V]/p'`" ]]; then
 
-        if [[ -z ${build_target_version} ]]; then
-            log error "The build_target_version is null, please check it."
+        build_to_version=v${build_to_version}
+        if [[ -z ${build_to_version} ]]; then
+            log error "The build_to_version is null, please check it."
         fi
     fi
 
-    # 3. src more
-    build_source_more=${ota_src_more:=}
-    if [[ -z ${build_source_more} ]];then
-        log error "The build_source_more is null, please check it."
+    # 待升级版本号更多信息
+    build_from_more=${fota_from_more:=}
+    if [[ -z ${build_from_more} ]];then
+        log error "The build_from_more is null, please check it."
     fi
 
-    # 4. tgt more
-    build_target_more=${ota_tgt_more:=}
-    if [[ -z ${build_target_more} ]];then
-        log error "The build_target_more is null, please check it."
+    # 升级版本号更多信息
+    build_to_more=${fota_to_more:=}
+    if [[ -z ${build_to_more} ]];then
+        log error "The build_to_more is null, please check it."
     fi
 
     # 5. oem type
@@ -302,10 +303,10 @@ function print_variable() {
     echo
     echo "JOBS = " ${JOBS}
     echo '-----------------------------------------'
-    echo "build_source_version = " ${build_source_version}
-    echo "build_source_more    = " ${build_source_more}
-    echo "build_target_version = " ${build_target_version}
-    echo "build_target_more    = " ${build_target_more}
+    echo "build_from_version   = " ${build_from_version}
+    echo "build_from_more      = " ${build_from_more}
+    echo "build_to_version     = " ${build_to_version}
+    echo "build_to_more        = " ${build_to_more}
     echo "build_oem_type       = " ${build_oem_type}
     echo '-----------------------------------------'
     echo "project_name_src     = " ${project_name_src}
@@ -315,10 +316,10 @@ function print_variable() {
     echo
 }
 
-function get_project_name() {
+function get_device_name() {
 
-    project_name_src=$(dirname ${build_source_more})
-    project_name_tgt=$(dirname ${build_target_more})
+    project_name_src=$(dirname ${build_from_more})
+    project_name_tgt=$(dirname ${build_to_more})
 
     if [[ ${project_name_src} != ${project_name_tgt} ]]; then
         log error "project don't matchup ..."
@@ -340,8 +341,8 @@ function handle_common_variable() {
     # 下载仓库
     git_sync_repository tools/JrdDiffTool thor84g_vzw_1.0
 
-    # 获取项目名和更新设备名
-    get_project_name
+    # 获取设备名
+    get_device_name
 }
 
 function init() {
@@ -356,8 +357,6 @@ function init() {
 function main() {
 
     local mfs_p=/mfs_tablet
-
-    local project_name=
     local device_name=
 
     init
