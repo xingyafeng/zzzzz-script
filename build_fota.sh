@@ -50,7 +50,7 @@ function backup_oem() {
 
 function prepare() {
 
-    local rom_p=${mfs_p}/teleweb/${build_project}
+    local rom_p=${mfs_p}/${build_project}
     local pre_ota_p=
     local curr_ota_p=
 
@@ -209,7 +209,7 @@ function handle_xml() {
 
 function backup_fota() {
 
-    local ota_path=/mfs_tablet/teleweb/thor84gvzw/fota
+    local ota_path=${mfs_p}/${build_project}/fota
 
     if ${userdebug}; then
         local prj_path=${build_from_version}_${build_to_version}_userdebug_fota_`date +"%Y-%m-%d_%H-%M-%S"`
@@ -243,7 +243,6 @@ function backup_fota() {
 }
 
 function handle_vairable() {
-
 
     # 项目名
     build_project=${foat_project:-}
@@ -356,7 +355,7 @@ function init() {
 
 function main() {
 
-    local mfs_p=/mfs_tablet
+    local mfs_p=/mfs_tablet/teleweb
     local device_name=
 
     init
