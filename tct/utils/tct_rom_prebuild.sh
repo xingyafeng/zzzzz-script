@@ -61,11 +61,11 @@ function get_modem_type() {
 
     case ${build_project} in
 
-        DelhiTF_Gerrit_Build)
+        delhitf)
             build_modem_type=tf
         ;;
 
-        TransformerVZW_Gerrit_Build)
+        transformer)
             build_modem_type=vzw
         ;;
 
