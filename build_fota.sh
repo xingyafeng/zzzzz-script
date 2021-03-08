@@ -13,8 +13,11 @@ build_from_more=
 # 项目升级版本
 build_to_version=
 build_to_more=
-# oem type
-build_oem_type=
+# oem|odm type
+build_custom_type=
+
+# ---------------
+tools_branch_name=
 
 # exec shell
 shellfs=$0
@@ -22,27 +25,57 @@ shellfs=$0
 # init function
 . "`dirname $0`/tct/tct_init.sh"
 
-function backup_oem() {
+function get_flag() {
 
-    local dir=$1
-    local TM=
+    local image=${1:-}
+
+    if [[ -n ${image} ]]; then
+        cat P* | egrep -w ${image} | sed 's%.*rename_prefix="%%'| sed 's%".*%%' | head -1
+    fi
+}
+
+function backup_oem_odm() {
+
+    local dir=${1:-}
+    local image=
+
+    # oem odm 标记，第一位是首位　第二位是倒数第二位
+    local oemflag=$(get_flag oem.img)
+    local oem0=${oemflag:0:1}
+    local oem1=${oemflag:1:1}
+
+    local odmflag=$(get_flag odm.img)
+    local odm0=${odmflag:0:1}
+    local odm1=${odmflag:1:1}
 
     pushd data/${dir}/ > /dev/null
 
-    for mbn in "`ls O*M0.mbn`" ; do
-        TM=`ls O*${build_oem_type}*M0.mbn`
+    for mbn in "`ls ${oem0}*${oem1}0.mbn`" ; do
+        image=`ls O*${build_custom_type}*M0.mbn`
 
-        mkdir -p tmp/oem
-        mv -vf ${mbn} tmp/oem
-        mv tmp/oem/${TM} .
+        if [[ ! -d tmp/oem ]]; then
+            mkdir -p tmp/oem
+        fi
+
+        mv ${mbn} tmp/oem
+
+        if [[ ${image} == ${mbn} ]]; then
+            mv -vf tmp/oem/${image} .
+        fi
     done
 
-    for mbn in "`ls V*80.mbn`" ; do
-        TM=`ls V*${build_oem_type}*80.mbn`
+    for mbn in "`ls ${odm0}*${odm1}0.mbn`" ; do
+        image=`ls ${odm0}*${build_custom_type}*${odm1}0.mbn`
 
-        mkdir -p tmp/oem
-        mv -vf ${mbn} tmp/oem
-        mv tmp/oem/${TM} .
+        if [[ ! -d tmp/odm ]]; then
+            mkdir -p tmp/odm
+        fi
+
+        mv ${mbn} tmp/odm
+
+        if [[ ${image} == ${mbn} ]]; then
+            mv -vf tmp/odm/${image} .
+        fi
     done
 
     popd > /dev/null
@@ -71,13 +104,13 @@ function prepare() {
     curr_ota_p=${rom_p}/${build_type}/${build_to_version}/${build_to_more}
 
     if [[ -d ${pre_ota_p} ]]; then
-        cp ${pre_ota_p}/*.mbn data/src
-        backup_oem src
+        cp -vf ${pre_ota_p}/*.mbn data/src
+        backup_oem_odm src
     fi
 
     if [[ -d ${curr_ota_p} ]]; then
-        cp ${curr_ota_p}/*.mbn data/tgt -fv
-        backup_oem tgt
+        cp -vf ${curr_ota_p}/*.mbn data/tgt
+        backup_oem_odm tgt
     fi
 }
 
@@ -207,9 +240,23 @@ function handle_xml() {
     popd > /dev/null
 }
 
+# 初始化备份的文件名
+function init_copy_fota() {
+
+    copyfs=()
+
+    copyfs[${#copyfs[@]}]=update_rkey.zip
+    copyfs[${#copyfs[@]}]=update_tkey.zip
+    copyfs[${#copyfs[@]}]=downgrade_rkey.zip
+    copyfs[${#copyfs[@]}]=$(ls TCL_${device_name}_${build_from_version}_${build_to_version}_*.xml)
+    copyfs[${#copyfs[@]}]=$(ls TCL_${device_name}_${build_to_version}_${build_from_version}_*.xml)
+
+}
+
 function backup_fota() {
 
     local ota_path=${mfs_p}/${build_project}/fota
+    local DEST_PATH=
 
     if ${userdebug}; then
         local prj_path=${build_from_version}_${build_to_version}_userdebug_fota_`date +"%Y-%m-%d_%H-%M-%S"`
@@ -217,26 +264,10 @@ function backup_fota() {
         local prj_path=${build_from_version}_${build_to_version}_fota_`date +"%Y-%m-%d_%H-%M-%S"`
     fi
 
-    if [[ ! -d ${ota_path}/${prj_path} ]]; then
-        sudo mkdir -p ${ota_path}/${prj_path}
-    fi
+    DEST_PATH=${ota_path}/${prj_path}
 
-    if [[ -f update_rkey.zip ]]; then
-        sudo cp -vf update_rkey.zip ${ota_path}/${prj_path}
-    fi
-
-    if [[ -f downgrade_rkey.zip ]]; then
-        sudo cp -vf downgrade_rkey.zip ${ota_path}/${prj_path}
-    fi
-
-    if [[ -f update_tkey.zip ]]; then
-        sudo cp -vf update_tkey.zip ${ota_path}/${prj_path}
-    fi
-
-    if [[ -n "`ls TCL_${device_name}_${build_from_version}_${build_to_version}_*.xml`" ]]; then
-        sudo cp -vf TCL_${device_name}_${build_from_version}_${build_to_version}_*.xml ${ota_path}/${prj_path}
-        sudo cp -vf TCL_${device_name}_${build_to_version}_${build_from_version}_*.xml ${ota_path}/${prj_path}
-    fi
+    init_copy_fota
+    enhance_copy_file '.' ${DEST_PATH}
 
     echo
     show_vip "--> copy fota image finish ..."
@@ -289,9 +320,9 @@ function handle_vairable() {
     fi
 
     # 5. oem type
-    build_oem_type=${oem_type:-TM}
-    if [[ -z ${build_oem_type} ]];then
-        log error "The build_oem_type is null, please check it."
+    build_custom_type=${fota_custom_type:-}
+    if [[ -z ${build_custom_type} ]];then
+        log error "The build_custom_type is null, please check it."
     fi
 
     handle_common_variable
@@ -306,8 +337,9 @@ function print_variable() {
     echo "build_from_more      = " ${build_from_more}
     echo "build_to_version     = " ${build_to_version}
     echo "build_to_more        = " ${build_to_more}
-    echo "build_oem_type       = " ${build_oem_type}
+    echo "build_custom_type    = " ${build_custom_type}
     echo '-----------------------------------------'
+    echo "tools_branch_name    = " ${tools_branch_name}
     echo "project_name_src     = " ${project_name_src}
     echo "project_name_tgt     = " ${project_name_tgt}
     echo "device_name          = " ${device_name}
@@ -335,10 +367,31 @@ function get_device_name() {
     esac
 }
 
+# 拿到tools/JrdDiffTool仓库的分支名
+function get_tools_branch() {
+
+    case ${build_project} in
+
+        thor84gvzw)
+            tools_branch_name='thor84g_vzw_1.0'
+            ;;
+
+        transformervzw)
+            tools_branch_name='TransformerVZW'
+        ;;
+
+        *)
+            tools_branch_name=''
+        ;;
+    esac
+}
+
 function handle_common_variable() {
 
+    get_tools_branch
+
     # 下载仓库
-    git_sync_repository tools/JrdDiffTool thor84g_vzw_1.0
+    git_sync_repository tools/JrdDiffTool ${tools_branch_name}
 
     # 获取设备名
     get_device_name
