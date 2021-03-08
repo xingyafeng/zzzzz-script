@@ -31,24 +31,35 @@ function source_init()
 
     if [[ $(is_rom_prebuild) == 'true' ]]; then
 
-        case ${JOB_NAME} in
+        case ${job_name} in
 
             DelhiTF_Gerrit_Build)
                 export SIGN_SECIMAGE_USEKEY=delhitf
                 source build/envsetup.sh && show_vip "--> source end ..."
                 wimdataclean
-                #choosecombo 1 delhitf userdebug false 1 false && show_vip "--> lunch end ..."
-                #add choosecombo option for delhitf
-                choosecombo 1 delhitf userdebug false 1 false 1 0 && show_vip "--> lunch end ..."
+                Command choosecombo 1 delhitf userdebug false 1 false 1 0 && show_vip "--> lunch end ..."
+            ;;
+
+            TransformerVZW_Gerrit_Build)
+                source build/envsetup.sh && show_vip "--> source end ..."
+                Command choosecombo 1 transformervzw userdebug transformervzw 1 false 0 0 && show_vip "--> lunch end ..."
+            ;;
+
+            *)
+                log error "The ${job_name} no found ..."
             ;;
         esac
     else
-        case ${JOB_NAME} in
+        case ${job_name} in
 
             transformervzw)
                 source build/envsetup.sh && show_vip "--> source end ..."
                 Command choosecombo 1 ${PROJECTNAME} ${build_type} ${PROJECTNAME} 1 $(is_mini_version) 0 ${build_anti_rollback} && show_vip "--> lunch end ..."
 #                choosecombo 1 transformervzw user transformervzw 1 false 0 0
+            ;;
+
+            *)
+                log error "The ${job_name} no found ..."
             ;;
         esac
     fi
