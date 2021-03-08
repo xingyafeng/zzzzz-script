@@ -31,6 +31,9 @@ declare -a invalid_module
 # 本次触发PATCHSET
 gerrit_patchset_revision=
 
+# build modem 类型
+build_modem_type=
+
 # exec shell
 shellfs=$0
 
@@ -47,6 +50,9 @@ function handle_common_vairable() {
 
     # 3. 配置manifest
     set_manifest_xml
+
+    # 4. 拿到modem类型
+    get_modem_type
 }
 
 function handle_vairable() {
@@ -86,6 +92,7 @@ function print_variable() {
     echo 'build_project      = ' ${build_project}
     echo 'build_manifest     = ' ${build_manifest}
     echo 'build_update_code  = ' ${build_update_code}
+    echo 'build_modem_type   = ' ${build_modem_type}
     echo '-------------------------------------'
     echo 'WORKSPACE          = ' ${WORKSPACE}
     echo 'GERRIT_TOPIC       = ' ${GERRIT_TOPIC}

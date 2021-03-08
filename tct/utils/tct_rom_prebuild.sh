@@ -56,6 +56,26 @@ function gotdir() {
     fi
 }
 
+# 拿到modem类型
+function get_modem_type() {
+
+    case ${build_project} in
+
+        DelhiTF_Gerrit_Build)
+            build_modem_type=tf
+        ;;
+
+        TransformerVZW_Gerrit_Build)
+            build_modem_type=vzw
+        ;;
+
+        *)
+            log error 'The build modem type is null ...'
+        ;;
+    esac
+}
+
+
 # 统计编译的工程
 function statistical_compilation_project() {
 
