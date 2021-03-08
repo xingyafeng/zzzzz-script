@@ -29,6 +29,18 @@ function gettop() {
     fi
 }
 
+# 配置正确 manifest
+function set_manifest_xml() {
+
+    if [[ -n ${build_manifest} ]]; then
+        if [[ ${build_manifest} =~ '.xml' ]]; then
+            build_manifest=${build_manifest}
+        else
+            build_manifest=${build_manifest}.xml
+        fi
+    fi
+}
+
 # 启用ccache缓存加速
 function use_ccache() {
 

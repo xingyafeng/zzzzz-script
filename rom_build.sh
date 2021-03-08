@@ -68,17 +68,6 @@ function get_cpu_core() {
     esac
 }
 
-function set_manifest_xml() {
-
-    if [[ -n ${build_manifest} ]]; then
-        if [[ ${build_manifest} =~ '.xml' ]]; then
-            build_manifest=${build_manifest}
-        else
-            build_manifest=${build_manifest}.xml
-        fi
-    fi
-}
-
 function handle_common() {
 
     unset BUILD_NUMBER

@@ -44,6 +44,9 @@ function handle_common_vairable() {
 
     # 2. 配置ccache
     use_ccache
+
+    # 3. 配置manifest
+    set_manifest_xml
 }
 
 function handle_vairable() {
