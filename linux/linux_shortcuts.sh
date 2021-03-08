@@ -416,6 +416,11 @@ function copy_to_bak() {
 ## login ssh server shortcuts
 function jenkins
 {
+    ssh patrol@jenkins
+}
+
+function jenkins0
+{
     if [[ -n ${1:-} ]]; then
         ssh android-bld@10.129.93.14
     else
