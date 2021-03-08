@@ -233,7 +233,7 @@ function make_droid() {
 
         case ${JOB_NAME} in
 
-            DelhiTF_Gerrit_Build)
+            DelhiTF_Gerrit_Build|TransformerVZW_Gerrit_Build)
                 show_vip '[tct]: --> make dist ...'
                 Command "bash build.sh dist -j$(nproc)"
                 ;;
