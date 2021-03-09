@@ -129,11 +129,11 @@ function verified-1() {
 
 function restore_git_repository() {
 
-    if [[ -s ${tmpfs}/env.ini ]]; then
+    if [[ -s ${tmpfs}/${job_name}.env.ini ]]; then
         while IFS="@" read -r GERRIT_CHANGE_URL GERRIT_PROJECT GERRIT_REFSPEC GERRIT_PATCHSET_NUMBER GERRIT_PATCHSET_REVISION GERRIT_CHANGE_NUMBER GERRIT_BRANCH _;do
             log debug "The project path is :  $(get_project_path)"
             recover_standard_git_project $(get_project_path)
-        done < ${tmpfs}/env.ini
+        done < ${tmpfs}/${job_name}.env.ini
 
         if [[ $? -eq 0 ]]; then
             log print "--> 已恢上次下载的仓库至最新状态."
@@ -155,7 +155,7 @@ function print_env_ini() {
         __blue__ 'GERRIT_CHANGE_NUMBER      = ' ${GERRIT_CHANGE_NUMBER}
         __blue__ 'GERRIT_BRANCH             = ' ${GERRIT_BRANCH}
         echo
-    done < ${tmpfs}/env.ini
+    done < ${tmpfs}/${job_name}.env.ini
 }
 
 # 拿到预编译的全部分支
@@ -196,9 +196,9 @@ function parse_all_patchset() {
 
     local branchs=$(get_project_branch)
 
-    :> ${tmpfs}/noenv.ini
+    :> ${tmpfs}/${job_name}.noenv.ini
     if [[ -z ${GERRIT_TOPIC} ]]; then
-        echo ${GERRIT_CHANGE_URL}@${GERRIT_PROJECT}@${GERRIT_REFSPEC}@${GERRIT_PATCHSET_NUMBER}@${GERRIT_PATCHSET_REVISION}@${GERRIT_CHANGE_NUMBER}@${GERRIT_BRANCH} >> ${tmpfs}/noenv.ini
+        echo ${GERRIT_CHANGE_URL}@${GERRIT_PROJECT}@${GERRIT_REFSPEC}@${GERRIT_PATCHSET_NUMBER}@${GERRIT_PATCHSET_REVISION}@${GERRIT_CHANGE_NUMBER}@${GERRIT_BRANCH} >> ${tmpfs}/${job_name}.noenv.ini
     fi
 
     # 恢复上次构建下载的PATCH
@@ -240,21 +240,21 @@ function parse_all_patchset() {
     else
         while IFS="@" read -r GERRIT_CHANGE_URL GERRIT_PROJECT GERRIT_REFSPEC GERRIT_PATCHSET_NUMBER GERRIT_PATCHSET_REVISION GERRIT_CHANGE_NUMBER GERRIT_BRANCH _;do
             change_number_list=(${GERRIT_CHANGE_NUMBER})
-        done < ${tmpfs}/noenv.ini
+        done < ${tmpfs}/${job_name}.noenv.ini
     fi
 
     show_vig "[tct] change_number_list = " ${change_number_list[@]}
 
-    :> ${tmpfs}/env.ini
+    :> ${tmpfs}/${job_name}.env.ini
     for item in ${change_number_list[@]} ; do
         if [[ -z "${GERRIT_TOPIC}" ]]; then
             while IFS="@" read -r GERRIT_CHANGE_URL GERRIT_PROJECT GERRIT_REFSPEC GERRIT_PATCHSET_NUMBER GERRIT_PATCHSET_REVISION GERRIT_CHANGE_NUMBER GERRIT_BRANCH _;do
-                echo ${GERRIT_CHANGE_URL}@${GERRIT_PROJECT}@${GERRIT_REFSPEC}@${GERRIT_PATCHSET_NUMBER}@${GERRIT_PATCHSET_REVISION}@${GERRIT_CHANGE_NUMBER}@${GERRIT_BRANCH} >> ${tmpfs}/env.ini
-            done < ${tmpfs}/noenv.ini
+                echo ${GERRIT_CHANGE_URL}@${GERRIT_PROJECT}@${GERRIT_REFSPEC}@${GERRIT_PATCHSET_NUMBER}@${GERRIT_PATCHSET_REVISION}@${GERRIT_CHANGE_NUMBER}@${GERRIT_BRANCH} >> ${tmpfs}/${job_name}.env.ini
+            done < ${tmpfs}/${job_name}.noenv.ini
         else
             if [[ -f "${gerrit_p}/${item}" ]]; then
                 source ${gerrit_p}/${item}
-                echo ${url}@${project}@${refspec}@${patchset}@${revision}@${changenumber}@${branch} >> ${tmpfs}/env.ini
+                echo ${url}@${project}@${refspec}@${patchset}@${revision}@${changenumber}@${branch} >> ${tmpfs}/${job_name}.env.ini
             else
                 log error "The topic item ${item} information dropout."
             fi
@@ -319,12 +319,12 @@ function check_patchset_status()
 
             check_status=false
         fi
-    done < ${tmpfs}/env.ini
+    done < ${tmpfs}/${job_name}.env.ini
 
     if [[ "${check_status}" == "false" ]];then
         while IFS="@" read -r GERRIT_CHANGE_URL GERRIT_PROJECT GERRIT_REFSPEC GERRIT_PATCHSET_NUMBER GERRIT_PATCHSET_REVISION GERRIT_CHANGE_NUMBER GERRIT_BRANCH _;do
             ssh-gerrit review -m '"The patchset relation for check failed on the same pr number, please check this patchset for verified -1 or reviewed <0."' ${GERRIT_CHANGE_NUMBER},${GERRIT_PATCHSET_NUMBER}
-        done < ${tmpfs}/env.ini
+        done < ${tmpfs}/${job_name}.env.ini
 
         log quit "check status failed, please check this patchset for verified -1 or reviewed <0  or closed|merged|abandoned|amend ..."
     fi
@@ -365,7 +365,7 @@ function download_all_patchset()
         fi
 
         popd > /dev/null
-    done < ${tmpfs}/env.ini
+    done < ${tmpfs}/${job_name}.env.ini
 
 #    show_vip "INFO: Exit ${FUNCNAME[0]}()"
     trap - ERR
@@ -400,7 +400,7 @@ function verify_patchset_submit() {
         else
             log debug "--> ${gerrit_patchset_revision} == ${GERRIT_PATCHSET_REVISION} ???"
         fi
-    done < ${tmpfs}/env.ini
+    done < ${tmpfs}/${job_name}.env.ini
 
 #    show_vip "INFO: Exit ${FUNCNAME[0]}()"
 }
@@ -413,7 +413,7 @@ function gerrit_build() {
     local project_path=
     local moden_path=
     local count=0
-    local index=$(cat ${tmpfs}/env.ini | wc -l)
+    local index=$(cat ${tmpfs}/${job_name}.env.ini | wc -l)
     local is_full_build=false # 默认不是增加构建
     declare -a build_case
 
@@ -497,7 +497,7 @@ function gerrit_build() {
                 fi
             ;;
         esac
-    done < ${tmpfs}/env.ini
+    done < ${tmpfs}/${job_name}.env.ini
 
     # 1. 去重
     if [[ -n ${build_path[@]} ]]; then
