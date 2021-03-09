@@ -158,6 +158,26 @@ function print_env_ini() {
     done < ${tmpfs}/env.ini
 }
 
+# 拿到预编译的全部分支
+function get_project_branch() {
+
+    local tmpbranchs=
+    local tmpbranch=($(xmlstarlet sel -T -t -m /manifest/project -v "concat(@revision,'')" -n .repo/manifest.xml | sort | uniq -u))
+
+    for branch in ${tmpbranch[@]} ; do
+
+        if [[ ${branch} == 'master' ]]; then
+            continue
+        fi
+
+        if [[ -n ${branch} ]]; then
+            tmpbranchs=${tmpbranchs}${branch}@
+        fi
+    done
+
+    echo ${tmpbranchs/%@/}
+}
+
 ####################################################
 #
 #  解析PATCHSET, 系统变量对应关系表
@@ -173,9 +193,8 @@ function print_env_ini() {
 function parse_all_patchset() {
 
     trap 'ERRTRAP ${LINENO} ${FUNCNAME} ${BASH_LINENO}' ERR
-#    show_vip "INFO: Enter ${FUNCNAME[0]}()"
 
-    local branchs="development_dint@jrdapp-android-r-dint@qct-sm4250-tf-r-v1.0-dint@TCT-ROM-4.0-AOSP-GCS-OP@TCTROM-R-QCT-V4.1-dev_gcs@TCTROM-R-QTI-OP@TCTROM-R-V4.0-dev_gcs"
+    local branchs=$(get_project_branch)
 
     :> ${tmpfs}/noenv.ini
     if [[ -z ${GERRIT_TOPIC} ]]; then
