@@ -72,6 +72,7 @@ function source_init_project() {
     case ${project_name} in
 
         sm7250-r0-seattletmo-dint) # seattletmo R
+            export UNSAFE_DISABLE_HIDDENAPI_FLAGS=true
             Command "choosecombo 1 seattletmo userdebug false false 1"
             ;;
 
