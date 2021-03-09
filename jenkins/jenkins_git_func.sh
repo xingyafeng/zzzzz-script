@@ -383,7 +383,7 @@ function repo_sync_repository() {
         return 0
     fi
 
-    if [[ $(hostname) == "u-yafeng.xing" ]]; then
+    if [[ $(hostname) == 'happysongs' ]]; then
         reference_p=~/Android/mirror
     else
         reference_p=/home/android/mirror
