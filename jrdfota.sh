@@ -14,6 +14,10 @@ build_target_more=
 # 5. oem type
 build_oem_type=
 
+build_eux_texts=
+build_update_time=
+build_mdip=
+
 # exec shell
 shellfs=$0
 
@@ -95,6 +99,8 @@ function prepare() {
 
 function dowork() {
 
+    local tmpxml='tmp.xml'
+
     declare -a scripts
 
     scripts[${#scripts[@]}]=prepare_pkg_source.sh
@@ -112,7 +118,46 @@ function dowork() {
         fi
     done
 
+    prepare_xml
     handle_xml
+}
+
+function prepare_xml() {
+
+    case ${build_eux_texts} in
+
+        Bug_Fixes_or_Enhancement)
+            :
+        ;;
+
+        Security_Update_and_Bug_Fixes_or_Enhancement)
+            cp -vf TCL_9048S_1_Security_Update_and_Bug_Fixes_or_Enhancement.xml ${tmpxml}
+
+            ## update_time
+            #10 minutes >> 20 minutes
+            sed -i "s#10 minutes#${build_update_time} minutes#" ${tmpxml}
+
+            ## SUversion 暂
+        ;;
+
+        Security_Update_Only)
+            cp -vf TCL_9048S_1_Security_Update_Only.xml ${tmpxml}
+
+            ## update_time
+            #10 minutes >> 20 minutes
+            sed -i "s#10 minutes#${build_update_time} minutes#" ${tmpxml}
+
+            ## MDIP
+            #MDIP=10 >> MDIP=20
+            sed -i "s#MDIP=10#MDIP=${build_mdip}#" ${tmpxml}
+
+            ## SUversion 暂时不修改
+        ;;
+
+        *)
+            :
+        ;;
+    esac
 }
 
 function handle_xml() {
@@ -132,7 +177,12 @@ function handle_xml() {
     echo "" >>update_rkey.zip__base64
 
     if [[ -f ${xml} ]]; then
-        git checkout -- ${xml}
+        if [[ -f ${tmpxml} ]]; then
+            cp ${tmpxml} ${xml}
+        else
+            git checkout -- ${xml}
+        fi
+
         sed -i s/8.1.0/${remove_v_build_source_version}/g ${xml}
         sed -i s/8.2.3/${remove_v_build_target_version}/g ${xml}
         size=`ls -al update_rkey.zip | awk '{print $5}'`
@@ -148,7 +198,12 @@ function handle_xml() {
     echo "" >>downgrade_rkey.zip__base64
 
     if [[ -f ${xml} ]]; then
-        git checkout -- ${xml}
+        if [[ -f ${tmpxml} ]]; then
+            cp ${tmpxml} ${xml}
+        else
+            git checkout -- ${xml}
+        fi
+
         sed -i s/TCL_9048S_8.1.0_8.2.3/TCL_9048S_8.1.0_8.2.3_downgrade/g ${xml}
         sed -i s/8.1.0/${remove_v_build_target_version}/g ${xml}
         sed -i s/8.2.3/${remove_v_build_source_version}/g ${xml}
@@ -165,7 +220,12 @@ function handle_xml() {
     echo "" >>update_tkey.zip__base64
 
     if [[ -f ${xml} ]]; then
-        git checkout -- ${xml}
+        if [[ -f ${tmpxml} ]]; then
+            cp ${tmpxml} ${xml}
+        else
+            git checkout -- ${xml}
+        fi
+
         sed -i s/TCL_9048S_8.1.0_8.2.3/TCL_9048S_8.1.0_8.2.3_bad_integrity/g ${xml}
         sed -i s/8.1.0/${remove_v_build_source_version}/g ${xml}
         sed -i s/8.2.3/${remove_v_build_target_version}/g ${xml}
@@ -179,7 +239,12 @@ function handle_xml() {
 
     # 4. invalid_9.19.1 <error > 升级包中使用降级包
     if [[ -f ${xml} ]]; then
-        git checkout -- ${xml}
+        if [[ -f ${tmpxml} ]]; then
+            cp ${tmpxml} ${xml}
+        else
+            git checkout -- ${xml}
+        fi
+
         sed -i s/TCL_9048S_8.1.0_8.2.3/TCL_9048S_8.1.0_8.2.3_invalid/g ${xml}
         sed -i s/8.1.0/${remove_v_build_source_version}/g ${xml}
         sed -i s/8.2.3/${remove_v_build_target_version}/g ${xml}
@@ -200,7 +265,12 @@ function handle_xml() {
         python File2Base64.py -b bigupdate_rkey.zip
         echo "" >>bigupdate_rkey.zip__base64
         if [[ -f ${xml} ]]; then
-            git checkout -- ${xml}
+            if [[ -f ${tmpxml} ]]; then
+                cp ${tmpxml} ${xml}
+            else
+                git checkout -- ${xml}
+            fi
+
             sed -i s/TCL_9048S_8.1.0_8.2.3/TCL_9048S_8.1.0_8.2.3_size_over_1.5G/g ${xml}
             sed -i s/8.1.0/${remove_v_build_source_version}/g ${xml}
             sed -i s/8.2.3/${remove_v_build_target_version}/g ${xml}
@@ -294,6 +364,11 @@ function handle_vairable() {
         log error "The build_oem_type is null, please check it."
     fi
 
+    #
+    build_eux_texts=${ota_eux_texts:-Bug_Fixes_or_Enhancement}
+    build_update_time=${ota_update_time:-20}
+    build_mdip=${ota_mdip:-20}
+
     handle_common_variable
 }
 
@@ -307,6 +382,9 @@ function print_variable() {
     echo "build_target_version = " ${build_target_version}
     echo "build_target_more    = " ${build_target_more}
     echo "build_oem_type       = " ${build_oem_type}
+    echo "build_eux_texts      = " ${build_eux_texts}
+    echo "build_update_time    = " ${build_update_time}
+    echo "build_mdip           = " ${build_mdip}
     echo '-----------------------------------------'
     echo "project_name_src     = " ${project_name_src}
     echo "project_name_tgt     = " ${project_name_tgt}
