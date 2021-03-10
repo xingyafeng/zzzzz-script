@@ -145,25 +145,21 @@ function enhance_zip() {
     popd > /dev/null
 }
 
-# 备份压缩包至Teleweb服务器
+# 备份压rom bts缩包至Teleweb服务器
 function backup_zip_to_teleweb() {
 
-    local zip_p=${tmpfs}/zip
+    local tmpzip=${tmpfs}/zip
 
-    pushd ${zip_path} > /dev/null
-
-    if [[ -f ${zip_p}/${zip_name}.zip ]]; then
-        sudo cp -vf ${zip_p}/${zip_name}.zip .
+    if [[ -f ${tmpzip}/${zip_name}.zip ]]; then
+        sudo cp -vf ${tmpzip}/${zip_name}.zip ${teleweb_p}
 
         # 清理动作
-        if [[ -d ${zip_p} ]]; then
-            rm ${zip_p}/* -rf
+        if [[ -d ${tmpzip} ]]; then
+            rm ${tmpzip}/* -rf
         fi
     fi
 
     show_vip "--> Backup the ${zip_name}.zip file to Teleweb Server."
-
-    popd > /dev/null
 }
 
 function check_rom_image() {

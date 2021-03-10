@@ -23,6 +23,9 @@ build_zip_perso=
 perso_ver=
 perso_num=
 
+# teleweb路径
+teleweb_p=/mfs_tablet/zip/rom
+
 # 处理公共变量
 function handle_common_variable() {
 
@@ -37,13 +40,31 @@ function handle_common_variable() {
             # 此版本需要更换路径.
             zip_path=${rom_p}/${build_zip_project}/${build_zip_type}/${build_zip_version}
             zip_name=${build_zip_version}
+
+            teleweb_p=${teleweb_p}/${build_zip_project}/${build_zip_type}/${build_zip_version}
         else
             zip_path=${rom_p}/${build_zip_project}/${build_zip_type}/${build_zip_version}/${build_zip_more}
             zip_name=${build_zip_version}_`echo ${build_zip_more} | sed s%/%_%g`
+
+            teleweb_p=${teleweb_p}/${build_zip_project}/${build_zip_type}/${build_zip_version}/${build_zip_more}
         fi
     else
         zip_path=${rom_p}/${build_zip_project}/${build_zip_type}/${build_zip_version}
         zip_name=${build_zip_version}
+
+        teleweb_p=${teleweb_p}/${build_zip_project}/${build_zip_type}/${build_zip_version}
+    fi
+
+    zip_p=${tmpfs}/HZNPI/HDT/product/${build_zip_project}/data
+
+
+    # 压缩指定路径
+    if [[ ! -d ${zip_p}  ]]; then
+        mkdir -p ${zip_p}
+    fi
+
+    if [[ ! -d ${teleweb_p} ]]; then
+        sudo mkdir -p ${teleweb_p}
     fi
 }
 
@@ -116,12 +137,27 @@ function zip_perso() {
 
 function zip_rom() {
 
+    local tmpzip=${tmpfs}/zip
+
     if [[ -d ${zip_path} && -n ${zip_name} ]]; then
+
+        pushd ${zip_path} > /dev/null
 
         #处理压缩包名称,后面增加Teleweb字眼
         zip_name=_${zip_name}-Teleweb
 
-        time enhance_zip
+        cp -vf *.mbn ${zip_p}
+
+        pushd ${tmpfs} > /dev/null
+        zip -1vr ${tmpzip}/${zip_name}.zip HZNPI/
+
+        if [[ -d HZNPI ]]; then
+            rm -rf HZNPI/ &
+        fi
+
+        popd > /dev/null
+
+        popd > /dev/null
     else
         log error "It is the ${zip_path} or ${zip_name} has error."
     fi
@@ -143,9 +179,12 @@ function sendEmail() {
 
 function main() {
 
-    local rom_p=/mfs_tablet/0_Shenzhen
-    local zip_path  zip_name
-    local perso_p
+    local rom_p=/mfs_tablet/teleweb
+    local zip_path=
+    local zip_name=
+    local zip_p=
+
+    local perso_p=
 
     # 初始化
     init
