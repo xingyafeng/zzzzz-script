@@ -111,8 +111,7 @@ function dowork() {
 
     for script in ${scripts[@]};do
         if [[ -f ${script} && -x ${script} ]]; then
-            log print "------ exec ${script}"
-            ./${script}
+            Command bash ${script}
         else
             log error "脚本文件不存在或者没有权限."
         fi
