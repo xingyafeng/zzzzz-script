@@ -345,7 +345,12 @@ function download_all_patchset()
     while IFS="@" read -r GERRIT_CHANGE_URL GERRIT_PROJECT GERRIT_REFSPEC GERRIT_PATCHSET_NUMBER GERRIT_PATCHSET_REVISION GERRIT_CHANGE_NUMBER GERRIT_BRANCH _;do
 
         project_path=$(get_project_path)
-        __green__ "@@@ project path: " ${project_path}
+
+        if [[ -d ${project_path} ]]; then
+            __green__ "@@@ project path: " ${project_path}
+        else
+            log error "The project path is not exist in the manifest."
+        fi
 
         pushd ${project_path} > /dev/null
 
