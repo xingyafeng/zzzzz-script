@@ -124,6 +124,9 @@ function dowork() {
 
 function prepare_xml() {
 
+    local xml_1=TCL_9048S_1_Security_Update_and_Bug_Fixes_or_Enhancement.xml
+    local xml_2=TCL_9048S_1_Security_Update_Only.xml
+
     case ${build_eux_texts} in
 
         Bug_Fixes_or_Enhancement)
@@ -131,27 +134,40 @@ function prepare_xml() {
         ;;
 
         Security_Update_and_Bug_Fixes_or_Enhancement)
-            cp -vf TCL_9048S_1_Security_Update_and_Bug_Fixes_or_Enhancement.xml ${tmpxml}
+            if [[ -f ${xml_1} ]]; then
+                cp -vf ${xml_1} ${tmpxml}
+            else
+                log warn "The ${xml_1} no found .."
+            fi
 
-            ## update_time
-            #10 minutes >> 20 minutes
-            sed -i "s#10 minutes#${build_update_time} minutes#" ${tmpxml}
+            if [[ -f ${tmpxml} ]]; then
+                ## update_time
+                #10 minutes >> 20 minutes
+                sed -i "s#10 minutes#${build_update_time} minutes#" ${tmpxml}
 
-            ## SUversion 暂
+                ## SUversion 暂
+            fi
         ;;
 
         Security_Update_Only)
-            cp -vf TCL_9048S_1_Security_Update_Only.xml ${tmpxml}
 
-            ## update_time
-            #10 minutes >> 20 minutes
-            sed -i "s#10 minutes#${build_update_time} minutes#" ${tmpxml}
+            if [[ -f ${xml_2} ]]; then
+                cp -vf ${xml_2} ${tmpxml}
+            else
+                log warn "The ${xml_2} no found .."
+            fi
 
-            ## MDIP
-            #MDIP=10 >> MDIP=20
-            sed -i "s#MDIP=10#MDIP=${build_mdip}#" ${tmpxml}
+            if [[ -f ${tmpxml} ]]; then
+                ## update_time
+                #10 minutes >> 20 minutes
+                sed -i "s#10 minutes#${build_update_time} minutes#" ${tmpxml}
 
-            ## SUversion 暂时不修改
+                ## MDIP
+                #MDIP=10 >> MDIP=20
+                sed -i "s#MDIP=10#MDIP=${build_mdip}#" ${tmpxml}
+
+                ## SUversion 暂时不修改
+            fi
         ;;
 
         *)
