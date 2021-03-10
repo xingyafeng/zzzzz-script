@@ -118,7 +118,6 @@ function dowork() {
         fi
     done
 
-    prepare_xml
     handle_xml
 }
 
@@ -187,6 +186,8 @@ function handle_xml() {
     __green__ "remove_v_build_target_version = ${remove_v_build_target_version}"
 
     pushd data > /dev/null
+
+    prepare_xml
 
     # 1. upgrade
     python File2Base64.py -b update_rkey.zip
