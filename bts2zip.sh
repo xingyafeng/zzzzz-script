@@ -24,6 +24,8 @@ preso_num=
 # 6. vendor
 bts_vendor=
 
+teleweb_p=/mfs_tablet/zip/bts
+
 # 处理公共变量
 function handle_common_variable() {
 
@@ -36,9 +38,13 @@ function handle_common_variable() {
 
         zip_name=_bts_${build_bts_project}_${build_bts_version}_${preso_ver}_${preso_num}
         zip_path=${rom_p}/${build_bts_project}/${build_bts_type}/${build_bts_version}
+
+        teleweb_p=${teleweb_p}/${build_bts_project}/${build_bts_type}/${build_bts_version}
     elif [[ -n ${build_bts_more} ]]; then
         zip_name=_bts_${build_bts_project}_${build_bts_version}_`echo ${build_bts_more} | sed s%/%_%g`
         zip_path=${rom_p}/${build_bts_project}/${build_bts_type}/${build_bts_version}/${build_bts_more}
+
+        teleweb_p=${teleweb_p}/${build_bts_project}/${build_bts_type}/${build_bts_version}/${build_bts_more}
     else
         if [[ -n "${bts_vendor}" ]]; then
             perso_p=${rom_p}/${build_bts_project}/perso/`echo ${build_bts_version} | sed s/v//`/${bts_vendor}
@@ -46,6 +52,12 @@ function handle_common_variable() {
 
         zip_name=_bts_${build_bts_project}_${build_bts_version}
         zip_path=${rom_p}/${build_bts_project}/${build_bts_type}/${build_bts_version}
+
+        teleweb_p=${teleweb_p}/${build_bts_project}/${build_bts_type}/${build_bts_version}
+    fi
+
+    if [[ ! -d ${teleweb_p} ]]; then
+        sudo mkdir -p ${teleweb_p}
     fi
 }
 
@@ -103,8 +115,12 @@ function print_variable() {
         echo "preso_num         = " ${preso_num}
         echo "perso_p           = " ${perso_p}
         echo '-----------------------------------------'
+        echo
     fi
 
+    echo '-----------------------------------------'
+    echo "teleweb_p         = " ${teleweb_p}
+    echo '-----------------------------------------'
     echo
 }
 
@@ -162,7 +178,8 @@ function sendEmail() {
 function main() {
 
     local rom_p=/mfs_tablet/teleweb
-    local zip_path  zip_name
+    local zip_path=
+    local zip_name=
     local perso_p=
     local isSend=
 
