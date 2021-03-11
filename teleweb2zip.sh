@@ -50,7 +50,7 @@ function handle_common_variable() {
         fi
     else
         zip_path=${rom_p}/${build_zip_project}/${build_zip_type}/${build_zip_version}
-        zip_name=${build_zip_version}
+        zip_name=${build_zip_project}_MainSW_${build_zip_version}_V01
 
         teleweb_p=${teleweb_p}/${build_zip_project}/${build_zip_type}/${build_zip_version}
     fi
@@ -81,13 +81,15 @@ function handle_vairable() {
 
     # 4. 其他信息
     build_zip_more=${zip_more:=}
-    case "`basename ${build_zip_more}`" in
+    if [[ -n ${build_zip_more}  ]]; then
+        case "`basename ${build_zip_more}`" in
 
-        *)
-            # person版本
-            zip_perso=${build_zip_more:=}
-            ;;
-    esac
+            *)
+                # person版本
+                zip_perso=${build_zip_more:=}
+                ;;
+        esac
+    fi
 
     # 公共变量
     handle_common_variable
@@ -101,8 +103,11 @@ function print_variable() {
     echo "build_zip_project = " ${build_zip_project}
     echo "build_zip_type    = " ${build_zip_type}
     echo "build_zip_version = " ${build_zip_version}
-    echo '-----------------------------------------'
-    echo "build_zip_more    = " ${build_zip_more}
+
+    if [[ -n ${build_zip_more} ]]; then
+        echo '-----------------------------------------'
+        echo "build_zip_more    = " ${build_zip_more}
+    fi
 
     if [[ "`is_perso_project`" == "true" ]]; then
         echo "zip_perso         = " ${zip_perso}
@@ -144,7 +149,7 @@ function zip_rom() {
         pushd ${zip_path} > /dev/null
 
         #处理压缩包名称,后面增加Teleweb字眼
-        zip_name=_${zip_name}-Teleweb
+        zip_name=${zip_name}-Teleweb
 
         cp -vf *.mbn ${zip_p}
 
