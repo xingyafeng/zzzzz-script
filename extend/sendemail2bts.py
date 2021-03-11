@@ -33,7 +33,7 @@ def send_mail(subject, content):
 # noinspection PyInterpreter
 if __name__ == '__main__':
 
-    rom_p = 'https://teleweb-sz.tclcom.com/0_Shenzhen'
+    rom_p = 'https://teleweb-sz.tclcom.com/0_Shenzhen/zip/bts'
 
     zip_project = sys.argv[1]
     zip_type = sys.argv[2]
