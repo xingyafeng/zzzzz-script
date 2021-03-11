@@ -114,7 +114,7 @@ function prepare() {
     fi
 }
 
-function dowork() {
+function make_inc() {
 
     declare -a scripts
 
@@ -135,9 +135,91 @@ function dowork() {
     handle_xml
 }
 
+function update_from_version() {
+
+    local version=${1:-}
+    local from_version=8.2.3
+
+    sed -i s/${from_version}/${version}/g ${prexml}
+}
+
+function update_to_version() {
+
+    local version=${1:-}
+    local to_version=8.1.0
+
+    sed -i s/${to_version}/${version}/g ${prexml}
+}
+
+function update_size() {
+
+    local file=${1:-}
+    local size=2862528
+
+    sed -i s/${size}/$(get_file_size ${file})/g ${prexml}
+}
+
+function update_time() {
+
+    local time=2018-05-23
+
+    sed -i s/${time}/$(date +"%Y-%m-%d")/g ${prexml}
+}
+
+function update_device_name() {
+
+    local devname=9048S
+
+    sed -i s/${devname}/${device_name}/g ${prexml}
+}
+
+function update_fota_config() {
+
+    local fs=${1:-}
+    local fota_name=
+
+    case ${fs} in
+
+        update_releasekey)     # release key　升级包
+
+            fota_name=update_rkey.zip
+
+
+            if [[ -f ${fota_name} ]]; then
+                python File2Base64.py -b ${fota_name} && echo >> ${fota_name}__base64
+            fi
+
+            if [[ -f ${prexml} ]]; then
+                git checkout -- ${prexml}
+                sed -i s/8.1.0/${remove_v_build_from_version}/g ${prexml}
+                sed -i s/8.2.3/${remove_v_build_to_version}/g ${prexml}
+                size=`ls -al update_rkey.zip | awk '{print $5}'`
+                sed -i s/2862528/${size}/g ${prexml}
+                sed -i s/2018-05-23/`date +"%Y-%m-%d"`/g ${prexml}
+                sed -i s/9048S/${device_name}/g ${prexml}
+            fi
+
+            head -c -1 -q ${prexml} update_rkey.zip__base64 ${endxml} > TCL_${device_name}_${build_from_version}_${build_to_version}_upgrade.xml
+
+        ;;
+
+        update_testkey)        # test    key　升级包
+        ;;
+
+        downgrade_releasekey)  # release key　降级包
+        ;;
+
+        invalid)               # 无效升级包，升级包中使用降级包
+        ;;
+
+        bigupdate_releasekey)  # 大文件升级包
+        ;;
+    esac
+}
+
 function handle_xml() {
 
-    local xml=TCL_9048S_1.xml
+    local prexml=TCL_9048S_1.xml
     local xml2=TCL_9048S_2.xml
     local remove_v_build_from_version=`echo ${build_from_version} | sed s/"[v|V]"//`
     local remove_v_build_to_version=`echo ${build_to_version} | sed s/"[v|V]"//`
@@ -151,65 +233,65 @@ function handle_xml() {
     python File2Base64.py -b update_rkey.zip
     echo "" >>update_rkey.zip__base64
 
-    if [[ -f ${xml} ]]; then
-        git checkout -- ${xml}
-        sed -i s/8.1.0/${remove_v_build_from_version}/g ${xml}
-        sed -i s/8.2.3/${remove_v_build_to_version}/g ${xml}
+    if [[ -f ${prexml} ]]; then
+        git checkout -- ${prexml}
+        sed -i s/8.1.0/${remove_v_build_from_version}/g ${prexml}
+        sed -i s/8.2.3/${remove_v_build_to_version}/g ${prexml}
         size=`ls -al update_rkey.zip | awk '{print $5}'`
-        sed -i s/2862528/${size}/g ${xml}
-        sed -i s/2018-05-23/`date +"%Y-%m-%d"`/g ${xml}
-        sed -i s/9048S/${device_name}/g ${xml}
+        sed -i s/2862528/${size}/g ${prexml}
+        sed -i s/2018-05-23/`date +"%Y-%m-%d"`/g ${prexml}
+        sed -i s/9048S/${device_name}/g ${prexml}
     fi
 
-    head -c -1 -q ${xml} update_rkey.zip__base64 ${xml2} > TCL_${device_name}_${build_from_version}_${build_to_version}_upgrade.xml
+    head -c -1 -q ${prexml} update_rkey.zip__base64 ${endxml} > TCL_${device_name}_${build_from_version}_${build_to_version}_upgrade.xml
 
     # 2. downgrade <降级包>
     python File2Base64.py -b downgrade_rkey.zip
     echo "" >>downgrade_rkey.zip__base64
 
-    if [[ -f ${xml} ]]; then
-        git checkout -- ${xml}
-        sed -i s/TCL_9048S_8.1.0_8.2.3/TCL_9048S_8.1.0_8.2.3_downgrade/g ${xml}
-        sed -i s/8.1.0/${remove_v_build_to_version}/g ${xml}
-        sed -i s/8.2.3/${remove_v_build_from_version}/g ${xml}
+    if [[ -f ${prexml} ]]; then
+        git checkout -- ${prexml}
+        sed -i s/TCL_9048S_8.1.0_8.2.3/TCL_9048S_8.1.0_8.2.3_downgrade/g ${prexml}
+        sed -i s/8.1.0/${remove_v_build_to_version}/g ${prexml}
+        sed -i s/8.2.3/${remove_v_build_from_version}/g ${prexml}
         size=`ls -al downgrade_rkey.zip | awk '{print $5}'`
-        sed -i s/2862528/${size}/g ${xml}
-        sed -i s/2018-05-23/`date +"%Y-%m-%d"`/g ${xml}
-        sed -i s/9048S/${device_name}/g ${xml}
+        sed -i s/2862528/${size}/g ${prexml}
+        sed -i s/2018-05-23/`date +"%Y-%m-%d"`/g ${prexml}
+        sed -i s/9048S/${device_name}/g ${prexml}
     fi
 
-    head -c -1 -q ${xml} downgrade_rkey.zip__base64 ${xml2} > TCL_${device_name}_${build_to_version}_${build_from_version}_downgrade.xml
+    head -c -1 -q ${prexml} downgrade_rkey.zip__base64 ${endxml} > TCL_${device_name}_${build_to_version}_${build_from_version}_downgrade.xml
 
     # 3. bad_integrity_9.19.3 <testkey>
     python File2Base64.py -b update_tkey.zip
     echo "" >>update_tkey.zip__base64
 
-    if [[ -f ${xml} ]]; then
-        git checkout -- ${xml}
-        sed -i s/TCL_9048S_8.1.0_8.2.3/TCL_9048S_8.1.0_8.2.3_bad_integrity/g ${xml}
-        sed -i s/8.1.0/${remove_v_build_from_version}/g ${xml}
-        sed -i s/8.2.3/${remove_v_build_to_version}/g ${xml}
+    if [[ -f ${prexml} ]]; then
+        git checkout -- ${prexml}
+        sed -i s/TCL_9048S_8.1.0_8.2.3/TCL_9048S_8.1.0_8.2.3_bad_integrity/g ${prexml}
+        sed -i s/8.1.0/${remove_v_build_from_version}/g ${prexml}
+        sed -i s/8.2.3/${remove_v_build_to_version}/g ${prexml}
         size=`ls -al update_tkey.zip | awk '{print $5}'`
-        sed -i s/2862528/${size}/g ${xml}
-        sed -i s/2018-05-23/`date +"%Y-%m-%d"`/g ${xml}
-        sed -i s/9048S/${device_name}/g ${xml}
+        sed -i s/2862528/${size}/g ${prexml}
+        sed -i s/2018-05-23/`date +"%Y-%m-%d"`/g ${prexml}
+        sed -i s/9048S/${device_name}/g ${prexml}
     fi
 
-    head -c -1 -q ${xml} update_tkey.zip__base64 ${xml2} > TCL_${device_name}_${build_from_version}_${build_to_version}_bad_integrity_9.19.3.xml
+    head -c -1 -q ${prexml} update_tkey.zip__base64 ${endxml} > TCL_${device_name}_${build_from_version}_${build_to_version}_bad_integrity_9.19.3.xml
 
     # 4. invalid_9.19.1 <error > 升级包中使用降级包
-    if [[ -f ${xml} ]]; then
-        git checkout -- ${xml}
-        sed -i s/TCL_9048S_8.1.0_8.2.3/TCL_9048S_8.1.0_8.2.3_invalid/g ${xml}
-        sed -i s/8.1.0/${remove_v_build_from_version}/g ${xml}
-        sed -i s/8.2.3/${remove_v_build_to_version}/g ${xml}
+    if [[ -f ${prexml} ]]; then
+        git checkout -- ${prexml}
+        sed -i s/TCL_9048S_8.1.0_8.2.3/TCL_9048S_8.1.0_8.2.3_invalid/g ${prexml}
+        sed -i s/8.1.0/${remove_v_build_from_version}/g ${prexml}
+        sed -i s/8.2.3/${remove_v_build_to_version}/g ${prexml}
         size=`ls -al downgrade_rkey.zip | awk '{print $5}'`
-        sed -i s/2862528/${size}/g ${xml}
-        sed -i s/2018-05-23/`date +"%Y-%m-%d"`/g ${xml}
-        sed -i s/9048S/${device_name}/g ${xml}
+        sed -i s/2862528/${size}/g ${prexml}
+        sed -i s/2018-05-23/`date +"%Y-%m-%d"`/g ${prexml}
+        sed -i s/9048S/${device_name}/g ${prexml}
     fi
 
-    head -c -1 -q ${xml} downgrade_rkey.zip__base64 ${xml2} > TCL_${device_name}_${build_from_version}_${build_to_version}_invalid_9.19.1.xml
+    head -c -1 -q ${prexml} downgrade_rkey.zip__base64 ${endxml} > TCL_${device_name}_${build_from_version}_${build_to_version}_invalid_9.19.1.xml
 
     # 5. size_over_1.5G_9.19.4 升级包中添加了大文件fillfile
     if ${ADD_BIG_UPC}; then
@@ -219,18 +301,18 @@ function handle_xml() {
         java -Xmx2048m -Djava.library.path=${tmpfs}/JrdDiffTool/lib64 -Dcom.tclcom.apksig.connect=localhost:50051,10.128.180.21:50051,10.128.180.117:50051,10.128.180.220:50051 -Dcom.tclcom.apksig.keysuite=thor84gvzw -jar ${tmpfs}/JrdDiffTool/framework/signapk.jar -providerClass com.tclcom.apksig.StubJCAProvider -w ${tmpfs}/JrdDiffTool/TCT_releasekeys/releasekey.x509.pem ${tmpfs}/JrdDiffTool/TCT_releasekeys/releasekey.pk8 ${tmpfs}/JrdDiffTool/data/bigupdate.zip ${tmpfs}/JrdDiffTool/data/bigupdate_rkey.zip
         python File2Base64.py -b bigupdate_rkey.zip
         echo "" >>bigupdate_rkey.zip__base64
-        if [[ -f ${xml} ]]; then
-            git checkout -- ${xml}
-            sed -i s/TCL_9048S_8.1.0_8.2.3/TCL_9048S_8.1.0_8.2.3_size_over_1.5G/g ${xml}
-            sed -i s/8.1.0/${remove_v_build_from_version}/g ${xml}
-            sed -i s/8.2.3/${remove_v_build_to_version}/g ${xml}
+        if [[ -f ${prexml} ]]; then
+            git checkout -- ${prexml}
+            sed -i s/TCL_9048S_8.1.0_8.2.3/TCL_9048S_8.1.0_8.2.3_size_over_1.5G/g ${prexml}
+            sed -i s/8.1.0/${remove_v_build_from_version}/g ${prexml}
+            sed -i s/8.2.3/${remove_v_build_to_version}/g ${prexml}
             size=`ls -al bigupdate_rkey.zip | awk '{print $5}'`
-            sed -i s/2862528/${size}/g ${xml}
-            sed -i s/2018-05-23/`date +"%Y-%m-%d"`/g ${xml}
-            sed -i s/9048S/${device_name}/g ${xml}
+            sed -i s/2862528/${size}/g ${prexml}
+            sed -i s/2018-05-23/`date +"%Y-%m-%d"`/g ${prexml}
+            sed -i s/9048S/${device_name}/g ${prexml}
         fi
 
-        head -c -1 -q ${xml} bigupdate_rkey.zip__base64 ${xml2} > TCL_${device_name}_${build_from_version}_${build_to_version}_size_over_1.5G_9.19.4.xml
+        head -c -1 -q ${prexml} bigupdate_rkey.zip__base64 ${endxml} > TCL_${device_name}_${build_from_version}_${build_to_version}_size_over_1.5G_9.19.4.xml
     else
         echo "------------------ADD_BIG_UPC = $ADD_BIG_UPC------------------"
     fi
@@ -416,7 +498,7 @@ function main() {
     pushd ${tmpfs}/JrdDiffTool > /dev/null
 
     prepare
-    dowork
+    make_inc
 
     popd > /dev/null
 }
