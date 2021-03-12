@@ -505,11 +505,11 @@ function build102() {
     ssh yafeng.xing@10.129.93.102
 }
 
-function build20() {
+function jenkins20() {
     ssh android@10.129.46.20
 }
 
-function build21() {
+function jenkins21() {
     ssh android@10.129.46.21
 }
 
