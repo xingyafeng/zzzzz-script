@@ -33,6 +33,12 @@ function backup_oem_odm() {
     local dir=${1:-}
     local image=
 
+    if [[ -z ${dir} ]]; then
+        log error "The dir is null ..."
+    fi
+
+    pushd data/${dir}/ > /dev/null
+
     # oem odm 标记，第一位是首位　第二位是倒数第二位
     local oemflag=$(get_custom_flag oem.img)
     local oem0=${oemflag:0:1}
@@ -42,14 +48,20 @@ function backup_oem_odm() {
     local odm0=${odmflag:0:1}
     local odm1=${odmflag:1:1}
 
-    if [[ -z ${dir} ]]; then
-        log error "The dir is null ..."
+    if false;then
+    echo '------------------------------------- backup_oem'
+    echo 'oemflag = ' ${oemflag}
+    echo 'oem0    = ' ${oem0}
+    echo 'oem1    = ' ${oem1}
+    echo '------------------------------------- backup_odm'
+    echo 'odmflag = ' ${odmflag}
+    echo 'odm0    = ' ${odm0}
+    echo 'odm1    = ' ${odm1}
+    echo '------------------------------------- backup_end'
     fi
 
-    pushd data/${dir}/ > /dev/null
-
-    for mbn in "`ls ${oem0}*${oem1}0.mbn`" ; do
-        image=`ls O*${build_custom_type}*M0.mbn`
+    for mbn in `ls ${oem0}*${oem1}0.mbn` ; do
+        image=`ls ${oem0}*${build_custom_type}*${oem1}0.mbn`
 
         if [[ ! -d tmp/oem ]]; then
             mkdir -p tmp/oem
@@ -57,12 +69,19 @@ function backup_oem_odm() {
 
         mv ${mbn} tmp/oem
 
+#        echo 'image = ' ${image}
+#        echo 'mbn   = ' ${mbn}
+
         if [[ ${image} == ${mbn} ]]; then
-            mv -vf tmp/oem/${image} .
+            if [[ -f tmp/oem/${image} ]]; then
+                mv -vf tmp/oem/${image} .
+            else
+                log warn 'it oem image has no found ...'
+            fi
         fi
     done
 
-    for mbn in "`ls ${odm0}*${odm1}0.mbn`" ; do
+    for mbn in `ls ${odm0}*${odm1}0.mbn` ; do
         image=`ls ${odm0}*${build_custom_type}*${odm1}0.mbn`
 
         if [[ ! -d tmp/odm ]]; then
@@ -71,8 +90,15 @@ function backup_oem_odm() {
 
         mv ${mbn} tmp/odm
 
+#        echo 'image = ' ${image}
+#        echo 'mbn   = ' ${mbn}
+
         if [[ ${image} == ${mbn} ]]; then
-            mv -vf tmp/odm/${image} .
+            if [[ -f tmp/odm/${image} ]]; then
+                mv -vf tmp/odm/${image} .
+            else
+                log warn 'it odm image has no found ...'
+            fi
         fi
     done
 
@@ -260,19 +286,34 @@ function update_fota_xml() {
 
 function prepare() {
 
-    local rom_p=${mfs_p}/${build_project}
-    local from_ota_p=${rom_p}/${build_type}/${build_from_version}/${build_from_more}
-    local to_ota_p=${rom_p}/${build_type}/${build_to_version}/${build_to_more}
+    local from_ota_p=${mfs_p}/${build_project}/${build_type}/${build_from_version}/${build_from_more}
+    local to_ota_p=${mfs_p}/${build_project}/${build_type}/${build_to_version}/${build_to_more}
 
     if [[ -d ${from_ota_p} && -d data/src ]]; then
-        cp -vf ${from_ota_p}/*.mbn data/src
+        local dir1=${from_ota_p}
+        local dir2=data/src
+
+        log debug "'dir1: ' ${dir1} 'dir2: ' ${dir2}"
+        if [[ $(check_folder_the_name ${dir1} ${dir2}) == 'false' ]]; then
+            time cp -vf ${dir1}/*.mbn ${dir2}
+        else
+            log debug 'is the same ...'
+        fi
 
         # 备份正确的oem odm image
         backup_oem_odm src
     fi
 
     if [[ -d ${to_ota_p} && -d data/tgt ]]; then
-        cp -vf ${to_ota_p}/*.mbn data/tgt
+        local dir3=${to_ota_p}
+        local dir4=data/tgt
+
+        log debug "'dir3: ' ${dir3} 'dir4: ' ${dir4}"
+        if [[ $(check_folder_the_name ${dir3} ${dir4}) == 'false' ]]; then
+            time cp -vf ${dir3}/*.mbn ${dir4}
+        else
+            log debug 'is the same ...'
+        fi
 
         # 备份正确的oem odm image
         backup_oem_odm tgt
@@ -281,7 +322,7 @@ function prepare() {
 
 function make_inc() {
 
-    declare -a scripts
+    scripts=()
 
     # 准备基准包 一个基准包 一个升级包
     prepare
@@ -296,12 +337,12 @@ function make_inc() {
         if [[ -f ${script} && -x ${script} ]]; then
             Command bash ${script}
         else
-            log error "脚本文件不存在或者没有权限."
+            log error "${script} 脚本文件不存在或者没有权限."
         fi
     done
 
     # 更新差分包xml
-    update_fota_xml
+#    update_fota_xml
 }
 
 function handle_common_variable() {
@@ -310,7 +351,7 @@ function handle_common_variable() {
     get_tools_branch
 
     # 下载仓库
-    git_sync_repository tools/JrdDiffTool ${tools_branch_name}
+    git_sync_repository tools/JrdDiffTool ${tools_branch_name} ${fota_tools_p}
 
     # 获取设备名
     get_device_name
@@ -319,13 +360,13 @@ function handle_common_variable() {
 function handle_vairable() {
 
     # 项目名
-    build_project=${foat_project:-}
+    build_project=${fota_project:-}
     if [[ -z ${build_project} ]]; then
         log error 'The build project is null ...'
     fi
 
     # 项目类型
-    build_type=${foat_type:-}
+    build_type=${fota_type:-}
     if [[ -z ${build_type} ]]; then
         log error 'The build type is null ...'
     fi
@@ -353,13 +394,17 @@ function handle_vairable() {
     # 待升级版本号更多信息
     build_from_more=${fota_from_more:=}
     if [[ -z ${build_from_more} ]];then
-        log error "The build_from_more is null, please check it."
+        log warn "The build_from_more is null, please check it."
+    else
+        from_more=$(dirname ${build_from_more})
     fi
 
     # 升级版本号更多信息
     build_to_more=${fota_to_more:=}
     if [[ -z ${build_to_more} ]];then
-        log error "The build_to_more is null, please check it."
+        log warn "The build_to_more is null, please check it."
+    else
+        to_more=$(dirname ${build_to_more})
     fi
 
     # 5. oem type
@@ -376,15 +421,32 @@ function print_variable() {
     echo
     echo "JOBS = " ${JOBS}
     echo '-----------------------------------------'
+
+    echo "build_project        = " ${build_project}
+    echo "build_type           = " ${build_type}
     echo "build_from_version   = " ${build_from_version}
-    echo "build_from_more      = " ${build_from_more}
     echo "build_to_version     = " ${build_to_version}
-    echo "build_to_more        = " ${build_to_more}
+
+    if [[ -n ${build_from_more} ]]; then
+        echo "build_from_more      = " ${build_from_more}
+    fi
+
+    if [[ -n ${build_to_more} ]]; then
+        echo "build_to_more        = " ${build_to_more}
+    fi
+
     echo "build_custom_type    = " ${build_custom_type}
     echo '-----------------------------------------'
     echo "tools_branch_name    = " ${tools_branch_name}
-    echo "project_name_src     = " ${project_name_src}
-    echo "project_name_tgt     = " ${project_name_tgt}
+
+    if [[ -n ${from_more} ]]; then
+        echo "from_more            = " ${from_more}
+    fi
+
+    if [[ -n ${to_more} ]]; then
+        echo "to_more              = " ${to_more}
+    fi
+
     echo "device_name          = " ${device_name}
     echo '-----------------------------------------'
     echo
@@ -392,8 +454,8 @@ function print_variable() {
 
 function init() {
 
-    local project_name_src=
-    local project_name_tgt=
+    local from_more=
+    local to_more=
 
     handle_vairable
     print_variable
@@ -402,11 +464,12 @@ function init() {
 function main() {
 
     local mfs_p=/mfs_tablet/teleweb
+    local fota_tools_p=${tmpfs}/fota
     local device_name=
 
     init
 
-    pushd ${tmpfs}/JrdDiffTool > /dev/null
+    pushd ${fota_tools_p}/JrdDiffTool > /dev/null
 
     make_inc
 

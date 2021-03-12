@@ -62,6 +62,69 @@ function update_device_name() {
     sed -i s/${devname}/${device_name}/g ${prexml}
 }
 
+# ----------------------------------------------------------------------------------------------diff
+
+function update_predownload_message() {
+
+    local src='<PreDownloadMessage>Android 8.2.3 is now ready to download and install.'
+    local tgt=''
+
+    case ${build_eux_texts} in
+        Security_Update_Only)
+            tgt='<PreDownloadMessage>&lt;p&gt;&lt;img src=&quot;https://cdn2.vzwdm.com/images/1040x500_SecurityUpdate.jpg&quot; /&gt;&lt;/p &gt; &lt;p&gt;&lt;b&gt;System Update X&lt;/b&gt;&lt;/p &gt; &lt;p&gt;This system update improves the security of your 9048S.&lt;/p &gt;'
+            ;;
+        Security_Update_and_Bug_Fixes_or_Enhancement)
+            tgt='<PreDownloadMessage>&lt;p&gt;&lt;img src=&quot;https://cdn2.vzwdm.com/images/1040x500_SecurityUpdates_and_Improvements.jpg&quot; /&gt;&lt;/p &gt; &lt;p&gt;&lt;b&gt;System Update X&lt;/b&gt;&lt;/p &gt; &lt;p&gt;This system update improves the security of your 9048S and includes other enhancements.&lt;/p &gt;'
+            ;;
+    esac
+
+    if [[ -n ${tgt} ]]; then
+        sed -i s/${src}/${tgt}/g ${prexml}
+        update_device_name
+    else
+        log warn 'The tgt content is empty.'
+    fi
+}
+
+function update_postdownload_message() {
+
+    local src='<PostDownloadMessage>Android 8.2.3 is now ready to download and install.'
+    local tgt=''
+
+    case ${build_eux_texts} in
+        Security_Update_Only)
+            tgt='<PostDownloadMessage>&lt;p&gt;&lt;img src=&quot;https://cdn2.vzwdm.com/images/1040x500_SecurityUpdate.jpg&quot; /&gt;&lt;/p &gt; &lt;p&gt;&lt;b&gt;System Update X&lt;/b&gt;&lt;/p &gt; &lt;p&gt;This update will restart your 9048S. During the update you won’t be able to make or receive 911 calls for 10 minutes.&lt;/p &gt;'
+        ;;
+
+        Security_Update_and_Bug_Fixes_or_Enhancement)
+            tgt='<PostDownloadMessage>&lt;p&gt;&lt;img src=&quot;https://cdn2.vzwdm.com/images/1040x500_SecurityUpdates_and_Improvements.jpg&quot; /&gt;&lt;/p &gt; &lt;p&gt;&lt;b&gt;System Update X&lt;/b&gt;&lt;/p &gt; &lt;p&gt;This update will restart your 9048S. During the update you won’t be able to make or receive 911 calls for 10 minutes.&lt;/p &gt;'
+        ;;
+    esac
+
+    if [[ -n ${tgt} ]]; then
+        sed -i s/${src}/${tgt}/g ${prexml}
+
+        # updte time
+        sed -i "s#10 minutes#${build_update_time} minutes#" ${prexml}
+
+        update_device_name
+    else
+        log warn 'The tgt content is empty.'
+    fi
+}
+
+function update_postupdate_message() {
+
+    local src='System updated'
+    local tgt='&lt;p&gt;&lt;img src=&quot;https://cdn2.vzwdm.com/images/1040x500_YouAreAllSet.jpg&quot; /&gt;&lt;/p &gt; &lt;p&gt;&lt;b&gt;System Update X&lt;/b&gt;&lt;/p &gt;'
+
+    if [[ -n ${tgt} ]]; then
+        sed -i s/${src}/${tgt}/g ${prexml}
+    else
+        log warn 'The tgt content is empty.'
+    fi
+}
+
 # 初始化备份的文件名
 function init_copy_fota() {
 
@@ -70,8 +133,14 @@ function init_copy_fota() {
     copyfs[${#copyfs[@]}]=update_rkey.zip
     copyfs[${#copyfs[@]}]=update_tkey.zip
     copyfs[${#copyfs[@]}]=downgrade_rkey.zip
-    copyfs[${#copyfs[@]}]=$(ls TCL_${device_name}_${build_from_version}_${build_to_version}_*.xml)
-    copyfs[${#copyfs[@]}]=$(ls TCL_${device_name}_${build_to_version}_${build_from_version}_*.xml)
+
+    for fs in $(ls TCL_${device_name}_${build_from_version}_${build_to_version}_*.xml) ; do
+        copyfs[${#copyfs[@]}]=${fs}
+    done
+
+    for fs in $(ls TCL_${device_name}_${build_to_version}_${build_from_version}_*.xml) ; do
+        copyfs[${#copyfs[@]}]=${fs}
+    done
 }
 
 # 备份FOTA版本
@@ -116,21 +185,37 @@ function get_tools_branch() {
 
 function get_device_name() {
 
-    project_name_src=$(dirname ${build_from_more})
-    project_name_tgt=$(dirname ${build_to_more})
+    case ${build_project} in
 
-    if [[ ${project_name_src} != ${project_name_tgt} ]]; then
-        log error "project don't matchup ..."
-    fi
+        thor84gvzw)
 
-    case ${project_name_src} in
+            if [[ -n ${from_more} && -n ${to_more} ]]; then
 
-        KIDS)
-            device_name="9049L"
-            ;;
+                # 保证选择的版本一致性
+                if [[ ${from_more} != ${to_more} ]]; then
+                    log error "project don't matchup ..."
+                fi
+
+                case ${from_more} in
+
+                    KIDS)
+                        device_name='9049L'
+                        ;;
+
+                    *)
+                        device_name='9048S'
+                        ;;
+                esac
+            fi
+        ;;
+
+        transformervzw)
+            device_name='9198S'
+        ;;
+
         *)
-            device_name="9048S"
-            ;;
+            log error "The build_project has no found ..."
+        ;;
     esac
 }
 

@@ -232,6 +232,10 @@ BASE=`pwd`
 ################################ 临时路径
 apk_release_p=${tmpfs}/APK/Release
 
+
+################################ unbound variable
+build_email=
+
 ################################ commom function
 
 # 处理公共变量
@@ -1809,11 +1813,7 @@ function copy_ota_tools()
 ## 容错处理
 function __return__()
 {
-    local type_err=
-
-    if [[ -n "$1" ]]; then
-        type_err=$1
-    fi
+    local type_err=${1:-}
 
     send_email_when_build_failed
 

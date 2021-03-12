@@ -13,6 +13,9 @@ gerrit_p=${tmpfs}/gerrit
 # build list info
 buildlist=${tmpfs}/buildlist.ini
 
+# 源码更新
+build_update_code='false'
+
 ## manifest info
 declare -A manifest_info
 ## module list

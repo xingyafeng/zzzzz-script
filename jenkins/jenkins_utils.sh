@@ -84,11 +84,29 @@ function get_line_from_file()
     sed -n "/^${string}/=" ${file_name}
 }
 
+# 检查是否未空目录
+function is_empty_dir() {
+
+    local dir=${1:-}
+    local status=
+
+    if [[ -z ${dir} ]]; then
+        log error 'argrs is error ...'
+    fi
+
+    status=$(ls ${dir} | wc -w)
+    if [[ ${status} == 0 ]]; then
+        echo true
+    else
+        echo false
+    fi
+}
+
 ## 检查两个文件是否相同
 function check_file_are_the_same()
 {
-    local file_1=$1
-    local file_2=$2
+    local file_1=${1:-}
+    local file_2=${2:-}
 
     if [[ $# -ne 2 ]];then
         log error "args is error, please check args!"
@@ -99,6 +117,37 @@ function check_file_are_the_same()
         echo true
     else
         echo false
+    fi
+}
+
+# 检查目录中的内容是否相同
+function check_folder_the_name() {
+
+    local folder_1=${1:-}
+    local folder_2=${2:-}
+
+    if [[ -z ${folder_1} || -z ${folder_2} ]]; then
+        log error "the folder is null ..."
+    fi
+
+    if [[ $(is_empty_dir ${folder_1}) == 'true' || $(is_empty_dir ${folder_2}) == 'true' ]]; then
+        echo 'false'
+    else
+        for f1 in $(ls ${folder_1}) ; do
+            for f2 in $(ls ${folder_2}) ; do
+                if [[ ${f1} == ${f2} ]]; then
+                    if [[ $(check_file_are_the_same ${folder_1}/${f1} ${folder_2}/${f2}) == 'true' ]]; then
+                        continue;
+                    else
+                        echo 'false'
+
+                        return 0
+                    fi
+                fi
+            done
+        done
+
+        echo 'true'
     fi
 }
 

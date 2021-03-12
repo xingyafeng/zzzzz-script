@@ -17,6 +17,9 @@ case ${shellfs##*/} in
     jrdfota.sh)
         ;;
 
+    build_fota.sh)
+        ;;
+
     build_release.sh)
         ;;
 
