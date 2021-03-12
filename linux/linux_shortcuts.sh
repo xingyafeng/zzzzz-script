@@ -413,7 +413,7 @@ function copy_to_bak() {
     fi
 }
 
-## login ssh server shortcuts
+## login ssh server shortcuts patrol/Aa123456
 function jenkins
 {
     ssh patrol@jenkins
