@@ -251,8 +251,8 @@ function update_fota_config() {
 
 function update_fota_xml() {
 
-    local prexml=TCL_9048S_1.xml
-    local endxml=TCL_9048S_2.xml
+    local prexml=TCL_prebase.xml
+    local endxml=TCL_endbase.xml
 
     local dv_from_verison=`echo ${build_from_version} | sed s/"[v|V]"//`
     local dv_to_verison=`echo ${build_to_version} | sed s/"[v|V]"//`
