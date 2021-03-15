@@ -159,8 +159,10 @@ function set_java_version_1.8() {
 
     export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64
     export JRE_HOME=${JAVA_HOME}/jre
-    export CLASSPATH=.:${CLASSPATH}:${JAVA_HOME}/lib:${JRE_HOME}/lib
+    export CLASSPATH=.:${JAVA_HOME}/lib:${JRE_HOME}/lib
     export PATH=${JAVA_HOME}/bin:${JRE_HOME}/bin:$PATH
+
+    java -version
 }
 
 ## 设置java环境变量
@@ -265,7 +267,11 @@ function enhance_copy_file() {
             dst="$2"
 
             if [[ ! -d ${dst} ]]; then
-                mkdir -p ${dst}
+                if [[ ${is_su_enable} == 'yes' ]]; then
+                    sudo mkdir -p ${dst}
+                else
+                    mkdir -p ${dst}
+                fi
             fi
             ;;
         *)

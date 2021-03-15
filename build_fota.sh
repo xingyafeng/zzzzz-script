@@ -28,6 +28,9 @@ shellfs=$0
 # init function
 . "`dirname $0`/tct/tct_init.sh"
 
+# 配置su权限
+is_su_enable='yes'
+
 function backup_oem_odm() {
 
     local dir=${1:-}
@@ -127,8 +130,8 @@ function update_fota_config() {
             if [[ -f ${prexml} ]]; then
                 git checkout -- ${prexml}
 
-                update_from_version ${dv_from_verison}
-                update_to_version ${dv_to_verison}
+                update_from_version ${dv_from_version}
+                update_to_version ${dv_to_version}
                 update_size ${fota_name}
                 update_time
                 update_device_name
@@ -150,8 +153,8 @@ function update_fota_config() {
                 git checkout -- ${prexml}
 
                 update_base_version downgrade
-                update_from_version ${dv_to_verison}
-                update_to_version ${dv_from_verison}
+                update_from_version ${dv_to_version}
+                update_to_version ${dv_from_version}
                 update_size ${fota_name}
                 update_time
                 update_device_name
@@ -173,8 +176,8 @@ function update_fota_config() {
                 git checkout -- ${prexml}
 
                 update_base_version downgrade
-                update_from_version ${dv_from_verison}
-                update_to_version ${dv_to_verison}
+                update_from_version ${dv_from_version}
+                update_to_version ${dv_to_version}
                 update_size ${fota_name}
                 update_time
                 update_device_name
@@ -192,7 +195,7 @@ function update_fota_config() {
                 git checkout -- ${prexml}
 
                 update_base_version invalid
-                update_from_version ${dv_from_verison}
+                update_from_version ${dv_from_version}
                 update_to_version ${dv_to_version}
                 update_size ${fota_name}
                 update_time
@@ -220,15 +223,15 @@ function update_fota_config() {
                     log error 'The fill file has no found ...'
                 fi
 
-                java -Xmx2048m -Djava.library.path=${tmpfs}/JrdDiffTool/lib64 \
+                java -Xmx2048m -Djava.library.path=${tmpfs}/fota/JrdDiffTool/lib64 \
                     -Dcom.tclcom.apksig.connect=localhost:50051,10.128.180.21:50051,10.128.180.117:50051,10.128.180.220:50051 \
                     -Dcom.tclcom.apksig.keysuite=${build_project} \
-                    -jar ${tmpfs}/JrdDiffTool/framework/signapk.jar \
+                    -jar ${tmpfs}/fota/JrdDiffTool/framework/signapk.jar \
                     -providerClass com.tclcom.apksig.StubJCAProvider \
-                    -w ${tmpfs}/JrdDiffTool/TCT_releasekeys/releasekey.x509.pem \
-                       ${tmpfs}/JrdDiffTool/TCT_releasekeys/releasekey.pk8 \
-                       ${tmpfs}/JrdDiffTool/data/${bigfile} \
-                       ${tmpfs}/JrdDiffTool/data/bigupdate_rkey.zip
+                    -w ${tmpfs}/fota/JrdDiffTool/TCT_releasekeys/releasekey.x509.pem \
+                       ${tmpfs}/fota/JrdDiffTool/TCT_releasekeys/releasekey.pk8 \
+                       ${tmpfs}/fota/JrdDiffTool/data/${bigfile} \
+                       ${tmpfs}/fota/JrdDiffTool/data/bigupdate_rkey.zip
 
                 python File2Base64.py -b bigupdate_rkey.zip && echo >> bigupdate_rkey.zip__base64
             fi
@@ -237,8 +240,8 @@ function update_fota_config() {
                 git checkout -- ${prexml}
 
                 update_base_version size_over_1.5G
-                update_from_version ${dv_from_verison}
-                update_to_version ${dv_to_verison}
+                update_from_version ${dv_from_version}
+                update_to_version ${dv_to_version}
                 update_size bigupdate_rkey.zip
                 update_time
                 update_device_name
@@ -251,11 +254,12 @@ function update_fota_config() {
 
 function update_fota_xml() {
 
+    local ADD_BIG_UPC=false
     local prexml=TCL_prebase.xml
     local endxml=TCL_endbase.xml
 
-    local dv_from_verison=`echo ${build_from_version} | sed s/"[v|V]"//`
-    local dv_to_verison=`echo ${build_to_version} | sed s/"[v|V]"//`
+    local dv_from_version=`echo ${build_from_version} | sed s/"[v|V]"//`
+    local dv_to_version=`echo ${build_to_version} | sed s/"[v|V]"//`
 
     pushd data > /dev/null
 
@@ -342,7 +346,7 @@ function make_inc() {
     done
 
     # 更新差分包xml
-#    update_fota_xml
+    update_fota_xml
 }
 
 function handle_common_variable() {
@@ -448,6 +452,8 @@ function print_variable() {
     fi
 
     echo "device_name          = " ${device_name}
+    echo '-----------------------------------------'
+    echo "is_su_enable         = " ${is_su_enable}
     echo '-----------------------------------------'
     echo
 }

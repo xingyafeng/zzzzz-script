@@ -41,7 +41,7 @@ function update_size() {
     local file=${1:-}
     local size=2862528
 
-    if [[ -z ${version} || ! -f ${file} ]]; then
+    if [[ -z ${file} || ! -f ${file} ]]; then
         log error "The ${version} is null ..."
     fi
 
@@ -146,6 +146,7 @@ function init_copy_fota() {
 # 备份FOTA版本
 function copy_fota_version() {
 
+    local userdebug=false
     local ota_path=${mfs_p}/${build_project}/fota
     local DEST_PATH=
 
