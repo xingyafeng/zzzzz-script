@@ -275,7 +275,12 @@ function enhance_copy_file() {
 
     for file in ${copyfs[@]} ; do
         if [[ -f ${src}/${file} ]]; then
-            cp -vf ${src}/${file} ${dst}
+
+            if [[ ${is_su_enable} == 'yes' ]]; then
+                sudo cp -vf ${src}/${file} ${dst}
+            else
+                cp -vf ${src}/${file} ${dst}
+            fi
         else
             ## 优化,有些版本没有此文件,需要忽略. 斟酌处理掉
             case ${file} in
