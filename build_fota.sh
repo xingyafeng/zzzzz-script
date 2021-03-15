@@ -213,6 +213,10 @@ function update_fota_config() {
             fota_name=update_rkey.zip
             fota_xmls=TCL_${device_name}_${build_from_version}_${build_to_version}_size_over_1.5G_9.19.4.xml
 
+            if ! ${ADD_BIG_UPC}; then
+                break;
+            fi
+
             if [[ -f ${fota_name} ]]; then
                 cp -vf ${fota_name} ${bigfile}
 
@@ -252,35 +256,36 @@ function update_fota_config() {
     esac
 }
 
+#####################################################
+##
+##  函数: update_fota_xml
+##  功能: 更新xml配置文件
+##  参数: 1. update_releasekey      <升级包>
+##        2. downgrade              <降级包>
+##        3. bad_integrity_9.19.3   <testkey>
+##        4. invalid_9.19.1         <error > 升级包中使用降级包
+##        5. size_over_1.5G_9.19.4 升级包中添加了大文件fillfile
+#
+##  举栗:
+##      update_fota_xml update_releasekey
+##      update_fota_xml downgrade
+##
+####################################################
 function update_fota_xml() {
 
     local ADD_BIG_UPC=false
     local prexml=TCL_prebase.xml
     local endxml=TCL_endbase.xml
+    local configs=(update_releasekey downgrade_releasekey update_testkey invalid bigupdate_releasekey)
 
     local dv_from_version=`echo ${build_from_version} | sed s/"[v|V]"//`
     local dv_to_version=`echo ${build_to_version} | sed s/"[v|V]"//`
 
     pushd data > /dev/null
 
-    # 1. upgrade
-    update_fota_config update_releasekey
-
-    # 2. downgrade <降级包>
-    update_fota_config downgrade_releasekey
-
-    # 3. bad_integrity_9.19.3 <testkey>
-    update_fota_config update_testkey
-
-    # 4. invalid_9.19.1 <error > 升级包中使用降级包
-    update_fota_config invalid
-
-    # 5. size_over_1.5G_9.19.4 升级包中添加了大文件fillfile
-    if ${ADD_BIG_UPC}; then
-        update_fota_config bigupdate_releasekey
-    else
-        echo "------------------ADD_BIG_UPC = $ADD_BIG_UPC------------------"
-    fi
+    for cfg in ${configs[@]} ; do
+        update_fota_config ${cfg}
+    done
 
     # 备份FOTA版本
     copy_fota_version
