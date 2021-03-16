@@ -110,6 +110,21 @@ function backup_oem_odm() {
     popd > /dev/null
 }
 
+#####################################################
+##
+##  函数: update_fota_config
+##  功能: 更新xml配置文件
+##  参数: 1. update_releasekey      <升级包>
+##        2. downgrade              <降级包>
+##        3. bad_integrity_9.19.3   <testkey>
+##        4. invalid_9.19.1         <error > 升级包中使用降级包
+##        5. size_over_1.5G_9.19.4 升级包中添加了大文件fillfile
+#
+##  举栗:
+##      update_fota_config update_releasekey
+##      update_fota_config downgrade
+##
+####################################################
 function update_fota_config() {
 
     local fs=${1:-}
@@ -258,21 +273,6 @@ function update_fota_config() {
     esac
 }
 
-#####################################################
-##
-##  函数: update_fota_xml
-##  功能: 更新xml配置文件
-##  参数: 1. update_releasekey      <升级包>
-##        2. downgrade              <降级包>
-##        3. bad_integrity_9.19.3   <testkey>
-##        4. invalid_9.19.1         <error > 升级包中使用降级包
-##        5. size_over_1.5G_9.19.4 升级包中添加了大文件fillfile
-#
-##  举栗:
-##      update_fota_xml update_releasekey
-##      update_fota_xml downgrade
-##
-####################################################
 function update_fota_xml() {
 
     local ADD_BIG_UPC=false
