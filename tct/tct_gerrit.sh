@@ -162,7 +162,7 @@ function print_env_ini() {
 function get_project_branch() {
 
     local tmpbranchs=
-    local tmpbranch=($(xmlstarlet sel -T -t -m /manifest/project -v "concat(@revision,'')" -n .repo/manifest.xml | sort | uniq -u))
+    local tmpbranch=($(xmlstarlet sel -T -t -m /manifest/project -v "concat(@revision,'')" -n .repo/manifest.xml | sort | uniq))
 
     for branch in ${tmpbranch[@]} ; do
 
@@ -196,6 +196,8 @@ function parse_all_patchset() {
 
     local branchs=$(get_project_branch)
 
+    log debug "branchs = ${branchs}"
+
     :> ${tmpfs}/${job_name}.noenv.ini
     if [[ -z ${GERRIT_TOPIC} ]]; then
         echo ${GERRIT_CHANGE_URL}@${GERRIT_PROJECT}@${GERRIT_REFSPEC}@${GERRIT_PATCHSET_NUMBER}@${GERRIT_PATCHSET_REVISION}@${GERRIT_CHANGE_NUMBER}@${GERRIT_BRANCH} >> ${tmpfs}/${job_name}.noenv.ini
@@ -215,7 +217,7 @@ function parse_all_patchset() {
         if [[ "$?" -eq 0 ]]; then
             pushd ${gerrit_p} > /dev/null
 
-            python ${script_p}/tools/parse_change_infos.py changeid.json "${branchs}"
+            python ${script_p}/tools/parse_change_infos.py changeid.json "${branchs[@]}"
             if [[ $? -ne 0 ]]; then
                 log error "Parse the topic : ${GERRIT_TOPIC} info failed."
             fi
