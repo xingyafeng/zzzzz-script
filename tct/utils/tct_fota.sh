@@ -42,7 +42,7 @@ function update_size() {
     local size=2862528
 
     if [[ -z ${file} || ! -f ${file} ]]; then
-        log error "The ${version} is null ..."
+        log error "The ${file} is null ..."
     fi
 
     sed -i s/${size}/$(get_file_size ${file})/g ${prexml}
