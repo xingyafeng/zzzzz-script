@@ -38,6 +38,8 @@ function backup_oem_odm() {
 
     if [[ -z ${dir} ]]; then
         log error "The dir is null ..."
+    else
+        log print "The dir: ${dir} ..."
     fi
 
     pushd data/${dir}/ > /dev/null
@@ -293,40 +295,39 @@ function update_fota_xml() {
     popd > /dev/null
 }
 
+function backup_image_version() {
+
+    log debug "'dir1: ' ${dir1} 'dir2: ' ${dir2}"
+    if [[ -d ${dir1} && -d ${dir2} ]]; then
+        time cp -vf ${dir1}/*.mbn ${dir2}
+
+        # 备份正确的oem odm image
+        backup_oem_odm $(basename ${dir2})
+    fi
+}
+
 function prepare() {
 
     local from_ota_p=${mfs_p}/${build_project}/${build_type}/${build_from_version}/${build_from_more}
     local to_ota_p=${mfs_p}/${build_project}/${build_type}/${build_to_version}/${build_to_more}
+    local dir1=
+    local dir2=
 
-    if [[ -d ${from_ota_p} && -d data/src ]]; then
-        local dir1=${from_ota_p}
-        local dir2=data/src
-
-        log debug "'dir1: ' ${dir1} 'dir2: ' ${dir2}"
-        if [[ $(check_folder_the_name ${dir1} ${dir2}) == 'false' ]]; then
-            time cp -vf ${dir1}/*.mbn ${dir2}
-        else
-            log debug 'is the same ...'
-        fi
-
-        # 备份正确的oem odm image
-        backup_oem_odm src
+    if [[ -d `git rev-parse --git-dir` ]];then
+        git clean -dxfq
+    else
+        log error "Could not found '.git' folder ..."
     fi
 
-    if [[ -d ${to_ota_p} && -d data/tgt ]]; then
-        local dir3=${to_ota_p}
-        local dir4=data/tgt
+    # 备份from version
+    dir1=${from_ota_p}
+    dir2=data/src
+    backup_image_version
 
-        log debug "'dir3: ' ${dir3} 'dir4: ' ${dir4}"
-        if [[ $(check_folder_the_name ${dir3} ${dir4}) == 'false' ]]; then
-            time cp -vf ${dir3}/*.mbn ${dir4}
-        else
-            log debug 'is the same ...'
-        fi
-
-        # 备份正确的oem odm image
-        backup_oem_odm tgt
-    fi
+    # 备份to version
+    dir1=${to_ota_p}
+    dir2=data/tgt
+    backup_image_version
 }
 
 function make_inc() {
