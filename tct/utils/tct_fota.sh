@@ -15,7 +15,7 @@ function update_base_version() {
 function update_from_version() {
 
     local version=${1:-}
-    local from_version=8.2.3
+    local from_version=8.1.0
 
     if [[ -z ${version} ]]; then
         log error "The ${version} is null ..."
@@ -27,7 +27,7 @@ function update_from_version() {
 function update_to_version() {
 
     local version=${1:-}
-    local to_version=8.1.0
+    local to_version=8.2.3
 
     if [[ -z ${version} ]]; then
         log error "The ${version} is null ..."
