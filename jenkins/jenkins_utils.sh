@@ -125,6 +125,7 @@ function check_folder_the_name() {
 
     local folder_1=${1:-}
     local folder_2=${2:-}
+    local count=0
 
     if [[ -z ${folder_1} || -z ${folder_2} ]]; then
         log error "the folder is null ..."
@@ -133,10 +134,11 @@ function check_folder_the_name() {
     if [[ $(is_empty_dir ${folder_1}) == 'true' || $(is_empty_dir ${folder_2}) == 'true' ]]; then
         echo 'false'
     else
-        for f1 in $(ls ${folder_1}) ; do
-            for f2 in $(ls ${folder_2}) ; do
-                if [[ ${f1} == ${f2} ]]; then
-                    if [[ $(check_file_are_the_same ${folder_1}/${f1} ${folder_2}/${f2}) == 'true' ]]; then
+        for f1 in $(ls ${folder_1}/*.mbn) ; do
+            for f2 in $(ls ${folder_2}/*.mbn) ; do
+                if [[ $(basename ${f1}) == $(basename ${f2}) ]]; then
+                    if [[ $(check_file_are_the_same ${f1} ${f2}) == 'true' ]]; then
+                        let count++
                         continue;
                     else
                         echo 'false'
@@ -147,7 +149,11 @@ function check_folder_the_name() {
             done
         done
 
-        echo 'true'
+        if [[ ${count} -eq 0 ]]; then
+            echo 'false'
+        else
+            echo 'true'
+        fi
     fi
 }
 

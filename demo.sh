@@ -19,10 +19,12 @@ function main() {
 
     pushd ~/workspace/date/0310 > /dev/null
 
-    local dir1=/mfs_tablet/teleweb/transformervzw/daily_version/v2C32-A
+    local dir1=/mfs_tablet/teleweb/transformervzw/daily_version/v2C32-B
     local dir2=src
     local dir3=tgt
     local ret=
+
+#    check_folder_the_name ${dir1} ${dir2}
 
     ret=$(check_folder_the_name ${dir1} ${dir2})
     if [[ ${ret} == 'false' ]]; then
