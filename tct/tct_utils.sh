@@ -20,7 +20,7 @@ function is_rom_prebuild() {
 
     case ${JOB_NAME} in
 
-        DelhiTF_Gerrit_Build|TransformerVZW_Gerrit_Build)
+        DelhiTF_Gerrit_Build|TransformerVZW_Gerrit_Build|Thor84gVZW-R_Gerrit_Build)
             echo true
         ;;
 

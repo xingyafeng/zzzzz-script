@@ -55,6 +55,19 @@ function handle_common_vairable() {
     get_modem_type
 }
 
+function handle_compile_para() {
+
+    # compile_para 编译参数
+    case ${JOB_NAME} in
+
+        Thor84gVZW-R_Gerrit_Build)
+            compile_para[${#compile_para[@]}]='TCT_EFUSE=true'
+            compile_para[${#compile_para[@]}]='ANTI_ROLLBACK=0'
+        ;;
+
+    esac
+}
+
 function handle_vairable() {
 
     # 1. manifest
@@ -79,6 +92,7 @@ function handle_vairable() {
     fi
 
     handle_common_vairable
+    handle_compile_para
 }
 
 function print_variable() {
@@ -108,6 +122,7 @@ function print_variable() {
     echo 'gerrit_patchset_revision  = ' ${gerrit_patchset_revision}
     echo '-------------------------------------'
     echo '${invalid_module[@]}      = ' ${invalid_module[@]}
+    echo "compile_para  = " ${compile_para[@]}
     echo '-------------------------------------'
     echo
 }

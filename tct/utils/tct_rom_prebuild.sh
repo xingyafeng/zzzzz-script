@@ -65,7 +65,7 @@ function get_modem_type() {
             build_modem_type=tf
         ;;
 
-        transformer)
+        transformer|thor84gvzw)
             build_modem_type=vzw
         ;;
 

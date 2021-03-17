@@ -31,22 +31,26 @@ function source_init()
 
     if [[ $(is_rom_prebuild) == 'true' ]]; then
 
+        source build/envsetup.sh && show_vip "--> source end ..."
+
         case ${job_name} in
 
             DelhiTF_Gerrit_Build)
                 export SIGN_SECIMAGE_USEKEY=delhitf
-                source build/envsetup.sh && show_vip "--> source end ..."
                 wimdataclean
                 Command choosecombo 1 delhitf userdebug false 1 false 1 0 && show_vip "--> lunch end ..."
             ;;
 
             TransformerVZW_Gerrit_Build)
-                source build/envsetup.sh && show_vip "--> source end ..."
                 Command choosecombo 1 transformervzw userdebug transformervzw 1 false 0 0 && show_vip "--> lunch end ..."
             ;;
 
+            Thor84gVZW-R_Gerrit_Build)
+                Command choosecombo 1 thor84gvzw user thor84gvzw 1 false false && show_vip "--> lunch end ..."
+            ;;
+
             *)
-                log error "The ${job_name} no found ..."
+                log error "The ${job_name} has no found ..."
             ;;
         esac
     else

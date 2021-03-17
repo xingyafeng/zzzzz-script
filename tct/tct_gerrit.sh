@@ -162,7 +162,7 @@ function print_env_ini() {
 function get_project_branch() {
 
     local tmpbranchs=
-    local tmpbranch=($(xmlstarlet sel -T -t -m /manifest/project -v "concat(@revision,'')" -n .repo/manifest.xml | sort | uniq))
+    local tmpbranch=($(xmlstarlet sel -T -t -m '//*' -v "concat(@revision,'')" -n .repo/manifest.xml | sort | uniq))
 
     for branch in ${tmpbranch[@]} ; do
 
