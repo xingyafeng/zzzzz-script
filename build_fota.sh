@@ -31,6 +31,9 @@ shellfs=$0
 # 配置su权限
 is_su_enable='yes'
 
+# 配置testkey
+export is_testkey=''
+
 function backup_oem_odm() {
 
     local dir=${1:-}
@@ -365,6 +368,9 @@ function handle_common_variable() {
 
     # 获取设备名
     get_device_name
+
+    # 配置testkey
+    set_testkey
 }
 
 function handle_vairable() {
@@ -460,6 +466,7 @@ function print_variable() {
     echo "device_name          = " ${device_name}
     echo '-----------------------------------------'
     echo "is_su_enable         = " ${is_su_enable}
+    echo "is_testkey           = " ${is_testkey}
     echo '-----------------------------------------'
     echo
 }

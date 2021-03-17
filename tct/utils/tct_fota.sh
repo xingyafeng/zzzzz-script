@@ -228,3 +228,18 @@ function get_custom_flag() {
         cat P* | egrep -w ${image} | sed 's%.*rename_prefix="%%'| sed 's%".*%%' | head -1
     fi
 }
+
+# 配置项目是否需要使用testkey签名
+function set_testkey() {
+
+    case ${build_type} in
+
+        daily_version)
+            is_testkey='yes'
+        ;;
+
+        *)
+            is_testkey=''
+        ;;
+    esac
+}
