@@ -17,6 +17,7 @@ build_oem_type=
 build_eux_texts=
 build_update_time=
 build_mdip=
+build_su_version=
 
 # exec shell
 shellfs=$0
@@ -143,7 +144,8 @@ function prepare_xml() {
                 #10 minutes >> 20 minutes
                 sed -i "s#10 minutes#${build_update_time} minutes#" ${tmpxml}
 
-                ## SUversion 暂
+                ## SUversion
+                sed -i "s#System Update X#System Update ${build_su_version}#g" ${tmpxml}
             fi
         ;;
 
@@ -164,7 +166,8 @@ function prepare_xml() {
                 #MDIP=10 >> MDIP=20
                 sed -i "s#MDIP=10#MDIP=${build_mdip}#" ${tmpxml}
 
-                ## SUversion 暂时不修改
+                ## SUversion
+                sed -i "s#System Update X#System Update ${build_su_version}#g" ${tmpxml}
             fi
         ;;
 
@@ -384,6 +387,7 @@ function handle_vairable() {
     build_eux_texts=${ota_eux_texts:-Bug_Fixes_or_Enhancement}
     build_update_time=${ota_update_time:-20}
     build_mdip=${ota_mdip:-20}
+    build_su_version=${ota_su_version:-1}
 
     handle_common_variable
 }
@@ -401,6 +405,7 @@ function print_variable() {
     echo "build_eux_texts      = " ${build_eux_texts}
     echo "build_update_time    = " ${build_update_time}
     echo "build_mdip           = " ${build_mdip}
+    echo "build_su_version     = " ${build_su_version}
     echo '-----------------------------------------'
     echo "project_name_src     = " ${project_name_src}
     echo "project_name_tgt     = " ${project_name_tgt}
