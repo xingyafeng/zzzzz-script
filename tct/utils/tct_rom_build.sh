@@ -183,29 +183,13 @@ function tct::utils::create_version_info() {
 #        echo "#define LOGO_VER            \"L${main:0:3}ML${perso}${sub}${platform}${extension}\"" >> $tmpversion
 #    fi
 
-    
-    pushd ${tmpfs} > /dev/null
-    
-    if [[ -d version ]]; then
-        Command "rm -rf version"
-        if [[ $? -eq 0 ]];then
-            show_vip "--> version deleted success ..."
-        else
-            log error "--> version deleted fail ..."
-        fi
-    fi    
-
-    Command "git clone git@shenzhen.gitweb.com:${versioninfo}.git -b ${build_manifest}"    
-    if [[ $? -eq 0 ]];then
-        show_vip "--> version download success ..."
-    else
-        log error "--> version download fail ..."
-    fi
+    #下载version仓库
+    git_sync_repository ${versioninfo} ${build_manifest} ${tmpfs}/version
 
     pushd ${tmpfs}/version > /dev/null
 
     if [[ -f version.inc ]]; then
-        Command "cp -vf ${tmpversion} version.inc"
+        cp -vf ${tmpversion} version.inc
     fi
 
     show_vip "git push git remote HEAD:${build_manifest}"
@@ -222,7 +206,7 @@ function tct::utils::create_version_info() {
     pushd > /dev/null
 
     if [[ -f ${tmpversion} ]]; then
-        Command "rm -f ${tmpversion}"
+        rm -f ${tmpversion}
     fi
 }
 
@@ -246,8 +230,8 @@ function tct::utils::create_manifest()
     PojectName=`tr '[A-Z]' '[a-z]' <<<${PROJECTNAME}`
     comment="create int/${PojectName}/v${build_version}.xml by int_tool create_manifest"
     echo "comment:$comment"
-    
-    Command "rm -rf ./*.xml"    
+
+    Command "rm -rf ./*.xml"
     repo manifest -o v$build_version.xml -r --suppress-upstream-revision
     #repo manifest -r -o .repo/manifests/default.xml
     Command "cp -dpRv v$build_version.xml .repo/manifests/int/${PojectName}/"
@@ -362,11 +346,11 @@ function tct::utils::get_version_info() {
     case ${JOB_NAME} in
 
         transformervzw)
-            version_inc=/qualcomm/version
+            version_inc=qualcomm/version
         ;;
 
         portotmo-r)
-            version_inc=/qualcomm/version
+            version_inc=qualcomm/version
         ;;
 
         *)

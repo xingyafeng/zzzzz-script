@@ -291,12 +291,12 @@ function main() {
                     pushd ${build_p} > /dev/null
 
                     init
-                    
+
                     if [[ "${build_update_code}" == "true" ]];then
                         #备份out目录
                         if [[ -d ${build_p}/out ]]; then
                             outbackup
-                        fi                        
+                        fi
                         # 下载，更新源代码
                         download_android_source_code
                     else

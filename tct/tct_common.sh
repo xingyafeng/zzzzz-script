@@ -82,7 +82,7 @@ function is_check_mirror() {
 function create_versioninfo(){
     #生成version.inc文件
     if [[ $(is_rom_prebuild) == 'false' ]]; then
-        # 生成version info        
+        # 生成version info
         #if [[ $(is_create_versioninfo) == 'true' ]]; then
         #    :
         if [[ ${VER_VARIANT} == "appli" ]] && [[ ${build_type} == "userdebug" ]]; then
@@ -114,7 +114,7 @@ function download_android_source_code()
         update_source_code
     else
         download_source_code
-    fi   
+    fi
 
     # 生成manifest列表
     #generate_manifest_list
@@ -241,9 +241,9 @@ function tct::build_cp() {
 }
 
 function make_droid() {
-
+    source_init
     if [[ $(is_rom_prebuild) == 'true' ]]; then
-        source_init
+
         case ${JOB_NAME} in
 
             DelhiTF_Gerrit_Build|TransformerVZW_Gerrit_Build|Thor84gVZW-R_Gerrit_Build)
@@ -262,10 +262,9 @@ function make_droid() {
             log error "--> make android failed !"
         fi
     else
-        
-        source_init
+
         case ${object} in
-            
+
             ap|qssi|target|merge)
                 tct::build_ap
                 ;;
@@ -337,13 +336,11 @@ function outbackup()
         else
             show_vip "--> version.inc is file does not exist ..."
         fi
-        
-
+ 
         if [[ -n "${build_number}" ]]; then
             outdir_string="${build_number}_"`date +"%Y%m%d%H%M%S"`
-            if [[ ! -d ${tmpfs}/${job_name}/${outdir_string} ]]; then
-            
-                Command "mkdir -p ${tmpfs}/${job_name}/${outdir_string}"
+            if [[ ! -d ${tmpfs}/out/${job_name}/${outdir_string} ]]; then
+                Command "mkdir -p ${tmpfs}/out/${job_name}/${outdir_string}"
             fi
             Command "mv out ${tmpfs}/${job_name}/${outdir_string}"
             if [[ $? -eq 0 ]];then
