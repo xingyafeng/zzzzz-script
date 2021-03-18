@@ -39,6 +39,8 @@ build_delivery_bug=
 # ----
 # driveronly|mini|cert|appli|daily
 VER_VARIANT=
+#perso号
+PERSONUM=
 # 编译项目
 BUILDPROJ=
 # 项目名称
@@ -51,6 +53,8 @@ modem_type=
 # sign apk
 signapk=
 
+#versioninfo
+versioninfo=
 # init function
 . "$(dirname "$0")/tct/tct_init.sh"
 
@@ -175,11 +179,13 @@ function print_variable() {
     echo "build_delivery_bug      = " ${build_delivery_bug}
     echo '-----------------------------------------'
     echo "VER_VARIANT             = " ${VER_VARIANT}
+    echo "PERSONUM                = " ${PERSONUM}
     echo "BUILDPROJ               = " ${BUILDPROJ}
     echo "PROJECTNAME             = " ${PROJECTNAME}
     echo "MODEMPROJECT            = " ${MODEMPROJECT}
     echo "modem_type              = " ${modem_type}
     echo "signapk                 = " ${signapk}
+    echo "versioninfo             = " ${versioninfo}
     echo '-----------------------------------------'
     echo "gettop_p                = " ${gettop_p}
     echo '-----------------------------------------'
@@ -204,6 +210,11 @@ function perpare() {
     build_baseversion=${tct_baseversion:-}
 
     VER_VARIANT=$(tct::utils::get_version_variant)
+    if [[ ${VER_VARIANT} == "appli" ]]; then
+        PERSONUM=${VERSION:3:1}
+    else
+        PERSONUM=0
+    fi
     tct::utils::get_moden_type
     tct::utils::get_signapk_para
 
@@ -222,6 +233,9 @@ function perpare() {
     if [[ -z ${build_manifest} ]]; then
         log error 'The manifest is null ...'
     fi
+
+    # version仓库地址
+    versioninfo=$(tct::utils::get_version_info)
 
     # -------------------------------------------------------
 
@@ -269,7 +283,7 @@ function main() {
 
                 target_download|download)
                     local build_p=${root_p}/${job_name}Y/${build_manifest}
-
+                    create_versioninfo
                     if [[ ! -d ${build_p} ]]; then
                         mkdir -p ${build_p}
                     fi
@@ -277,8 +291,12 @@ function main() {
                     pushd ${build_p} > /dev/null
 
                     init
-
+                    
                     if [[ "${build_update_code}" == "true" ]];then
+                        #备份out目录
+                        if [[ -d ${build_p}/out ]]; then
+                            outbackup
+                        fi                        
                         # 下载，更新源代码
                         download_android_source_code
                     else
@@ -349,7 +367,7 @@ function main() {
                     popd > /dev/null
                     ;;
 
-                target|merge|modem|ap|cp|backup)
+                target|merge|modem|ap|cp)
                     local build_p=${root_p}/${job_name}Y/${build_manifest}
 
                     if [[ ! -d ${build_p} ]]; then
@@ -360,8 +378,22 @@ function main() {
 
                     init
 
-                    source_init
+                    #source_init
                     make_android
+
+                    popd > /dev/null
+                    ;;
+                backup)
+                    local build_p=${root_p}/${job_name}Y/${build_manifest}
+
+                    if [[ ! -d ${build_p} ]]; then
+                        mkdir -p ${build_p}
+                    fi
+
+                    pushd ${build_p} > /dev/null
+
+                    init
+                    copyimgtoteleweb
 
                     popd > /dev/null
                     ;;

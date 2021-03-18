@@ -20,6 +20,7 @@ function generate_manifest_list() {
     done < ${manifest_list_p}
 }
 
+
 # 更新目标列表
 function update_module_target() {
 

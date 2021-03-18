@@ -79,6 +79,23 @@ function is_check_mirror() {
     echo true
 }
 
+function create_versioninfo(){
+    #生成version.inc文件
+    if [[ $(is_rom_prebuild) == 'false' ]]; then
+        # 生成version info        
+        #if [[ $(is_create_versioninfo) == 'true' ]]; then
+        #    :
+        if [[ ${VER_VARIANT} == "appli" ]] && [[ ${build_type} == "userdebug" ]]; then
+            show_vip "no need to creat versioninfo and manifest"
+        else
+            show_vip "create version.inc start ..."
+            tct::utils::create_version_info
+            tct::utils::tct_check_version.inc
+            show_vip "create version.inc end ..."
+        fi
+    fi
+}
+
 # 下载与更新Android源代码
 function download_android_source_code()
 {
@@ -97,19 +114,11 @@ function download_android_source_code()
         update_source_code
     else
         download_source_code
-    fi
+    fi   
 
     # 生成manifest列表
-    generate_manifest_list
-
-    if [[ $(is_rom_prebuild) == 'false' ]]; then
-        # 生成version info
-        if [[ $(is_create_versioninfo) == 'true' ]]; then
-            :
-#            tct::utils::create_version_info
-#            tct::utils::tct_check_version.inc
-        fi
-    fi
+    #generate_manifest_list
+    tct::utils::create_manifest
 }
 
 ## 更新源代码
@@ -233,10 +242,8 @@ function tct::build_cp() {
 
 function make_droid() {
 
-    source_init
-
     if [[ $(is_rom_prebuild) == 'true' ]]; then
-
+        source_init
         case ${JOB_NAME} in
 
             DelhiTF_Gerrit_Build|TransformerVZW_Gerrit_Build|Thor84gVZW-R_Gerrit_Build)
@@ -255,8 +262,10 @@ function make_droid() {
             log error "--> make android failed !"
         fi
     else
+        
+        source_init
         case ${object} in
-
+            
             ap|qssi|target|merge)
                 tct::build_ap
                 ;;
@@ -265,9 +274,9 @@ function make_droid() {
                 tct::build_cp
                 ;;
 
-            backup)
-                tct::utils::backup_image_version
-                ;;
+#            backup)
+#                tct::utils::backup_image_version
+#                ;;
 
             *)
                 log debug 'no target build ...'
@@ -308,6 +317,55 @@ function outclean() {
         fi
     fi
 }
+
+#备份out目录
+function outbackup()
+{
+    local appli_number=
+    local build_number=
+    local outdir_string=
+    if [[ "${build_clean}" == "true" ]];then
+        show_vip '[tct]: --> out backup ...'
+        if [[ -f version/version.inc ]];then
+            #当version.inc文件存在时，获取上一个版本的版本号
+            appli_number=`awk '/ANDROID_SYS_VER/ {print substr($NF, 9,1)}' version/version.inc`
+            if [[ ${appli_number} == 0 ]];then
+                build_number=`awk '/ANDROID_SYS_VER/ {print substr($NF, 3,4)}' version/version.inc`
+            else
+                build_number=`awk '/ANDROID_SYS_VER/ {print substr($NF, 3,4)"-"substr($NF, 9,1)}' version/version.inc`
+            fi
+        else
+            show_vip "--> version.inc is file does not exist ..."
+        fi
+        
+
+        if [[ -n "${build_number}" ]]; then
+            outdir_string="${build_number}_"`date +"%Y%m%d%H%M%S"`
+            if [[ ! -d ${tmpfs}/${job_name}/${outdir_string} ]]; then
+            
+                Command "mkdir -p ${tmpfs}/${job_name}/${outdir_string}"
+            fi
+            Command "mv out ${tmpfs}/${job_name}/${outdir_string}"
+            if [[ $? -eq 0 ]];then
+                echo
+                show_vip "--> out backup end ..."
+            else
+                log error "--> out bakcup fail ..."
+            fi
+        fi
+    else
+        show_vip '[tct]: --> make installclean ...'
+        Command "make -j${JOBS} installclean"
+        if [[ $? -eq 0 ]];then
+            echo
+            show_vip "--> make installclean end ..."
+        else
+            log error "--> make installclean fail ..."
+        fi
+    fi
+
+}
+
 
 function make_android()
 {
@@ -510,4 +568,9 @@ function get_perso_num() {
     local mbn=${1-}
 
     echo ${mbn: -5:1}
+}
+
+#拷贝img到teleweb
+function copyimgtoteleweb(){
+    tct::utils::backup_image_version
 }

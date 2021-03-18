@@ -183,24 +183,46 @@ function tct::utils::create_version_info() {
 #        echo "#define LOGO_VER            \"L${main:0:3}ML${perso}${sub}${platform}${extension}\"" >> $tmpversion
 #    fi
 
+    
+    pushd ${tmpfs} > /dev/null
+    
+    if [[ -d version ]]; then
+        Command "rm -rf version"
+        if [[ $? -eq 0 ]];then
+            show_vip "--> version deleted success ..."
+        else
+            log error "--> version deleted fail ..."
+        fi
+    fi    
+
+    Command "git clone git@shenzhen.gitweb.com:${versioninfo}.git -b ${build_manifest}"    
+    if [[ $? -eq 0 ]];then
+        show_vip "--> version download success ..."
+    else
+        log error "--> version download fail ..."
+    fi
+
     pushd ${tmpfs}/version > /dev/null
 
     if [[ -f version.inc ]]; then
-        cp -vf ${tmpversion} version.inc
+        Command "cp -vf ${tmpversion} version.inc"
     fi
+
+    show_vip "git push git remote HEAD:${build_manifest}"
 
     if [[ "`git status -s`" ]];then
         git add version.inc
         git commit -m "Release ${build_version}"
-        git push `git remote` HEAD:master
+        git pull
+        git push `git remote` HEAD:${build_manifest}
     else
-        log error 'The version.inc do not update.'
+        log warn 'The version.inc do not update.'
     fi
 
     pushd > /dev/null
 
     if [[ -f ${tmpversion} ]]; then
-        rm -f ${tmpversion}
+        Command "rm -f ${tmpversion}"
     fi
 }
 
@@ -210,7 +232,7 @@ function tct::utils::tct_check_version.inc() {
     local version_inc=
 
     if [[ -d .repo && -f build/core/envsetup.mk && -f Makefile ]];then
-        repo sync -c -d --no-tags version
+        Command "repo sync -c -d --no-tags version"
     fi
 
     version_inc=$(cat version/version.inc | awk '/ANDROID_SYS_VER/{ print $NF }')
@@ -224,17 +246,20 @@ function tct::utils::create_manifest()
     PojectName=`tr '[A-Z]' '[a-z]' <<<${PROJECTNAME}`
     comment="create int/${PojectName}/v${build_version}.xml by int_tool create_manifest"
     echo "comment:$comment"
-
-    repo manifest -r -o .repo/manifests/default.xml
+    
+    Command "rm -rf ./*.xml"    
+    repo manifest -o v$build_version.xml -r --suppress-upstream-revision
+    #repo manifest -r -o .repo/manifests/default.xml
+    Command "cp -dpRv v$build_version.xml .repo/manifests/int/${PojectName}/"
 
     pushd .repo/manifests > /dev/null
 
     if [[ -n $(git status -s) ]]; then
-        git add default.xml
+        git add int/${PojectName}/v$build_version.xml
         git commit -m "$comment"
         git push origin default:master
     else
-        log warn 'The default.xml has not update.'
+        log error 'create_manifest v$build_version.xml error.'
     fi
 
 	pushd > /dev/null
@@ -329,4 +354,24 @@ function tct::utils::is_img_sign() {
     else
         echo false
     fi
+}
+
+# 获取version.inc仓库地址
+function tct::utils::get_version_info() {
+    local version_inc=
+    case ${JOB_NAME} in
+
+        transformervzw)
+            version_inc=/qualcomm/version
+        ;;
+
+        portotmo-r)
+            version_inc=/qualcomm/version
+        ;;
+
+        *)
+            version_inc=''
+        ;;
+    esac
+    echo ${version_inc}
 }
