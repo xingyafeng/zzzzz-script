@@ -239,7 +239,7 @@ function make_android_for_single() {
                     module_filter
                 ;;
 
-                vendor/qcom/proprietary/sensors-see/registry)
+                vendor/qcom/proprietary/sensors-see/registry|frameworks/base/core/jni)
                     module_filter
                 ;;
             esac
