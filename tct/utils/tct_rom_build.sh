@@ -192,18 +192,17 @@ function tct::utils::create_version_info() {
         cp -vf ${tmpversion} version.inc
     fi
 
-    show_vip "git push git remote HEAD:${build_manifest}"
+    show_vip "git push $(git remote) HEAD:${build_manifest}"
 
-    if [[ "`git status -s`" ]];then
+    if [[ -n "`git status -s`" ]];then
         git add version.inc
         git commit -m "Release ${build_version}"
-        git pull
         git push `git remote` HEAD:${build_manifest}
     else
         log warn 'The version.inc do not update.'
     fi
 
-    pushd > /dev/null
+    popd > /dev/null
 
     if [[ -f ${tmpversion} ]]; then
         rm -f ${tmpversion}
