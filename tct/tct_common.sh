@@ -117,8 +117,11 @@ function download_android_source_code()
     fi
 
     # 生成manifest列表
-    #generate_manifest_list
-    tct::utils::create_manifest
+    generate_manifest_list
+
+    if [[ $(is_rom_prebuild) == 'false' ]]; then
+        tct::utils::create_manifest
+    fi
 }
 
 ## 更新源代码
@@ -241,7 +244,9 @@ function tct::build_cp() {
 }
 
 function make_droid() {
+
     source_init
+
     if [[ $(is_rom_prebuild) == 'true' ]]; then
 
         case ${JOB_NAME} in
@@ -273,9 +278,9 @@ function make_droid() {
                 tct::build_cp
                 ;;
 
-#            backup)
-#                tct::utils::backup_image_version
-#                ;;
+            backup)
+                tct::utils::backup_image_version
+                ;;
 
             *)
                 log debug 'no target build ...'
@@ -363,11 +368,12 @@ function outbackup()
 
 }
 
-
 function make_android()
 {
-    # 清除编译
-    outclean
+    if [[ $(is_rom_prebuild) == 'true' ]]; then
+        # 清除编译
+        outclean
+    fi
 
     ## 编译android
     make_droid
@@ -565,9 +571,4 @@ function get_perso_num() {
     local mbn=${1-}
 
     echo ${mbn: -5:1}
-}
-
-#拷贝img到teleweb
-function copyimgtoteleweb(){
-    tct::utils::backup_image_version
 }

@@ -367,7 +367,7 @@ function main() {
                     popd > /dev/null
                     ;;
 
-                target|merge|modem|ap|cp)
+                target|merge|modem|ap|cp|backup)
                     local build_p=${root_p}/${job_name}Y/${build_manifest}
 
                     if [[ ! -d ${build_p} ]]; then
@@ -378,26 +378,11 @@ function main() {
 
                     init
 
-                    #source_init
+                    source_init
                     make_android
 
                     popd > /dev/null
                     ;;
-                backup)
-                    local build_p=${root_p}/${job_name}Y/${build_manifest}
-
-                    if [[ ! -d ${build_p} ]]; then
-                        mkdir -p ${build_p}
-                    fi
-
-                    pushd ${build_p} > /dev/null
-
-                    init
-                    copyimgtoteleweb
-
-                    popd > /dev/null
-                    ;;
-
                 *)
                     :
                 ;;
