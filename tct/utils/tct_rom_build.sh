@@ -184,7 +184,11 @@ function tct::utils::create_version_info() {
 #    fi
 
     #下载version仓库
-    git_sync_repository ${versioninfo} ${build_manifest} ${tmpfs}/version
+    if [[ -d ${tmpfs}/version ]];then
+        rm -rvf ${tmpfs}/version
+    fi
+
+    git_sync_repository ${versioninfo} ${build_manifest} ${tmpfs}
 
     pushd ${tmpfs}/version > /dev/null
 
@@ -251,29 +255,63 @@ function tct::utils::create_manifest()
 # 备份版本
 function tct::utils::backup_image_version() {
 
-    if true; then
-        log debug "start backup image version ..."
+    if false; then
+        log debug "Do not copy ..."
     else
+        show_vip "start backup image version ..."
         source_init
 
-        sh copyimgs.sh
+        local releasedir=
+        local creat_time=
+        local telewebdir_bak=
+        local telewebdir=
+        local productname=
 
-        releasedir=/local/release/${JOB_NAME}/v${VERSION}
-        creat_time=`date +%Y%m%d%H%M -r /teleweb/${PROJECTNAME}/tmp/v${VERSION}`
-        telewebdir_bak=/teleweb/${PROJECTNAME}/tmp/v${version}_${creat_time}
-        telewebdir=/teleweb/${PROJECTNAME}/tmp/v${VERSION}
+        Command "sh copyimgs.sh"
 
-        if [[ -d ${telewebdir} ]]; then
-            sudo mv ${telewebdir} ${telewebdir_bak}
+        releasedir=/local/release/${JOB_NAME}/v${build_version}
+        productname=$(ls out/target/product/*/vendor.img | awk -F '/' '{print $(NF-1)" "$NF}' | awk '{print $1}')
+
+        if [[ -d ${teleweb_p}/${PROJECTNAME}/tmp/v${build_version} ]]; then
+            creat_time=`date +%Y%m%d%H%M -r ${teleweb_p}/${PROJECTNAME}/tmp/v${build_version}`
         fi
 
-        rm -rf ${releasedir}
-        mkdir -vp ${releasedir}
-        sudo mkdir -vp ${telewebdir}
-        cp -rfv ${TOPDIR}/build/${JOB_NAME}/v${VERSION}/out/target/product/holi/Teleweb/* ${releasedir}
-        sudo cp -rfv ${TOPDIR}/build/${JOB_NAME}/v${VERSION}/out/target/product/holi/Teleweb/* ${telewebdir}
-        chmod -R 0755 ${releasedir}
-        sudo chmod -R 0755 ${telewebdir}
+        if [[ ${VER_VARIANT} == "appli" ]] && [[ ${build_type} == "userdebug" ]]; then
+            telewebdir=${teleweb_p}/${PROJECTNAME}/userdebug/appli/v${build_version}
+            telewebdir_bak=${teleweb_p}/${PROJECTNAME}/userdebug/appli/v${build_version}_${creat_time}
+        else
+            telewebdir=${teleweb_p}/${PROJECTNAME}/tmp/v${build_version}
+            telewebdir_bak=${teleweb_p}/${PROJECTNAME}/tmp/v${build_version}_${creat_time}
+        fi
+
+        if [[ -d ${telewebdir} ]]; then
+            Command "sudo mv ${telewebdir} ${telewebdir_bak}"
+        fi
+
+        if [[ ${VER_VARIANT} == "mini" ]]; then
+            pushd out/target/product/${productname}/Teleweb/ > /dev/null 
+                zip -v _v${build_version}-Teleweb.zip *.*
+            pushd > /dev/null
+        fi
+
+        Command "rm -rvf ${releasedir}"
+        Command "mkdir -vp ${releasedir}"
+        Command "sudo mkdir -vp ${telewebdir}"
+
+        Command "cp -rfv out/target/product/${productname}/Teleweb/* ${releasedir}"
+        Command "sudo cp -rfv out/target/product/${productname}/Teleweb/* ${telewebdir}"
+
+        Command "chmod -R 0755 ${releasedir}"
+        Command "sudo chmod -R 0755 ${telewebdir}"
+
+
+        #if [[ ${#build_version} == "4" ]]; then
+        #    show_vip "python amss_nicobar_la2.0.1/vendor/script/collect_parameters.py -t ${PROJECTNAME}/$telewebdir/v$build_version -b $build_manifest -y false"
+        #    python amss_4350_spf1.0/vendor/script/collect_parameters.py -t ${PROJECTNAME}/$telewebdir/v$build_version -b $build_manifest -y false
+        #fi
+
+        show_vip "copyimage end ... "
+
     fi
 }
 
@@ -357,4 +395,34 @@ function tct::utils::get_version_info() {
         ;;
     esac
     echo ${version_inc}
+}
+
+function tct::utils::releasemail()
+{
+
+    if [ ${VER_VARIANT} == "appli" ] || [ ${VER_VARIANT} == "mini" ] || [ ${VER_VARIANT} == "cert" ]; then
+        local basever=`python /local/tools_int/misc/getLastBigVersion.py -cur $build_version`
+        if [[ ${build_version:3:1} == "1" ]]; then
+            basever=${build_version}
+        fi
+        echo "curl -X POST -v 'http://10.129.93.215:8080/job/Auto-delivery-new/buildWithParameters?token=Auto-delivery-new&version=${build_version}&baseversion=${basever}&project=${PROJECTNAME}&build_server=${build_server_y}&delivery_bug=false&band=EU&BUILD_DUALSIM=false'"
+        curl -X POST -v "http://10.129.93.215:8080/job/Auto-delivery-new/buildWithParameters?token=Auto-delivery-new&version=${build_version}&baseversion=${basever}&project=${PROJECTNAME}&build_server=${build_server_y}&delivery_bug=false&band=EU&BUILD_DUALSIM=false"
+        return
+    fi
+
+    if [[ ${VER_VARIANT} == "daily" ]]; then
+        echo 'Send release mail ...'
+        local lastversion=`/local/tools_int/misc/getLastDailyNumber2.py -cur $build_version`
+        if [ "${lastversion:5:1}" != 0 ]; then
+            basever=$lastversion
+        else
+            basever=${lastversion:0:4}
+        fi
+        /local/tools_int/bin/superspam_new -user yuhua.chen# -project ${PROJECTNAME} -version $build_version -base $basever -sendto self -mailpassword 12345678
+	    local result=$?
+	    if [ "$result" != "0" ]; then
+	        echo "releasemail error"
+	        exit $result
+	    fi
+    fi
 }

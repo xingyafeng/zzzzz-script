@@ -209,7 +209,8 @@ function tct::build_ap() {
         ;;
     esac
 
-    Command ${compile_para[@]} bash build.sh dist -j$(nproc) ${para}
+    show_vip "${compile_para[@]} bash build.sh dist -j$(nproc) ${para}"
+    Command ${compile_para[@]} bash build.sh dist -j$(nproc) ${para} 2>&1 | tee build_ap.log
     if [[ $? -eq 0 ]];then
         echo
         show_vip "--> make ${object} end ..."
@@ -230,7 +231,16 @@ function tct::build_cp() {
     # 置空WORKSPACE
     unset WORKSPACE
 
-    Command bash linux_build.sh -a ${MODEMPROJECT} ${modem_type}
+    if [ -d Mannar.LA.1.0.1/common/sectools/ext/six ]; then
+        rm -rvf Mannar.LA.1.0.1/common/sectools/ext/six
+    fi
+
+    if [ -d RPM.BF.1.11/rpm_proc/tools/build/scons/sectools/ext/six ]; then
+        rm -rvf RPM.BF.1.11/rpm_proc/tools/build/scons/sectools/ext/six
+    fi
+
+    show_vip "${compile_para[@]} bash linux_build.sh -a -s ${MODEMPROJECT} ${modem_type}"
+    Command ${compile_para[@]} bash linux_build.sh -a -s ${MODEMPROJECT} ${modem_type} 2>&1 | tee build_cp.log
     if [[ $? -eq 0 ]];then
         echo
         show_vip "--> make moden end ..."
@@ -270,16 +280,19 @@ function make_droid() {
 
         case ${object} in
 
-            ap|qssi|target|merge)
+           ap|qssi|target|merge)
                 tct::build_ap
-                ;;
+                log debug "build ${object} ..."
+               ;;
 
-            cp|modem)
+           cp|modem)
                 tct::build_cp
-                ;;
+                log debug "build ${object} ..."
+               ;;
 
             backup)
                 tct::utils::backup_image_version
+                tct::utils::releasemail
                 ;;
 
             *)
@@ -341,12 +354,13 @@ function outbackup()
         else
             show_vip "--> version.inc is file does not exist ..."
         fi
- 
+
         if [[ -n "${build_number}" ]]; then
             outdir_string="${build_number}_"`date +"%Y%m%d%H%M%S"`
-            if [[ ! -d ${tmpfs}/out/${job_name}/${outdir_string} ]]; then
-                Command "mkdir -p ${tmpfs}/out/${job_name}/${outdir_string}"
+            if [[ -d ${tmpfs}/out/${job_name}/${build_number}_* ]]; then
+                rm -rvf ${tmpfs}/out/${job_name}/${build_number}_*
             fi
+            Command "mkdir -p ${tmpfs}/out/${job_name}/${outdir_string}"
             Command "mv out ${tmpfs}/${job_name}/${outdir_string}"
             if [[ $? -eq 0 ]];then
                 echo
