@@ -45,6 +45,7 @@ function set_invalid_module() {
     invalid_module[${#invalid_module[@]}]=sensors_list
     invalid_module[${#invalid_module[@]}]=audio.primary.msmnile
     invalid_module[${#invalid_module[@]}]=msmnile_
+    invalid_module[${#invalid_module[@]}]=libandroid_runtime
 }
 
 # 过滤无效目标
