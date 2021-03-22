@@ -55,10 +55,18 @@ function handle_common_variable() {
         teleweb_p=${teleweb_p}/${build_zip_project}/${build_zip_type}/${build_zip_version}
     fi
 
+    case ${build_zip_project} in
+        portotmo)
+            build_zip_project=$(echo ${build_zip_project} | tr 'a-z' 'A-Z')
+            ;;
+        *)
+            build_zip_project=${build_zip_project}
+        ;;
+    esac
+
     zip_p=${tmpfs}/HZNPI/HDT/product/${build_zip_project}/data
 
     case ${build_zip_type} in
-
         mini)
             #处理压缩包名称,后面增加Teleweb字眼
             zip_name=${build_zip_version}-Teleweb
