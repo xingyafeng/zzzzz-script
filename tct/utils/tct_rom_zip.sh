@@ -79,7 +79,7 @@ function enhance_zip() {
                 pushd ${tmpfs} > /dev/null
                 if [[ -d HZNPI ]]; then
                     zip -1vr ${tmpzip}/${zip_name}.zip HZNPI/ -x bts_*.zip
-                    rm -rf HZNPI/ &
+                    versionclean HZNPI
                 fi
                 popd > /dev/null
             ;;
@@ -165,6 +165,31 @@ function enhance_zip() {
     log debug "--> zip version end ..."
 
     popd > /dev/null
+}
+
+# 清除VERSION目录
+function versionclean() {
+
+    local versiondir=$(mktemp -d -p ${tmpfs})
+    local cleandir=${1:-}
+
+    if [[ -z ${cleandir} ]]; then
+        log error 'args is error ...'
+    fi
+
+    if [[ -d ${cleandir}/ ]]; then
+        mv ${cleandir} ${versiondir}
+    fi
+
+    if [[ -d ${versiondir} ]]; then
+        Command "rm -rf ${versiondir} &"
+        if [[ $? -eq 0 ]];then
+            echo
+            show_vip "--> clean version end ..."
+        else
+            log error "--> clean version fail ..."
+        fi
+    fi
 }
 
 # 备份压rom bts缩包至Teleweb服务器
