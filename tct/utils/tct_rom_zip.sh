@@ -200,12 +200,9 @@ function backup_zip_to_teleweb() {
     if [[ -f ${tmpzip}/${zip_name}.zip ]]; then
         sudo cp -vf ${tmpzip}/${zip_name}.zip ${teleweb_p}
 
-        if [[ -L ${zip_path}/${zip_name}.zip ]]; then
-            sudo rm ${zip_path}/${zip_name}.zip
+        if [[ ! -L ${zip_path}/${zip_name}.zip ]]; then
+            sudo ln -vs ${teleweb_p}/${zip_name}.zip ${zip_path}
         fi
-
-        # 压缩包
-        sudo ln -sv ${teleweb_p}/${zip_name}.zip ${zip_path}
 
         # 清理动作
         if [[ -d ${tmpzip} ]]; then
@@ -215,6 +212,7 @@ function backup_zip_to_teleweb() {
         log error 'The zip has not found ...'
     fi
 
+    echo
     show_vip "--> Backup the ${zip_name}.zip file to Teleweb Server."
 }
 
