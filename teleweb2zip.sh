@@ -44,7 +44,7 @@ function handle_common_variable() {
             teleweb_p=${teleweb_p}/${build_zip_project}/${build_zip_type}/${build_zip_version}
         else
             zip_path=${rom_p}/${build_zip_project}/${build_zip_type}/${build_zip_version}/${build_zip_more}
-            zip_name=${build_zip_version}_`echo ${build_zip_more} | sed s%/%_%g`
+            zip_name=${build_zip_project}_MainSW_${build_zip_version}_`echo ${build_zip_more} | sed s%/%_%g`_V01
 
             teleweb_p=${teleweb_p}/${build_zip_project}/${build_zip_type}/${build_zip_version}/${build_zip_more}
         fi
