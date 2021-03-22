@@ -39,18 +39,18 @@ function handle_common_variable() {
 
             # 此版本需要更换路径.
             zip_path=${rom_p}/${build_zip_project}/${build_zip_type}/${build_zip_version}
-            zip_name=${build_zip_version}
+            zip_name=_${build_zip_version}
 
             teleweb_p=${teleweb_p}/${build_zip_project}/${build_zip_type}/${build_zip_version}
         else
             zip_path=${rom_p}/${build_zip_project}/${build_zip_type}/${build_zip_version}/${build_zip_more}
-            zip_name=${build_zip_project}_MainSW_${build_zip_version}_`echo ${build_zip_more} | sed s%/%_%g`_V01
+            zip_name=_${build_zip_project}_MainSW_${build_zip_version}_`echo ${build_zip_more} | sed s%/%_%g`_V01
 
             teleweb_p=${teleweb_p}/${build_zip_project}/${build_zip_type}/${build_zip_version}/${build_zip_more}
         fi
     else
         zip_path=${rom_p}/${build_zip_project}/${build_zip_type}/${build_zip_version}
-        zip_name=${build_zip_project}_MainSW_${build_zip_version}_V01
+        zip_name=_${build_zip_project}_MainSW_${build_zip_version}_V01
 
         teleweb_p=${teleweb_p}/${build_zip_project}/${build_zip_type}/${build_zip_version}
     fi
@@ -69,7 +69,7 @@ function handle_common_variable() {
     case ${build_zip_type} in
         mini)
             #处理压缩包名称,后面增加Teleweb字眼
-            zip_name=${build_zip_version}-Teleweb
+            zip_name=_${build_zip_version}-Teleweb
         ;;
 
         *)
