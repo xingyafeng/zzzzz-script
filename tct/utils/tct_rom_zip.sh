@@ -74,7 +74,7 @@ function enhance_zip() {
                 zip_name=${zip_name}
 
                 # 备份版本至指定的路径，然后进行路径压缩
-                cp -vf *.mbn ${zip_p}
+                cp -vf *.mbn *.[mM][dD]5 ${zip_p}
 
                 pushd ${tmpfs} > /dev/null
                 if [[ -d HZNPI ]]; then
