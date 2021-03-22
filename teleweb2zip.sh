@@ -142,27 +142,8 @@ function zip_perso() {
 
 function zip_rom() {
 
-    local tmpzip=${tmpfs}/zip
-
     if [[ -d ${zip_path} && -n ${zip_name} ]]; then
-
-        pushd ${zip_path} > /dev/null
-
-        #处理压缩包名称,后面增加Teleweb字眼
-        zip_name=${zip_name}-Teleweb
-
-        cp -vf *.mbn ${zip_p}
-
-        pushd ${tmpfs} > /dev/null
-        zip -1vr ${tmpzip}/${zip_name}.zip HZNPI/
-
-        if [[ -d HZNPI ]]; then
-            rm -rf HZNPI/ &
-        fi
-
-        popd > /dev/null
-
-        popd > /dev/null
+        enhance_zip
     else
         log error "It is the ${zip_path} or ${zip_name} has error."
     fi

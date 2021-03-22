@@ -15,7 +15,7 @@
 function enhance_zip() {
 
     local image=
-    local zip_p=${tmpfs}/zip
+    local tmpzip=${tmpfs}/zip
 
     log debug "--> zip version start ..."
 
@@ -30,8 +30,8 @@ function enhance_zip() {
     pushd ${zip_path} > /dev/null
 
     # 清理动作,防止构建失败后,临时文件未及时清理
-    if [[ -d ${zip_p} ]]; then
-        rm ${zip_p}/* -rvf
+    if [[ -d ${tmpzip} ]]; then
+        rm ${tmpzip}/* -rvf
     fi
 
     if [[ ${#images[@]} -gt 0 ]]; then
@@ -43,25 +43,50 @@ function enhance_zip() {
                 vendor.img)
                     if [[ -n ${bts_perso} ]]; then
                         pushd `dirname ${perso_p}` > /dev/null
-                        cp -vf ${image} ${zip_p}/`check_rom_image`
+                        cp -vf ${image} ${tmpzip}/`check_rom_image`
                         popd > /dev/null
                     else
-                        cp -vf ${image} ${zip_p}/`check_rom_image`
+                        cp -vf ${image} ${tmpzip}/`check_rom_image`
                     fi
                     ;;
 
                 *)
-                    cp -vf ${image} ${zip_p}/`check_rom_image`
+                    cp -vf ${image} ${tmpzip}/`check_rom_image`
                     ;;
             esac
         done
 
-        pushd ${zip_p} > /dev/null
-        zip -1v ${zip_p}/${zip_name}.zip *.*
+        pushd ${tmpzip} > /dev/null
+        zip -1v ${tmpzip}/${zip_name}.zip *.*
         popd > /dev/null
 
     else
-        zip -1v ${zip_p}/${zip_name}.zip *.* -x bts_*.zip
+
+        #据版本不同压缩路径和名称存在差异性
+        case ${build_zip_type} in
+
+            mini)
+                #处理压缩包名称,后面增加Teleweb字眼
+                zip_name=${build_zip_version}-Teleweb
+
+                zip -1v ${tmpzip}/${zip_name}.zip *.* -x bts_*.zip
+            ;;
+
+            *)
+                #处理压缩包名称,后面增加Teleweb字眼
+                zip_name=${zip_name}
+
+                # 备份版本至指定的路径，然后进行路径压缩
+                cp -vf *.mbn ${zip_p}
+
+                pushd ${tmpfs} > /dev/null
+                if [[ -d HZNPI ]]; then
+                    zip -1vr ${tmpzip}/${zip_name}.zip HZNPI/ -x bts_*.zip
+                    rm -rf HZNPI/ &
+                fi
+                popd > /dev/null
+            ;;
+        esac
     fi
 
     # 处理追加文件，perso vendor.img
@@ -73,11 +98,11 @@ function enhance_zip() {
 
                 pushd `dirname ${perso_p}` > /dev/null
                 # rename image
-                cp -vf ${image} ${zip_p}/`check_rom_image`
+                cp -vf ${image} ${tmpzip}/`check_rom_image`
 
                 # updte perso image
-                pushd ${zip_p} > /dev/null
-                zip -1uv ${zip_p}/${zip_name}.zip `check_rom_image`
+                pushd ${tmpzip} > /dev/null
+                zip -1uv ${tmpzip}/${zip_name}.zip `check_rom_image`
                 popd > /dev/null
 
                 popd > /dev/null
@@ -89,7 +114,7 @@ function enhance_zip() {
 
                 show_vig "perso_name = ${perso_name}"
 
-                pushd ${zip_p} > /dev/null
+                pushd ${tmpzip} > /dev/null
 
                 unzip ${perso_p} -d .
                 if [[ -f ${perso_name} ]]; then
@@ -106,11 +131,11 @@ function enhance_zip() {
                         ;;
                     esac
 
-                    if [[ ${perso_image} == `unzip -l ${zip_p}/${zip_name}.zip | egrep ${perso_image} | awk '{print $NF}'` ]]; then
-                        zip -d ${zip_p}/${zip_name}.zip ${perso_image}
+                    if [[ ${perso_image} == `unzip -l ${tmpzip}/${zip_name}.zip | egrep ${perso_image} | awk '{print $NF}'` ]]; then
+                        zip -d ${tmpzip}/${zip_name}.zip ${perso_image}
                     fi
 
-                    zip -1uv ${zip_p}/${zip_name}.zip ${perso_image}
+                    zip -1uv ${tmpzip}/${zip_name}.zip ${perso_image}
                 else
                     log warn "Could not found the ${perso_image} ..."
                 fi
@@ -130,11 +155,11 @@ function enhance_zip() {
 
         pushd `dirname ${perso_p}` > /dev/null
         # rename image
-        cp -vf ${image} ${zip_p}/`check_rom_image`
+        cp -vf ${image} ${tmpzip}/`check_rom_image`
 
         # updte perso image
-        pushd ${zip_p} > /dev/null
-        zip -1uv ${zip_p}/${zip_name}.zip `check_rom_image`
+        pushd ${tmpzip} > /dev/null
+        zip -1uv ${tmpzip}/${zip_name}.zip `check_rom_image`
         popd > /dev/null
 
         popd > /dev/null
