@@ -183,7 +183,7 @@ function backup_zip_to_teleweb() {
         fi
 
         # 压缩包
-        sudo ln -s ${teleweb_p}/${zip_name}.zip ${zip_path}
+        sudo ln -sv ${teleweb_p}/${zip_name}.zip ${zip_path}
 
         # 清理动作
         if [[ -d ${tmpzip} ]]; then
