@@ -15,12 +15,27 @@ function is_apk_prebuild() {
     esac
 }
 
-# 探测预编译rom项目
+# 探测rom预编译项目
 function is_rom_prebuild() {
 
-    case ${JOB_NAME} in
+    case ${job_name} in
 
         DelhiTF_Gerrit_Build|TransformerVZW_Gerrit_Build|Thor84gVZW-R_Gerrit_Build)
+            echo true
+        ;;
+
+        *)
+            echo false
+        ;;
+    esac
+}
+
+# 探测rom编译项目
+function is_rom_build() {
+
+    case ${job_name} in
+
+        transformervzw)
             echo true
         ;;
 

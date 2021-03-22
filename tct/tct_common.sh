@@ -119,7 +119,7 @@ function download_android_source_code()
     # 生成manifest列表
     generate_manifest_list
 
-    if [[ $(is_rom_prebuild) == 'false' ]]; then
+    if [[ $(is_rom_build) == 'true' ]]; then
         tct::utils::create_manifest
     fi
 }
