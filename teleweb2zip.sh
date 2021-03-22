@@ -57,6 +57,17 @@ function handle_common_variable() {
 
     zip_p=${tmpfs}/HZNPI/HDT/product/${build_zip_project}/data
 
+    case ${build_zip_type} in
+
+        mini)
+            #处理压缩包名称,后面增加Teleweb字眼
+            zip_name=${build_zip_version}-Teleweb
+        ;;
+
+        *)
+            zip_name=${zip_name}
+        ;;
+    esac
 
     # 压缩指定路径
     if [[ ! -d ${zip_p}  ]]; then

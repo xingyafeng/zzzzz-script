@@ -66,9 +66,6 @@ function enhance_zip() {
         case ${build_zip_type} in
 
             mini)
-                #处理压缩包名称,后面增加Teleweb字眼
-                zip_name=${build_zip_version}-Teleweb
-
                 zip -1v ${tmpzip}/${zip_name}.zip *.* -x bts_*.zip
             ;;
 
