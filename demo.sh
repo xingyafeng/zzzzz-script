@@ -16,33 +16,15 @@ shellfs=$0
 function main() {
 
     trap 'ERRTRAP ${LINENO} ${FUNCNAME} ${BASH_LINENO}' ERR
+    log debug 'start ...'
 
-    pushd ~/workspace/date/0310 > /dev/null
+    pushd ${script_p} > /dev/null
 
-    local dir1=/mfs_tablet/teleweb/transformervzw/daily_version/v2C32-B
-    local dir2=src
-    local dir3=tgt
-    local ret=
-
-#    check_folder_the_name ${dir1} ${dir2}
-
-    ret=$(check_folder_the_name ${dir1} ${dir2})
-    if [[ ${ret} == 'false' ]]; then
-        cp -vf ${dir1}/*.mbn ${dir2}/
-    else
-        log debug 'is the same ...'
-    fi
-
-    ret=$(check_folder_the_name ${dir1} ${dir3})
-    if [[ ${ret} == 'false' ]]; then
-        cp -vf ${dir1}/*.mbn ${dir3}/
-    else
-        log debug 'is the same ...'
-    fi
-
+    Command _echo 'main.'
 
     popd > /dev/null
 
+    log debug 'end ...'
     trap - ERR
 }
 
