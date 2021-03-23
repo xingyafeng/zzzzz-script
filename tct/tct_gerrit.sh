@@ -352,7 +352,7 @@ function download_all_patchset()
         if [[ -d ${project_path} ]]; then
             __green__ "@@@ project path: " ${project_path}
         else
-            log error "The project path is not exist in the manifest."
+            log error "${project_path}::The project path is not exist in the manifest."
         fi
 
         pushd ${project_path} > /dev/null
