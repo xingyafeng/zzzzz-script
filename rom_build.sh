@@ -93,9 +93,14 @@ function handle_compile_para() {
     case ${JOB_NAME} in
 
         transformervzw)
-            if [[ -n "${signapk}" ]]; then
-                compile_para[${#compile_para[@]}]="SIGNAPK_USE_RELEASEKEY=${signapk}"
+            if [[ -n "${build_efuse}" ]]; then
+                compile_para[${#compile_para[@]}]="TCT_EFUSE=${build_efuse}"
             fi
+
+            if [[ -n "${build_anti_rollback}" ]]; then
+                compile_para[${#compile_para[@]}]="ANTI_ROLLBACK=${build_anti_rollback}"
+            fi
+
         ;;
 
         portotmo-r)
@@ -282,14 +287,17 @@ function main() {
                     ;;
 
                 target_download|download)
+                    echo 'download ...'
+
                     local build_p=${root_p}/${job_name}Y/${build_manifest}
-                    create_versioninfo
+
                     if [[ ! -d ${build_p} ]]; then
                         mkdir -p ${build_p}
                     fi
 
                     pushd ${build_p} > /dev/null
 
+                    create_versioninfo
                     init
 
                     if [[ "${build_update_code}" == "true" ]];then
@@ -304,7 +312,9 @@ function main() {
                     fi
 
                     popd > /dev/null
+
                     ;;
+
 
                 qssi_clean)
                     local build_p=${root_p}/${job_name}X/${build_manifest}
@@ -329,6 +339,8 @@ function main() {
                     ;;
 
                 target_clean|clean)
+                    echo "clean"
+
                     local build_p=${root_p}/${job_name}Y/${build_manifest}
 
                     if [[ ! -d ${build_p} ]]; then
@@ -348,7 +360,9 @@ function main() {
                     fi
 
                     popd > /dev/null
+
                     ;;
+
 
                 qssi)
                     local build_p=${root_p}/${job_name}X/${build_manifest}
