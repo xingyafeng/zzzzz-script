@@ -45,8 +45,10 @@
     
     * docker rm [容器名称]
     
-    批量删除容器
-
+    批量删除退出的容器
+    docker rm $(docker ps -a | grep Exited | awk '{print $1}')
+    批量删除所有容器
+    docker rm $(docker ps -aq)
 
 # 守护式容器
 
