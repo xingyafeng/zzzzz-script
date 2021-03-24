@@ -34,9 +34,7 @@ function update_module_target() {
 # 生成目标列表
 function generate_module_target() {
 
-    if [[ ! -f ${buildlist} ]]; then
-        generate_buildlist_file
-    fi
+    generate_buildlist_file
 
     if [[ -f ${buildlist} ]]; then
         while IFS=":" read -r _path _target _;do
@@ -74,7 +72,8 @@ function modify_buildlist() {
     # 1. frameworks/base 只单编译 framework
     sed -i "s#^frameworks/base:.*#frameworks/base:framework#" ${buildlist}
 
-    # 2. xx
+    # 2. packages/apps/Launcher3 单独编译 Launcher3QuickStep
+    sed -i "s#^packages/apps/Launcher3:.*#packages/apps/Launcher3:Launcher3QuickStep#" ${buildlist}
 }
 
 # 生成result_installed.txt
