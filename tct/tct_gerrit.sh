@@ -3,7 +3,7 @@
 # 生成manifest中name对于的path列表
 function generate_manifest_list() {
 
-    local manifest_list_p=${tmpfs}/manifest_list.txt
+    local manifest_list_p=${tmpfs}/manifest_list_for_${VerManifest}.txt
 
     if [[ -f .repo/manifest.xml ]]; then
         xmlstarlet sel -T -t -m /manifest/project -v "concat(@name,':',@path,'')" -n .repo/manifest.xml > ${manifest_list_p}
