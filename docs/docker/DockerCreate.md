@@ -137,22 +137,13 @@ ENV <key><value>
 ENV <key>=<value>...
 
 #12. USER
-
-
-# 环境设置
-CMD　<会被覆盖>
-ENTERYPONIT
-ADD 
-COPY
-VOLUME
-WORKSPACE
-ENV　<设置环境变量>
-
 USER　<设置用户>
 
     USER user           USER uid
     USER user:group     USER uid:gid
     USER user:gid       USER uid:group
 
-ONBUILD 在编译时
+#13. ONBUILD
+镜像触发器
+当一个镜像被其他镜像作为基础镜像时执行会在构建过程中插入指令
 
