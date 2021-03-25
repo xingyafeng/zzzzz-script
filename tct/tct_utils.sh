@@ -35,7 +35,7 @@ function is_rom_build() {
 
     case ${job_name} in
 
-        transformervzw|dohatmo-r)
+        transformervzw|dohatmo-r|irvinevzw)
             echo true
         ;;
 

@@ -254,8 +254,8 @@ function tct::build_cp() {
         rm -rvf RPM.BF.1.11/rpm_proc/tools/build/scons/sectools/ext/six
     fi
 
-    show_vip "${compile_para[@]} bash linux_build.sh -a -s ${MODEMPROJECT} ${modem_type}"
-    Command ${compile_para[@]} bash linux_build.sh -a -s ${MODEMPROJECT} ${modem_type} 2>&1 | tee build_cp.log
+    show_vip "${compile_para[@]} bash linux_build.sh -a ${MODEMPROJECT} ${modem_type}"
+    Command ${compile_para[@]} bash linux_build.sh -a ${MODEMPROJECT} ${modem_type} 2>&1 | tee build_cp.log
     if [[ $? -eq 0 ]];then
         echo
         show_vip "--> make moden end ..."

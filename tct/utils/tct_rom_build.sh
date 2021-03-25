@@ -31,8 +31,8 @@ function tct::utils::get_modem_project() {
 
     local modem_project=
     modem_project=$(${tmpfs}/tools_int/bin/${getprojectinfo} ${PLATFORM} ${build_version:0:3}X -SignScript)
-    if [[ ${JOB_NAME} == "transformervzw" ]];then
-        echo ${modem_project} | sed "s#${modem_type}##"
+    if [[ ${JOB_NAME} == "transformervzw" | ${JOB_NAME} == "irvinevzw" ]];then
+        echo ${modem_project} | sed "s#vzw##"
     else
         echo ${modem_project}
     fi
@@ -80,7 +80,7 @@ function tct::utils::get_moden_type() {
 
     case ${JOB_NAME} in
 
-        transformervzw|dohatmo-r)
+        transformervzw|dohatmo-r|irvinevzw)
             case ${VER_VARIANT} in
 
                 appli)
@@ -225,7 +225,8 @@ function tct::utils::tct_check_version.inc() {
     if [[ -d .repo && -f build/core/envsetup.mk && -f Makefile ]];then
         Command "repo sync -c -d --no-tags version"
     else
-        Command "git_sync_repository ${versioninfo} ${build_manifest} ${pwd_path}"
+        #Command "git_sync_repository ${versioninfo} ${build_manifest} ${pwd_path}"
+        Command "git clone git@shenzhen.gitweb.com:${versioninfo} -b ${build_manifest} ${pwd_path}/version"
     fi
 
     version_inc=$(cat version/version.inc | awk '/ANDROID_SYS_VER/{ print $NF }')
@@ -352,7 +353,7 @@ function tct::utils::get_platform_info() {
 
     case ${JOB_NAME} in
 
-        transformervzw)
+        transformervzw|irvinevzw)
             PLATFORM=QC4350
         ;;
 
@@ -402,12 +403,12 @@ function tct::utils::get_version_info() {
     local version_inc=
     case ${JOB_NAME} in
 
-        transformervzw|portotmo-r)
+        transformervzw|portotmo-r|irvinevzw)
             version_inc=qualcomm/version
         ;;
 
         dohatmo-r)
-            version_inc=mtk/version_cd 
+            version_inc=mtk/version_cd
         ;;
 
         *)
@@ -438,7 +439,8 @@ function tct::utils::releasemail()
         else
             basever=${lastversion:0:4}
         fi
-        /local/tools_int/bin/superspam_new -user yuhua.chen# -project ${PROJECTNAME} -version $build_version -base $basever -sendto self -mailpassword 12345678
+        /local/tools_int/bin/superspam_new -user hudson.adm# -project ${PROJECTNAME} -version $build_version -base $basever -sendto all -mailpassword 12345678
+
 	    local result=$?
 	    if [ "$result" != "0" ]; then
 	        echo "releasemail error"
@@ -453,7 +455,7 @@ function tct::utils::get_project_info() {
 
     case ${JOB_NAME} in
 
-        transformervzw|portotmo-r)
+        transformervzw|portotmo-r|irvinevzw)
             getprojectinfo=Qcom_C_GetVerInfo
         ;;
 
