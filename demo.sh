@@ -22,6 +22,11 @@ function main() {
 
     Command _echo 'main.'
 
+    while true;do
+        sleep 1
+        echo 'dbug ....'
+    done
+
     popd > /dev/null
 
     log debug 'end ...'
