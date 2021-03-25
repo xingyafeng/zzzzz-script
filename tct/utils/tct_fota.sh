@@ -232,14 +232,22 @@ function get_custom_flag() {
 # 配置项目是否需要使用testkey签名
 function set_testkey() {
 
-    case ${build_type} in
+    case ${build_from_type} in
 
         daily_version)
             is_testkey='yes'
         ;;
 
         *)
-            is_testkey=''
+            case ${build_to_type} in
+                daily_version)
+                    is_testkey='yes'
+                ;;
+
+                *)
+                    is_testkey=''
+                ;;
+            esac
         ;;
     esac
 }

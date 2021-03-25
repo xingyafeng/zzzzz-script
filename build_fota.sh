@@ -8,10 +8,12 @@ set -o pipefail
 # 项目名
 build_project=
 # 项目类型
-build_type=
+build_from_type=
 # 项目待升级版本
 build_from_version=
 build_from_more=
+# 项目类型
+build_to_type=
 # 项目升级版本
 build_to_version=
 build_to_more=
@@ -311,8 +313,8 @@ function backup_image_version() {
 
 function prepare() {
 
-    local from_ota_p=${mfs_p}/${build_project}/${build_type}/${build_from_version}/${build_from_more}
-    local to_ota_p=${mfs_p}/${build_project}/${build_type}/${build_to_version}/${build_to_more}
+    local from_ota_p=${mfs_p}/${build_project}/${build_from_type}/${build_from_version}/${build_from_more}
+    local to_ota_p=${mfs_p}/${build_project}/${build_to_type}/${build_to_version}/${build_to_more}
     local dir1=
     local dir2=
 
@@ -382,8 +384,13 @@ function handle_vairable() {
     fi
 
     # 项目类型
-    build_type=${fota_type:-}
-    if [[ -z ${build_type} ]]; then
+    build_from_type=${fota_from_type:-}
+    if [[ -z ${build_from_type} ]]; then
+        log error 'The build type is null ...'
+    fi
+
+    build_to_type=${fota_to_type:-}
+    if [[ -z ${build_to_type} ]]; then
         log error 'The build type is null ...'
     fi
 
@@ -439,18 +446,23 @@ function print_variable() {
     echo '-----------------------------------------'
 
     echo "build_project        = " ${build_project}
-    echo "build_type           = " ${build_type}
+    echo '-----------------------------------------'
+    echo "build_from_type      = " ${build_from_type}
     echo "build_from_version   = " ${build_from_version}
-    echo "build_to_version     = " ${build_to_version}
 
     if [[ -n ${build_from_more} ]]; then
         echo "build_from_more      = " ${build_from_more}
     fi
 
+    echo '-----------------------------------------'
+    echo "build_to_type        = " ${build_to_type}
+    echo "build_to_version     = " ${build_to_version}
+
     if [[ -n ${build_to_more} ]]; then
         echo "build_to_more        = " ${build_to_more}
     fi
 
+    echo '-----------------------------------------'
     echo "build_custom_type    = " ${build_custom_type}
     echo '-----------------------------------------'
     echo "tools_branch_name    = " ${tools_branch_name}
@@ -466,7 +478,11 @@ function print_variable() {
     echo "device_name          = " ${device_name}
     echo '-----------------------------------------'
     echo "is_su_enable         = " ${is_su_enable}
-    echo "is_testkey           = " ${is_testkey}
+
+    if [[ -n ${is_testkey} ]]; then
+        echo "is_testkey           = " ${is_testkey}
+    fi
+
     echo '-----------------------------------------'
     echo
 }
