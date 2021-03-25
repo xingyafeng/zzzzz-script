@@ -7,7 +7,7 @@ function tct::utils::get_manifest_branch() {
     if [[ -n ${build_tmpbranch} ]]; then
         branch=${build_tmpbranch}
     else
-        branch=$(${tmpfs}/tools_int/bin/Qcom_C_GetVerInfo ${PLATFORM} ${build_version:0:3}X -Branch)
+        branch=$(${tmpfs}/tools_int/bin/${getprojectinfo} ${PLATFORM} ${build_version:0:3}X -Branch)
     fi
 
     echo ${branch}
@@ -16,22 +16,26 @@ function tct::utils::get_manifest_branch() {
 function tct::utils::get_build_project() {
 
     local build_project=
-    build_project=$(${tmpfs}/tools_int/bin/Qcom_C_GetVerInfo ${PLATFORM} ${build_version:0:3}X -QcomProject)
+    build_project=$(${tmpfs}/tools_int/bin/${getprojectinfo} ${PLATFORM} ${build_version:0:3}X -QcomProject)
     echo ${build_project}
 }
 
 function tct::utils::get_project_name() {
 
     local project_name=
-    project_name=$(${tmpfs}/tools_int/bin/Qcom_C_GetVerInfo ${PLATFORM} ${build_version:0:3}X -Project)
+    project_name=$(${tmpfs}/tools_int/bin/${getprojectinfo} ${PLATFORM} ${build_version:0:3}X -Project)
     echo ${project_name}
 }
 
 function tct::utils::get_modem_project() {
 
     local modem_project=
-    modem_project=$(${tmpfs}/tools_int/bin/Qcom_C_GetVerInfo ${PLATFORM} ${build_version:0:3}X -SignScript)
-    echo ${modem_project} | sed "s#${modem_type}##"
+    modem_project=$(${tmpfs}/tools_int/bin/${getprojectinfo} ${PLATFORM} ${build_version:0:3}X -SignScript)
+    if [[ ${JOB_NAME} == "transformervzw" ]];then
+        echo ${modem_project} | sed "s#${modem_type}##"
+    else
+        echo ${modem_project}
+    fi
 }
 
 function tct::utils::get_version_variant()
@@ -76,7 +80,7 @@ function tct::utils::get_moden_type() {
 
     case ${JOB_NAME} in
 
-        transformervzw)
+        transformervzw|dohatmo-r)
             case ${VER_VARIANT} in
 
                 appli)
@@ -184,13 +188,13 @@ function tct::utils::create_version_info() {
 #    fi
 
     #下载version仓库
-    if [[ -d ${tmpfs}/version ]];then
-        rm -rvf ${tmpfs}/version
+    if [[ -d ${tmpfs}/${version_path} ]];then
+        rm -rvf ${tmpfs}/${version_path}
     fi
 
-    git_sync_repository ${versioninfo} ${build_manifest} ${tmpfs}
+    git_sync_repository ${versioninfo} ${build_manifest}
 
-    pushd ${tmpfs}/version > /dev/null
+    pushd ${tmpfs}/${version_path} > /dev/null
 
     if [[ -f version.inc ]]; then
         cp -vf ${tmpversion} version.inc
@@ -217,9 +221,11 @@ function tct::utils::create_version_info() {
 function tct::utils::tct_check_version.inc() {
 
     local version_inc=
-
+    local pwd_path=`pwd`
     if [[ -d .repo && -f build/core/envsetup.mk && -f Makefile ]];then
         Command "repo sync -c -d --no-tags version"
+    else
+        Command "git_sync_repository ${versioninfo} ${build_manifest} ${pwd_path}"
     fi
 
     version_inc=$(cat version/version.inc | awk '/ANDROID_SYS_VER/{ print $NF }')
@@ -234,22 +240,26 @@ function tct::utils::create_manifest()
     comment="create int/${PojectName}/v${build_version}.xml by int_tool create_manifest"
     echo "comment:$comment"
 
-    Command "rm -rf ./*.xml"
-    repo manifest -o v$build_version.xml -r --suppress-upstream-revision
-    #repo manifest -r -o .repo/manifests/default.xml
-    Command "cp -dpRv v$build_version.xml .repo/manifests/int/${PojectName}/"
+    #Command "rm -rf ./*.xml"
+    #repo manifest -o v$build_version.xml -r --suppress-upstream-revision
+    if [[ ! -d .repo/manifests/int/${PojectName} ]]; then
+        mkdir -p .repo/manifests/int/${PojectName}
+    fi
+    repo manifest -r -o .repo/manifests/int/${PojectName}/v${build_version}.xml
+    #Command "cp -dpRv v$build_version.xml .repo/manifests/int/${PojectName}/"
 
     pushd .repo/manifests > /dev/null
 
     if [[ -n $(git status -s) ]]; then
         git add int/${PojectName}/v$build_version.xml
         git commit -m "$comment"
+        git pull
         git push origin default:master
     else
         log error 'create_manifest v$build_version.xml error.'
     fi
 
-	pushd > /dev/null
+	popd > /dev/null
 }
 
 # 备份版本
@@ -269,8 +279,14 @@ function tct::utils::backup_image_version() {
 
         Command "sh copyimgs.sh"
 
-        releasedir=/local/release/${JOB_NAME}/v${build_version}
-        productname=$(ls out/target/product/*/vendor.img | awk -F '/' '{print $(NF-1)" "$NF}' | awk '{print $1}')
+
+        releasedir=/local/release/${PROJECTNAME}-release/v${build_version}
+
+        if [[ -f out/target/product/*/vendor.img ]];then
+            productname=$(ls out/target/product/*/vendor.img | awk -F '/' '{print $(NF-1)" "$NF}' | awk '{print $1}')
+        else
+            productname=${PROJECTNAME}
+        fi
 
         if [[ -d ${teleweb_p}/${PROJECTNAME}/tmp/v${build_version} ]]; then
             creat_time=`date +%Y%m%d%H%M -r ${teleweb_p}/${PROJECTNAME}/tmp/v${build_version}`
@@ -344,6 +360,10 @@ function tct::utils::get_platform_info() {
             PLATFORM=QC6125
         ;;
 
+        dohatmo-r)
+            PLATFORM=MT6762
+        ;;
+
         *)
             PLATFORM=''
         ;;
@@ -382,12 +402,12 @@ function tct::utils::get_version_info() {
     local version_inc=
     case ${JOB_NAME} in
 
-        transformervzw)
+        transformervzw|portotmo-r)
             version_inc=qualcomm/version
         ;;
 
-        portotmo-r)
-            version_inc=qualcomm/version
+        dohatmo-r)
+            version_inc=mtk/version_cd 
         ;;
 
         *)
@@ -425,4 +445,24 @@ function tct::utils::releasemail()
 	        exit $result
 	    fi
     fi
+}
+
+# 拿到项目信息
+
+function tct::utils::get_project_info() {
+
+    case ${JOB_NAME} in
+
+        transformervzw|portotmo-r)
+            getprojectinfo=Qcom_C_GetVerInfo
+        ;;
+
+        dohatmo-r)
+            getprojectinfo=GetVerInfo
+        ;;
+
+        *)
+            :
+            ;;
+    esac
 }

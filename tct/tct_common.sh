@@ -81,7 +81,7 @@ function is_check_mirror() {
 
 function create_versioninfo(){
     #生成version.inc文件
-    if [[ $(is_rom_prebuild) == 'false' ]]; then
+    if [[ $(is_rom_build) == 'true' ]]; then
         # 生成version info
         #if [[ $(is_create_versioninfo) == 'true' ]]; then
         #    :
@@ -127,6 +127,14 @@ function download_android_source_code()
 ## 更新源代码
 function update_source_code()
 {
+    local manifest_name=
+    local PojectName=`tr '[A-Z]' '[a-z]' <<<${PROJECTNAME}`
+    if [[ ${VER_VARIANT} == "appli" ]] && [[ ${build_type} == "userdebug" ]]; then
+        manifest_name=int/${PojectName}/v${build_version}.xml
+    else
+        manifest_name=${build_manifest}
+    fi
+
     if [[ -f build/core/envsetup.mk && -f Makefile ]]; then
 
         if [[ "`is_android_project`" == "true" ]]; then
@@ -141,9 +149,9 @@ function update_source_code()
         ## 重新初始化，防止本地提交代码影响版本
         if [[ -n "${build_manifest}" ]];then
             if [[ "$(is_check_mirror)" == "true" ]]; then
-                Command "repo init -m ${build_manifest} --reference=${reference_p}"
+                Command "repo init -m ${manifest_name} --reference=${reference_p}"
             else
-                Command "repo init -m ${build_manifest}"
+                Command "repo init -m ${manifest_name}"
             fi
         fi
 
@@ -158,6 +166,13 @@ function update_source_code()
 function download_source_code()
 {
     local manifest_project_p='gcs_sz/manifest.git'
+    local manifest_name=
+    local PojectName=`tr '[A-Z]' '[a-z]' <<<${PROJECTNAME}`
+    if [[ ${VER_VARIANT} == "appli" ]] && [[ ${build_type} == "userdebug" ]]; then
+        manifest_name=int/${PojectName}/v${build_version}.xml
+    else
+        manifest_name=${build_manifest}
+    fi
 
     if [[ -n "${build_manifest}" ]];then
 
@@ -167,9 +182,9 @@ function download_source_code()
         fi
 
         if [[ "$(is_check_mirror)" == "true" ]]; then
-            Command "repo init -u ${default_gerrit}:${manifest_project_p} -m ${build_manifest} --reference=${reference_p}"
+            Command "repo init -u ${default_gerrit}:${manifest_project_p} -m ${manifest_name} --reference=${reference_p}"
         else
-            Command "repo init -u ${default_gerrit}:${manifest_project_p} -m ${build_manifest}"
+            Command "repo init -u ${default_gerrit}:${manifest_project_p} -m ${manifest_name}"
         fi
     fi
 
@@ -290,6 +305,11 @@ function make_droid() {
                 log debug "build ${object} ..."
                ;;
 
+            mtk)
+                tct::build_mtk
+                log debug "build ${object} ..."
+               ;;
+
             backup)
                 tct::utils::backup_image_version
                 tct::utils::releasemail
@@ -361,7 +381,7 @@ function outbackup()
                 rm -rvf ${tmpfs}/out/${job_name}/${build_number}_*
             fi
             Command "mkdir -p ${tmpfs}/out/${job_name}/${outdir_string}"
-            Command "mv out ${tmpfs}/${job_name}/${outdir_string}"
+            Command "mv out ${tmpfs}/out/${job_name}/${outdir_string}"
             if [[ $? -eq 0 ]];then
                 echo
                 show_vip "--> out backup end ..."
@@ -585,4 +605,16 @@ function get_perso_num() {
     local mbn=${1-}
 
     echo ${mbn: -5:1}
+}
+
+function tct::build_mtk(){
+    
+    Command "./tclMake -o=`echo ${compile_para[@]} | sed s/[[:space:]]//g` ${PROJECTNAME} new"
+    if [[ $? -eq 0 ]];then
+        echo
+        show_vip "--> make mtk end ..."
+
+    else
+        log error "--> make android mtk failed !"
+    fi
 }

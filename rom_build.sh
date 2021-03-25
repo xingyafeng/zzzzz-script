@@ -55,6 +55,9 @@ signapk=
 
 #versioninfo
 versioninfo=
+version_path=
+
+getprojectinfo=
 # init function
 . "$(dirname "$0")/tct/tct_init.sh"
 
@@ -115,6 +118,23 @@ function handle_compile_para() {
             if [[ -n ${PROJECTNAME} ]]; then
                 compile_para[${#compile_para[@]}]="SIGN_SECIMAGE_USEKEY=${PROJECTNAME}"
             fi
+        ;;
+
+        dohatmo-r)
+
+            compile_para[${#compile_para[@]}]="TARGET_BUILD_VARIANT=${build_type},"
+            compile_para[${#compile_para[@]}]="TARGET_BUILD_MODEM=true,"
+
+            if [[ -n "${build_anti_rollback}" ]]; then
+                compile_para[${#compile_para[@]}]="ANTI_ROLLBACK=${build_anti_rollback},"
+            fi
+
+            if [[ -n "${build_efuse}" ]]; then
+                compile_para[${#compile_para[@]}]="TCT_EFUSE=${build_efuse},"
+            fi
+
+            compile_para[${#compile_para[@]}]="TARGET_BUILD_MMITEST=$(is_mini_version)"
+
         ;;
     esac
 }
@@ -191,6 +211,8 @@ function print_variable() {
     echo "modem_type              = " ${modem_type}
     echo "signapk                 = " ${signapk}
     echo "versioninfo             = " ${versioninfo}
+    echo "version_path            = " ${version_path}
+    echo "getprojectinfo          = " ${getprojectinfo}
     echo '-----------------------------------------'
     echo "gettop_p                = " ${gettop_p}
     echo '-----------------------------------------'
@@ -223,6 +245,8 @@ function perpare() {
     tct::utils::get_moden_type
     tct::utils::get_signapk_para
 
+    tct::utils::get_project_info
+
     # 编译项目
     BUILDPROJ=$(tct::utils::get_build_project)
 
@@ -241,6 +265,7 @@ function perpare() {
 
     # version仓库地址
     versioninfo=$(tct::utils::get_version_info)
+    version_path=`basename ${versioninfo}`    
 
     # -------------------------------------------------------
 
@@ -288,7 +313,7 @@ function main() {
 
                 target_download|download)
                     echo 'download ...'
-
+                
                     local build_p=${root_p}/${job_name}Y/${build_manifest}
 
                     if [[ ! -d ${build_p} ]]; then
@@ -297,7 +322,12 @@ function main() {
 
                     pushd ${build_p} > /dev/null
 
-                    create_versioninfo
+                    if [[ ${VER_VARIANT} == "appli" ]] && [[ ${build_type} == "userdebug" ]]; then
+                        echo "no need to creat versioninfo and manifest"
+                    else
+                        create_versioninfo
+                    fi
+    
                     init
 
                     if [[ "${build_update_code}" == "true" ]];then
@@ -312,7 +342,7 @@ function main() {
                     fi
 
                     popd > /dev/null
-
+                
                     ;;
 
 
@@ -340,7 +370,7 @@ function main() {
 
                 target_clean|clean)
                     echo "clean"
-
+                
                     local build_p=${root_p}/${job_name}Y/${build_manifest}
 
                     if [[ ! -d ${build_p} ]]; then
@@ -360,7 +390,7 @@ function main() {
                     fi
 
                     popd > /dev/null
-
+                
                     ;;
 
 
@@ -381,7 +411,7 @@ function main() {
                     popd > /dev/null
                     ;;
 
-                target|merge|modem|ap|cp|backup)
+                target|merge|modem|ap|cp|mtk|backup)
                     local build_p=${root_p}/${job_name}Y/${build_manifest}
 
                     if [[ ! -d ${build_p} ]]; then
@@ -397,6 +427,7 @@ function main() {
 
                     popd > /dev/null
                     ;;
+
                 *)
                     :
                 ;;

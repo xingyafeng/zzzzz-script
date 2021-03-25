@@ -35,7 +35,7 @@ function is_rom_build() {
 
     case ${job_name} in
 
-        transformervzw)
+        transformervzw|dohatmo-r)
             echo true
         ;;
 
@@ -172,6 +172,21 @@ function is_mini_version() {
     case ${VER_VARIANT} in
 
         mini)
+            echo true
+            ;;
+
+        *)
+            echo false
+            ;;
+    esac
+}
+
+# 探测认证版本
+function is_cert_version() {
+
+    case ${VER_VARIANT} in
+
+        cert)
             echo true
             ;;
 

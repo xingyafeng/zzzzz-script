@@ -58,9 +58,19 @@ function source_init()
 
             transformervzw)
                 source build/envsetup.sh && show_vip "--> source end ..."
-                Command choosecombo 1 ${PROJECTNAME} ${build_type} ${PROJECTNAME} 1 $(is_mini_version) 0 ${build_anti_rollback} && show_vip "--> lunch end ..."
-                Command choosesecimagekey=${PROJECTNAME} && choosesignapkkey=${PROJECTNAME}
+                Command choosecombo 1 ${PROJECTNAME} ${build_type} ${PROJECTNAME} 1 $(is_mini_version) 0 ${build_anti_rollback} $(is_cert_version) && show_vip "--> lunch end ..."
+                if [[ ${VER_VARIANT} == "appli" ]] && [[ ${build_type} == "user" ]] ; then
+                        Command choosesecimagekey ${PROJECTNAME} && choosesignapkkey ${PROJECTNAME}
+                else
+                        Command choosesecimagekey transformervzw
+                fi
+                
 #                choosecombo 1 transformervzw user transformervzw 1 false 0 0
+            ;;
+
+            dohatmo-r)
+                source build/envsetup.sh && show_vip "--> source end ..."
+                
             ;;
 
             *)
