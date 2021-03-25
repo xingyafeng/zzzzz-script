@@ -44,7 +44,7 @@ function filter() {
             esac
         ;;
 
-        mt6762-tf-r0-v1.1-dint) # Tokyo Lite TMO R
+        mt6761-r0-tokyolitetmo-dint) # Tokyo Lite TMO R
             case ${GERRIT_PROJECT} in
                 genericapp/gcs_HiddenMenu)
                     case ${GERRIT_BRANCH} in
