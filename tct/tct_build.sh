@@ -268,8 +268,7 @@ function make_android_for_whole() {
 
     export WITHOUT_CHECK_API=false
 
-    log print "TARGET_PRODUCT = ${TARGET_PRODUCT}"
-    log print $(get_build_var TARGET_PRODUCT)
+    log print "TCT::TARGET_PRODUCT = ${TARGET_PRODUCT}"
 
     if ${build_debug};then
         if [[ "${TARGET_PRODUCT}" == "qssi" ]]; then
