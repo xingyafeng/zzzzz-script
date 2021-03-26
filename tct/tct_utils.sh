@@ -126,6 +126,17 @@ function is_qssi_product() {
         esac
     done
 
+    # 正面手动增加编译项目支持qssi构建
+    case ${path} in
+
+        device/qcom/qssi)
+            let count++
+        ;;
+
+        *)
+        ;;
+    esac
+
     if [[ ${count} -gt 0 ]]; then
         echo true
     else
