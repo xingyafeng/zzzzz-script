@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # 初始化公共函数
-. "`dirname $0`"/init_script.sh
+. "$(dirname ${shellfs})"/init_script.sh
 
 # 初始化差异函数
 case ${shellfs##*/} in
