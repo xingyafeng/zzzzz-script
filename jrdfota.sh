@@ -5,7 +5,7 @@ set -e
 
 ## 设置JAVA环境变量
 unset -v JAVA_HOME
-export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+export JAVA_HOME=/home/android-bld/.tmpfs/JrdDiffTool/prebuilts/OpenJDK-1.8
 export JRE_HOME=${JAVA_HOME}/jre
 export CLASSPATH=.:${CLASSPATH}:${JAVA_HOME}/lib:${JRE_HOME}/lib
 export PATH=${JAVA_HOME}/bin:${JRE_HOME}/bin:$PATH
