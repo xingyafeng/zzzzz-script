@@ -512,7 +512,17 @@ function gerrit_build() {
         show_vir "[tct]: build path = ${build_path[@]}"
     fi
 
-    # 2. check qssi project
+    # 2. 检查是否需要整编
+    if [[ ${is_full_build} == "true" ]]; then
+        unset build_path
+    fi
+
+    # ----------------------------------------------------------------- 编译规则
+
+    ### 初始化环境变量
+    source_init
+
+    # check qssi project
     if [[ -n "${build_path}" ]]; then
         for build in ${build_path[@]} ; do
             if [[ "$(is_qssi_product ${build})" == "true" ]]; then
@@ -522,16 +532,6 @@ function gerrit_build() {
             fi
         done
     fi
-
-    # 3. 检查是否需要整编
-    if [[ ${is_full_build} == "true" ]]; then
-        unset build_path
-    fi
-
-    # ----------------------------------------------------------------- 编译规则
-
-    ### 初始化环境变量
-    source_init
 
     # 一、特殊处理 build case, e.g. 1、moden 2、kernel etc
     make_android_for_case
