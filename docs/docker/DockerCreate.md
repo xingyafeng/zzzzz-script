@@ -69,6 +69,13 @@ sudo docker images
 
 #------------------------------------ Dockerfile 基础命令介绍
 
+docker build 
+
+1. docker build --no-cache # 不使用构建缓存
+2. 增加就环境变量　ENV REFRESH_DATE 2021-03-25　# 单独刷新后续命令不使用缓存
+3. docker build 删除中间层容器并未删除中间层镜像
+4. docker histroy　# 查看构建过程
+
 #注释和指令
 
 # 基本格式
@@ -147,3 +154,25 @@ USER　<设置用户>
 镜像触发器
 当一个镜像被其他镜像作为基础镜像时执行会在构建过程中插入指令
 
+
+# ------------------
+
+# 1. 数据卷容器
+在指定文件夹下创建Dockerfile文件：vim Dockerfile
+
+#2. 编辑Dockerfile
+#    volume test
+FROM centos
+VOLUME ["/container/dataVolume1","/container/dataVolume2"]
+CMD echo "finished,-------------successful"
+CMD /bin/bash
+将Dockerfile构建为docker镜像：docker -f build Dockerfile -t imageName .    （说明：. 用于路径参数传递，标识当前路径）
+
+数据卷容器
+
+    命名的容器挂载数据卷，其他容器通过挂载这个父容器实现数据共享，挂载数据卷的容器称为数据卷荣容器
+
+创建数据卷容器
+
+    启动dc01容器：docker run -it --name dc01 imageName
+    dc02继承自dc01：docker run -it --name dc02 --volumes-from dc01 imageName
