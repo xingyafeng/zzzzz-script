@@ -31,7 +31,7 @@ function tct::utils::get_modem_project() {
 
     local modem_project=
     modem_project=$(${tmpfs}/tools_int/bin/${getprojectinfo} ${PLATFORM} ${build_version:0:3}X -SignScript)
-    if [[ ${JOB_NAME} == "transformervzw" | ${JOB_NAME} == "irvinevzw" ]];then
+    if [[ ${JOB_NAME} == "transformervzw" || ${JOB_NAME} == "irvinevzw" ]];then
         echo ${modem_project} | sed "s#vzw##"
     else
         echo ${modem_project}
