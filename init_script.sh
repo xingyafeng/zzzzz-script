@@ -27,7 +27,8 @@ fi
 
 if [[ "$(is_build_server)" == "true" ]];then
     if [[ -f ${tmpfs}/yf.lock ]];then
-        echo "fatal: ${tmpfs}/yf.lock': File exists."
+#        echo "fatal: ${tmpfs}/yf.lock': File exists."
+    :
     else
         #　下载或更新zzzzz-script脚本仓库
         if [[ $(is_connect_netwrok 'http://sz.gerrit.tclcom.com:8080') == "true" ]];then
