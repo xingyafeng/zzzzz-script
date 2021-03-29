@@ -60,6 +60,7 @@ https://blog.csdn.net/bobo184/article/details/88957636 # 博客步骤
 ## 1. Update the apt package index, and install the latest version of Docker Engine and containerd, or go to the next step to install a specific version: 
     
     $ sudo apt-get update
+    $ sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 7EA0A9C3F273FCD8 # 当出现问题
     $ sudo apt-get install docker-ce docker-ce-cli containerd.io
 
 ## 2. To install a specific version of Docker Engine, list the available versions in the repo, then select and install:
