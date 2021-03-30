@@ -373,6 +373,9 @@ function handle_common_variable() {
 
     # 配置testkey
     set_testkey
+
+    # 配置java version
+    tct::utils::set_java_version
 }
 
 function handle_vairable() {
