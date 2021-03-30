@@ -170,7 +170,7 @@ function get_tools_branch() {
 
     case ${build_project} in
 
-        thor84gvzw)
+        thor84gvzw|thor84gvzw_r)
             tools_branch_name='thor84g_vzw_1.0'
             ;;
 
@@ -188,7 +188,7 @@ function get_device_name() {
 
     case ${build_project} in
 
-        thor84gvzw)
+        thor84gvzw|thor84gvzw_r)
 
             if [[ -n ${from_more} && -n ${to_more} ]]; then
 
