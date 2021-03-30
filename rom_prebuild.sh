@@ -65,6 +65,10 @@ function handle_compile_para() {
             compile_para[${#compile_para[@]}]='ANTI_ROLLBACK=0'
         ;;
 
+        DohaTMO-R_Gerrit_Build)
+            compile_para[${#compile_para[@]}]='TARGET_BUILD_VARIANT=user,TARGET_BUILD_MODEM=true,ANTI_ROLLBACK=1,TCT_EFUSE=true,TARGET_BUILD_MMITEST=false'
+        ;;
+
     esac
 }
 

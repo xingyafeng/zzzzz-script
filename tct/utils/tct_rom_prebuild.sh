@@ -69,6 +69,10 @@ function get_modem_type() {
             build_modem_type=vzw
         ;;
 
+        Doha_TMO)
+            build_modem_type=zzz_test
+        ;;
+
         *)
             log error 'The build modem type is null ...'
         ;;

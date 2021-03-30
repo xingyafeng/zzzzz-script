@@ -279,7 +279,15 @@ function make_droid() {
             DelhiTF_Gerrit_Build|TransformerVZW_Gerrit_Build|Thor84gVZW-R_Gerrit_Build)
                 show_vip '[tct]: --> make dist ...'
                 Command ${compile_para[@]} bash build.sh dist -j$(nproc)
-                ;;
+            ;;
+
+            DohaTMO-R_Gerrit_Build)
+                if [[ "${build_clean}" == "true" ]];then
+                    Command ./tclMake -o=${compile_para[@]} ${build_project} new
+                else
+                    Command ./tclMake -o=${compile_para[@]} ${build_project} remake
+                fi
+            ;;
             *)
                 log warn 'no things build ...'
             ;;

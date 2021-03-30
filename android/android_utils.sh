@@ -49,6 +49,10 @@ function source_init()
                 Command choosecombo 1 thor84gvzw user thor84gvzw 1 false false && show_vip "--> lunch end ..."
             ;;
 
+            DohaTMO-R_Gerrit_Build)
+                show_vip "--> dohatmo-r lunch end ..."
+            ;;
+
             *)
                 log error "The ${job_name} has no found ..."
             ;;

@@ -24,6 +24,10 @@ function is_rom_prebuild() {
             echo true
         ;;
 
+        DohaTMO-R_Gerrit_Build)
+            echo true
+        ;;
+
         *)
             echo false
         ;;
