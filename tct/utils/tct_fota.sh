@@ -255,6 +255,8 @@ function set_testkey() {
 # 配置java vesion
 function tct::utils::set_java_version() {
 
+    local CLASSPATH=
+
     ## 设置JAVA环境变量
     unset -v JAVA_HOME
     export JAVA_HOME=${fota_tools_p}/JrdDiffTool/prebuilts/OpenJDK-1.8
