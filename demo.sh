@@ -22,6 +22,7 @@ function main() {
 
     Command _echo 'main.'
 
+    echo "tct_debug = " ${tct_debug}
     while true;do
         sleep 1
         echo 'dbug ....'
