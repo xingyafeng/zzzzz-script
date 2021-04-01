@@ -22,10 +22,10 @@ function main() {
 
     Command _echo 'main.'
 
-    echo "tct_debug = " ${tct_debug}
     while true;do
         sleep 1
         echo 'dbug ....'
+        Command _echo "tct_debug = ${tct_debug}"
     done
 
     popd > /dev/null
