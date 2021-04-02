@@ -283,7 +283,7 @@ function tct::utils::backup_image_version() {
 
         releasedir=/local/release/${PROJECTNAME}-release/v${build_version}
 
-        if [[ -f out/target/product/*/vendor.img ]];then
+        if [[ -f `ls out/target/product/*/vendor.img` ]];then
             productname=$(ls out/target/product/*/vendor.img | awk -F '/' '{print $(NF-1)" "$NF}' | awk '{print $1}')
         else
             productname=${PROJECTNAME}
@@ -306,7 +306,10 @@ function tct::utils::backup_image_version() {
         fi
 
         if [[ ${VER_VARIANT} == "mini" ]]; then
-            pushd out/target/product/${productname}/Teleweb/ > /dev/null 
+            if [[ ${JOB_NAME} == "transformervzw" ]]; then
+                cp amss_4350_spf1.0/vendor/tct/transformer/build/partition_load_pt/ufs/provision/provision_ufs22.xml out/target/product/${productname}/Teleweb/provision_ufs22.xml
+            fi
+            pushd out/target/product/${productname}/Teleweb/ > /dev/null
                 zip -v _v${build_version}-Teleweb.zip *.*
             pushd > /dev/null
         fi
