@@ -66,7 +66,7 @@ function enhance_zip() {
         case ${build_zip_type} in
 
             mini)
-                zip -1v ${tmpzip}/${zip_name}.zip *.* -x bts_*.zip
+                zip -1v ${tmpzip}/${zip_name}.zip *.* -x *bts_*.zip
             ;;
 
             *)
@@ -74,11 +74,11 @@ function enhance_zip() {
                 zip_name=${zip_name}
 
                 # 备份版本至指定的路径，然后进行路径压缩
-                cp -vf *.mbn *.[mM][dD]5 ${zip_p}
+                cp -vf *.mbn *.[mM][dD]5 *.xml ${zip_p}
 
                 pushd ${tmpfs} > /dev/null
                 if [[ -d HZNPI ]]; then
-                    zip -1vr ${tmpzip}/${zip_name}.zip HZNPI/ -x bts_*.zip
+                    zip -1vr ${tmpzip}/${zip_name}.zip HZNPI/ -x *bts_*.zip
                     versionclean HZNPI
                 fi
                 popd > /dev/null
