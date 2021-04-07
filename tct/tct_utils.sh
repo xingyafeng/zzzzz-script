@@ -49,6 +49,21 @@ function is_rom_build() {
     esac
 }
 
+# 探测mediaTek项目
+function is_mediatek_project() {
+
+    case ${job_name} in
+
+        DohaTMO-R_Gerrit_Build)
+            echo true
+        ;;
+
+        *)
+            echo false
+        ;;
+    esac
+}
+
 # 探测是否不需要创建versioninfo
 function is_create_versioninfo() {
 

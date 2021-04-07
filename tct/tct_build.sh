@@ -271,10 +271,16 @@ function make_android_for_whole() {
     log print "TCT::TARGET_PRODUCT = ${TARGET_PRODUCT}"
 
     if ${build_debug};then
-        if [[ "${TARGET_PRODUCT}" == "qssi" ]]; then
-            Command "bash build.sh --qssi_only -j${JOBS}"
+
+        if [[ $(is_mediatek_project) == 'true' ]]; then
+            Command ./tclMake -o=${compile_para[@]} ${build_project} remake
         else
-            Command "bash build.sh --target_only -j${JOBS}"
+            if [[ "${TARGET_PRODUCT}" == "qssi" ]]; then
+                Command "bash build.sh --qssi_only -j${JOBS}"
+            else
+                Command "bash build.sh --target_only -j${JOBS}"
+            fi
+
         fi
 
         if [[ $? -eq 0 ]] ; then
