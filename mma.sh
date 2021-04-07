@@ -20,7 +20,7 @@ function main() {
     local target=${1:-}
 
     for t in ${target[@]} ; do
-       Command mma -$(nproc) ${t}
+       Command mma -j$(nproc) ${t}
     done
 
     trap - ERR
