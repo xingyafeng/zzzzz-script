@@ -17,11 +17,13 @@ function main() {
     trap 'ERRTRAP ${LINENO} ${FUNCNAME} ${BASH_LINENO}' ERR
 
     local target=${1:-}
+    :> {tmpfs}/mma.log
 
     source build/envsetup.sh
 
     for t in ${target[@]} ; do
-       Command mma -j$(nproc) ${t}
+        echo "mma -j$(nproc) ${t}" >> {tmpfs}/mma.log
+        Command mma -j$(nproc) ${t}
     done
 
     trap - ERR
