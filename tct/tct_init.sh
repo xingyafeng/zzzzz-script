@@ -30,7 +30,7 @@ case ${shellfs##*/} in
     rom_build.sh)
         ;;
 
-    demo.sh|docker.sh)
+    demo.sh|docker.sh|mma.sh)
         ;;
     *)
         log error "执行脚本不匹配 ..."
