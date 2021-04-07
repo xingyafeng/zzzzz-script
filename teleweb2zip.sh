@@ -59,6 +59,11 @@ function handle_common_variable() {
         portotmo)
             build_zip_project=$(echo ${build_zip_project} | tr 'a-z' 'A-Z')
             ;;
+
+        portotmo_r)
+            build_zip_project=$(echo ${build_zip_project} | sed 's/_r//' | tr 'a-z' 'A-Z')
+            ;;
+
         *)
             build_zip_project=${build_zip_project}
         ;;
