@@ -19,6 +19,8 @@ build_to_version=
 build_to_more=
 # oem|odm type
 build_custom_type=
+# add big file update
+build_big_update=
 
 # ---------------
 # 工具仓库分支名
@@ -235,7 +237,7 @@ function update_fota_config() {
             fota_name=update_rkey.zip
             fota_xmls=TCL_${device_name}_${build_from_version}_${build_to_version}_size_over_1.5G_9.19.4.xml
 
-            if ! ${ADD_BIG_UPC}; then
+            if ! ${build_big_update}; then
                 break;
             fi
 
@@ -294,7 +296,6 @@ function update_fota_config() {
 
 function update_fota_xml() {
 
-    local ADD_BIG_UPC=false
     local prexml=TCL_prebase.xml
     local endxml=TCL_endbase.xml
     local configs=(update_releasekey downgrade_releasekey update_testkey invalid bigupdate_releasekey)
@@ -453,6 +454,9 @@ function handle_vairable() {
         log error "The build_custom_type is null, please check it."
     fi
 
+    # 6. big file update
+    build_big_update=${fota_big_update:-false}
+
     handle_common_variable
 }
 
@@ -481,6 +485,7 @@ function print_variable() {
 
     echo '-----------------------------------------'
     echo "build_custom_type    = " ${build_custom_type}
+    echo "build_big_update     = " ${build_big_update}
     echo '-----------------------------------------'
     echo "tools_branch_name    = " ${tools_branch_name}
 
