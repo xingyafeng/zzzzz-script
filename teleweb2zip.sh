@@ -167,7 +167,7 @@ function zip_perso() {
 function zip_rom() {
 
     if [[ -d ${zip_path} && -n ${zip_name} ]]; then
-        enhance_zip
+        time enhance_zip
     else
         log error "It is the ${zip_path} or ${zip_name} has error."
     fi

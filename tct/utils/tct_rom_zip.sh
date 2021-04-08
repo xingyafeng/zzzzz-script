@@ -34,13 +34,6 @@ function enhance_zip() {
         rm ${tmpzip}/* -rvf
     fi
 
-    # 清理 HZNPI目录
-    pushd ${tmpfs} > /dev/null
-    if [[ -d HZNPI ]]; then
-        versionclean HZNPI
-    fi
-    popd > /dev/null
-
     if [[ ${#images[@]} -gt 0 ]]; then
 
         for image in ${images[@]} ; do
@@ -79,6 +72,13 @@ function enhance_zip() {
             *)
                 #处理压缩包名称,后面增加Teleweb字眼
                 zip_name=${zip_name}
+
+                # 清理 HZNPI目录
+                pushd ${tmpfs} > /dev/null
+                if [[ -d HZNPI ]]; then
+                    versionclean HZNPI
+                fi
+                popd > /dev/null
 
                 # 备份版本至指定的路径，然后进行路径压缩
                 if [[ -n "`ls *.xml`" ]]; then
