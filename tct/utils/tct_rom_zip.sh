@@ -34,6 +34,13 @@ function enhance_zip() {
         rm ${tmpzip}/* -rvf
     fi
 
+    # 清理 HZNPI目录
+    pushd ${tmpfs} > /dev/null
+    if [[ -d HZNPI ]]; then
+        versionclean HZNPI
+    fi
+    popd > /dev/null
+
     if [[ ${#images[@]} -gt 0 ]]; then
 
         for image in ${images[@]} ; do
