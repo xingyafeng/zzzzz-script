@@ -249,15 +249,29 @@ function update_fota_config() {
                     log error 'The fill file has no found ...'
                 fi
 
-                echo mobile#wevwqo | java -Xmx2048m -Djava.library.path=${fota_tools_p}/JrdDiffTool/lib64 \
-                    -Dcom.tclcom.apksig.connect=localhost:50051,10.128.180.21:50051,10.128.180.117:50051,10.128.180.220:50051 \
-                    -Dcom.tclcom.apksig.keysuite=${build_project} \
-                    -jar ${fota_tools_p}/JrdDiffTool/framework/signapk.jar \
-                    -providerClass com.tclcom.apksig.StubJCAProvider \
-                    -w ${fota_tools_p}/JrdDiffTool/TCT_releasekeys/releasekey.x509.pem \
-                       ${fota_tools_p}/JrdDiffTool/TCT_releasekeys/releasekey.pk8 \
-                       ${fota_tools_p}/JrdDiffTool/data/${bigfile} \
-                       ${fota_tools_p}/JrdDiffTool/data/bigupdate_rkey.zip
+                case ${build_project} in
+
+                    transformervzw)
+                        echo mobile#wevwqo | java -Xmx2048m -Djava.library.path=${fota_tools_p}/JrdDiffTool/lib64 \
+                            -jar ${fota_tools_p}/JrdDiffTool/framework/signapk.jar \
+                            -w   ${fota_tools_p}/JrdDiffTool/TCT_releasekeys/releasekey.x509.pem \
+                                 ${fota_tools_p}/JrdDiffTool/TCT_releasekeys/releasekey.pk8 \
+                                 ${fota_tools_p}/JrdDiffTool/data/${bigfile} \
+                                 ${fota_tools_p}/JrdDiffTool/data/bigupdate_rkey.zip
+                        ;;
+
+                    *)
+                        java -Xmx2048m -Djava.library.path=${fota_tools_p}/JrdDiffTool/lib64 \
+                            -Dcom.tclcom.apksig.connect=localhost:50051,10.128.180.21:50051,10.128.180.117:50051,10.128.180.220:50051 \
+                            -Dcom.tclcom.apksig.keysuite=${build_project} \
+                            -jar ${fota_tools_p}/JrdDiffTool/framework/signapk.jar \
+                            -providerClass com.tclcom.apksig.StubJCAProvider \
+                            -w ${fota_tools_p}/JrdDiffTool/TCT_releasekeys/releasekey.x509.pem \
+                               ${fota_tools_p}/JrdDiffTool/TCT_releasekeys/releasekey.pk8 \
+                               ${fota_tools_p}/JrdDiffTool/data/${bigfile} \
+                               ${fota_tools_p}/JrdDiffTool/data/bigupdate_rkey.zip
+                        ;;
+                esac
 
                 python File2Base64.py -b bigupdate_rkey.zip && echo >> bigupdate_rkey.zip__base64
             fi
