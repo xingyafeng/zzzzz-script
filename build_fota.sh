@@ -249,7 +249,7 @@ function update_fota_config() {
                     log error 'The fill file has no found ...'
                 fi
 
-                java -Xmx2048m -Djava.library.path=${fota_tools_p}/JrdDiffTool/lib64 \
+                echo mobile#wevwqo | java -Xmx2048m -Djava.library.path=${fota_tools_p}/JrdDiffTool/lib64 \
                     -Dcom.tclcom.apksig.connect=localhost:50051,10.128.180.21:50051,10.128.180.117:50051,10.128.180.220:50051 \
                     -Dcom.tclcom.apksig.keysuite=${build_project} \
                     -jar ${fota_tools_p}/JrdDiffTool/framework/signapk.jar \
