@@ -84,7 +84,7 @@ function generate_buildlist_file() {
 
     if [[ -f ${path_py} && -f out/target/product/qssi/module-info.json ]]; then
         python ${path_py} out/target/product/qssi/module-info.json ${buildlist}
-    elif [[ -f ${path_py} && ${json} ]];then
+    elif [[ -f ${path_py} && -f ${json} ]];then
         python ${path_py} ${json} ${buildlist}
     else
         log warn "${path_py} or out/target/product/qssi/module-info.json has no found!"
@@ -92,8 +92,6 @@ function generate_buildlist_file() {
 
     if [[ -f ${buildlist} ]]; then
         modify_buildlist
-    else
-        log error "The ${buildlist} has no found!"
     fi
 }
 
