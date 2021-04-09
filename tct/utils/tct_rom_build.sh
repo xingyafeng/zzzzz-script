@@ -340,7 +340,7 @@ function tct::utils::downlolad_tools() {
     # 下载 tools_int and version
     if [[ $(is_thesame_server) == 'true' ]]; then
         case ${object} in
-            'target_download'|'ap')
+            'target_download'|'ap'|'download')
                 git_sync_repository alps/tools_int master
                 git_sync_repository qualcomm/version master
             ;;
