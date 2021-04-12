@@ -152,13 +152,14 @@ function init_copy_fota() {
 function copy_fota_version() {
 
     local userdebug=false
+    local date=$(date +'%Y.%m.%d_%H.%M.%S')
     local ota_path=${mfs_p}/${build_project}/fota
     local DEST_PATH=
 
     if ${userdebug}; then
-        local prj_path=${build_from_version}_${build_to_version}_userdebug_fota_`date +"%Y-%m-%d_%H-%M-%S"`
+        local prj_path=${build_from_version}_to_${build_to_version}_userdebug_fota_${date}
     else
-        local prj_path=${build_from_version}_${build_to_version}_fota_`date +"%Y-%m-%d_%H-%M-%S"`
+        local prj_path=${build_from_version}_to_${build_to_version}_fota_${date}
     fi
 
     DEST_PATH=${ota_path}/${prj_path}
