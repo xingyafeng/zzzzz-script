@@ -19,8 +19,11 @@ build_to_version=
 build_to_more=
 # oem|odm type
 build_custom_type=
+# add fillpkg update
+build_fullpkg_update=
 # add big file update
 build_big_update=
+
 
 # ---------------
 # 工具仓库分支名
@@ -291,6 +294,28 @@ function update_fota_config() {
 
             head -c -1 -q ${prexml} bigupdate_rkey.zip__base64 ${endxml} > ${fota_xmls}
         ;;
+
+        update_releasekeyfull) # 1. release key full　升级包
+
+            fota_name=full_upgrade_rkey.zip
+            fota_xmls=TCL_${device_name}_${build_from_version}_${build_to_version}_upgrade.xml
+
+            if [[ -f ${fota_name} ]]; then
+                python File2Base64.py -b ${fota_name} && echo >> ${fota_name}__base64
+            fi
+
+            if [[ -f ${prexml} ]]; then
+                git checkout -- ${prexml}
+
+                update_from_version ${dv_from_version}
+                update_to_version ${dv_to_version}
+                update_size ${fota_name}
+                update_time
+                update_device_name
+            fi
+
+            head -c -1 -q ${prexml} ${fota_name}__base64 ${endxml} > ${fota_xmls}
+        ;;
     esac
 }
 
@@ -305,9 +330,13 @@ function update_fota_xml() {
 
     pushd data > /dev/null
 
-    for cfg in ${configs[@]} ; do
-        update_fota_config ${cfg}
-    done
+    if [[ ${build_fullpkg_update} == 'true' ]]; then
+        update_fota_config update_releasekeyfull
+    else
+        for cfg in ${configs[@]} ; do
+            update_fota_config ${cfg}
+        done
+    fi
 
     # 备份FOTA版本
     copy_fota_version
@@ -357,11 +386,15 @@ function make_inc() {
     # 准备基准包 一个基准包 一个升级包
     prepare
 
-    scripts[${#scripts[@]}]=prepare_pkg_source.sh
-    scripts[${#scripts[@]}]=prepare_pkg_target.sh
-    scripts[${#scripts[@]}]=gen_diff_pkg_releasekey.sh
-    scripts[${#scripts[@]}]=gen_diff_pkg_testkey.sh
-    scripts[${#scripts[@]}]=gen_diff_downgrade_pkg_releasekey.sh
+    if [[ ${build_fullpkg_update} == 'true' ]]; then
+        scripts[${#scripts[@]}]=gen_full_pkg_releasekey.sh
+    else
+        scripts[${#scripts[@]}]=prepare_pkg_source.sh
+        scripts[${#scripts[@]}]=prepare_pkg_target.sh
+        scripts[${#scripts[@]}]=gen_diff_pkg_releasekey.sh
+        scripts[${#scripts[@]}]=gen_diff_pkg_testkey.sh
+        scripts[${#scripts[@]}]=gen_diff_downgrade_pkg_releasekey.sh
+    fi
 
     for script in ${scripts[@]};do
         if [[ -f ${script} && -x ${script} ]]; then
@@ -454,7 +487,12 @@ function handle_vairable() {
         log error "The build_custom_type is null, please check it."
     fi
 
-    # 6. big file update
+    # ----------------------------------------------------------------------------------------------
+
+    # full package update
+    build_fullpkg_update=${fota_fullpkg_update:-false}
+
+    # big file update
     build_big_update=${fota_big_update:-false}
 
     handle_common_variable
@@ -485,6 +523,7 @@ function print_variable() {
 
     echo '-----------------------------------------'
     echo "build_custom_type    = " ${build_custom_type}
+    echo "build_fullpkg_update = " ${build_fullpkg_update}
     echo "build_big_update     = " ${build_big_update}
     echo '-----------------------------------------'
     echo "tools_branch_name    = " ${tools_branch_name}
