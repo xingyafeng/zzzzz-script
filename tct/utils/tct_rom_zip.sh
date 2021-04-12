@@ -80,8 +80,12 @@ function enhance_zip() {
                 fi
                 popd > /dev/null
 
+                if [[ ! -d ${zip_p} ]]; then
+                    mkdir -p ${zip_p}
+                fi
+
                 # 备份版本至指定的路径，然后进行路径压缩
-                if [[ -n "`ls *.xml`" ]]; then
+                if [[ -n "`ls *.xml 2> /dev/null`" ]]; then
                     cp -vf *.mbn *.[mM][dD]5 *.xml ${zip_p}
                 else
                     cp -vf *.mbn *.[mM][dD]5 ${zip_p}
@@ -207,12 +211,15 @@ function versionclean() {
 function backup_zip_to_teleweb() {
 
     local tmpzip=${tmpfs}/zip
+    local date=$(date +'%Y.%m.%d_%H.%M.%S')
 
     if [[ -f ${tmpzip}/${zip_name}.zip ]]; then
         sudo cp -vf ${tmpzip}/${zip_name}.zip ${teleweb_p}
 
         if [[ ! -L ${zip_path}/${zip_name}.zip ]]; then
             sudo ln -vs ${teleweb_p}/${zip_name}.zip ${zip_path}
+        else
+            sudo ln -vs ${teleweb_p}/${zip_name}.${date}.zip ${zip_path}
         fi
 
         # 清理动作
