@@ -69,43 +69,43 @@ function module_filter() {
 # 编译boot
 function make_boot() {
 
-    bash linux_build.sh -b ${build_project} ${build_modem_type}
+    Command bash linux_build.sh -b ${build_project} ${build_modem_type}
 }
 
 # 编译modem
 function make_modem() {
 
-    bash linux_build.sh -m ${build_project} ${build_modem_type}
+    Command bash linux_build.sh -m ${build_project} ${build_modem_type}
 }
 
 # 编译rpm
 function make_rpm() {
 
-    bash linux_build.sh -r ${build_project} ${build_modem_type}
+    Command bash linux_build.sh -r ${build_project} ${build_modem_type}
 }
 
 # # 编译adsp
 function make_adsp() {
 
-    bash linux_build.sh -d ${build_project} ${build_modem_type}
+    Command bash linux_build.sh -d ${build_project} ${build_modem_type}
 }
 
 # 编译cdsp
 function make_cdsp() {
 
-    bash linux_build.sh -s ${build_project} ${build_modem_type}
+    Command bash linux_build.sh -s ${build_project} ${build_modem_type}
 }
 
 # 编译tz
 function make_tz() {
 
-    bash linux_build.sh -t ${build_project} ${build_modem_type}
+    Command bash linux_build.sh -t ${build_project} ${build_modem_type}
 }
 
 # 编译all
 function make_all() {
 
-    bash linux_build.sh -a ${build_project} ${build_modem_type}
+    Command bash linux_build.sh -a ${build_project} ${build_modem_type}
 }
 
 # 编译moden模块
