@@ -387,6 +387,7 @@ function make_inc() {
     prepare
 
     if [[ ${build_fullpkg_update} == 'true' ]]; then
+        scripts[${#scripts[@]}]=prepare_pkg_target.sh
         scripts[${#scripts[@]}]=gen_full_pkg_releasekey.sh
     else
         scripts[${#scripts[@]}]=prepare_pkg_source.sh

@@ -130,15 +130,20 @@ function init_copy_fota() {
 
     copyfs=()
 
-    copyfs[${#copyfs[@]}]=update_rkey.zip
-    copyfs[${#copyfs[@]}]=update_tkey.zip
-    copyfs[${#copyfs[@]}]=downgrade_rkey.zip
 
-    for fs in $(ls TCL_${device_name}_${build_from_version}_${build_to_version}_*.xml) ; do
+    if [[ ${build_fullpkg_update} == 'true' ]]; then
+        copyfs[${#copyfs[@]}]=full_upgrade_rkey.zip
+    else
+        copyfs[${#copyfs[@]}]=update_rkey.zip
+        copyfs[${#copyfs[@]}]=update_tkey.zip
+        copyfs[${#copyfs[@]}]=downgrade_rkey.zip
+    fi
+
+    for fs in $(ls TCL_${device_name}_${build_from_version}_${build_to_version}_*.xml 2> /dev/null) ; do
         copyfs[${#copyfs[@]}]=${fs}
     done
 
-    for fs in $(ls TCL_${device_name}_${build_to_version}_${build_from_version}_*.xml) ; do
+    for fs in $(ls TCL_${device_name}_${build_to_version}_${build_from_version}_*.xml 2> /dev/null) ; do
         copyfs[${#copyfs[@]}]=${fs}
     done
 }
