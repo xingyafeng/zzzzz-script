@@ -50,8 +50,7 @@ function source_init()
             ;;
 
             DohaTMO-R_Gerrit_Build)
-#                Command lunch vnd_Doha_TMO-userdebug && show_vip "--> dohatmo-r lunch end ..."
-                show_vip "--> dohatmo-r lunch end ..."
+                Command choosecombo release full_Doha_TMO userdebug false 1 && show_vip "--> lunch end ..."
             ;;
 
             *)
