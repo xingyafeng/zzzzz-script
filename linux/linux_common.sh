@@ -166,3 +166,16 @@ function cpfs()
         echo "e.g cpfs file_name hostname"
     fi
 }
+
+# download ssh file
+function download_ssh_file() {
+
+    local path=${1:-}
+    local ssh_p='/local/workspace/android-bld/ssh-jenkins.zip'
+
+    if [[ -z ${path} ]]; then
+        log error 'The path is null ...'
+    fi
+
+    scp -P 8089 android-bld@10.129.93.30:${ssh_p} ${path}
+}
