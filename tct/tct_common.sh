@@ -86,7 +86,7 @@ function create_versioninfo(){
         #if [[ $(is_create_versioninfo) == 'true' ]]; then
         #    :
         if [[ ${VER_VARIANT} == "appli" ]] && [[ ${build_type} == "userdebug" ]]; then
-            show_vip "no need to creat versioninfo and manifest"
+            show_vip "no need to creat versioninfo"
         else
             show_vip "create version.inc start ..."
             tct::utils::create_version_info
@@ -120,7 +120,17 @@ function download_android_source_code()
     generate_manifest_list
 
     if [[ $(is_rom_build) == 'true' ]]; then
-        tct::utils::create_manifest
+        if [[ ${VER_VARIANT} == "appli" ]] && [[ ${build_type} == "userdebug" ]]; then
+            show_vip "no need to creat manifest"
+        else
+            tct::utils::create_manifest
+        fi
+        
+
+        if [[ "${build_userdebug}" == "true" ]]; then
+            show_vip "build_userdebug ..."
+            tct::utils::build_userdebug
+        fi
     fi
 }
 
@@ -320,7 +330,12 @@ function make_droid() {
 
             backup)
                 tct::utils::backup_image_version
-                tct::utils::releasemail
+                if [[ ${VER_VARIANT} == "appli" ]] && [[ ${build_type} == "userdebug" ]]; then
+                    echo "no need releasemail"
+                else
+                    tct::utils::releasemail
+                fi
+                
                 ;;
 
             *)
@@ -385,8 +400,8 @@ function outbackup()
 
         if [[ -n "${build_number}" ]]; then
             outdir_string="${build_number}_"`date +"%Y%m%d%H%M%S"`
-            if [[ -d ${tmpfs}/out/${job_name}/${build_number}_* ]]; then
-                rm -rvf ${tmpfs}/out/${job_name}/${build_number}_*
+            if [[ -d ${tmpfs}/out/${job_name}/ ]]; then
+                rm -rvf ${tmpfs}/out/${job_name}/*
             fi
             Command "mkdir -p ${tmpfs}/out/${job_name}/${outdir_string}"
             Command "mv out ${tmpfs}/out/${job_name}/${outdir_string}"

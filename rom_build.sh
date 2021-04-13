@@ -58,6 +58,8 @@ versioninfo=
 version_path=
 
 getprojectinfo=
+
+build_userdebug_server=
 # init function
 . "$(dirname "$0")/tct/tct_init.sh"
 
@@ -176,6 +178,9 @@ function handle_variable() {
     # 12. delivery bug
     build_delivery_bug=${tct_delivery_bug:-false}
 
+    # 13. userdebug
+    build_userdebug=${tct_userdebug:-false}
+
     # ---------------------------------------------
 
     handle_common
@@ -202,6 +207,7 @@ function print_variable() {
     echo "build_user2root         = " ${build_user2root}
     echo "build_isship            = " ${build_isship}
     echo "build_delivery_bug      = " ${build_delivery_bug}
+    echo "build_userdebug         = " ${build_userdebug}
     echo '-----------------------------------------'
     echo "VER_VARIANT             = " ${VER_VARIANT}
     echo "PERSONUM                = " ${PERSONUM}
@@ -213,6 +219,7 @@ function print_variable() {
     echo "versioninfo             = " ${versioninfo}
     echo "version_path            = " ${version_path}
     echo "getprojectinfo          = " ${getprojectinfo}
+    echo "build_userdebug_server  = " ${build_userdebug_server}
     echo '-----------------------------------------'
     echo "gettop_p                = " ${gettop_p}
     echo '-----------------------------------------'
@@ -238,7 +245,7 @@ function perpare() {
 
     VER_VARIANT=$(tct::utils::get_version_variant)
     if [[ ${VER_VARIANT} == "appli" ]]; then
-        PERSONUM=${VERSION:3:1}
+        PERSONUM=${build_version:3:1}
     else
         PERSONUM=0
     fi
@@ -246,6 +253,7 @@ function perpare() {
     tct::utils::get_signapk_para
 
     tct::utils::get_project_info
+
 
     # 编译项目
     BUILDPROJ=$(tct::utils::get_build_project)
@@ -265,7 +273,10 @@ function perpare() {
 
     # version仓库地址
     versioninfo=$(tct::utils::get_version_info)
-    version_path=`basename ${versioninfo}`    
+    version_path=`basename ${versioninfo}`  
+
+    #获取userdebug编译机
+    tct::utils::get_build_userdebug_server  
 
     # -------------------------------------------------------
 
@@ -322,13 +333,13 @@ function main() {
 
                     pushd ${build_p} > /dev/null
 
+                    init
+
                     if [[ ${VER_VARIANT} == "appli" ]] && [[ ${build_type} == "userdebug" ]]; then
                         echo "no need to creat versioninfo and manifest"
                     else
                         create_versioninfo
                     fi
-    
-                    init
 
                     if [[ "${build_update_code}" == "true" ]];then
                         #备份out目录

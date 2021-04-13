@@ -66,6 +66,7 @@ function source_init()
                 if [[ ${VER_VARIANT} == "appli" ]] && [[ ${build_type} == "user" ]] ; then
                         Command choosesecimagekey ${PROJECTNAME} && choosesignapkkey ${PROJECTNAME}
                 else
+                        unset SIGNAPK_USE_RELEASEKEY
                         Command choosesecimagekey transformervzw
                 fi
 

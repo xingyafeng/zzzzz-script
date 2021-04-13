@@ -192,7 +192,7 @@ function tct::utils::create_version_info() {
         rm -rvf ${tmpfs}/${version_path}
     fi
 
-    git_sync_repository ${versioninfo} ${build_manifest}
+    git_sync_repository ${versioninfo} ${build_manifest%.*}
 
     pushd ${tmpfs}/${version_path} > /dev/null
 
@@ -200,12 +200,12 @@ function tct::utils::create_version_info() {
         cp -vf ${tmpversion} version.inc
     fi
 
-    show_vip "git push $(git remote) HEAD:${build_manifest}"
+    show_vip "git push $(git remote) HEAD:${build_manifest%.*}"
 
     if [[ -n "`git status -s`" ]];then
         git add version.inc
         git commit -m "Release ${build_version}"
-        git push `git remote` HEAD:${build_manifest}
+        git push `git remote` HEAD:${build_manifest%.*}
     else
         log warn 'The version.inc do not update.'
     fi
@@ -226,7 +226,7 @@ function tct::utils::tct_check_version.inc() {
         Command "repo sync -c -d --no-tags version"
     else
         #Command "git_sync_repository ${versioninfo} ${build_manifest} ${pwd_path}"
-        Command "git clone git@shenzhen.gitweb.com:${versioninfo} -b ${build_manifest} ${pwd_path}/version"
+        Command "git clone git@shenzhen.gitweb.com:${versioninfo} -b ${build_manifest%.*} ${pwd_path}/version"
     fi
 
     version_inc=$(cat version/version.inc | awk '/ANDROID_SYS_VER/{ print $NF }')
@@ -464,6 +464,50 @@ function tct::utils::get_project_info() {
 
         dohatmo-r)
             getprojectinfo=GetVerInfo
+        ;;
+
+        *)
+            :
+            ;;
+    esac
+}
+
+function tct::utils::build_userdebug() {
+    case ${JOB_NAME} in
+
+        transformervzw)
+            echo "curl -X POST -v http://10.129.93.215:8080/job/transformervzw/buildWithParameters?token=transformervzw&tct_version=${build_version}&tct_server_y=${build_userdebug_server}&tct_update_code=${build_update_code}&tct_anti_rollback=${build_anti_rollback}&tct_type=userdebug&tct_clean=${build_clean}"
+            curl -X POST -v "http://10.129.93.215:8080/job/transformervzw/buildWithParameters?token=transformervzw&tct_version=${build_version}&tct_server_y=${build_userdebug_server}&tct_update_code=${build_update_code}&tct_anti_rollback=${build_anti_rollback}&tct_type=userdebug&tct_clean=${build_clean}"
+            
+        ;;
+
+        dohatmo-r)
+            echo "curl -X POST -v http://10.129.93.215:8080/job/dohatmo-r/buildWithParameters?token=dohatmo-r&tct_version=${build_version}&tct_server_y=${build_userdebug_server}&tct_update_code=${build_update_code}&tct_anti_rollback=${build_anti_rollback}&tct_type=userdebug&tct_clean=${build_clean}"
+            curl -X POST -v "http://10.129.93.215:8080/job/dohatmo-r/buildWithParameters?token=dohatmo-r&tct_version=${build_version}&tct_server_y=${build_userdebug_server}&tct_update_code=${build_update_code}&tct_anti_rollback=${build_anti_rollback}&tct_type=userdebug&tct_clean=${build_clean}"
+            
+        ;;
+
+        *)
+            :
+            ;;
+    esac
+    
+}
+
+function tct::utils::get_build_userdebug_server() {
+
+    case ${JOB_NAME} in
+
+        transformervzw)
+            build_userdebug_server=WS110-8089
+        ;;
+
+        dohatmo-r)
+            build_userdebug_server=WS109-8089
+        ;;
+
+        irvinevzw)
+            build_userdebug_server=WS108-8089
         ;;
 
         *)
