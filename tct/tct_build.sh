@@ -203,6 +203,11 @@ function make_android_for_case() {
             case ${bcase} in
 
                 *)
+                    # 编译moden 需要重新choosecombo
+                    if [[ ${bcase} == 'build_moden' ]]; then
+                        source_init
+                    fi
+
                     Command ${bcase}
                     if [[ $? -eq 0 ]]; then
                         if [[ ${is_full_build} == "false" ]]; then # 非全编译
