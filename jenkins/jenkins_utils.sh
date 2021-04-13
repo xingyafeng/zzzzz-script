@@ -58,8 +58,10 @@ function Command() {
 # 检查路径是否存在, -d
 function check_if_dir_exists() {
 
-    if [[ ! -d "$1" ]]; then
-        log error "Could not find the dir: \"$1\", aborting ..."
+    local dir=${1-:}
+
+    if [[ ! -d "${dir}" ]]; then
+        mkdir -p ${dir}
     fi
 }
 
