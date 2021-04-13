@@ -585,3 +585,21 @@ function mirror22() {
 function droidyafeng() {
     ssh -l yafeng WS186
 }
+
+function docker0() {
+    ssh -l jenkins 10.129.47.112
+}
+
+function docker1() {
+    ssh -l jenkins 10.129.46.104
+}
+
+function docker2() {
+    ssh -l jenkins 10.129.46.54
+}
+
+function docker3() {
+    ssh -l jenkins 10.129.47.111
+}
+
+
