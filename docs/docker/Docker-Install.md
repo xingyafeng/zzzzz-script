@@ -156,6 +156,7 @@ apt-get install docker-ce=<VERSION_STRING> docker-ce-cli=<VERSION_STRING> contai
 
 #举栗子：
 apt-get install docker-ce=5:20.10.0~3-0~ubuntu-xenial docker-ce-cli=5:20.10.0~3-0~ubuntu-xenial containerd.io
+sudo yum install docker-ce-3:20.10.6-3.el7 docker-ce-cli-3:20.10.6-3.el7 containerd.io
     
 # 一
 docker run -d -p 80:80 httpd
@@ -163,7 +164,15 @@ docker run -d -p 80:80 httpd
 # 登录
 10.129.46.47:80
     
-# 二、镜像加速器    
+# 二、镜像加速器  ubuntu centos
+sudo mkdir -p /etc/docker
+sudo tee /etc/docker/daemon.json <<-'EOF'
+{
+  "registry-mirrors": ["https://8myihr0t.mirror.aliyuncs.com"]
+}
+EOF
+sudo systemctl daemon-reload
+sudo systemctl restart docker
 
 # 三、命令补全
 
