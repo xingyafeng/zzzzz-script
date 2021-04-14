@@ -424,6 +424,9 @@ function handle_common_variable() {
 
     # 拿到项目对应工具仓库
     get_tools_branch
+    if [[ -z ${tools_branch_name} ]]; then
+        log error "The tools branch name is null ..."
+    fi
 
     # 下载仓库
     git_sync_repository tools/JrdDiffTool ${tools_branch_name} ${fota_tools_p}
