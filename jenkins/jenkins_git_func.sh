@@ -477,10 +477,6 @@ function recover_standard_git_project()
 		cd ${OPWD} > /dev/null
 	fi
 
-    if [[ ${build_update_code} == 'true' ]]; then
-        return 0
-    fi
-
     if [[ -d .repo && -f build/core/envsetup.mk && -f Makefile ]];then
         # 同步最新
         Command "repo sync ${tDir} -c -d --no-tags -j$(nproc)"
