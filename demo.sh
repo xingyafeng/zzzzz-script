@@ -22,12 +22,6 @@ function main() {
 
     Command _echo 'main.'
 
-    while true;do
-        sleep 1
-        echo 'dbug ....'
-        Command _echo "tct_debug = ${tct_debug}"
-    done
-
     popd > /dev/null
 
     log debug 'end ...'
