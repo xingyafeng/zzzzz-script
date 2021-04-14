@@ -153,7 +153,7 @@ function copy_fota_version() {
 
     local userdebug=false
     local date=$(date +'%Y.%m.%d_%H.%M.%S')
-    local ota_path=${mfs_p}/${build_project}/fota
+    local ota_path=${mfs_p}/${tctproject}/fota
     local DEST_PATH=
 
     if ${userdebug}; then
@@ -174,7 +174,7 @@ function copy_fota_version() {
 # 拿到tools/JrdDiffTool仓库的分支名
 function get_tools_branch() {
 
-    case ${build_project} in
+    case ${tctproject} in
 
         thor84gvzw|thor84gvzw_r)
             tools_branch_name='thor84g_vzw_1.0'
@@ -192,7 +192,7 @@ function get_tools_branch() {
 
 function get_device_name() {
 
-    case ${build_project} in
+    case ${tctproject} in
 
         thor84gvzw|thor84gvzw_r)
 
@@ -221,7 +221,7 @@ function get_device_name() {
         ;;
 
         *)
-            log error "The build_project has no found ..."
+            log error "The tctproject has no found ..."
         ;;
     esac
 }
@@ -271,4 +271,14 @@ function tct::utils::set_java_version() {
     export PATH=${JAVA_HOME}/bin:${JRE_HOME}/bin:$PATH
 
     java -version
+}
+
+# 探测是否跨版本升级
+function is_over_update() {
+
+    if [[ -z ${build_project} ]]; then
+        echo 'true'
+    else
+        echo 'false'
+    fi
 }

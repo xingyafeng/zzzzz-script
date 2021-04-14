@@ -6,7 +6,10 @@ set -o nounset
 set -o pipefail
 
 # 项目名
+tctproject=
 build_project=
+build_from_project=
+build_to_project=
 # 项目类型
 build_from_type=
 # 项目待升级版本
@@ -357,10 +360,18 @@ function backup_image_version() {
 
 function prepare() {
 
-    local from_ota_p=${mfs_p}/${build_project}/${build_from_type}/${build_from_version}/${build_from_more}
-    local to_ota_p=${mfs_p}/${build_project}/${build_to_type}/${build_to_version}/${build_to_more}
+    local from_ota_p=
+    local to_ota_p=
     local dir1=
     local dir2=
+
+    if [[ $(is_over_update) == 'true' ]]; then
+        from_ota_p=${mfs_p}/${build_from_project}/${build_from_type}/${build_from_version}/${build_from_more}
+        to_ota_p=${mfs_p}/${build_to_project}/${build_to_type}/${build_to_version}/${build_to_more}
+    else
+        from_ota_p=${mfs_p}/${tctproject}/${build_from_type}/${build_from_version}/${build_from_more}
+        to_ota_p=${mfs_p}/${tctproject}/${build_to_type}/${build_to_version}/${build_to_more}
+    fi
 
     if [[ -d `git rev-parse --git-dir` ]];then
         git clean -dxfq
@@ -432,7 +443,22 @@ function handle_vairable() {
     # 项目名
     build_project=${fota_project:-}
     if [[ -z ${build_project} ]]; then
-        log error 'The build project is null ...'
+        build_from_project=${fota_from_project:-}
+        if [[ -z ${build_from_project} ]]; then
+            log error 'The build from project is null ...'
+        fi
+
+        build_to_project=${fota_to_project:-}
+        if [[ -z ${build_to_project} ]]; then
+            log error 'The build to project is null ...'
+        fi
+    fi
+
+    # set tctproject
+    if [[ $(is_over_update) == 'true' ]]; then
+        tctproject=${build_to_project}
+    else
+        tctproject=${build_project}
     fi
 
     # 项目类型
@@ -492,6 +518,9 @@ function handle_vairable() {
 
     # full package update
     build_fullpkg_update=${fota_fullpkg_update:-false}
+    if [[ $(is_over_update) == 'true' ]]; then
+        build_fullpkg_update='true'
+    fi
 
     # big file update
     build_big_update=${fota_big_update:-false}
@@ -505,7 +534,14 @@ function print_variable() {
     echo "JOBS = " ${JOBS}
     echo '-----------------------------------------'
 
-    echo "build_project        = " ${build_project}
+    if [[ $(is_over_update) == 'true' ]]; then
+        echo "build_from_project   = " ${build_from_project}
+        echo "build_to_project     = " ${build_to_project}
+    else
+        echo "build_project        = " ${build_project}
+    fi
+
+    echo "tctproject           = " ${tctproject}
     echo '-----------------------------------------'
     echo "build_from_type      = " ${build_from_type}
     echo "build_from_version   = " ${build_from_version}
