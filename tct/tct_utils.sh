@@ -225,3 +225,16 @@ function is_cert_version() {
             ;;
     esac
 }
+
+# 探测强耦合项目
+function is_over_coupling() {
+
+    for tp in ${tct_projects[@]} ; do
+
+        if [[ ${tp} == ${project_path} ]]; then
+            echo 'true' && return 0
+        fi
+    done
+
+    echo false
+}

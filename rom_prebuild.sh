@@ -28,6 +28,9 @@ declare -a project_paths
 # 无效的模块
 declare -a invalid_module
 
+# 强耦合项目
+declare -a tct_projects
+
 # 本次触发PATCHSET
 gerrit_patchset_revision=
 

@@ -20,7 +20,6 @@ function generate_manifest_list() {
     done < ${manifest_list_p}
 }
 
-
 # 更新目标列表
 function update_module_target() {
 
@@ -338,6 +337,17 @@ function check_patchset_status()
     trap - ERR
 }
 
+# 配置强耦合项目
+function set_tct_projects() {
+
+    tct_projects=()
+
+    tct_projects[${#tct_projects[@]}]='vendor/tct/system'
+    tct_projects[${#tct_projects[@]}]='vendor/tct/frameworks'
+    tct_projects[${#tct_projects[@]}]='system/core'
+    tct_projects[${#tct_projects[@]}]='frameworks/base'
+}
+
 function download_all_patchset()
 {
     trap 'ERRTRAP ${LINENO} ${FUNCNAME} ${BASH_LINENO}' ERR
@@ -347,6 +357,7 @@ function download_all_patchset()
 
     log print "--> download patchset start ..."
 
+    set_tct_projects
     while IFS="@" read -r GERRIT_CHANGE_URL GERRIT_PROJECT GERRIT_REFSPEC GERRIT_PATCHSET_NUMBER GERRIT_PATCHSET_REVISION GERRIT_CHANGE_NUMBER GERRIT_BRANCH _;do
 
         project_path=$(get_project_path)
@@ -355,6 +366,16 @@ function download_all_patchset()
             __green__ "@@@ project path: " ${project_path}
         else
             log error "${project_path}::The project path is not exist in the manifest."
+        fi
+
+        # 处理强耦合问题
+        if [[ $(is_over_coupling) == 'true' ]]; then
+            for tp in ${tct_projects[@]} ; do
+                show_vip "[over-coupling] tct project: ${tp} ..."
+                if [[ -d ${tp} ]]; then
+                    recover_standard_git_project ${tp}
+                fi
+            done
         fi
 
         pushd ${project_path} > /dev/null
