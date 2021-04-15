@@ -501,7 +501,7 @@ function jenkinscd
 }
 
 # 编译服务器，密码mobile#3
-function build102() {
+function yafeng.xing() {
     ssh yafeng.xing@10.129.93.102
 }
 
