@@ -25,6 +25,17 @@ pipeline {
                         }
                     }
                 }
+
+                stage('download_debug') {
+                    agent {
+                        label "${tct_server_x}"
+                    }
+                    steps {
+                        script {
+                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh download_debug")
+                        }
+                    }
+                }
             }
         }
 
@@ -37,6 +48,17 @@ pipeline {
                     steps {
                         script {
                             utils.command("~/workspace/script/zzzzz-script/rom_build.sh clean")
+                        }
+                    }
+                }
+
+                stage('clean debug') {
+                    agent {
+                        label "${tct_server_x}"
+                    }
+                    steps {
+                        script {
+                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh clean_debug")
                         }
                     }
                 }
@@ -64,6 +86,28 @@ pipeline {
                         }
                     }
                 }
+
+                stage('build debug_ap') {
+                    agent {
+                        label "${tct_server_x}"
+                    }
+                    steps {
+                        script {
+                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh debug_ap")
+                        }
+                    }
+                }
+
+                stage('build debug_cp') {
+                    agent {
+                        label "${tct_server_x}"
+                    }
+                    steps {
+                        script {
+                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh debug_cp")
+                        }
+                    }
+                }
             }
         }
 
@@ -75,6 +119,17 @@ pipeline {
                     steps {
                         script {
                             utils.command("~/workspace/script/zzzzz-script/rom_build.sh backup")
+                        }
+                    }
+                }
+
+                stage('debug_backup rom iamge files') {
+                    agent {
+                        label "${tct_server_x}"
+                    }
+                    steps {
+                        script {
+                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh debug_backup")
                         }
                     }
                 }
