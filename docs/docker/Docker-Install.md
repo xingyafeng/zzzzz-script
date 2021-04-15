@@ -177,7 +177,7 @@ sudo systemctl restart docker
 # 三、命令补全
 
 # docker
-$ apt install bash-completion     
+$ apt install bash-completion
 $ source /etc/bash_completion
 
 # docker-compose 命令补全
@@ -186,6 +186,10 @@ $ source /etc/bash_completion
 sudo curl -L https://github.com/docker/compose/releases/download/1.20.1/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 docker-compose version
+
+docker-compose down -v  停止并移除网络
+docker-compose up -d    启动容器
+docker-compose ps       查看运行的容器
 
 # 四、卸载
 root@ubuntu1604:~# rm -rf /var/lib/docker
