@@ -79,23 +79,6 @@ function is_check_mirror() {
     echo true
 }
 
-function create_versioninfo(){
-    #生成version.inc文件
-    if [[ $(is_rom_build) == 'true' ]]; then
-        # 生成version info
-        #if [[ $(is_create_versioninfo) == 'true' ]]; then
-        #    :
-        if [[ ${VER_VARIANT} == "appli" ]] && [[ ${build_type} == "userdebug" ]]; then
-            show_vip "no need to creat versioninfo"
-        else
-            show_vip "create version.inc start ..."
-            tct::utils::create_version_info
-            tct::utils::tct_check_version.inc
-            show_vip "create version.inc end ..."
-        fi
-    fi
-}
-
 # 下载与更新Android源代码
 function download_android_source_code()
 {
@@ -123,11 +106,12 @@ function download_android_source_code()
         if [[ ${VER_VARIANT} == "appli" ]] && [[ ${build_type} == "userdebug" ]]; then
             show_vip "no need to creat manifest"
         else
+            tct::utils::create_versioninfo
             tct::utils::create_manifest
         fi
-        
 
-        if [[ "${build_userdebug}" == "true" ]]; then
+
+        if [[ ${VER_VARIANT} == "appli" ]] &&[[ "${build_userdebug}" == "true" ]]; then
             show_vip "build_userdebug ..."
             tct::utils::build_userdebug
         fi
@@ -349,31 +333,34 @@ function make_droid() {
 function outclean() {
 
     local outdir=$(mktemp -d -p ${tmpfs})
+    if [[ $(is_rom_build) == 'true' ]]; then
+        outbackup
+    else
+        if [[ "${build_clean}" == "true" ]];then
+            show_vip '[tct]: --> make clean ...'
 
-    if [[ "${build_clean}" == "true" ]];then
-        show_vip '[tct]: --> make clean ...'
+            if [[ -d out/ ]]; then
+                Command mv out ${outdir}
+            fi
 
-        if [[ -d out/ ]]; then
-            Command mv out ${outdir}
-        fi
-
-        if [[ -d ${outdir} ]]; then
-            Command "rm -rf ${outdir} &"
+            if [[ -d ${outdir} ]]; then
+                Command "rm -rf ${outdir} &"
+                if [[ $? -eq 0 ]];then
+                    echo
+                    show_vip "--> make clean end ..."
+                else
+                    log error "--> make clean fail ..."
+                fi
+            fi
+        else
+            show_vip '[tct]: --> make installclean ...'
+            Command "make -j${JOBS} installclean"
             if [[ $? -eq 0 ]];then
                 echo
-                show_vip "--> make clean end ..."
+                show_vip "--> make installclean end ..."
             else
-                log error "--> make clean fail ..."
+                log error "--> make installclean fail ..."
             fi
-        fi
-    else
-        show_vip '[tct]: --> make installclean ...'
-        Command "make -j${JOBS} installclean"
-        if [[ $? -eq 0 ]];then
-            echo
-            show_vip "--> make installclean end ..."
-        else
-            log error "--> make installclean fail ..."
         fi
     fi
 }
@@ -384,8 +371,8 @@ function outbackup()
     local appli_number=
     local build_number=
     local outdir_string=
-    if [[ "${build_clean}" == "true" ]];then
         show_vip '[tct]: --> out backup ...'
+        echo `pwd`
         if [[ -f version/version.inc ]];then
             #当version.inc文件存在时，获取上一个版本的版本号
             appli_number=`awk '/ANDROID_SYS_VER/ {print substr($NF, 9,1)}' version/version.inc`
@@ -394,34 +381,31 @@ function outbackup()
             else
                 build_number=`awk '/ANDROID_SYS_VER/ {print substr($NF, 3,4)"-"substr($NF, 9,1)}' version/version.inc`
             fi
+            if [[ -n "${build_number}" ]]; then
+                outdir_string="${build_number}_"`date +"%Y%m%d%H%M%S"`
+                if [[ -d ${tmpfs}/out/${job_name}/ ]]; then
+                    Command "rm -rf ${tmpfs}/out/${job_name}/*"
+                fi
+                Command "mkdir -p ${tmpfs}/out/${job_name}/${outdir_string}"
+
+                if [[ "${build_clean}" == "true" ]];then
+                    Command "mv out ${tmpfs}/out/${job_name}/${outdir_string}"
+                else
+                    Command "cp -r out ${tmpfs}/out/${job_name}/${outdir_string}"
+                fi
+
+                if [[ $? -eq 0 ]];then
+                    echo
+                    show_vip "--> out backup end ..."
+                else
+                    log error "--> out bakcup fail ..."
+                fi
+            else
+                show_vip "--> out backup failed ..."
+            fi
         else
             show_vip "--> version.inc is file does not exist ..."
         fi
-
-        if [[ -n "${build_number}" ]]; then
-            outdir_string="${build_number}_"`date +"%Y%m%d%H%M%S"`
-            if [[ -d ${tmpfs}/out/${job_name}/ ]]; then
-                rm -rvf ${tmpfs}/out/${job_name}/*
-            fi
-            Command "mkdir -p ${tmpfs}/out/${job_name}/${outdir_string}"
-            Command "mv out ${tmpfs}/out/${job_name}/${outdir_string}"
-            if [[ $? -eq 0 ]];then
-                echo
-                show_vip "--> out backup end ..."
-            else
-                log error "--> out bakcup fail ..."
-            fi
-        fi
-    else
-        show_vip '[tct]: --> make installclean ...'
-        Command "make -j${JOBS} installclean"
-        if [[ $? -eq 0 ]];then
-            echo
-            show_vip "--> make installclean end ..."
-        else
-            log error "--> make installclean fail ..."
-        fi
-    fi
 
 }
 

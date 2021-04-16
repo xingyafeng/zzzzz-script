@@ -59,7 +59,6 @@ version_path=
 
 getprojectinfo=
 
-build_userdebug_server=
 # init function
 . "$(dirname "$0")/tct/tct_init.sh"
 
@@ -273,10 +272,7 @@ function perpare() {
 
     # version仓库地址
     versioninfo=$(tct::utils::get_version_info)
-    version_path=`basename ${versioninfo}`  
-
-    #获取userdebug编译机
-    tct::utils::get_build_userdebug_server  
+    version_path=`basename ${versioninfo}`
 
     # -------------------------------------------------------
 
@@ -335,17 +331,7 @@ function main() {
 
                     init
 
-                    if [[ ${VER_VARIANT} == "appli" ]] && [[ ${build_type} == "userdebug" ]]; then
-                        echo "no need to creat versioninfo and manifest"
-                    else
-                        create_versioninfo
-                    fi
-
                     if [[ "${build_update_code}" == "true" ]];then
-                        #备份out目录
-                        if [[ -d ${build_p}/out ]]; then
-                            outbackup
-                        fi
                         # 下载，更新源代码
                         download_android_source_code
                     else
@@ -353,7 +339,7 @@ function main() {
                     fi
 
                     popd > /dev/null
-                
+
                     ;;
 
 
@@ -392,16 +378,20 @@ function main() {
 
                     init
                     if [[ -d .repo && -f build/core/envsetup.mk && -f Makefile ]];then
-                        source_init
-                        if [[ $? -eq 0 ]]; then
+                        if [[ $(is_rom_build) == 'true' ]]; then
                             outclean
+                        else
+                            source_init
+                            if [[ $? -eq 0 ]]; then
+                                outclean
+                            fi
                         fi
                     else
                         log warn "The (.repo) not found ! please download android source code !"
                     fi
 
                     popd > /dev/null
-                
+
                     ;;
 
 
@@ -432,9 +422,12 @@ function main() {
                     pushd ${build_p} > /dev/null
 
                     init
-
-                    source_init
-                    make_android
+                    if [[ $(is_rom_build) == 'true' ]]; then
+                        make_android
+                    else
+                        source_init
+                        make_android
+                    fi
 
                     popd > /dev/null
                     ;;

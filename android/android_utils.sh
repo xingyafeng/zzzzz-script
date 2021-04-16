@@ -64,10 +64,11 @@ function source_init()
                 source build/envsetup.sh && show_vip "--> source end ..."
                 Command choosecombo 1 ${PROJECTNAME} ${build_type} ${PROJECTNAME} 1 $(is_mini_version) 0 ${build_anti_rollback} $(is_cert_version) && show_vip "--> lunch end ..."
                 if [[ ${VER_VARIANT} == "appli" ]] && [[ ${build_type} == "user" ]] ; then
-                        Command choosesecimagekey ${PROJECTNAME} && choosesignapkkey ${PROJECTNAME}
+                        echo "this is user build -->${VER_VARIANT} -- ${build_type}"
+                        Command "choosesecimagekey ${PROJECTNAME} && choosesignapkkey ${PROJECTNAME}"
                 else
                         unset SIGNAPK_USE_RELEASEKEY
-                        Command choosesecimagekey transformervzw
+                        Command "choosesecimagekey transformervzw"
                 fi
 
 #                choosecombo 1 transformervzw user transformervzw 1 false 0 0

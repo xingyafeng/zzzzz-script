@@ -189,7 +189,7 @@ function tct::utils::create_version_info() {
 
     #下载version仓库
     if [[ -d ${tmpfs}/${version_path} ]];then
-        rm -rvf ${tmpfs}/${version_path}
+        Command "rm -rf ${tmpfs}/${version_path}"
     fi
 
     git_sync_repository ${versioninfo} ${build_manifest%.*}
@@ -205,6 +205,7 @@ function tct::utils::create_version_info() {
     if [[ -n "`git status -s`" ]];then
         git add version.inc
         git commit -m "Release ${build_version}"
+        git pull
         git push `git remote` HEAD:${build_manifest%.*}
     else
         log warn 'The version.inc do not update.'
@@ -270,7 +271,7 @@ function tct::utils::backup_image_version() {
         log debug "Do not copy ..."
     else
         show_vip "start backup image version ..."
-        source_init
+        #source_init
 
         local releasedir=
         local creat_time=
@@ -476,42 +477,32 @@ function tct::utils::build_userdebug() {
     case ${JOB_NAME} in
 
         transformervzw)
-            echo "curl -X POST -v http://10.129.93.215:8080/job/transformervzw/buildWithParameters?token=transformervzw&tct_version=${build_version}&tct_server_y=${build_userdebug_server}&tct_update_code=${build_update_code}&tct_anti_rollback=${build_anti_rollback}&tct_type=userdebug&tct_clean=${build_clean}"
-            curl -X POST -v "http://10.129.93.215:8080/job/transformervzw/buildWithParameters?token=transformervzw&tct_version=${build_version}&tct_server_y=${build_userdebug_server}&tct_update_code=${build_update_code}&tct_anti_rollback=${build_anti_rollback}&tct_type=userdebug&tct_clean=${build_clean}"
-            
+            echo "curl -X POST -v http://10.129.93.215:8080/job/transformervzw/buildWithParameters?token=transformervzw&tct_version=${build_version}&tct_server_y=${build_server_x}&tct_update_code=${build_update_code}&tct_anti_rollback=${build_anti_rollback}&tct_type=userdebug&tct_clean=${build_clean}"
+            curl -X POST -v "http://10.129.93.215:8080/job/transformervzw/buildWithParameters?token=transformervzw&tct_version=${build_version}&tct_server_y=${build_server_x}&tct_update_code=${build_update_code}&tct_anti_rollback=${build_anti_rollback}&tct_type=userdebug&tct_clean=${build_clean}"
+
         ;;
 
         dohatmo-r)
-            echo "curl -X POST -v http://10.129.93.215:8080/job/dohatmo-r/buildWithParameters?token=dohatmo-r&tct_version=${build_version}&tct_server_y=${build_userdebug_server}&tct_update_code=${build_update_code}&tct_anti_rollback=${build_anti_rollback}&tct_type=userdebug&tct_clean=${build_clean}"
-            curl -X POST -v "http://10.129.93.215:8080/job/dohatmo-r/buildWithParameters?token=dohatmo-r&tct_version=${build_version}&tct_server_y=${build_userdebug_server}&tct_update_code=${build_update_code}&tct_anti_rollback=${build_anti_rollback}&tct_type=userdebug&tct_clean=${build_clean}"
-            
+            echo "curl -X POST -v http://10.129.93.215:8080/job/dohatmo-r/buildWithParameters?token=dohatmo-r&tct_version=${build_version}&tct_server_y=${build_server_x}&tct_update_code=${build_update_code}&tct_anti_rollback=${build_anti_rollback}&tct_type=userdebug&tct_clean=${build_clean}"
+            curl -X POST -v "http://10.129.93.215:8080/job/dohatmo-r/buildWithParameters?token=dohatmo-r&tct_version=${build_version}&tct_server_y=${build_server_x}&tct_update_code=${build_update_code}&tct_anti_rollback=${build_anti_rollback}&tct_type=userdebug&tct_clean=${build_clean}"
+
         ;;
 
         *)
             :
             ;;
     esac
-    
+
 }
 
-function tct::utils::get_build_userdebug_server() {
 
-    case ${JOB_NAME} in
+function tct::utils::create_versioninfo(){
 
-        transformervzw)
-            build_userdebug_server=WS110-8089
-        ;;
+    #生成version.inc文件
 
-        dohatmo-r)
-            build_userdebug_server=WS109-8089
-        ;;
+    show_vip "create version.inc start ..."
+    tct::utils::create_version_info
+    tct::utils::tct_check_version.inc
+    show_vip "create version.inc end ..."
 
-        irvinevzw)
-            build_userdebug_server=WS108-8089
-        ;;
-
-        *)
-            :
-            ;;
-    esac
 }
