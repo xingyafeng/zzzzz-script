@@ -76,6 +76,12 @@ function source_init()
 
             dohatmo-r)
                 source build/envsetup.sh && show_vip "--> source end ..."
+                if [[ ${VER_VARIANT} == "appli" ]] && [[ ${build_type} == "user" ]] ; then
+                        echo "this is user build -->${VER_VARIANT} -- ${build_type}"
+                        Command "choosesecimagekey ${PROJECTNAME} && choosesignapkkey ${PROJECTNAME}"
+                else
+                        Command "choosesecimagekey ${PROJECTNAME}"
+                fi
 
             ;;
 

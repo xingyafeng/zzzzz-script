@@ -39,8 +39,10 @@ build_delivery_bug=
 # ----
 # driveronly|mini|cert|appli|daily
 VER_VARIANT=
+
 #perso号
 PERSONUM=
+
 # 编译项目
 BUILDPROJ=
 # 项目名称
@@ -243,11 +245,7 @@ function perpare() {
     build_baseversion=${tct_baseversion:-}
 
     VER_VARIANT=$(tct::utils::get_version_variant)
-    if [[ ${VER_VARIANT} == "appli" ]]; then
-        PERSONUM=${build_version:3:1}
-    else
-        PERSONUM=0
-    fi
+    PERSONUM=$(tct::utils::get_perso_num)
     tct::utils::get_moden_type
     tct::utils::get_signapk_para
 
@@ -265,7 +263,13 @@ function perpare() {
 
     # 2. 临时分支
     build_tmpbranch=${tct_tmpbranch:-}
-    build_manifest=$(tct::utils::get_manifest_branch)
+
+    if [[ -z ${build_tmpbranch} ]]; then
+        build_manifest=$(tct::utils::get_manifest_branch)
+    else
+        build_manifest=${build_tmpbranch}
+    fi
+
     if [[ -z ${build_manifest} ]]; then
         log error 'The manifest is null ...'
     fi
@@ -338,6 +342,9 @@ function main() {
                         log warn "This time you don't update the source code."
                     fi
 
+                    #如果是appli和debug版本时创建version和manifest
+                    is_appli_debug
+
                     popd > /dev/null
 
                     ;;
@@ -378,14 +385,8 @@ function main() {
 
                     init
                     if [[ -d .repo && -f build/core/envsetup.mk && -f Makefile ]];then
-                        if [[ $(is_rom_build) == 'true' ]]; then
-                            outclean
-                        else
-                            source_init
-                            if [[ $? -eq 0 ]]; then
-                                outclean
-                            fi
-                        fi
+                        outclean
+
                     else
                         log warn "The (.repo) not found ! please download android source code !"
                     fi
@@ -422,12 +423,9 @@ function main() {
                     pushd ${build_p} > /dev/null
 
                     init
-                    if [[ $(is_rom_build) == 'true' ]]; then
-                        make_android
-                    else
-                        source_init
-                        make_android
-                    fi
+
+                    make_android
+
 
                     popd > /dev/null
                     ;;

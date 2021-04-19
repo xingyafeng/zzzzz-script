@@ -64,26 +64,29 @@ function is_mediatek_project() {
     esac
 }
 
-# 探测是否不需要创建versioninfo
-function is_create_versioninfo() {
+# 探测是否不需要创建versioninfo and manifest
+function is_build_debug() {
 
     case ${VER_VARIANT} in
 
         appli)
-            echo false
-            ;;
-        *)
             case ${build_type} in
+
                 userdebug)
-                    echo false
-                ;;
+                    echo true
+                    ;;
 
                 *)
-                    echo true
+                    echo false
                 ;;
             esac
-            ;;
+        ;;
+
+        *)
+            echo false
+        ;;
     esac
+
 }
 
 # 区分由时间触发

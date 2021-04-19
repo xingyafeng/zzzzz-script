@@ -188,11 +188,14 @@ function tct::utils::create_version_info() {
 #    fi
 
     #下载version仓库
-    if [[ -d ${tmpfs}/${version_path} ]];then
-        Command "rm -rf ${tmpfs}/${version_path}"
+
+
+#    git_sync_repository ${versioninfo} ${build_manifest%.*}
+    if [[ -d ${tmpfs}/${version_path} ]]; then
+        Command "mv ${tmpfs}/${version_path} ${tmpfs}/${version_path}_bak && rm -rf ${tmpfs}/${version_path}_bak &"
     fi
 
-    git_sync_repository ${versioninfo} ${build_manifest%.*}
+    Command "git clone git@shenzhen.gitweb.com:${versioninfo} -b ${build_manifest%.*} ${tmpfs}/${version_path}"
 
     pushd ${tmpfs}/${version_path} > /dev/null
 
@@ -205,7 +208,6 @@ function tct::utils::create_version_info() {
     if [[ -n "`git status -s`" ]];then
         git add version.inc
         git commit -m "Release ${build_version}"
-        git pull
         git push `git remote` HEAD:${build_manifest%.*}
     else
         log warn 'The version.inc do not update.'
@@ -294,7 +296,7 @@ function tct::utils::backup_image_version() {
             creat_time=`date +%Y%m%d%H%M -r ${teleweb_p}/${PROJECTNAME}/tmp/v${build_version}`
         fi
 
-        if [[ ${VER_VARIANT} == "appli" ]] && [[ ${build_type} == "userdebug" ]]; then
+        if [[ $(is_build_debug) == 'true' ]]; then
             telewebdir=${teleweb_p}/${PROJECTNAME}/userdebug/appli/v${build_version}
             telewebdir_bak=${teleweb_p}/${PROJECTNAME}/userdebug/appli/v${build_version}_${creat_time}
         else

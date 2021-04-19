@@ -37,12 +37,18 @@ function gettop() {
 
 # 配置正确 manifest
 function set_manifest_xml() {
+    local PojectName=`tr '[A-Z]' '[a-z]' <<<${PROJECTNAME}`
 
     if [[ -n ${build_manifest} ]]; then
-        if [[ ${build_manifest} =~ '.xml' ]]; then
-            build_manifest=${build_manifest}
+        if [[ $(is_build_debug) == 'true' ]]; then
+            build_manifest=int/${PojectName}/v${build_version}.xml
         else
-            build_manifest=${build_manifest}.xml
+            if [[ ${build_manifest} =~ '.xml' ]]; then
+                build_manifest=${build_manifest}
+            else
+                build_manifest=${build_manifest}.xml
+            fi
+
         fi
     fi
 }
@@ -102,32 +108,12 @@ function download_android_source_code()
     # 生成manifest列表
     generate_manifest_list
 
-    if [[ $(is_rom_build) == 'true' ]]; then
-        if [[ ${VER_VARIANT} == "appli" ]] && [[ ${build_type} == "userdebug" ]]; then
-            show_vip "no need to creat manifest"
-        else
-            tct::utils::create_versioninfo
-            tct::utils::create_manifest
-        fi
-
-
-        if [[ ${VER_VARIANT} == "appli" ]] &&[[ "${build_userdebug}" == "true" ]]; then
-            show_vip "build_userdebug ..."
-            tct::utils::build_userdebug
-        fi
-    fi
 }
 
 ## 更新源代码
 function update_source_code()
 {
     local manifest_name=
-    local PojectName=`tr '[A-Z]' '[a-z]' <<<${PROJECTNAME}`
-    if [[ ${VER_VARIANT} == "appli" ]] && [[ ${build_type} == "userdebug" ]]; then
-        manifest_name=int/${PojectName}/v${build_version}.xml
-    else
-        manifest_name=${build_manifest}
-    fi
 
     if [[ -f build/core/envsetup.mk && -f Makefile ]]; then
 
@@ -143,9 +129,9 @@ function update_source_code()
         ## 重新初始化，防止本地提交代码影响版本
         if [[ -n "${build_manifest}" ]];then
             if [[ "$(is_check_mirror)" == "true" ]]; then
-                Command "repo init -m ${manifest_name} --reference=${reference_p}"
+                Command "repo init -m ${build_manifest} --reference=${reference_p}"
             else
-                Command "repo init -m ${manifest_name}"
+                Command "repo init -m ${build_manifest}"
             fi
         fi
 
@@ -160,13 +146,6 @@ function update_source_code()
 function download_source_code()
 {
     local manifest_project_p='gcs_sz/manifest.git'
-    local manifest_name=
-    local PojectName=`tr '[A-Z]' '[a-z]' <<<${PROJECTNAME}`
-    if [[ ${VER_VARIANT} == "appli" ]] && [[ ${build_type} == "userdebug" ]]; then
-        manifest_name=int/${PojectName}/v${build_version}.xml
-    else
-        manifest_name=${build_manifest}
-    fi
 
     if [[ -n "${build_manifest}" ]];then
 
@@ -176,9 +155,9 @@ function download_source_code()
         fi
 
         if [[ "$(is_check_mirror)" == "true" ]]; then
-            Command "repo init -u ${default_gerrit}:${manifest_project_p} -m ${manifest_name} --reference=${reference_p}"
+            Command "repo init -u ${default_gerrit}:${manifest_project_p} -m ${build_manifest} --reference=${reference_p}"
         else
-            Command "repo init -u ${default_gerrit}:${manifest_project_p} -m ${manifest_name}"
+            Command "repo init -u ${default_gerrit}:${manifest_project_p} -m ${build_manifest}"
         fi
     fi
 
@@ -314,12 +293,12 @@ function make_droid() {
 
             backup)
                 tct::utils::backup_image_version
-                if [[ ${VER_VARIANT} == "appli" ]] && [[ ${build_type} == "userdebug" ]]; then
+                if [[ $(is_build_debug) == 'true' ]]; then
                     echo "no need releasemail"
                 else
                     tct::utils::releasemail
                 fi
-                
+
                 ;;
 
             *)
@@ -332,81 +311,41 @@ function make_droid() {
 # 清除OUT目录
 function outclean() {
 
-    local outdir=$(mktemp -d -p ${tmpfs})
-    if [[ $(is_rom_build) == 'true' ]]; then
-        outbackup
-    else
-        if [[ "${build_clean}" == "true" ]];then
-            show_vip '[tct]: --> make clean ...'
+    #local outdir=$(mktemp -d -p ${tmpfs})
+    local outdir=out_bak
 
-            if [[ -d out/ ]]; then
-                Command mv out ${outdir}
-            fi
-
-            if [[ -d ${outdir} ]]; then
-                Command "rm -rf ${outdir} &"
-                if [[ $? -eq 0 ]];then
-                    echo
-                    show_vip "--> make clean end ..."
-                else
-                    log error "--> make clean fail ..."
-                fi
-            fi
+    if [[ "${build_clean}" == "true" ]];then
+        show_vip '[tct]: --> make clean ...'
+        if [[ $(is_rom_prebuild) == 'true' ]]; then
+            dirclean out
         else
-            show_vip '[tct]: --> make installclean ...'
-            Command "make -j${JOBS} installclean"
-            if [[ $? -eq 0 ]];then
-                echo
-                show_vip "--> make installclean end ..."
-            else
-                log error "--> make installclean fail ..."
+
+            if [[ -d out_bak ]]; then
+                dirclean out_bak
             fi
+
+            Command "mkdir out_bak"
+
+            if [[ -d out ]]; then
+                Command "mv out out_bak/"
+            fi
+
+            if [[ -d out_sys ]]; then
+                Command "mv out_sys out_bak/"
+            fi
+        fi
+
+    else
+        show_vip '[tct]: --> make installclean ...'
+        source_init
+        Command "make -j${JOBS} installclean"
+        if [[ $? -eq 0 ]];then
+            echo
+            show_vip "--> make installclean end ..."
+        else
+            log error "--> make installclean fail ..."
         fi
     fi
-}
-
-#备份out目录
-function outbackup()
-{
-    local appli_number=
-    local build_number=
-    local outdir_string=
-        show_vip '[tct]: --> out backup ...'
-        echo `pwd`
-        if [[ -f version/version.inc ]];then
-            #当version.inc文件存在时，获取上一个版本的版本号
-            appli_number=`awk '/ANDROID_SYS_VER/ {print substr($NF, 9,1)}' version/version.inc`
-            if [[ ${appli_number} == 0 ]];then
-                build_number=`awk '/ANDROID_SYS_VER/ {print substr($NF, 3,4)}' version/version.inc`
-            else
-                build_number=`awk '/ANDROID_SYS_VER/ {print substr($NF, 3,4)"-"substr($NF, 9,1)}' version/version.inc`
-            fi
-            if [[ -n "${build_number}" ]]; then
-                outdir_string="${build_number}_"`date +"%Y%m%d%H%M%S"`
-                if [[ -d ${tmpfs}/out/${job_name}/ ]]; then
-                    Command "rm -rf ${tmpfs}/out/${job_name}/*"
-                fi
-                Command "mkdir -p ${tmpfs}/out/${job_name}/${outdir_string}"
-
-                if [[ "${build_clean}" == "true" ]];then
-                    Command "mv out ${tmpfs}/out/${job_name}/${outdir_string}"
-                else
-                    Command "cp -r out ${tmpfs}/out/${job_name}/${outdir_string}"
-                fi
-
-                if [[ $? -eq 0 ]];then
-                    echo
-                    show_vip "--> out backup end ..."
-                else
-                    log error "--> out bakcup fail ..."
-                fi
-            else
-                show_vip "--> out backup failed ..."
-            fi
-        else
-            show_vip "--> version.inc is file does not exist ..."
-        fi
-
 }
 
 function make_android()
@@ -615,7 +554,7 @@ function get_perso_num() {
 }
 
 function tct::build_mtk(){
-    
+
     Command "./tclMake -o=`echo ${compile_para[@]} | sed s/[[:space:]]//g` ${PROJECTNAME} new"
     if [[ $? -eq 0 ]];then
         echo
@@ -623,5 +562,20 @@ function tct::build_mtk(){
 
     else
         log error "--> make android mtk failed !"
+    fi
+}
+
+function is_appli_debug(){
+    if [[ $(is_build_debug) == 'true' ]]; then
+        show_vip "no need to creat manifest and version"
+    else
+        show_vip "creat manifest and version"
+        tct::utils::create_versioninfo
+        tct::utils::create_manifest
+    fi
+
+    if [[ ${VER_VARIANT} == "appli" ]] &&[[ "${build_userdebug}" == "true" ]]; then
+        show_vip "build_userdebug ..."
+        tct::utils::build_userdebug
     fi
 }
