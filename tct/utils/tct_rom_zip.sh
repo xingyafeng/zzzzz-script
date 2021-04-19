@@ -76,7 +76,7 @@ function enhance_zip() {
                 # 清理 HZNPI目录
                 pushd ${tmpfs} > /dev/null
                 if [[ -d HZNPI ]]; then
-                    versionclean HZNPI
+                    dirclean HZNPI
                 fi
                 popd > /dev/null
 
@@ -94,7 +94,7 @@ function enhance_zip() {
                 pushd ${tmpfs} > /dev/null
                 if [[ -d HZNPI ]]; then
                     zip -1vr ${tmpzip}/${zip_name}.zip HZNPI/ -x *bts_*.zip
-                    versionclean HZNPI
+                    dirclean HZNPI
                 fi
                 popd > /dev/null
             ;;
@@ -183,9 +183,9 @@ function enhance_zip() {
 }
 
 # 清除VERSION目录
-function versionclean() {
+function dirclean() {
 
-    local versiondir=$(mktemp -d -p ${tmpfs})
+    local tmpdir=$(mktemp -d -p ${tmpfs})
     local cleandir=${1:-}
 
     if [[ -z ${cleandir} ]]; then
@@ -193,16 +193,16 @@ function versionclean() {
     fi
 
     if [[ -d ${cleandir}/ ]]; then
-        mv ${cleandir} ${versiondir}
+        mv ${cleandir} ${tmpdir}
     fi
 
-    if [[ -d ${versiondir} ]]; then
-        Command "rm -rf ${versiondir} &"
+    if [[ -d ${tmpdir} ]]; then
+        Command "rm -rf ${tmpdir} &"
         if [[ $? -eq 0 ]];then
             echo
-            show_vip "--> clean version end ..."
+            show_vip "--> clean dir end ..."
         else
-            log error "--> clean version fail ..."
+            log error "--> clean dir fail ..."
         fi
     fi
 }
