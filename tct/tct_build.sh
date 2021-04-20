@@ -257,6 +257,7 @@ function make_android_for_single() {
         fix_incorrect_module
         show_vir "[tct]: mma -j${JOBS} ${build_module_list[@]}"
         if ${build_debug};then
+            source_init
             mma -j${JOBS} ${build_module_list[@]}
             if [[ ${PIPESTATUS[0]} -eq 0 ]] ; then
                 verify_patchset_submit 0
