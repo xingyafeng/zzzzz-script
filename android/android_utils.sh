@@ -38,7 +38,7 @@ function source_init()
             DelhiTF_Gerrit_Build)
                 export SIGN_SECIMAGE_USEKEY=delhitf
                 wimdataclean
-                Command choosecombo 1 delhitf userdebug false 1 false 1 0 && show_vip "--> lunch end ..."
+                Command choosecombo 1 delhitf userdebug true 1 false true 2 && show_vip "--> lunch end ..."
             ;;
 
             TransformerVZW_Gerrit_Build)
