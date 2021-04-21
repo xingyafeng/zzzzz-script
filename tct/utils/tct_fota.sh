@@ -258,6 +258,22 @@ function set_testkey() {
     esac
 }
 
+# 配置签名项目的名称
+function tct::utils::set_project_name() {
+
+    case ${build_project} in
+
+        thor84gvzw_r)
+            project_name=thor84gvzw
+        ;;
+
+        *)
+            project_name=${build_project}
+        ;;
+    esac
+
+    log print "@@@ project name = ${project_name}"
+}
 # 配置java vesion
 function tct::utils::set_java_version() {
 

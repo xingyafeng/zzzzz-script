@@ -239,6 +239,7 @@ function update_fota_config() {
         bigupdate_releasekey)  # 5. 大文件升级包
 
             local bigfile=bigupdate.zip
+            local project_name=
 
             fota_name=update_rkey.zip
             fota_xmls=TCL_${device_name}_${build_from_version}_${build_to_version}_size_over_1.5G_9.19.4.xml
@@ -269,9 +270,10 @@ function update_fota_config() {
                         ;;
 
                     *)
+                        tct::utils::set_project_name
                         java -Xmx2048m -Djava.library.path=${fota_tools_p}/JrdDiffTool/lib64 \
                             -Dcom.tclcom.apksig.connect=localhost:50051,10.128.180.21:50051,10.128.180.117:50051,10.128.180.220:50051 \
-                            -Dcom.tclcom.apksig.keysuite=${build_project} \
+                            -Dcom.tclcom.apksig.keysuite=${project_name} \
                             -jar ${fota_tools_p}/JrdDiffTool/framework/signapk.jar \
                             -providerClass com.tclcom.apksig.StubJCAProvider \
                             -w ${fota_tools_p}/JrdDiffTool/TCT_releasekeys/releasekey.x509.pem \
