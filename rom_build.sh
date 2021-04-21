@@ -61,6 +61,8 @@ version_path=
 
 getprojectinfo=
 
+build_enduser=
+
 # init function
 . "$(dirname "$0")/tct/tct_init.sh"
 
@@ -182,6 +184,8 @@ function handle_variable() {
     # 13. userdebug
     build_userdebug=${tct_userdebug:-false}
 
+    # 14 .enduser
+    build_enduser=${tct_enduser-:false}
     # ---------------------------------------------
 
     handle_common
@@ -209,6 +213,7 @@ function print_variable() {
     echo "build_isship            = " ${build_isship}
     echo "build_delivery_bug      = " ${build_delivery_bug}
     echo "build_userdebug         = " ${build_userdebug}
+    echo "build_enduser           = " ${build_enduser}
     echo '-----------------------------------------'
     echo "VER_VARIANT             = " ${VER_VARIANT}
     echo "PERSONUM                = " ${PERSONUM}

@@ -208,6 +208,7 @@ function tct::utils::create_version_info() {
     if [[ -n "`git status -s`" ]];then
         git add version.inc
         git commit -m "Release ${build_version}"
+        git pull
         git push `git remote` HEAD:${build_manifest%.*}
     else
         log warn 'The version.inc do not update.'

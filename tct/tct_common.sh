@@ -197,6 +197,8 @@ function tct::build_ap() {
         ;;
     esac
 
+    is_enduser_apk
+    
     show_vip "${compile_para[@]} bash build.sh dist -j$(nproc) ${para}"
     Command ${compile_para[@]} bash build.sh dist -j$(nproc) ${para} 2>&1 | tee build_ap.log
     if [[ $? -eq 0 ]];then
@@ -578,4 +580,25 @@ function is_appli_debug(){
         show_vip "build_userdebug ..."
         tct::utils::build_userdebug
     fi
+}
+
+# 是否需要移除enduser.apk
+function is_enduser_apk() {
+
+    case ${JOB_NAME} in
+
+        transformervzw)
+            if [[ "${build_enduser}" == "true" ]];then
+                show_vip "need usersupport apk..."
+            else
+                show_vip "no need usersupport apk, remove android.mk"
+                Command "mv vendor/tct/apps/UserSupport/Android.mk vendor/tct/apps/UserSupport/Android.mk_bak"
+            fi
+        ;;
+
+        *)
+            :
+        ;;
+    esac
+
 }
