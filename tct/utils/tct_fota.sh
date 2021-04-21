@@ -281,7 +281,18 @@ function tct::utils::set_java_version() {
 
     ## 设置JAVA环境变量
     unset -v JAVA_HOME
-    export JAVA_HOME=${fota_tools_p}/JrdDiffTool/prebuilts/OpenJDK-1.8
+
+    case ${tctproject} in
+
+        transformervzw)
+            export JAVA_HOME=${fota_tools_p}/JrdDiffTool/prebuilts/jdk9/linux-x86
+        ;;
+
+        *)
+            export JAVA_HOME=${fota_tools_p}/JrdDiffTool/prebuilts/OpenJDK-1.8
+        ;;
+    esac
+
     export JRE_HOME=${JAVA_HOME}/jre
     export CLASSPATH=.:${CLASSPATH}:${JAVA_HOME}/lib:${JRE_HOME}/lib
     export PATH=${JAVA_HOME}/bin:${JRE_HOME}/bin:$PATH
