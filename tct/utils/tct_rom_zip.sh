@@ -66,7 +66,7 @@ function enhance_zip() {
         case ${build_zip_type} in
 
             mini)
-                zip -1v ${tmpzip}/${zip_name}.zip *.* -x *bts_*.zip
+                zip -1v ${tmpzip}/${zip_name}.zip *.* -x *.zip
             ;;
 
             *)
@@ -214,13 +214,19 @@ function backup_zip_to_teleweb() {
     local date=$(date +'%Y.%m.%d_%H.%M.%S')
 
     if [[ -f ${tmpzip}/${zip_name}.zip ]]; then
-        sudo cp -vf ${tmpzip}/${zip_name}.zip ${teleweb_p}
+        Command time sudo cp -vf ${tmpzip}/${zip_name}.zip ${teleweb_p}
 
-        if [[ ! -L ${zip_path}/${zip_name}.zip ]]; then
-            sudo ln -vs ${teleweb_p}/${zip_name}.zip ${zip_path}
+        pushd ${zip_path} > /dev/null
+
+        echo
+        # 新建软连接，减小空间的压力
+        if [[ ! -L ${zip_name}.zip ]]; then
+            sudo ln -vs ${teleweb_p}/${zip_name}.zip
         else
-            sudo ln -vs ${teleweb_p}/${zip_name}.${date}.zip ${zip_path}
+            sudo ln -vs ${teleweb_p}/${zip_name}.zip ${zip_name}.${date}.zip
         fi
+
+        popd > /dev/null
 
         # 清理动作
         if [[ -d ${tmpzip} ]]; then
