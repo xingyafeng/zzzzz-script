@@ -128,6 +128,16 @@ function download_and_update_apk_repository()
     fi
 }
 
+# 更新gitweb服务器地址
+function udpate_gerrit_server() {
+
+    case ${GITRES} in
+        qualcomm/version|mtk/version_cd)
+            gerrit_server='shenzhen.gitweb.com'
+        ;;
+    esac
+}
+
 #####################################################
 ##
 ##  函数: git_sync_repository
@@ -249,6 +259,7 @@ function git_sync_repository()
 
         popd > /dev/null
     else
+        udpate_gerrit_server
         if [[ "`is_valid_user`" == "true" ]]; then
             Command "git clone -b ${GITRES_BRANCH} ssh://${git_username}@${gerrit_server}:${gerrit_port}/${GITRES} ${GITRES_PATH}/${GITRES##*/}"
         else
