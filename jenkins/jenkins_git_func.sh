@@ -266,14 +266,16 @@ function git_sync_repository()
             Command "git clone -b ${GITRES_BRANCH} ${default_gerrit}:${GITRES} ${GITRES_PATH}/${GITRES##*/}"
         fi
 
-        pushd ${GITRES_PATH}/${GITRES##*/} > /dev/null
+        if [[ ${gerrit_server} == 'SZ.gerrit.tclcom.com' ]]; then
+            pushd ${GITRES_PATH}/${GITRES##*/} > /dev/null
 
-        git fetch http://SZ.gerrit.tclcom.com:8080/gcs_sz/repo.git stable_gcs
-        git checkout FETCH_HEAD -- hooks/commit-msg
-        mv ./hooks/commit-msg .git/hooks/
-        git rm ./hooks/commit-msg
+            git fetch http://SZ.gerrit.tclcom.com:8080/gcs_sz/repo.git stable_gcs
+            git checkout FETCH_HEAD -- hooks/commit-msg
+            mv ./hooks/commit-msg .git/hooks/
+            git rm ./hooks/commit-msg
 
-        popd > /dev/null
+            popd > /dev/null
+        fi
     fi
 }
 
