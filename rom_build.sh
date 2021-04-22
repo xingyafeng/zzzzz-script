@@ -40,9 +40,6 @@ build_delivery_bug=
 # driveronly|mini|cert|appli|daily
 VER_VARIANT=
 
-#perso号
-PERSONUM=
-
 # 编译项目
 BUILDPROJ=
 # 项目名称
@@ -55,14 +52,12 @@ modem_type=
 # sign apk
 signapk=
 
-#versioninfo
-versioninfo=
-version_path=
-
 getprojectinfo=
 
 build_enduser=
 
+# version仓库地址
+versioninfo=
 # init function
 . "$(dirname "$0")/tct/tct_init.sh"
 
@@ -216,14 +211,11 @@ function print_variable() {
     echo "build_enduser           = " ${build_enduser}
     echo '-----------------------------------------'
     echo "VER_VARIANT             = " ${VER_VARIANT}
-    echo "PERSONUM                = " ${PERSONUM}
     echo "BUILDPROJ               = " ${BUILDPROJ}
     echo "PROJECTNAME             = " ${PROJECTNAME}
     echo "MODEMPROJECT            = " ${MODEMPROJECT}
     echo "modem_type              = " ${modem_type}
     echo "signapk                 = " ${signapk}
-    echo "versioninfo             = " ${versioninfo}
-    echo "version_path            = " ${version_path}
     echo "getprojectinfo          = " ${getprojectinfo}
     echo "build_userdebug_server  = " ${build_userdebug_server}
     echo '-----------------------------------------'
@@ -237,8 +229,7 @@ function print_variable() {
 function perpare() {
 
     local PLATFORM=
-
-    tct::utils::downlolad_tools
+    
     tct::utils::get_platform_info
 
     # 1. 版本号
@@ -250,7 +241,7 @@ function perpare() {
     build_baseversion=${tct_baseversion:-}
 
     VER_VARIANT=$(tct::utils::get_version_variant)
-    PERSONUM=$(tct::utils::get_perso_num)
+    
     tct::utils::get_moden_type
     tct::utils::get_signapk_para
 
@@ -279,12 +270,10 @@ function perpare() {
         log error 'The manifest is null ...'
     fi
 
-    # version仓库地址
-    versioninfo=$(tct::utils::get_version_info)
-    version_path=`basename ${versioninfo}`
-
     # -------------------------------------------------------
 
+    versioninfo=$(tct::utils::get_version_info)
+    tct::utils::downlolad_tools
 }
 
 function init() {

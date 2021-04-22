@@ -91,6 +91,10 @@ function tct::utils::get_moden_type() {
                     modem_type=mini
                 ;;
 
+                cert)
+                    modem_type=cert
+                ;;
+
                 *)
                     modem_type=vzw
                 ;;
@@ -136,8 +140,8 @@ function tct::utils::create_version_info() {
     local main=${build_version:0:4}
     local security=0
     #local efuse=0
-    local perso=${PERSONUM}
-    local platform=DQ
+    local perso=${perso_num}
+    local platform=${custo_name_platform}
     local extension=00
 
     if [[ ${build_efuse} == "true" ]]; then
@@ -191,11 +195,6 @@ function tct::utils::create_version_info() {
 
 
 #    git_sync_repository ${versioninfo} ${build_manifest%.*}
-    if [[ -d ${tmpfs}/${version_path} ]]; then
-        Command "mv ${tmpfs}/${version_path} ${tmpfs}/${version_path}_bak && rm -rf ${tmpfs}/${version_path}_bak &"
-    fi
-
-    Command "git clone git@shenzhen.gitweb.com:${versioninfo} -b ${build_manifest%.*} ${tmpfs}/${version_path}"
 
     pushd ${tmpfs}/${version_path} > /dev/null
 
@@ -293,11 +292,25 @@ function tct::utils::backup_image_version() {
             productname=${PROJECTNAME}
         fi
 
-        if [[ -d ${teleweb_p}/${PROJECTNAME}/tmp/v${build_version} ]]; then
-            creat_time=`date +%Y%m%d%H%M -r ${teleweb_p}/${PROJECTNAME}/tmp/v${build_version}`
+        if [[ ${build_version:2:1} == "O" ]]; then
+            if [[ -d ${teleweb_p}/${PROJECTNAME}/cts_version/v${build_version} ]]; then
+                creat_time=`date +%Y%m%d%H%M -r ${teleweb_p}/${PROJECTNAME}/cts_version/v${build_version}`
+            fi
+        else
+            if [[ -d ${teleweb_p}/${PROJECTNAME}/tmp/v${build_version} ]]; then
+                creat_time=`date +%Y%m%d%H%M -r ${teleweb_p}/${PROJECTNAME}/tmp/v${build_version}`
+            fi
         fi
 
-        if [[ $(is_build_debug) == 'true' ]]; then
+        if [[ ${build_version:2:1} == "O" ]]; then
+            if [[ $(is_build_debug) == 'true' ]]; then
+             telewebdir=${teleweb_p}/${PROJECTNAME}/cts_version/v${build_version}_userdebug
+             telewebdir_bak=${teleweb_p}/${PROJECTNAME}/cts_version/v${build_version}_userdebug_${creat_time}
+           else
+             telewebdir=${teleweb_p}/${PROJECTNAME}/cts_version/v${build_version}
+             telewebdir_bak=${teleweb_p}/${PROJECTNAME}/cts_version/v${build_version}_${creat_time}
+           fi
+        elif [[ $(is_build_debug) == 'true' ]]; then
             telewebdir=${teleweb_p}/${PROJECTNAME}/userdebug/appli/v${build_version}
             telewebdir_bak=${teleweb_p}/${PROJECTNAME}/userdebug/appli/v${build_version}_${creat_time}
         else
@@ -341,17 +354,19 @@ function tct::utils::backup_image_version() {
 
 function tct::utils::downlolad_tools() {
 
+    local branch=${build_manifest}
+
     # 下载 tools_int and version
     if [[ $(is_thesame_server) == 'true' ]]; then
         case ${object} in
             'target_download'|'ap'|'download')
                 git_sync_repository alps/tools_int master
-                git_sync_repository qualcomm/version master
+                git_sync_repository ${versioninfo} ${branch}
             ;;
         esac
     else
         git_sync_repository alps/tools_int master
-        git_sync_repository qualcomm/version master
+        git_sync_repository ${versioninfo} ${branch}
     fi
 }
 
@@ -480,14 +495,14 @@ function tct::utils::build_userdebug() {
     case ${JOB_NAME} in
 
         transformervzw)
-            echo "curl -X POST -v http://10.129.93.215:8080/job/transformervzw/buildWithParameters?token=transformervzw&tct_version=${build_version}&tct_server_y=${build_server_x}&tct_update_code=${build_update_code}&tct_anti_rollback=${build_anti_rollback}&tct_type=userdebug&tct_clean=${build_clean}"
-            curl -X POST -v "http://10.129.93.215:8080/job/transformervzw/buildWithParameters?token=transformervzw&tct_version=${build_version}&tct_server_y=${build_server_x}&tct_update_code=${build_update_code}&tct_anti_rollback=${build_anti_rollback}&tct_type=userdebug&tct_clean=${build_clean}"
+            echo "curl -X POST -v http://10.129.93.215:8080/job/transformervzw/buildWithParameters?token=transformervzw&tct_version=${build_version}&tct_server_y=${build_server_x}&tct_update_code=${build_update_code}&tct_anti_rollback=${build_anti_rollback}&tct_type=userdebug&tct_clean=${build_clean}&&tct_tmpbranch=${build_tmpbranch}"
+            curl -X POST -v "http://10.129.93.215:8080/job/transformervzw/buildWithParameters?token=transformervzw&tct_version=${build_version}&tct_server_y=${build_server_x}&tct_update_code=${build_update_code}&tct_anti_rollback=${build_anti_rollback}&tct_type=userdebug&tct_clean=${build_clean}&&tct_tmpbranch=${build_tmpbranch}"
 
         ;;
 
         dohatmo-r)
-            echo "curl -X POST -v http://10.129.93.215:8080/job/dohatmo-r/buildWithParameters?token=dohatmo-r&tct_version=${build_version}&tct_server_y=${build_server_x}&tct_update_code=${build_update_code}&tct_anti_rollback=${build_anti_rollback}&tct_type=userdebug&tct_clean=${build_clean}"
-            curl -X POST -v "http://10.129.93.215:8080/job/dohatmo-r/buildWithParameters?token=dohatmo-r&tct_version=${build_version}&tct_server_y=${build_server_x}&tct_update_code=${build_update_code}&tct_anti_rollback=${build_anti_rollback}&tct_type=userdebug&tct_clean=${build_clean}"
+            echo "curl -X POST -v http://10.129.93.215:8080/job/dohatmo-r/buildWithParameters?token=dohatmo-r&tct_version=${build_version}&tct_server_y=${build_server_x}&tct_update_code=${build_update_code}&tct_anti_rollback=${build_anti_rollback}&tct_type=userdebug&tct_clean=${build_clean}&&tct_tmpbranch=${build_tmpbranch}"
+            curl -X POST -v "http://10.129.93.215:8080/job/dohatmo-r/buildWithParameters?token=dohatmo-r&tct_version=${build_version}&tct_server_y=${build_server_x}&tct_update_code=${build_update_code}&tct_anti_rollback=${build_anti_rollback}&tct_type=userdebug&tct_clean=${build_clean}&&tct_tmpbranch=${build_tmpbranch}"
 
         ;;
 
@@ -508,4 +523,20 @@ function tct::utils::create_versioninfo(){
     tct::utils::tct_check_version.inc
     show_vip "create version.inc end ..."
 
+}
+
+# 设置版本序列倒数第三，第四位
+function tct::utils::custo_name_platform() {
+    local custo_name_platform=
+    case ${JOB_NAME} in
+
+        transformervzw|dohatmo-r|irvinevzw)
+            custo_name_platform=DQ
+        ;;
+
+        *)
+            custo_name_platform=DH
+        ;;
+    esac
+    echo ${custo_name_platform}
 }

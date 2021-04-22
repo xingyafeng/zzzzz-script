@@ -115,7 +115,6 @@ function download_android_source_code()
 ## 更新源代码
 function update_source_code()
 {
-    local manifest_name=
 
     if [[ -f build/core/envsetup.mk && -f Makefile ]]; then
 
@@ -201,7 +200,7 @@ function tct::build_ap() {
     esac
 
     is_enduser_apk
-    
+
     show_vip "${compile_para[@]} bash build.sh dist -j$(nproc) ${para}"
     Command ${compile_para[@]} bash build.sh dist -j$(nproc) ${para} 2>&1 | tee build_ap.log
     if [[ $? -eq 0 ]];then
@@ -298,7 +297,7 @@ function make_droid() {
 
             backup)
                 tct::utils::backup_image_version
-                if [[ $(is_build_debug) == 'true' ]]; then
+                if [[ $(is_build_debug) == 'true' || ${build_version:2:1} == "O" ]];then
                     echo "no need releasemail"
                 else
                     tct::utils::releasemail
@@ -574,6 +573,11 @@ function is_appli_debug(){
     if [[ $(is_build_debug) == 'true' ]]; then
         show_vip "no need to creat manifest and version"
     else
+        
+        local version_path=`basename ${versioninfo}`
+        local perso_num=$(tct::utils::get_perso_num)
+        local custo_name_platform=$(tct::utils::custo_name_platform)
+
         show_vip "creat manifest and version"
         tct::utils::create_versioninfo
         tct::utils::create_manifest
