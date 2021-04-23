@@ -38,6 +38,18 @@ function filter() {
                     esac
                 ;;
 
+                genericapp/gcs_SystemUI)
+                    case ${GERRIT_BRANCH} in
+                        gcs_SystemUI_common)
+                            echo true
+                        ;;
+
+                        *)
+                            echo false
+                        ;;
+                    esac
+                 ;;
+
                 *)
                     echo false
                 ;;
