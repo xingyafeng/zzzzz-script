@@ -300,6 +300,7 @@ function make_droid() {
                 if [[ $(is_build_debug) == 'true' || ${build_version:2:1} == "O" ]];then
                     echo "no need releasemail"
                 else
+                    echo "need releasemail"
                     tct::utils::releasemail
                 fi
 
@@ -573,7 +574,7 @@ function is_appli_debug(){
     if [[ $(is_build_debug) == 'true' ]]; then
         show_vip "no need to creat manifest and version"
     else
-        
+
         local version_path=`basename ${versioninfo}`
         local perso_num=$(tct::utils::get_perso_num)
         local custo_name_platform=$(tct::utils::custo_name_platform)

@@ -229,7 +229,7 @@ function print_variable() {
 function perpare() {
 
     local PLATFORM=
-    
+
     tct::utils::get_platform_info
 
     # 1. 版本号
@@ -241,7 +241,7 @@ function perpare() {
     build_baseversion=${tct_baseversion:-}
 
     VER_VARIANT=$(tct::utils::get_version_variant)
-    
+
     tct::utils::get_moden_type
     tct::utils::get_signapk_para
 
@@ -318,7 +318,7 @@ function main() {
 
                 target_download|download)
                     echo 'download ...'
-                
+
                     local build_p=${root_p}/${job_name}Y/${build_manifest}
 
                     if [[ ! -d ${build_p} ]]; then
@@ -368,7 +368,7 @@ function main() {
 
                 target_clean|clean)
                     echo "clean"
-                
+
                     local build_p=${root_p}/${job_name}Y/${build_manifest}
 
                     if [[ ! -d ${build_p} ]]; then

@@ -280,6 +280,7 @@ function tct::utils::backup_image_version() {
         local telewebdir_bak=
         local telewebdir=
         local productname=
+        local beetlepath=
 
         Command "sh copyimgs.sh"
 
@@ -322,6 +323,26 @@ function tct::utils::backup_image_version() {
             Command "sudo mv ${telewebdir} ${telewebdir_bak}"
         fi
 
+        #generate beetle_version.txt file
+        if [[ ${VER_VARIANT} == "appli" ]]; then
+            beetlepath=appli
+        elif [[ ${VER_VARIANT} == "mini" ]]; then
+            beetlepath=mini
+        elif [[ ${VER_VARIANT} == "cert" ]]; then
+            beetlepath=certification
+        else
+            echo "do nothing"
+        fi
+
+        if [[ ${JOB_NAME} == "transformervzw" ]]; then
+            if [[ $(is_build_debug) == 'true' || ${#build_version} != "4" ]]; then
+                show_vip "no need upload to beat web ..."
+            else
+                echo "python amss_nicobar_la2.0.1/vendor/script/collect_parameters.py -t ${PROJECTNAME}/$beetlepath/v$build_version -b $build_manifest -y false"
+                python amss_4350_spf1.0/vendor/script/collect_parameters.py -t ${PROJECTNAME}/$beetlepath/v$build_version -b $build_manifest -y false
+            fi
+        fi
+
         if [[ ${VER_VARIANT} == "mini" ]]; then
             if [[ ${JOB_NAME} == "transformervzw" ]]; then
                 cp amss_4350_spf1.0/vendor/tct/transformer/build/partition_load_pt/ufs/provision/provision_ufs22.xml out/target/product/${productname}/Teleweb/provision_ufs22.xml
@@ -342,10 +363,6 @@ function tct::utils::backup_image_version() {
         Command "sudo chmod -R 0755 ${telewebdir}"
 
 
-        #if [[ ${#build_version} == "4" ]]; then
-        #    show_vip "python amss_nicobar_la2.0.1/vendor/script/collect_parameters.py -t ${PROJECTNAME}/$telewebdir/v$build_version -b $build_manifest -y false"
-        #    python amss_4350_spf1.0/vendor/script/collect_parameters.py -t ${PROJECTNAME}/$telewebdir/v$build_version -b $build_manifest -y false
-        #fi
 
         show_vip "copyimage end ... "
 
