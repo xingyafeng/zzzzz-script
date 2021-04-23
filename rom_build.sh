@@ -103,7 +103,6 @@ function handle_compile_para() {
             if [[ -n "${build_anti_rollback}" ]]; then
                 compile_para[${#compile_para[@]}]="ANTI_ROLLBACK=${build_anti_rollback}"
             fi
-
         ;;
 
         portotmo-r)
@@ -121,7 +120,6 @@ function handle_compile_para() {
         ;;
 
         dohatmo-r)
-
             compile_para[${#compile_para[@]}]="TARGET_BUILD_VARIANT=${build_type},"
             compile_para[${#compile_para[@]}]="TARGET_BUILD_MODEM=true,"
 
@@ -134,7 +132,6 @@ function handle_compile_para() {
             fi
 
             compile_para[${#compile_para[@]}]="TARGET_BUILD_MMITEST=$(is_mini_version)"
-
         ;;
     esac
 }
@@ -149,8 +146,8 @@ function handle_variable() {
     fi
 
     # 4. 编译服务器
-    build_server_x=${tct_server_x:-}
-    build_server_y=${tct_server_y:-}
+    build_server_x=${tct_server_x:-s3}
+    build_server_y=${tct_server_y:-s0}
 
     # 5. anti rollback
     build_anti_rollback=${tct_anti_rollback:-0}
@@ -240,13 +237,11 @@ function perpare() {
 
     build_baseversion=${tct_baseversion:-}
 
-    VER_VARIANT=$(tct::utils::get_version_variant)
-
     tct::utils::get_moden_type
     tct::utils::get_signapk_para
-
     tct::utils::get_project_info
 
+    VER_VARIANT=$(tct::utils::get_version_variant)
 
     # 编译项目
     BUILDPROJ=$(tct::utils::get_build_project)
@@ -273,6 +268,8 @@ function perpare() {
     # -------------------------------------------------------
 
     versioninfo=$(tct::utils::get_version_info)
+
+    # 下载编译使用的工具仓库
     tct::utils::downlolad_tools
 }
 
@@ -317,7 +314,7 @@ function main() {
                     ;;
 
                 target_download|download)
-                    echo 'download ...'
+                    log debug 'download code ...'
 
                     local build_p=${root_p}/${job_name}Y/${build_manifest}
 
@@ -336,13 +333,11 @@ function main() {
                         log warn "This time you don't update the source code."
                     fi
 
-                    #如果是appli和debug版本时创建version和manifest
+                    # 如果是appli和debug版本时创建version和manifest
                     is_appli_debug
 
                     popd > /dev/null
-
                     ;;
-
 
                 qssi_clean)
                     local build_p=${root_p}/${job_name}X/${build_manifest}
@@ -367,7 +362,7 @@ function main() {
                     ;;
 
                 target_clean|clean)
-                    echo "clean"
+                    log debug  "outclean ..."
 
                     local build_p=${root_p}/${job_name}Y/${build_manifest}
 
@@ -380,15 +375,12 @@ function main() {
                     init
                     if [[ -d .repo && -f build/core/envsetup.mk && -f Makefile ]];then
                         outclean
-
                     else
                         log warn "The (.repo) not found ! please download android source code !"
                     fi
 
                     popd > /dev/null
-
                     ;;
-
 
                 qssi)
                     local build_p=${root_p}/${job_name}X/${build_manifest}
@@ -418,21 +410,21 @@ function main() {
 
                     init
 
+                    source_init
                     make_android
-
 
                     popd > /dev/null
                     ;;
 
                 *)
-                    :
+                    log warn '无法识别 ...'
                 ;;
             esac
             :
         ;;
 
         *)
-            log error '识别错误...'
+            log error '参数错误 ...'
         ;;
     esac
 

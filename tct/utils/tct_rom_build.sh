@@ -225,6 +225,7 @@ function tct::utils::tct_check_version.inc() {
 
     local version_inc=
     local pwd_path=`pwd`
+
     if [[ -d .repo && -f build/core/envsetup.mk && -f Makefile ]];then
         Command "repo sync -c -d --no-tags version"
     else
@@ -238,25 +239,24 @@ function tct::utils::tct_check_version.inc() {
     fi
 }
 
-function tct::utils::create_manifest()
-{
-    PojectName=`tr '[A-Z]' '[a-z]' <<<${PROJECTNAME}`
-    comment="create int/${PojectName}/v${build_version}.xml by int_tool create_manifest"
-    echo "comment:$comment"
+function tct::utils::create_manifest() {
 
-    #Command "rm -rf ./*.xml"
-    #repo manifest -o v$build_version.xml -r --suppress-upstream-revision
+    local PojectName=`tr '[A-Z]' '[a-z]' <<<${PROJECTNAME}`
+    local comment="create int/${PojectName}/v${build_version}.xml by int_tool create_manifest"
+
+    show_vip "comment: ${comment}"
+
     if [[ ! -d .repo/manifests/int/${PojectName} ]]; then
         mkdir -p .repo/manifests/int/${PojectName}
     fi
-    repo manifest -r -o .repo/manifests/int/${PojectName}/v${build_version}.xml
-    #Command "cp -dpRv v$build_version.xml .repo/manifests/int/${PojectName}/"
+
+    Command repo manifest -r -o .repo/manifests/int/${PojectName}/v${build_version}.xml
 
     pushd .repo/manifests > /dev/null
 
-    if [[ -n $(git status -s) ]]; then
-        git add int/${PojectName}/v$build_version.xml
-        git commit -m "$comment"
+    if [[ -n "$(git status -s)" ]]; then
+        git add int/${PojectName}/v${build_version}.xml
+        git commit -m "${comment}"
         git pull
         git push origin default:master
     else
@@ -339,7 +339,7 @@ function tct::utils::backup_image_version() {
                 show_vip "no need upload to beat web ..."
             else
                 echo "python amss_nicobar_la2.0.1/vendor/script/collect_parameters.py -t ${PROJECTNAME}/$beetlepath/v$build_version -b $build_manifest -y false"
-                python amss_4350_spf1.0/vendor/script/collect_parameters.py -t ${PROJECTNAME}/$beetlepath/v$build_version -b $build_manifest -y false
+                python amss_4350_spf1.0/vendor/script/collect_parameters.py -t ${PROJECTNAME}/${beetlepath}/v${build_version} -b ${build_manifest} -y false
             fi
         fi
 
@@ -439,7 +439,9 @@ function tct::utils::is_img_sign() {
 
 # 获取version.inc仓库地址
 function tct::utils::get_version_info() {
+
     local version_inc=
+
     case ${JOB_NAME} in
 
         transformervzw|portotmo-r|irvinevzw)
@@ -454,42 +456,42 @@ function tct::utils::get_version_info() {
             version_inc=''
         ;;
     esac
+
     echo ${version_inc}
 }
 
 function tct::utils::releasemail()
 {
+    if [[ ${VER_VARIANT} == "appli" ]] || [[ ${VER_VARIANT} == "mini" ]] || [[ ${VER_VARIANT} == "cert" ]]; then
+        local basever=`python /local/tools_int/misc/getLastBigVersion.py -cur ${build_version}`
 
-    if [ ${VER_VARIANT} == "appli" ] || [ ${VER_VARIANT} == "mini" ] || [ ${VER_VARIANT} == "cert" ]; then
-        local basever=`python /local/tools_int/misc/getLastBigVersion.py -cur $build_version`
         if [[ ${build_version:3:1} == "1" ]]; then
             basever=${build_version}
         fi
+
         echo "curl -X POST -v 'http://10.129.93.215:8080/job/Auto-delivery-new/buildWithParameters?token=Auto-delivery-new&version=${build_version}&baseversion=${basever}&project=${PROJECTNAME}&build_server=${build_server_y}&delivery_bug=false&band=EU&BUILD_DUALSIM=false'"
         curl -X POST -v "http://10.129.93.215:8080/job/Auto-delivery-new/buildWithParameters?token=Auto-delivery-new&version=${build_version}&baseversion=${basever}&project=${PROJECTNAME}&build_server=${build_server_y}&delivery_bug=false&band=EU&BUILD_DUALSIM=false"
-        return
     fi
 
     if [[ ${VER_VARIANT} == "daily" ]]; then
+        local lastversion=`/local/tools_int/misc/getLastDailyNumber2.py -cur ${build_version}`
+
         echo 'Send release mail ...'
-        local lastversion=`/local/tools_int/misc/getLastDailyNumber2.py -cur $build_version`
-        if [ "${lastversion:5:1}" != 0 ]; then
-            basever=$lastversion
+
+        if [[ "${lastversion:5:1}" != 0 ]]; then
+            basever=${lastversion}
         else
             basever=${lastversion:0:4}
         fi
-        /local/tools_int/bin/superspam_new -user hudson.adm# -project ${PROJECTNAME} -version $build_version -base $basever -sendto all -mailpassword 12345678
 
-	    local result=$?
-	    if [ "$result" != "0" ]; then
-	        echo "releasemail error"
-	        exit $result
+        /local/tools_int/bin/superspam_new -user hudson.adm# -project ${PROJECTNAME} -version ${build_version} -base ${basever} -sendto all -mailpassword 12345678
+	    if [[ $? -ne 0 ]]; then
+	        log error "releasemail fail ..."
 	    fi
     fi
 }
 
 # 拿到项目信息
-
 function tct::utils::get_project_info() {
 
     case ${JOB_NAME} in
@@ -504,47 +506,44 @@ function tct::utils::get_project_info() {
 
         *)
             :
-            ;;
+        ;;
     esac
 }
 
 function tct::utils::build_userdebug() {
+
     case ${JOB_NAME} in
 
         transformervzw)
             echo "curl -X POST -v http://10.129.93.215:8080/job/transformervzw/buildWithParameters?token=transformervzw&tct_version=${build_version}&tct_server_y=${build_server_x}&tct_update_code=${build_update_code}&tct_anti_rollback=${build_anti_rollback}&tct_type=userdebug&tct_clean=${build_clean}&&tct_tmpbranch=${build_tmpbranch}"
             curl -X POST -v "http://10.129.93.215:8080/job/transformervzw/buildWithParameters?token=transformervzw&tct_version=${build_version}&tct_server_y=${build_server_x}&tct_update_code=${build_update_code}&tct_anti_rollback=${build_anti_rollback}&tct_type=userdebug&tct_clean=${build_clean}&&tct_tmpbranch=${build_tmpbranch}"
-
         ;;
 
         dohatmo-r)
             echo "curl -X POST -v http://10.129.93.215:8080/job/dohatmo-r/buildWithParameters?token=dohatmo-r&tct_version=${build_version}&tct_server_y=${build_server_x}&tct_update_code=${build_update_code}&tct_anti_rollback=${build_anti_rollback}&tct_type=userdebug&tct_clean=${build_clean}&&tct_tmpbranch=${build_tmpbranch}"
             curl -X POST -v "http://10.129.93.215:8080/job/dohatmo-r/buildWithParameters?token=dohatmo-r&tct_version=${build_version}&tct_server_y=${build_server_x}&tct_update_code=${build_update_code}&tct_anti_rollback=${build_anti_rollback}&tct_type=userdebug&tct_clean=${build_clean}&&tct_tmpbranch=${build_tmpbranch}"
-
         ;;
 
         *)
             :
-            ;;
+        ;;
     esac
-
 }
 
-
+# 生成version.inc文件
 function tct::utils::create_versioninfo(){
-
-    #生成version.inc文件
 
     show_vip "create version.inc start ..."
     tct::utils::create_version_info
     tct::utils::tct_check_version.inc
     show_vip "create version.inc end ..."
-
 }
 
 # 设置版本序列倒数第三，第四位
 function tct::utils::custo_name_platform() {
+
     local custo_name_platform=
+
     case ${JOB_NAME} in
 
         transformervzw|dohatmo-r|irvinevzw)
@@ -555,5 +554,6 @@ function tct::utils::custo_name_platform() {
             custo_name_platform=DH
         ;;
     esac
+
     echo ${custo_name_platform}
 }

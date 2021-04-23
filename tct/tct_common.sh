@@ -39,6 +39,7 @@ function gettop() {
 
 # 配置正确 manifest
 function set_manifest_xml() {
+
     local PojectName=`tr '[A-Z]' '[a-z]' <<<${PROJECTNAME}`
 
     if [[ -n ${build_manifest} ]]; then
@@ -50,7 +51,6 @@ function set_manifest_xml() {
             else
                 build_manifest=${build_manifest}.xml
             fi
-
         fi
     fi
 }
@@ -247,8 +247,6 @@ function tct::build_cp() {
 
 function make_droid() {
 
-    source_init
-
     if [[ $(is_rom_prebuild) == 'true' ]]; then
 
         case ${JOB_NAME} in
@@ -276,70 +274,71 @@ function make_droid() {
         else
             log error "--> make android failed !"
         fi
+
     else
 
         case ${object} in
 
-           ap|qssi|target|merge)
+            ap|qssi|target|merge)
                 tct::build_ap
-                log debug "build ${object} ..."
-               ;;
+            ;;
 
-           cp|modem)
+            cp|modem)
                 tct::build_cp
-                log debug "build ${object} ..."
-               ;;
+            ;;
 
             mtk)
                 tct::build_mtk
-                log debug "build ${object} ..."
-               ;;
+            ;;
 
             backup)
                 tct::utils::backup_image_version
+
                 if [[ $(is_build_debug) == 'true' || ${build_version:2:1} == "O" ]];then
                     echo "no need releasemail"
                 else
                     echo "need releasemail"
                     tct::utils::releasemail
                 fi
-
-                ;;
+            ;;
 
             *)
                 log debug 'no target build ...'
-                ;;
+            ;;
         esac
+
+        log debug "build ${object} ..."
     fi
 }
 
 # 清除OUT目录
 function outclean() {
 
-    #local outdir=$(mktemp -d -p ${tmpfs})
-    local outdir=out_bak
+    local outdir='out_bak'
 
     if [[ "${build_clean}" == "true" ]];then
+
         show_vip '[tct]: --> make clean ...'
+
         if [[ $(is_rom_prebuild) == 'true' ]]; then
             dirclean out
         else
-
-            if [[ -d out_bak ]]; then
-                dirclean out_bak
+            if [[ -d ${outdir} ]]; then
+                dirclean ${outdir}
             fi
 
-            Command "mkdir out_bak"
+            if [[ ! -d ${outdir} ]]; then
+                Command mkdir -p ${outdir}
+            fi
 
             if [[ -d out ]]; then
-                Command "mv out out_bak/"
+                Command mv out ${outdir}
             fi
 
             if [[ -d out_sys ]]; then
-                Command "mv out_sys out_bak/"
+                Command mv out_sys ${outdir}
             fi
         fi
-
     else
         show_vip '[tct]: --> make installclean ...'
         source_init
