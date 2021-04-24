@@ -260,7 +260,7 @@ function tct::utils::create_manifest()
         git pull
         git push origin default:master
     else
-        log error 'create_manifest v$build_version.xml error.'
+        log warn "The v${build_version}.xml do not update."
     fi
 
 	popd > /dev/null
