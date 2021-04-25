@@ -467,7 +467,7 @@ function gerrit_build() {
                 build_case[${#build_case[@]}]=build_moden
             ;;
 
-            kernel/msm-4.19|kernel/msm-5.4)
+            kernel/msm-4.19|kernel/msm-5.4|kernel-4.19)
                 build_case[${#build_case[@]}]=build_kernel
             ;;
 
