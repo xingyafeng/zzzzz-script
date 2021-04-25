@@ -205,7 +205,7 @@ function update_fota_config() {
             if [[ -f ${prexml} ]]; then
                 git checkout -- ${prexml}
 
-                update_base_version downgrade
+                update_base_version bad_integrity
                 update_from_version ${dv_from_version}
                 update_to_version ${dv_to_version}
                 update_size ${fota_name}
