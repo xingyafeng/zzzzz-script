@@ -214,11 +214,12 @@ function print_variable() {
     echo "modem_type              = " ${modem_type}
     echo "signapk                 = " ${signapk}
     echo "getprojectinfo          = " ${getprojectinfo}
-    echo "build_userdebug_server  = " ${build_userdebug_server}
+
     echo '-----------------------------------------'
     echo "gettop_p                = " ${gettop_p}
     echo '-----------------------------------------'
     echo "compile_para  = " ${compile_para[@]}
+
     echo '-----------------------------------------'
     echo
 }
@@ -236,6 +237,11 @@ function perpare() {
     fi
 
     build_baseversion=${tct_baseversion:-}
+
+    versioninfo=$(tct::utils::get_version_info)
+
+    # 下载编译使用的工具仓库
+    tct::utils::downlolad_tools
 
     tct::utils::get_moden_type
     tct::utils::get_signapk_para
@@ -267,10 +273,6 @@ function perpare() {
 
     # -------------------------------------------------------
 
-    versioninfo=$(tct::utils::get_version_info)
-
-    # 下载编译使用的工具仓库
-    tct::utils::downlolad_tools
 }
 
 function init() {

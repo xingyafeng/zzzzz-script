@@ -515,13 +515,13 @@ function tct::utils::build_userdebug() {
     case ${JOB_NAME} in
 
         transformervzw)
-            echo "curl -X POST -v http://10.129.93.215:8080/job/transformervzw/buildWithParameters?token=transformervzw&tct_version=${build_version}&tct_server_y=${build_server_x}&tct_update_code=${build_update_code}&tct_anti_rollback=${build_anti_rollback}&tct_type=userdebug&tct_clean=${build_clean}&&tct_tmpbranch=${build_tmpbranch}"
-            curl -X POST -v "http://10.129.93.215:8080/job/transformervzw/buildWithParameters?token=transformervzw&tct_version=${build_version}&tct_server_y=${build_server_x}&tct_update_code=${build_update_code}&tct_anti_rollback=${build_anti_rollback}&tct_type=userdebug&tct_clean=${build_clean}&&tct_tmpbranch=${build_tmpbranch}"
+            echo "curl -X POST -v http://10.129.93.215:8080/job/transformervzw/buildWithParameters?token=transformervzw&${debug_variable}"
+            curl -X POST -v "http://10.129.93.215:8080/job/transformervzw/buildWithParameters?token=transformervzw&${debug_variable}"
         ;;
 
         dohatmo-r)
-            echo "curl -X POST -v http://10.129.93.215:8080/job/dohatmo-r/buildWithParameters?token=dohatmo-r&tct_version=${build_version}&tct_server_y=${build_server_x}&tct_update_code=${build_update_code}&tct_anti_rollback=${build_anti_rollback}&tct_type=userdebug&tct_clean=${build_clean}&&tct_tmpbranch=${build_tmpbranch}"
-            curl -X POST -v "http://10.129.93.215:8080/job/dohatmo-r/buildWithParameters?token=dohatmo-r&tct_version=${build_version}&tct_server_y=${build_server_x}&tct_update_code=${build_update_code}&tct_anti_rollback=${build_anti_rollback}&tct_type=userdebug&tct_clean=${build_clean}&&tct_tmpbranch=${build_tmpbranch}"
+            echo "curl -X POST -v http://10.129.93.215:8080/job/dohatmo-r/buildWithParameters?token=dohatmo-r&${debug_variable}"
+            curl -X POST -v "http://10.129.93.215:8080/job/dohatmo-r/buildWithParameters?token=dohatmo-r&${debug_variable}"
         ;;
 
         *)
@@ -556,4 +556,33 @@ function tct::utils::custo_name_platform() {
     esac
 
     echo ${custo_name_platform}
+}
+
+# 设置appli&&userdebug版本参数
+function tct::utils::handle_debug_compile_para() {
+    local debug_compile_para=
+    debug_compile_para[${#debug_compile_para[@]}]="tct_version=${build_version}&"
+    debug_compile_para[${#debug_compile_para[@]}]="tct_baseversion=${build_baseversion}&"
+    debug_compile_para[${#debug_compile_para[@]}]="tct_tmpbranch=${build_tmpbranch}&"
+    debug_compile_para[${#debug_compile_para[@]}]="tct_type=userdebug&"
+    debug_compile_para[${#debug_compile_para[@]}]="tct_server_y=${build_server_x}&"
+    debug_compile_para[${#debug_compile_para[@]}]="tct_anti_rollback=${build_anti_rollback}&"
+    debug_compile_para[${#debug_compile_para[@]}]="tct_rsu_key=${build_rsu_key}&"
+    debug_compile_para[${#debug_compile_para[@]}]="tct_update_code=${build_update_code}&"
+    debug_compile_para[${#debug_compile_para[@]}]="tct_clean=${build_clean}&"
+    debug_compile_para[${#debug_compile_para[@]}]="tct_efuse=${build_efuse}&"
+    debug_compile_para[${#debug_compile_para[@]}]="tct_isship=${build_isship}&"
+
+    case ${JOB_NAME} in
+
+        transformervzw)
+
+            debug_compile_para[${#debug_compile_para[@]}]="tct_enduser=${build_enduser}&"
+        ;;
+
+        *)
+            :
+        ;;
+    esac
+    echo ${debug_compile_para[@]}
 }

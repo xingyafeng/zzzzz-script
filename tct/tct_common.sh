@@ -583,10 +583,14 @@ function is_appli_debug(){
         show_vip "creat manifest and version"
         tct::utils::create_versioninfo
         tct::utils::create_manifest
+
     fi
 
     if [[ ${VER_VARIANT} == "appli" ]] &&[[ "${build_userdebug}" == "true" ]]; then
         show_vip "build_userdebug ..."
+
+        local debug_compile_para=$(tct::utils::handle_debug_compile_para)
+        local debug_variable=`echo ${debug_compile_para%?} | sed s/[[:space:]]//g`
         tct::utils::build_userdebug
     fi
 }
