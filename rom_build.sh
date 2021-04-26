@@ -352,10 +352,7 @@ function main() {
 
                     init
                     if [[ -d .repo && -f build/core/envsetup.mk && -f Makefile ]];then
-                        source_init
-                        if [[ $? -eq 0 ]]; then
-                            outclean
-                        fi
+                        outclean
                     else
                         log warn "The (.repo) not found ! please download android source code !"
                     fi
