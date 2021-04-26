@@ -1,5 +1,14 @@
 #!/usr/bin/env bash
 
+function is_in_manifest() {
+
+    if [[ -n ${manifest_info[${GERRIT_PROJECT}]} ]]; then
+        echo true
+    else
+        echo false
+    fi
+}
+
 # 生成manifest中name对于的path列表
 function generate_manifest_list() {
 
@@ -133,7 +142,13 @@ function restore_git_repository() {
 
     if [[ -s ${tmpfs}/${job_name}.env.ini ]]; then
         while IFS="@" read -r GERRIT_CHANGE_URL GERRIT_PROJECT GERRIT_REFSPEC GERRIT_PATCHSET_NUMBER GERRIT_PATCHSET_REVISION GERRIT_CHANGE_NUMBER GERRIT_BRANCH _;do
-            log debug "The project path is :  $(get_project_path)"
+
+            if [[ $(is_in_manifest) == 'true' ]]; then
+                log debug "The project path is :  $(get_project_path)"
+            else
+                log error "The project ${GERRIT_PROJECT} is not exist in the manifest."
+            fi
+
             recover_standard_git_project $(get_project_path)
         done < ${tmpfs}/${job_name}.env.ini
 
@@ -360,12 +375,16 @@ function download_all_patchset()
     set_tct_projects
     while IFS="@" read -r GERRIT_CHANGE_URL GERRIT_PROJECT GERRIT_REFSPEC GERRIT_PATCHSET_NUMBER GERRIT_PATCHSET_REVISION GERRIT_CHANGE_NUMBER GERRIT_BRANCH _;do
 
-        project_path=$(get_project_path)
+        if [[ $(is_in_manifest) == 'true' ]]; then
+            project_path=$(get_project_path)
 
-        if [[ -d ${project_path} ]]; then
-            __green__ "@@@ project path: " ${project_path}
+            if [[ -d ${project_path} ]]; then
+                __green__ "@@@ project path: " ${project_path}
+            else
+                log error "${project_path}:::The project path is not exist in the android source code."
+            fi
         else
-            log error "${project_path}::The project path is not exist in the manifest."
+            log error "The project ${GERRIT_PROJECT} is not exist in the manifest."
         fi
 
         # 处理强耦合问题
