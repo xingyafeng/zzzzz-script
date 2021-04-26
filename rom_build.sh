@@ -56,8 +56,6 @@ getprojectinfo=
 
 build_enduser=
 
-# version仓库地址
-versioninfo=
 # init function
 . "$(dirname "$0")/tct/tct_init.sh"
 
@@ -227,6 +225,8 @@ function print_variable() {
 function perpare() {
 
     local PLATFORM=
+    #判断磁盘空间
+    tct::utils::check_dist_space
 
     tct::utils::get_platform_info
 
@@ -238,7 +238,7 @@ function perpare() {
 
     build_baseversion=${tct_baseversion:-}
 
-    versioninfo=$(tct::utils::get_version_info)
+    VER_VARIANT=$(tct::utils::get_version_variant)
 
     # 下载编译使用的工具仓库
     tct::utils::downlolad_tools
@@ -246,17 +246,6 @@ function perpare() {
     tct::utils::get_moden_type
     tct::utils::get_signapk_para
     tct::utils::get_project_info
-
-    VER_VARIANT=$(tct::utils::get_version_variant)
-
-    # 编译项目
-    BUILDPROJ=$(tct::utils::get_build_project)
-
-    # 项目名称
-    PROJECTNAME=$(tct::utils::get_project_name)
-
-    # modem项目
-    MODEMPROJECT=$(tct::utils::get_modem_project)
 
     # 2. 临时分支
     build_tmpbranch=${tct_tmpbranch:-}
@@ -270,6 +259,16 @@ function perpare() {
     if [[ -z ${build_manifest} ]]; then
         log error 'The manifest is null ...'
     fi
+
+
+    # 编译项目
+    BUILDPROJ=$(tct::utils::get_build_project)
+
+    # 项目名称
+    PROJECTNAME=$(tct::utils::get_project_name)
+
+    # modem项目
+    MODEMPROJECT=$(tct::utils::get_modem_project)
 
     # -------------------------------------------------------
 
@@ -327,6 +326,8 @@ function main() {
                     pushd ${build_p} > /dev/null
 
                     init
+
+                    update_gapp
 
                     if [[ "${build_update_code}" == "true" ]];then
                         # 下载，更新源代码
