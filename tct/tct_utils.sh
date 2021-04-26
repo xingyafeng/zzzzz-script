@@ -1,5 +1,15 @@
 #!/usr/bin/env bash
 
+# 探测android根路径 croot
+function is_android_gettop() {
+
+    if [[ -d .repo && -f build/core/envsetup.mk && -f Makefile ]];then
+        echo true
+    else
+        echo false
+    fi
+}
+
 # 探测预编译apk项目
 function is_apk_prebuild() {
 
