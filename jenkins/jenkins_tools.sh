@@ -791,7 +791,7 @@ function is_valid_user() {
 
     case ${git_username} in
 
-        yafeng.xing|Integration.tablet)
+        yafeng.xing)
             echo true
             ;;
 
