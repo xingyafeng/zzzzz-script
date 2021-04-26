@@ -194,7 +194,7 @@ function tct::utils::create_version_info() {
     #下载version仓库
 
 
-#    git_sync_repository ${versioninfo} ${build_manifest%.*}
+    git_sync_repository ${versioninfo} ${build_manifest%.*}
 
     pushd ${tmpfs}/${version_path} > /dev/null
 
@@ -378,12 +378,12 @@ function tct::utils::downlolad_tools() {
         case ${object} in
             'target_download'|'ap'|'download')
                 git_sync_repository alps/tools_int master
-                git_sync_repository ${versioninfo} ${branch}
+#                git_sync_repository ${versioninfo} ${branch}
             ;;
         esac
     else
         git_sync_repository alps/tools_int master
-        git_sync_repository ${versioninfo} ${branch}
+#        git_sync_repository ${versioninfo} ${branch}
     fi
 }
 
@@ -585,4 +585,38 @@ function tct::utils::handle_debug_compile_para() {
         ;;
     esac
     echo ${debug_compile_para[@]}
+}
+
+#查看磁盘空间
+function tct::utils::check_dist_space() {
+    local space=
+    space=`df -lh -B G /local | awk '{print $4}'| tail -1`
+    show_vip "free space:${space}----${space%?}"
+    if [[ ${space%?} -lt 500 ]]; then
+        log error "there is no enough space left on device.there is only ${space} left."
+    fi
+
+}
+
+# 判断是否更新GAPP
+function tct::utils::is_update_gapp() {
+
+    local is_update_gapp=
+
+    case ${JOB_NAME} in
+
+        transformervzw|dohatmo-r)
+            is_update_gapp=false
+        ;;
+
+        irvinevzw)
+            is_update_gapp=false
+        ;;
+
+        *)
+            is_update_gapp=false
+        ;;
+    esac
+
+    echo ${is_update_gapp}
 }

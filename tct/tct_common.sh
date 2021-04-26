@@ -575,7 +575,7 @@ function is_appli_debug(){
     if [[ $(is_build_debug) == 'true' ]]; then
         show_vip "no need to creat manifest and version"
     else
-
+        local versioninfo=$(tct::utils::get_version_info)
         local version_path=`basename ${versioninfo}`
         local perso_num=$(tct::utils::get_perso_num)
         local custo_name_platform=$(tct::utils::custo_name_platform)
@@ -613,5 +613,25 @@ function is_enduser_apk() {
             :
         ;;
     esac
+
+}
+
+#判断是否更新gapp
+function update_gapp() {
+    local is_update_gapp=$(tct::utils::is_update_gapp)
+
+    if [[ ${VER_VARIANT} == "daily" ]] && [[ "${is_update_gapp}" == "true" ]];then
+        show_vip "update Gapp begin !"
+        show_vip "${tmpfs}/tools_int/bin/AutoUpdateGApp/${PROJECTNAME}/DuliApp_sync.sh ${build_manifest%.*}"
+
+        ${tmpfs}/tools_int/bin/AutoUpdateGApp/${PROJECTNAME}/DuliApp_sync.sh ${build_manifest%.*}
+        local result=$?
+        if [ "$result" != "0" ]; then
+            log error "update Gapp error"
+        fi
+        show_vip "update Gapp end !"
+    else
+        show_vip "no need update gapp ..."
+    fi
 
 }
