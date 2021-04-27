@@ -297,6 +297,10 @@ function tct::utils::backup_image_version() {
             if [[ -d ${teleweb_p}/${PROJECTNAME}/cts_version/v${build_version} ]]; then
                 creat_time=`date +%Y%m%d%H%M -r ${teleweb_p}/${PROJECTNAME}/cts_version/v${build_version}`
             fi
+        elif [[ ${build_version:2:1} == "R" ]]; then
+            if [[ -d ${teleweb_p}/${PROJECTNAME}/driveronly/v${build_version} ]]; then
+                creat_time=`date +%Y%m%d%H%M -r ${teleweb_p}/${PROJECTNAME}/driveronly/v${build_version}`
+            fi
         else
             if [[ -d ${teleweb_p}/${PROJECTNAME}/tmp/v${build_version} ]]; then
                 creat_time=`date +%Y%m%d%H%M -r ${teleweb_p}/${PROJECTNAME}/tmp/v${build_version}`
@@ -311,6 +315,9 @@ function tct::utils::backup_image_version() {
              telewebdir=${teleweb_p}/${PROJECTNAME}/cts_version/v${build_version}
              telewebdir_bak=${teleweb_p}/${PROJECTNAME}/cts_version/v${build_version}_${creat_time}
            fi
+        elif [[ ${build_version:2:1} == "R" ]]; then
+            telewebdir=${teleweb_p}/${PROJECTNAME}/driveronly/v${build_version}
+            telewebdir_bak=${teleweb_p}/${PROJECTNAME}/driveronly/v${build_version}_${creat_time}
         elif [[ $(is_build_debug) == 'true' ]]; then
             telewebdir=${teleweb_p}/${PROJECTNAME}/userdebug/appli/v${build_version}
             telewebdir_bak=${teleweb_p}/${PROJECTNAME}/userdebug/appli/v${build_version}_${creat_time}
@@ -382,6 +389,7 @@ function tct::utils::downlolad_tools() {
             ;;
         esac
     else
+        show_vip "git_sync_repository alps/tools_int master"
         git_sync_repository alps/tools_int master
 #        git_sync_repository ${versioninfo} ${branch}
     fi
@@ -394,10 +402,6 @@ function tct::utils::get_platform_info() {
 
         transformervzw|irvinevzw)
             PLATFORM=QC4350
-        ;;
-
-        portotmo-r)
-            PLATFORM=QC6125
         ;;
 
         dohatmo-r)
@@ -444,7 +448,7 @@ function tct::utils::get_version_info() {
 
     case ${JOB_NAME} in
 
-        transformervzw|portotmo-r|irvinevzw)
+        transformervzw|irvinevzw)
             version_inc=qualcomm/version
         ;;
 
@@ -496,7 +500,7 @@ function tct::utils::get_project_info() {
 
     case ${JOB_NAME} in
 
-        transformervzw|portotmo-r|irvinevzw)
+        transformervzw|irvinevzw)
             getprojectinfo=Qcom_C_GetVerInfo
         ;;
 
@@ -514,14 +518,9 @@ function tct::utils::build_userdebug() {
 
     case ${JOB_NAME} in
 
-        transformervzw)
-            echo "curl -X POST -v http://10.129.93.215:8080/job/transformervzw/buildWithParameters?token=transformervzw&${debug_variable}"
-            curl -X POST -v "http://10.129.93.215:8080/job/transformervzw/buildWithParameters?token=transformervzw&${debug_variable}"
-        ;;
-
-        dohatmo-r)
-            echo "curl -X POST -v http://10.129.93.215:8080/job/dohatmo-r/buildWithParameters?token=dohatmo-r&${debug_variable}"
-            curl -X POST -v "http://10.129.93.215:8080/job/dohatmo-r/buildWithParameters?token=dohatmo-r&${debug_variable}"
+        transformervzw|dohatmo-r|irvinevzw)
+            echo "curl -X POST -v http://10.129.93.215:8080/job/${JOB_NAME}/buildWithParameters?token=${JOB_NAME}&${debug_variable}"
+            curl -X POST -v "http://10.129.93.215:8080/job/${JOB_NAME}/buildWithParameters?token=${JOB_NAME}&${debug_variable}"
         ;;
 
         *)

@@ -103,20 +103,6 @@ function handle_compile_para() {
             fi
         ;;
 
-        portotmo-r)
-            if [[ -n "${build_efuse}" ]]; then
-                compile_para[${#compile_para[@]}]="TCT_EFUSE=${build_efuse}"
-            fi
-
-            if [[ -n "${build_anti_rollback}" ]]; then
-                compile_para[${#compile_para[@]}]="ANTI_ROLLBACK=${build_anti_rollback}"
-            fi
-
-            if [[ -n ${PROJECTNAME} ]]; then
-                compile_para[${#compile_para[@]}]="SIGN_SECIMAGE_USEKEY=${PROJECTNAME}"
-            fi
-        ;;
-
         dohatmo-r)
             compile_para[${#compile_para[@]}]="TARGET_BUILD_VARIANT=${build_type},"
             compile_para[${#compile_para[@]}]="TARGET_BUILD_MODEM=true,"
