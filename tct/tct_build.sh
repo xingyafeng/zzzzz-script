@@ -113,76 +113,86 @@ function build_moden() {
 
     # 记录变量WORKSPACE
     local tmpworkspace=${WORKSPACE}
+    local project_path=
     local tmpath=
 
-    # 查询提交文件
-    listfs=(`git --git-dir=${project_path}/.git log --name-only --pretty=format: ${GERRIT_PATCHSET_REVISION} -1 | grep -v "^$" | sort -u`)
-    for fs in ${listfs[@]} ; do
-        tmpath=$(gotdir ${fs})
-        if [[ -n ${tmpath} ]]; then
-            case ${tmpath} in
-                BOOT.XF.4.1) # 过滤错误选项
-                    build_modem[${#build_modem[@]}]=make_boot
-                ;;
+    while IFS="@" read -r GERRIT_CHANGE_URL GERRIT_PROJECT GERRIT_REFSPEC GERRIT_PATCHSET_NUMBER GERRIT_PATCHSET_REVISION GERRIT_CHANGE_NUMBER GERRIT_BRANCH _;do
+        project_path=$(get_project_path)
+        case ${project_path} in
+            amss_4250_spf1.0|amss_4350_spf1.0|amss_nicobar_la2.0.1)
+                # 查询提交文件
+                listfs=(`git --git-dir=${project_path}/.git log --name-only --pretty=format: ${GERRIT_PATCHSET_REVISION} -1 | grep -v "^$" | sort -u`)
+                for fs in ${listfs[@]} ; do
+                    tmpath=$(gotdir ${fs})
+                    #__blue__ "[tct]: fs = ${fs}"
+                    #__blue__ "[tct]:  tmpath　= ${tmpath}"
+                    if [[ -n ${tmpath} ]]; then
+                        case ${tmpath} in
+                            BOOT.XF.4.1|boot_images) # 过滤错误选项
+                                build_modem[${#build_modem[@]}]=make_boot
+                            ;;
 
-                MPSS.HA.1.0)
-                    build_modem[${#build_modem[@]}]=make_modem
-                ;;
+                            MPSS.HA.1.0|modem_proc)
+                                build_modem[${#build_modem[@]}]=make_modem
+                            ;;
 
-                RPM.BF.1.10)
-                    build_modem[${#build_modem[@]}]=make_rpm
-                ;;
+                            RPM.BF.1.10|rpm_proc)
+                                build_modem[${#build_modem[@]}]=make_rpm
+                            ;;
 
-                ADSP.VT.5.4.1)
-                    build_modem[${#build_modem[@]}]=make_adsp
-                ;;
+                            ADSP.VT.5.4.1|adsp_proc)
+                                build_modem[${#build_modem[@]}]=make_adsp
+                            ;;
 
-                CDSP.VT.2.4.1)
-                    build_modem[${#build_modem[@]}]=make_cdsp
-                ;;
+                            CDSP.VT.2.4.1|cdsp_proc)
+                                build_modem[${#build_modem[@]}]=make_cdsp
+                            ;;
 
-                TZ.XF.5.1)
-                    build_modem[${#build_modem[@]}]=make_tz
-                ;;
+                            TZ.XF.5.1|trustzone_images)
+                                build_modem[${#build_modem[@]}]=make_tz
+                            ;;
 
-                *)
-                    build_modem[${#build_modem[@]}]=make_all
-                ;;
-            esac
-        fi
-    done
+                            *)
+                                build_modem[${#build_modem[@]}]=make_all
+                            ;;
+                        esac
+                    fi
+                done
 
-    if [[ -n ${build_modem[@]} ]]; then
+                if [[ -n ${build_modem[@]} ]]; then
 
-        # 去重
-        build_modem=($(awk -vRS=' ' '!a[$1]++' <<< ${build_modem[@]}))
-        __red__ "[tct]: 1. build modem = ${build_modem[@]}"
+                    # 去重
+                    build_modem=($(awk -vRS=' ' '!a[$1]++' <<< ${build_modem[@]}))
+                    __red__ "[tct]: 1. build modem = ${build_modem[@]}"
 
-        # 当需要全编译,就无需进行单编译.
-        for bm in ${build_modem[@]} ; do
-            if [[ ${bm} == "make_all" ]]; then
-                unset build_modem && build_modem[${#build_modem[@]}]=make_all
-                break;
-            fi
-        done
+                    # 当需要全编译,就无需进行单编译.
+                    for bm in ${build_modem[@]} ; do
+                        if [[ ${bm} == "make_all" ]]; then
+                            unset build_modem && build_modem[${#build_modem[@]}]=make_all
+                            break;
+                        fi
+                    done
 
-        __red__ "[tct]: 2. build modem = ${build_modem[@]}"
+                    __red__ "[tct]: 2. build modem = ${build_modem[@]}"
 
-        pushd ${moden_path} > /dev/null
+                    pushd ${moden_path} > /dev/null
 
-        # 置空WORKSPACE
-        unset WORKSPACE
+                    # 置空WORKSPACE
+                    unset WORKSPACE
 
-        if [[ -f linux_build.sh ]]; then
-            Command ${build_modem[@]}
-        else
-            log error "The linux_build.sh has no found ..."
-        fi
+                    if [[ -f linux_build.sh ]]; then
+                        Command ${build_modem[@]}
+                    else
+                        log error "The linux_build.sh has no found ..."
+                    fi
 
-        popd > /dev/null
-    fi
+                    popd > /dev/null
+                fi
 
-    export WORKSPACE=${tmpworkspace}
+                export WORKSPACE=${tmpworkspace}
+            ;;
+        esac
+    done < ${tmpfs}/${job_name}.env.ini
 }
 
 # 编译kernel

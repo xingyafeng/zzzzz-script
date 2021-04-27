@@ -481,7 +481,7 @@ function gerrit_build() {
 
         case "${project_path}" in
 
-            amss_4250_spf1.0|amss_4350_spf1.0)
+            amss_4250_spf1.0|amss_4350_spf1.0|amss_nicobar_la2.0.1)
                 moden_path=${project_path}
                 build_case[${#build_case[@]}]=build_moden
             ;;
