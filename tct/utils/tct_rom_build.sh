@@ -7,7 +7,7 @@ function tct::utils::get_manifest_branch() {
     if [[ -n ${build_tmpbranch} ]]; then
         branch=${build_tmpbranch}
     else
-        branch=$(${tmpfs}/tools_int/bin/${getprojectinfo} ${PLATFORM} ${build_version:0:3}X -Branch)
+        branch=$(/local/tools_int/bin/${getprojectinfo} ${PLATFORM} ${build_version:0:3}X -Branch)
     fi
 
     echo ${branch}
@@ -16,21 +16,21 @@ function tct::utils::get_manifest_branch() {
 function tct::utils::get_build_project() {
 
     local build_project=
-    build_project=$(${tmpfs}/tools_int/bin/${getprojectinfo} ${PLATFORM} ${build_version:0:3}X -QcomProject)
+    build_project=$(/local/tools_int/bin/${getprojectinfo} ${PLATFORM} ${build_version:0:3}X -QcomProject)
     echo ${build_project}
 }
 
 function tct::utils::get_project_name() {
 
     local project_name=
-    project_name=$(${tmpfs}/tools_int/bin/${getprojectinfo} ${PLATFORM} ${build_version:0:3}X -Project)
+    project_name=$(/local/tools_int/bin/${getprojectinfo} ${PLATFORM} ${build_version:0:3}X -Project)
     echo ${project_name}
 }
 
 function tct::utils::get_modem_project() {
 
     local modem_project=
-    modem_project=$(${tmpfs}/tools_int/bin/${getprojectinfo} ${PLATFORM} ${build_version:0:3}X -SignScript)
+    modem_project=$(/local/tools_int/bin/${getprojectinfo} ${PLATFORM} ${build_version:0:3}X -SignScript)
     if [[ ${JOB_NAME} == "transformervzw" || ${JOB_NAME} == "irvinevzw" ]];then
         echo ${modem_project} | sed "s#vzw##"
     else
@@ -384,13 +384,13 @@ function tct::utils::downlolad_tools() {
     if [[ $(is_thesame_server) == 'true' ]]; then
         case ${object} in
             'target_download'|'ap'|'download')
-                git_sync_repository alps/tools_int master
+                git_sync_repository alps/tools_int master /local
 #                git_sync_repository ${versioninfo} ${branch}
             ;;
         esac
     else
         show_vip "git_sync_repository alps/tools_int master"
-        git_sync_repository alps/tools_int master
+        git_sync_repository alps/tools_int master /local
 #        git_sync_repository ${versioninfo} ${branch}
     fi
 }
@@ -473,8 +473,8 @@ function tct::utils::releasemail()
             basever=${build_version}
         fi
 
-        echo "curl -X POST -v 'http://10.129.93.215:8080/job/Auto-delivery-new/buildWithParameters?token=Auto-delivery-new&version=${build_version}&baseversion=${basever}&project=${PROJECTNAME}&build_server=${build_server_y}&delivery_bug=false&band=EU&BUILD_DUALSIM=false'"
-        curl -X POST -v "http://10.129.93.215:8080/job/Auto-delivery-new/buildWithParameters?token=Auto-delivery-new&version=${build_version}&baseversion=${basever}&project=${PROJECTNAME}&build_server=${build_server_y}&delivery_bug=false&band=EU&BUILD_DUALSIM=false"
+        echo "curl -X POST -v 'http://10.129.93.215:8080/job/Auto-delivery-new/buildWithParameters?token=Auto-delivery-new&version=${build_version}&baseversion=${basever}&project=${PROJECTNAME}&build_server=${build_server_y}&delivery_bug=${build_delivery_bug}&band=EU&BUILD_DUALSIM=false'"
+        curl -X POST -v "http://10.129.93.215:8080/job/Auto-delivery-new/buildWithParameters?token=Auto-delivery-new&version=${build_version}&baseversion=${basever}&project=${PROJECTNAME}&build_server=${build_server_y}&delivery_bug=${build_delivery_bug}&band=EU&BUILD_DUALSIM=false"
     fi
 
     if [[ ${VER_VARIANT} == "daily" ]]; then

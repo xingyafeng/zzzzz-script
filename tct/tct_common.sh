@@ -622,9 +622,9 @@ function update_gapp() {
 
     if [[ ${VER_VARIANT} == "daily" ]] && [[ "${is_update_gapp}" == "true" ]];then
         show_vip "update Gapp begin !"
-        show_vip "${tmpfs}/tools_int/bin/AutoUpdateGApp/${PROJECTNAME}/DuliApp_sync.sh ${build_manifest%.*}"
+        show_vip "/local/tools_int/bin/AutoUpdateGApp/${PROJECTNAME}/DuliApp_sync.sh ${build_manifest%.*}"
 
-        ${tmpfs}/tools_int/bin/AutoUpdateGApp/${PROJECTNAME}/DuliApp_sync.sh ${build_manifest%.*}
+        /local/tools_int/bin/AutoUpdateGApp/${PROJECTNAME}/DuliApp_sync.sh ${build_manifest%.*}
         local result=$?
         if [ "$result" != "0" ]; then
             log error "update Gapp error"
