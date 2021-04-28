@@ -605,7 +605,7 @@ function tct::utils::is_update_gapp() {
     case ${JOB_NAME} in
 
         transformervzw|dohatmo-r)
-            is_update_gapp=false
+            is_update_gapp=true
         ;;
 
         irvinevzw)
