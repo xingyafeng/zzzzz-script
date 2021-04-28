@@ -72,7 +72,7 @@ function print-config() {
 function get-device-path() {
 
     croot
-    dirname `find device/ -name AndroidProducts.mk` | egrep -w `get_build_var TARGET_DEVICE` --color=never
+    dirname $(find device/ -name AndroidProducts.mk) | egrep -w $(get_target_device) --color=never
 }
 
 function get_target_device() {

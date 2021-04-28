@@ -29,9 +29,9 @@ function source_init()
 
     #print-config
 
-    if [[ $(is_rom_prebuild) == 'true' ]]; then
+    source build/envsetup.sh && show_vip "--> source end ..."
 
-        source build/envsetup.sh && show_vip "--> source end ..."
+    if [[ $(is_rom_prebuild) == 'true' ]]; then
 
         case ${job_name} in
 
@@ -58,37 +58,32 @@ function source_init()
             ;;
         esac
     else
+
         case ${job_name} in
 
             transformervzw)
-                source build/envsetup.sh && show_vip "--> source end ..."
                 Command choosecombo 1 ${PROJECTNAME} ${build_type} ${PROJECTNAME} 1 $(is_mini_version) 0 ${build_anti_rollback} $(is_cert_version) && show_vip "--> lunch end ..."
-                if [[ ${VER_VARIANT} == "appli" ]] && [[ ${build_type} == "user" ]] ; then
-                        echo "this is user build -->${VER_VARIANT} -- ${build_type}"
-                        Command "choosesecimagekey ${PROJECTNAME} && choosesignapkkey ${PROJECTNAME}"
-                else
-                        unset SIGNAPK_USE_RELEASEKEY
-                        Command "choosesecimagekey transformervzw"
-                fi
 
-#                choosecombo 1 transformervzw user transformervzw 1 false 0 0
+                if [[ $(is_user_appli) == 'true' ]]; then
+                    Command "choosesecimagekey ${PROJECTNAME} && choosesignapkkey ${PROJECTNAME}"
+                else
+                    unset SIGNAPK_USE_RELEASEKEY
+                    Command choosesecimagekey transformervzw
+                fi
             ;;
 
             dohatmo-r)
-                source build/envsetup.sh && show_vip "--> source end ..."
-                if [[ ${VER_VARIANT} == "appli" ]] && [[ ${build_type} == "user" ]] ; then
-                        echo "this is user build -->${VER_VARIANT} -- ${build_type}"
-                        Command "choosesecimagekey ${PROJECTNAME} && choosesignapkkey ${PROJECTNAME}"
-                else
-                        Command "choosesecimagekey ${PROJECTNAME}"
-                fi
+                show_vip "--> this is user build -->${VER_VARIANT} -- ${build_type}"
 
+                if [[ $(is_user_appli) == 'true' ]]; then
+                    Command "choosesecimagekey ${PROJECTNAME} && choosesignapkkey ${PROJECTNAME}"
+                else
+                    Command "choosesecimagekey ${PROJECTNAME}"
+                fi
             ;;
 
             irvinevzw)
-                source build/envsetup.sh && show_vip "--> source end ..."
                 Command choosecombo 1 ${PROJECTNAME} ${build_type} ${PROJECTNAME} 1 $(is_mini_version) 0 ${build_anti_rollback} $(is_cert_version) && show_vip "--> lunch end ..."
-
             ;;
 
             *)
@@ -99,8 +94,8 @@ function source_init()
 
     ROOT=$(gettop)
     OUT=${OUT}
-    DEVICE_PROJECT=`get_build_var TARGET_DEVICE`
-    DEVICE=`get-device-path`
+    DEVICE_PROJECT=$(get_target_device)
+    DEVICE=$(get-device-path)
     print_env
 }
 

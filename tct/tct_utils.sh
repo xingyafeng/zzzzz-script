@@ -239,6 +239,29 @@ function is_cert_version() {
     esac
 }
 
+# 探测发布版本并且为user
+function is_user_appli() {
+
+    case ${build_type} in
+
+        user)
+            case ${VER_VARIANT} in
+                appli)
+                    echo true
+                ;;
+
+                *)
+                    echo false
+                ;;
+            esac
+        ;;
+
+        *)
+            echo false
+        ;;
+    esac
+}
+
 # 探测强耦合项目
 function is_over_coupling() {
 
