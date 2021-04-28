@@ -203,7 +203,6 @@ function tct::build_ap() {
 
     is_enduser_apk
 
-    show_vip "${compile_para[@]} bash build.sh dist -j$(nproc) ${para}"
     Command ${compile_para[@]} bash build.sh dist -j$(nproc) ${para}
     if [[ $? -eq 0 ]];then
         echo
