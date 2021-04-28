@@ -361,6 +361,8 @@ function set_tct_projects() {
     tct_projects[${#tct_projects[@]}]='vendor/tct/frameworks'
     tct_projects[${#tct_projects[@]}]='system/core'
     tct_projects[${#tct_projects[@]}]='frameworks/base'
+    tct_projects[${#tct_projects[@]}]='frameworks/opt/net/ims'
+    tct_projects[${#tct_projects[@]}]='vendor/mediatek/proprietary/packages/apps/CarrierConfig'
 }
 
 function download_all_patchset()
