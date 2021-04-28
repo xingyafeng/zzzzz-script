@@ -168,6 +168,23 @@ function init() {
     print_variable
 }
 
+##########################################################
+#
+#                   关键的文件
+#
+#   1. buildlist.ini 项目路径:编译目标
+#   2. manifest_list_for_xxx.txt  gerrit-path:android-path
+#   3. env.ini      Topic存在时，当前触发gerrit环境变量
+#   4. noenv.in     Topic不存在时，当前触发gerrit环境变量
+#   5. bpath.txt    实际android.* 的路径
+#   6. bproject.txt 实际项目路径.s
+#   7. gerrit
+#       a. 324299 次数触发的关键信息
+#       b. changeid.json
+#       c. change_number_list.txt
+#   8.
+#
+##########################################################
 function main() {
 
     trap 'ERRTRAP ${LINENO} ${FUNCNAME} ${BASH_LINENO}' ERR
