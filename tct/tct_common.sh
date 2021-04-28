@@ -42,16 +42,18 @@ function set_manifest_xml() {
 
     local PojectName=`tr '[A-Z]' '[a-z]' <<<${PROJECTNAME}`
 
-    if [[ -n ${build_manifest} ]]; then
-        if [[ $(is_build_debug) == 'true' ]]; then
-            build_manifest=int/${PojectName}/v${build_version}.xml
-        else
-            if [[ ${build_manifest} =~ '.xml' ]]; then
-                build_manifest=${build_manifest}
-            else
+    if [[ $(is_build_debug) == 'true' ]]; then
+        build_manifest=int/${PojectName}/v${build_version}.xml
+    else
+        case ${build_manifest} in
+            *.xml)
+                # 保持不变
+            ;;
+
+            *)
                 build_manifest=${build_manifest}.xml
-            fi
-        fi
+            ;;
+        esac
     fi
 }
 
