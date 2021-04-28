@@ -218,8 +218,12 @@ function update_fota_config() {
 
         invalid) # 4. 无效升级包，升级包中使用降级包
 
-            fota_name=downgrade_rkey.zip
+            fota_name=invalid_package
             fota_xmls=TCL_${device_name}_${build_from_version}_${build_to_version}_invalid_9.19.1.xml
+
+            if [[ -f ${fota_name} ]]; then
+                python File2Base64.py -b ${fota_name} && echo >> ${fota_name}__base64
+            fi
 
             if [[ -f ${prexml} ]]; then
                 git checkout -- ${prexml}
@@ -233,7 +237,6 @@ function update_fota_config() {
             fi
 
             head -c -1 -q ${prexml} ${fota_name}__base64 ${endxml} > ${fota_xmls}
-
         ;;
 
         bigupdate_releasekey)  # 5. 大文件升级包
