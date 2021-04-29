@@ -204,7 +204,7 @@ function tct::build_ap() {
     is_enduser_apk
 
     show_vip "${compile_para[@]} bash build.sh dist -j$(nproc) ${para}"
-    Command ${compile_para[@]} bash build.sh dist -j$(nproc) ${para} 2>&1 | tee build_ap.log
+    Command ${compile_para[@]} bash build.sh dist -j$(nproc) ${para}
     if [[ $? -eq 0 ]];then
         echo
         show_vip "--> make ${object} end ..."
@@ -234,7 +234,7 @@ function tct::build_cp() {
     fi
 
     show_vip "${compile_para[@]} bash linux_build.sh -a ${MODEMPROJECT} ${modem_type}"
-    Command ${compile_para[@]} bash linux_build.sh -a ${MODEMPROJECT} ${modem_type} 2>&1 | tee build_cp.log
+    Command ${compile_para[@]} bash linux_build.sh -a ${MODEMPROJECT} ${modem_type}
     if [[ $? -eq 0 ]];then
         echo
         show_vip "--> make moden end ..."
