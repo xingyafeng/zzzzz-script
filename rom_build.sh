@@ -272,6 +272,7 @@ function main() {
 
     local root_p=~/jobs
     local object=${1:-}
+    local stime=120
 
     perpare
 
@@ -395,6 +396,10 @@ function main() {
                     pushd ${build_p} > /dev/null
 
                     init
+
+                    if [[ ${object} == 'cp' ]]; then
+                        sleep ${stime}
+                    fi
 
                     source_init
                     make_android
