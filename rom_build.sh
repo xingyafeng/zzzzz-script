@@ -272,7 +272,7 @@ function main() {
 
     local root_p=~/jobs
     local object=${1:-}
-    local stime=120
+    local stime=150
 
     perpare
 
@@ -397,7 +397,7 @@ function main() {
 
                     init
 
-                    if [[ ${object} == 'cp' ]]; then
+                    if [[ ${object} == 'ap' ]]; then
                         sleep ${stime}
                     fi
 
