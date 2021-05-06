@@ -76,7 +76,7 @@ function use_ccache() {
 # 检查mirror服务器
 function is_check_mirror() {
 
-    local mirror_servre=(10.129.93.164 10.129.93.165 10.129.93.167 10.129.93.167)
+    local mirror_servre=(10.129.93.165 10.129.93.167 10.129.93.167)
 
     for mirror in ${mirror_servre[@]} ; do
         if [[ $(showmount -e ${mirror} 2> /dev/null) ]]; then
