@@ -562,6 +562,15 @@ function get_perso_num() {
 
 function tct::build_mtk(){
 
+    case ${JOB_NAME} in
+        dohatmo-r)
+            Command "bash /local/tools_int/kphtools/replaceoemkey_dohatmo.sh"
+        ;;
+        *)
+            :
+        ;;
+    esac
+
     Command "./tclMake -o=`echo ${compile_para[@]} | sed s/[[:space:]]//g` ${PROJECTNAME} new"
     if [[ $? -eq 0 ]];then
         echo
