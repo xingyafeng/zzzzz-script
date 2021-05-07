@@ -1,5 +1,7 @@
 @Library('share-library@master') _
 
+currentBuild.description="${tct_version} on ${tct_server_y}"
+
 pipeline {
     agent {
         node {
