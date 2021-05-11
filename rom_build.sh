@@ -211,8 +211,6 @@ function print_variable() {
 function perpare() {
 
     local PLATFORM=
-    #判断磁盘空间
-    tct::utils::check_dist_space
 
     tct::utils::get_platform_info
 
@@ -303,6 +301,9 @@ function main() {
 
                 target_download|download)
                     log debug 'download code ...'
+
+                    #检查磁盘空间大小
+                    tct::utils::check_dist_space
 
                     local build_p=${root_p}/${job_name}Y/${build_manifest}
 
