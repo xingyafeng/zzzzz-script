@@ -267,6 +267,9 @@ function handle_xml() {
     head -c -1 -q ${xml} update_tkey.zip__base64 ${xml2} > TCL_${device_name}_${build_source_version}_${build_target_version}_bad_integrity_9.19.3.xml
 
     # 4. invalid_9.19.1 <error > 升级包中使用降级包
+    python File2Base64.py -b invalid_package
+    echo "" >>invalid_package__base64
+
     if [[ -f ${xml} ]]; then
         if [[ -f ${tmpxml} ]]; then
             cp ${tmpxml} ${xml}
@@ -277,13 +280,13 @@ function handle_xml() {
         sed -i s/TCL_9048S_8.1.0_8.2.3/TCL_9048S_8.1.0_8.2.3_invalid/g ${xml}
         sed -i s/8.1.0/${remove_v_build_source_version}/g ${xml}
         sed -i s/8.2.3/${remove_v_build_target_version}/g ${xml}
-        size=`ls -al downgrade_rkey.zip | awk '{print $5}'`
+        size=`ls -al invalid_package | awk '{print $5}'`
         sed -i s/2862528/${size}/g ${xml}
         sed -i s/2018-05-23/`date +"%Y-%m-%d"`/g ${xml}
         sed -i s/9048S/${device_name}/g ${xml}
     fi
 
-    head -c -1 -q ${xml} downgrade_rkey.zip__base64 ${xml2} > TCL_${device_name}_${build_source_version}_${build_target_version}_invalid_9.19.1.xml
+    head -c -1 -q ${xml} invalid_package__base64 ${xml2} > TCL_${device_name}_${build_source_version}_${build_target_version}_invalid_9.19.1.xml
 
     # 5. size_over_1.5G_9.19.4 升级包中添加了大文件fillfile
     if ${ADD_BIG_UPC}; then
