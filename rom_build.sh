@@ -115,6 +115,10 @@ function handle_compile_para() {
                 compile_para[${#compile_para[@]}]="TCT_EFUSE=${build_efuse},"
             fi
 
+            if [[ ${VER_VARIANT} == "cert" ]]; then
+                compile_para[${#compile_para[@]}]="TARGET_BUILD_CERTIFICATION=true,"
+            fi
+
             compile_para[${#compile_para[@]}]="TARGET_BUILD_MMITEST=$(is_mini_version)"
         ;;
     esac
