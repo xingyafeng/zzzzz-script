@@ -33,11 +33,12 @@ function source_init()
 
     if [[ $(is_rom_prebuild) == 'true' ]]; then
 
+        wimdataclean
+
         case ${job_name} in
 
             DelhiTF_Gerrit_Build)
                 export SIGN_SECIMAGE_USEKEY=delhitf
-                wimdataclean
                 Command choosecombo 1 delhitf userdebug true 1 false true 2 && show_vip "--> lunch end ..."
             ;;
 

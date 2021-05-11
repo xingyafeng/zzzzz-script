@@ -492,8 +492,8 @@ function handle_tct_custom() {
 
 function wimdataclean() {
 
-    if [[ -d "out/target/common/jrdResAssetsCust/wimdata" ]];then
-        rm -rf "out/target/common/jrdResAssetsCust/wimdata"
+    if [[ -d "out/target/common/jrdResAssetsCust" ]];then
+        rm -rf "out/target/common/jrdResAssetsCust"
     fi
 }
 
