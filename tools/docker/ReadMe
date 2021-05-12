@@ -1,0 +1,23 @@
+问题：使用docker.tct.com域名 登录Harbor
+docker login docker.tct.com
+
+出现以下错误：
+Error response from daemon: Get https://docker.tct.com/v2/: x509: certificate signed by unknown authority
+
+解决方法：
+制作的ca证书添加到信任（因为是自签名证书):
+将ca.crt拷贝至客户端主机
+
+mkdir -p /etc/docker/certs.d/docker.tct.com
+cp ca.crt /etc/docker/certs.d/docker.tct.com/ca.crt
+
+再次登录
+
+android@WS104 ~ $ docker login docker.tct.com
+Username: admin
+Password: 
+WARNING! Your password will be stored unencrypted in /home/android/.docker/config.json.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/engine/reference/commandline/login/#credentials-store
+
+Login Succeeded
