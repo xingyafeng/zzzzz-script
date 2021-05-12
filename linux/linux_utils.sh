@@ -760,3 +760,12 @@ function get_file_size() {
 
     wc -c < ${file}
 }
+
+# 配置代理
+function set_http_proxy() {
+
+    export http_proxy=http://10.129.93.241:3128
+    export http_proxys=http://10.129.93.241:3128
+
+    apt-get update
+}
