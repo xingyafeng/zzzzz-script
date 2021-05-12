@@ -161,7 +161,7 @@ function is_qssi_product() {
     # 正面手动增加编译项目支持qssi构建
     case ${path} in
 
-        device/qcom/qssi)
+        device/qcom/qssi|mmitest)
             let count++
         ;;
 
