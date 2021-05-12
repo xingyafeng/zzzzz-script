@@ -86,12 +86,14 @@ pipeline {
 
         success {
             script {
+                utils.command("curl -X POST -F proj=${JOB_NAME} -F number=${BUILD_NUMBER} -F server=${tct_server_y} -F success=True -F build_type=1 http://10.129.93.247:9091/order/jenkinsUpdateOrder")
                 log.d 'This will <success> run ...'
             }
         }
 
         failure {
             script {
+                utils.command("curl -X POST -F proj=${JOB_NAME} -F number=${BUILD_NUMBER} -F server=${tct_server_y} -F success=False -F build_type=1 http://10.129.93.247:9091/order/jenkinsUpdateOrder")
                 log.e 'This will <failure> run ...'
             }
         }
