@@ -263,15 +263,6 @@ function update_fota_config() {
 
                 case ${build_project} in
 
-                    transformervzw)
-                        echo mobile#wevwqo | java -Xmx2048m -Djava.library.path=${fota_tools_p}/JrdDiffTool/lib64 \
-                            -jar ${fota_tools_p}/JrdDiffTool/framework/signapk.jar \
-                            -w   ${fota_tools_p}/JrdDiffTool/TCT_releasekeys/releasekey.x509.pem \
-                                 ${fota_tools_p}/JrdDiffTool/TCT_releasekeys/releasekey.pk8 \
-                                 ${fota_tools_p}/JrdDiffTool/data/${bigfile} \
-                                 ${fota_tools_p}/JrdDiffTool/data/bigupdate_rkey.zip
-                        ;;
-
                     *)
                         tct::utils::set_project_name
                         java -Xmx2048m -Djava.library.path=${fota_tools_p}/JrdDiffTool/lib64 \
