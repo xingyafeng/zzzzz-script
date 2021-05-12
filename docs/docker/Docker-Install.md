@@ -134,7 +134,7 @@ docker info warn
     # 增加组
     sudo groupadd docker 
     # 将当前户名加入组内
-    sudo gpasswd -a ${USER} docker　
+    sudo gpasswd -a ${USER} docker
     # 重启服务器
     sudo service docker restart　
     
@@ -143,7 +143,7 @@ docker info warn
     sudo usermod -aG docker ${USER}
     
     #　切换当前会话到新 group 或者重启 X 会话
-    newgrp - docker　
+    newgrp - docker
 
 到此完成。
     
@@ -220,6 +220,7 @@ sudo add-apt-repository "deb [arch=amd64] https://mirrors.aliyun.com/docker-ce/l
 # Step 4: 更新并安装Docker-CE
 sudo apt-get -y update
 sudo apt-get -y install docker-ce # --->>> 是否需要指定版本
+sudo apt-get -y install docker-ce=5:20.10.6~3-0~ubuntu-bionic
 
 # 安装指定版本的Docker-CE:
 # Step 1: 查找Docker-CE的版本:
