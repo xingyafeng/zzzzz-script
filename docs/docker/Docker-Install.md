@@ -168,7 +168,8 @@ docker run -d -p 80:80 httpd
 sudo mkdir -p /etc/docker
 sudo tee /etc/docker/daemon.json <<-'EOF'
 {
-  "registry-mirrors": ["https://8myihr0t.mirror.aliyuncs.com"]
+  "registry-mirrors": ["https://8myihr0t.mirror.aliyuncs.com"],
+  "insecure-registries":["docker.tct.com"]
 }
 EOF
 sudo systemctl daemon-reload
