@@ -490,10 +490,35 @@ function handle_tct_custom() {
     generate_module_target
 }
 
+# 资源文件清除
+function resclean() {
+
+    wimdataclean
+    gitclean frameworks/base
+}
+
+# 清除preso res
 function wimdataclean() {
 
     if [[ -d "out/target/common/jrdResAssetsCust" ]];then
         rm -rf "out/target/common/jrdResAssetsCust"
+    fi
+}
+
+# 清理仓库
+function gitclean() {
+
+    local gitpath=${1:-}
+
+    if [[ -z ${gitpath} ]]; then
+        log error 'The git path is empty.'
+    fi
+
+    if [[ $(is_android_gettop) == 'true' ]]; then
+        git --git-dir=${gitpath}/.git --work-tree=${gitpath} clean -dxf
+        git --git-dir=${gitpath}/.git --work-tree=${gitpath} checkout -- .
+    else
+        log error 'The currect dir is not android root.'
     fi
 }
 

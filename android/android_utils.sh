@@ -33,7 +33,7 @@ function source_init()
 
     if [[ $(is_rom_prebuild) == 'true' ]]; then
 
-        wimdataclean
+        resclean
 
         case ${job_name} in
 
