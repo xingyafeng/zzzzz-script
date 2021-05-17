@@ -221,7 +221,12 @@ sudo add-apt-repository "deb [arch=amd64] https://mirrors.aliyun.com/docker-ce/l
 # Step 4: 更新并安装Docker-CE
 sudo apt-get -y update
 sudo apt-get -y install docker-ce # --->>> 是否需要指定版本
+# 16.06
+sudo apt-get -y install docker-ce=5:20.10.6~3-0~ubuntu-xenial
+
+# 18.04
 sudo apt-get -y install docker-ce=5:20.10.6~3-0~ubuntu-bionic
+
 
 # 安装指定版本的Docker-CE:
 # Step 1: 查找Docker-CE的版本:
