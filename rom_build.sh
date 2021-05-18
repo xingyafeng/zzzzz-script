@@ -307,7 +307,7 @@ function main() {
                     log debug 'download code ...'
 
                     #检查磁盘空间大小
-                    tct::utils::check_dist_space
+                    #tct::utils::check_dist_space
 
                     local build_p=${root_p}/${job_name}Y/${build_manifest}
 
