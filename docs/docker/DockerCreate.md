@@ -61,15 +61,26 @@ RUN apt-get update
 RUN apt-get install -y nginx
 EXPOSE 80
 
+# release Dockerfile Create image
+git cloen git@github.com:xingyafeng/ubuntu.git
+
+# Create image
+$ docker build --no-cache -t 'docker.tct.com/tct/ubuntu16.04:v1.0.1' -f ubuntu16.04/Dockerfile ubuntu16.04/
+$ docker run -d -p 8089:22 --name=android --restart=always -h s25 -v /home/android/mirror:/home/android/mirror -v /mfs_tablet:/mfs_tablet -v /data/jobs:/home/android-bld/jobs docker.tct.com/tct/ubuntu16.04:v1.0.1
+$ docker run -d -p 8089:22 --name=android --restart=always -h s26 -v /home/android/mirror:/home/android/mirror -v /mfs_tablet:/mfs_tablet -v /data/jobs:/home/android-bld/jobs docker.tct.com/tct/ubuntu16.04:v1.0.1
+
+$ docker stop
+$ docker kill
+
 # 创建镜像
 sudo docker build -t='xx/xxx' .
 # 查看镜像
-sudo docker images 
+sudo docker images
 # 提交镜像
 
 #------------------------------------ Dockerfile 基础命令介绍
 
-docker build 
+docker build
 
 1. docker build --no-cache # 不使用构建缓存
 2. 增加就环境变量　ENV REFRESH_DATE 2021-03-25　# 单独刷新后续命令不使用缓存
