@@ -345,8 +345,8 @@ function tct::utils::backup_image_version() {
             if [[ $(is_build_debug) == 'true' || ${#build_version} != "4" ]]; then
                 show_vip "no need upload to beat web ..."
             else
-                echo "python amss_nicobar_la2.0.1/vendor/script/collect_parameters.py -t ${PROJECTNAME}/$beetlepath/v$build_version -b $build_manifest -y false"
-                python amss_4350_spf1.0/vendor/script/collect_parameters.py -t ${PROJECTNAME}/${beetlepath}/v${build_version} -b ${build_manifest} -y false
+                echo "python amss_nicobar_la2.0.1/vendor/script/collect_parameters.py -t ${PROJECTNAME}/$beetlepath/v$build_version -b ${build_manifest%.*} -y false"
+                python amss_4350_spf1.0/vendor/script/collect_parameters.py -t ${PROJECTNAME}/${beetlepath}/v${build_version} -b ${build_manifest%.*} -y false
             fi
         fi
 
