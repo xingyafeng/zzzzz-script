@@ -165,7 +165,7 @@ function handle_variable() {
     build_userdebug=${tct_userdebug:-false}
 
     # 14 .enduser
-    build_enduser=${tct_enduser-:false}
+    build_enduser=${tct_enduser:-false}
     # ---------------------------------------------
 
     handle_common
