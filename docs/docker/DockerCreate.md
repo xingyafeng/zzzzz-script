@@ -41,12 +41,21 @@
     httpd               latest              02ef73cf1bc0        3 weeks ago         194.4 MB
     ubuntu              15.10               4e3b13c8a266        4 weeks ago         136.3 MB
     hello-world         latest              690ed74de00f        6 months ago        960 B
-    training/webapp     latest              6fae60ef3446        12 months ago       348.8 MB    
+    training/webapp     latest              6fae60ef3446        12 months ago       348.8 MB
 
 使用我们的新镜像 runoob/ubuntu 来启动一个容器
 
-    runoob@runoob:~$ docker run -t -i runoob/ubuntu:v2 /bin/bash                            
-    root@1a9fbdeb5da3:/#    
+    runoob@runoob:~$ docker run -t -i runoob/ubuntu:v2 /bin/bash
+    root@1a9fbdeb5da3:/#
+
+docker ubuntu14.04 问题点:
+1. sh -> dash
+
+dpkg-reconfigure dash  --> 选择 no
+
+2. repo sync
+
+需要手动选择 yes
 
 --------------------------------------------------------
 
