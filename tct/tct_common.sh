@@ -292,6 +292,7 @@ function make_droid() {
 
             mtk)
                 tct::build_mtk
+               echo "build_mtk"
             ;;
 
             backup)
@@ -317,7 +318,7 @@ function make_droid() {
 # 清除OUT目录
 function outclean() {
 
-    local outdir='out_bak'
+    local outdir='outbak'
 
     if [[ "${build_clean}" == "true" ]];then
 
@@ -338,8 +339,8 @@ function outclean() {
                 Command mv out ${outdir}
             fi
 
-            if [[ -d out_sys ]]; then
-                Command mv out_sys ${outdir}
+            if ls out_* 1> /dev/null 2>&1; then
+                Command mv out_* ${outdir}
             fi
         fi
     else
@@ -600,7 +601,12 @@ function tct::build_mtk(){
     if [[ $? -eq 0 ]];then
         echo
         show_vip "--> make mtk end ..."
-
+        if [[ $(is_compile_mpcs) == 'true' ]]; then
+            #编译MPCS版本
+            Command "mv out out_tmo"
+            show_vip "build MPCS"
+            tct::utils::build_mpcs
+        fi
     else
         log error "--> make android mtk failed !"
     fi
@@ -668,5 +674,30 @@ function update_gapp() {
     else
         show_vip "no need update gapp ..."
     fi
+
+}
+
+# 是否编译MPCS版本
+function is_compile_mpcs() {
+
+    case ${JOB_NAME} in
+        dohatmo-r)
+
+            if [[ $(is_build_debug) == 'true' || $(is_user_appli) == 'true' ]]; then        
+                #Command "mv out out_tmo"
+                #if [[ $? -eq 0 ]];then
+                echo true
+                #else
+                #    echo false
+                #fi
+            else
+                echo false
+            fi
+        ;;
+
+        *)
+            echo false
+        ;;
+    esac
 
 }

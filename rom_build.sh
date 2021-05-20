@@ -305,7 +305,7 @@ function main() {
 
                 target_download|download)
                     log debug 'download code ...'
-
+                    #if false; then
                     #检查磁盘空间大小
                     #tct::utils::check_dist_space
 
@@ -332,6 +332,7 @@ function main() {
                     is_appli_debug
 
                     popd > /dev/null
+                    #fi
                     ;;
 
                 qssi_clean)
@@ -355,7 +356,7 @@ function main() {
 
                 target_clean|clean)
                     log debug  "outclean ..."
-
+                    #if false; then
                     local build_p=${root_p}/${job_name}Y/${build_manifest}
 
                     if [[ ! -d ${build_p} ]]; then
@@ -372,6 +373,7 @@ function main() {
                     fi
 
                     popd > /dev/null
+                    #fi
                     ;;
 
                 qssi)

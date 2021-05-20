@@ -281,11 +281,14 @@ function tct::utils::backup_image_version() {
         local telewebdir=
         local productname=
         local beetlepath=
-
+        #local perso_build_name=$(tct::utils::perso_build_name)
+        local teleweb_img_name=$(tct::utils::teleweb_img_name)
+        local img_arr=
+        local perso_build_name=
+        
         Command "sh copyimgs.sh"
-
-
         releasedir=/local/release/${PROJECTNAME}-release/v${build_version}
+
 
         if [[ -f `ls out/target/product/*/vendor.img` ]];then
             productname=$(ls out/target/product/*/vendor.img | awk -F '/' '{print $(NF-1)" "$NF}' | awk '{print $1}')
@@ -359,16 +362,55 @@ function tct::utils::backup_image_version() {
             pushd > /dev/null
         fi
 
-        Command "rm -rvf ${releasedir}"
+        Command "rm -rf ${releasedir}"
         Command "mkdir -vp ${releasedir}"
         Command "sudo mkdir -vp ${telewebdir}"
 
-        Command "cp -rfv out/target/product/${productname}/Teleweb/* ${releasedir}"
-        Command "sudo cp -rfv out/target/product/${productname}/Teleweb/* ${telewebdir}"
+        if [[ $(is_compile_mpcs) == 'true' ]]; then
+            Command "cp -rf out/target/product/${productname}/Teleweb/${teleweb_img_name} ${releasedir}/${teleweb_img_name}"
+            Command "cp -rf /local/tools_int/simlockimage/${PROJECTNAME}/* ${releasedir}/${teleweb_img_name}/"
 
+            if [[ "${PROJECTNAME}" == "Doha_TMO" ]];then
+                #arr_simlock=(tmo/simlock tmo/nosimlock ${perso_build_name}/simlock ${perso_build_name}/nosimlock)
+                img_arr=(super.img vbmeta_system.img vbmeta_vendor.img tct_fota_meta.zip md1img-verified.img dfile_v${build_version}.zip MDDB_InfoCustomAppSrcP_MT6765_*.EDB)
+                perso_build_name=boost
+                pushd out_${perso_build_name}/target/product/${productname} > /dev/null
+                for img in ${img_arr[@]} ; do
+                   if [[ -f ${img} ]];then
+                        Command "cp ${img} ${releasedir}/${teleweb_img_name}/${perso_build_name}_${img}"
+                    fi 
+                done
+
+                popd > /dev/null
+
+                tct::utils::checksum tmo nosimlock
+                show_vip "checksum tmo nosimlock end ... "
+
+                tct::utils::checksum tmo simlock
+                show_vip "checksum tmo simlock end ... "
+
+                tct::utils::checksum ${perso_build_name} nosimlock
+                show_vip "checksum ${perso_build_name} nosimlock end ... "
+
+                tct::utils::checksum ${perso_build_name} simlock
+                show_vip "checksum ${perso_build_name} simlock end ... "
+
+                tct::utils::renameimage
+                show_vip "renameimage end ... "
+
+                Command "sudo cp -rfv ${releasedir}/* ${telewebdir}"
+
+            fi
+
+
+        else
+            Command "cp -rfv out/target/product/${productname}/Teleweb/* ${releasedir}"
+            Command "sudo cp -rfv out/target/product/${productname}/Teleweb/* ${telewebdir}"
+
+        fi
         Command "chmod -R 0755 ${releasedir}"
         Command "sudo chmod -R 0755 ${telewebdir}"
-
+        echo "copy to teleweb..."
 
 
         show_vip "copyimage end ... "
@@ -545,8 +587,12 @@ function tct::utils::custo_name_platform() {
 
     case ${JOB_NAME} in
 
-        transformervzw|dohatmo-r|irvinevzw)
+        transformervzw|irvinevzw)
             custo_name_platform=DQ
+        ;;
+
+        dohatmo-r)
+            custo_name_platform=CX
         ;;
 
         *)
@@ -618,4 +664,220 @@ function tct::utils::is_update_gapp() {
     esac
 
     echo ${is_update_gapp}
+}
+
+function tct::utils::build_mpcs(){
+    source_init
+    case ${JOB_NAME} in
+        dohatmo-r)
+            Command "choosecombo 1 full_Doha_TMO ${build_type} false 1"
+            Command "python build/make/makePerso.py -p Doha_TMO -a 'SIGNAPK_USE_RELEASEKEY=Doha_TMO SIGN_SECIMAGE_USEKEY=Doha_TMO MP_BRANCH_VALUE=1 ANTI_ROLLBACK=${build_anti_rollback}'"
+            if [[ $? -eq 0 ]];then
+                echo
+                show_vip "--> make MPCS end ..."
+                Command "mv out out_boost"
+                Command "mv out_tmo out"
+
+            else
+                log error "--> make android MPCS failed !"
+            fi
+        ;;
+
+        *)
+            :
+        ;;
+    esac
+    
+}
+
+function tct::utils::renameimage(){
+    
+    local image_name=
+    local mbn_name=
+    local originpath="../../${teleweb_img_name}"   
+
+    local naming_rule_path=${root_p}/${job_name}Y/${build_manifest%.*}/out/target/product/${productname}/naming_rule.txt
+
+    Command "rm -rf ${naming_rule_path}"
+    Command "ls -lh out/target/product/${productname}/Teleweb | grep -E '.mbn|.db|.sca|.EDB|.ini' | cut -d ':' -f 2 | cut -d ' ' -f 2,4 | sort >> ${naming_rule_path}"
+    image_name=`cat ${naming_rule_path} | cut -d ' ' -f 2 | cut -d '/' -f 2 | sort | uniq `
+
+    Command "mkdir -vp ${releasedir}/${perso_build_name}/nosimlock"
+    if [[ $? -eq 0 ]];then
+        pushd ${releasedir}/${perso_build_name}/nosimlock > /dev/null
+        for image in ${image_name}
+        do
+            mbn_name=`cat ${naming_rule_path} | grep "\<${image}\>" | cut -d ' ' -f 1`
+            
+            if [[ "${image}" == "simlock.img" ]]; then
+                ln -s ${originpath}/${perso_build_name}_no_simlock.img $mbn_name                       
+            elif [[ "${image}" == "Checksum.ini" ]]; then
+                ln -s ${originpath}/${perso_build_name}_nosimlock_Checksum.ini $mbn_name
+            
+            elif [[ "${img_arr[@]}"  =~ "${image}" ]]; then
+                Command "ln -s ${originpath}/${perso_build_name}_${image} $mbn_name"
+
+            else
+                ln -s ${originpath}/$image $mbn_name
+            fi
+        done
+        if ls ${originpath}/${perso_build_name}_MDDB_InfoCustomAppSrcP_MT6765_*.EDB 1> /dev/null 2>&1; then
+            Command "rm -rf `cat ${naming_rule_path} | grep -E '.EDB' | cut -d ' ' -f 1`"
+            Command "ln -s ${originpath}/${perso_build_name}_MDDB_InfoCustomAppSrcP_MT6765_*.EDB `cat ${naming_rule_path} | grep -E '.EDB' | cut -d ' ' -f 1`"
+        fi
+        popd > /dev/null
+    else
+        log error "--> mkdir -vp ${releasedir}/${perso_build_name}/nosimlock failed !"
+    fi
+    
+    Command "mkdir -vp ${releasedir}/${perso_build_name}/simlock"
+    if [[ $? -eq 0 ]];then
+        pushd ${releasedir}/${perso_build_name}/simlock > /dev/null
+        for image in ${image_name}
+        do
+            mbn_name=`cat ${naming_rule_path} | grep "\<${image}\>" | cut -d ' ' -f 1`
+
+            if [[ "${image}" == "simlock.img" ]]; then
+                ln -s ${originpath}/${perso_build_name}_simlock.img $mbn_name
+            elif [[ "${image}" == "Checksum.ini" ]]; then
+                ln -s ${originpath}/${perso_build_name}_simlock_Checksum.ini $mbn_name
+
+            elif [[ "${img_arr[@]}"  =~ "${image}" ]]; then
+                Command "ln -s ${originpath}/${perso_build_name}_${image} $mbn_name"
+
+            else
+                ln -s ${originpath}/$image $mbn_name
+            fi
+        done
+        if ls ${originpath}/${perso_build_name}_MDDB_InfoCustomAppSrcP_MT6765_*.EDB 1> /dev/null 2>&1; then
+            Command "rm -rf `cat ${naming_rule_path} | grep -E '.EDB' | cut -d ' ' -f 1`"
+            Command "ln -s ${originpath}/${perso_build_name}_MDDB_InfoCustomAppSrcP_MT6765_*.EDB `cat ${naming_rule_path} | grep -E '.EDB' | cut -d ' ' -f 1`"
+        fi
+        popd > /dev/null
+    else
+        log error "--> mkdir -vp ${releasedir}/${perso_build_name}/simlock failed !"
+    fi
+
+    Command "mkdir -vp ${releasedir}/tmo/nosimlock"
+    if [[ $? -eq 0 ]];then
+        pushd ${releasedir}/tmo/nosimlock > /dev/null
+        for image in ${image_name}
+        do
+            mbn_name=`cat ${naming_rule_path} | grep "\<${image}\>" | cut -d ' ' -f 1`
+            if [[ "${image}" == "simlock.img" ]]; then
+                ln -s ${originpath}/tmo_no_simlock.img $mbn_name
+            elif [[ "${image}" == "Checksum.ini" ]]; then
+                ln -s ${originpath}/tmo_nosimlock_Checksum.ini $mbn_name
+            else
+                ln -s ${originpath}/$image $mbn_name
+            fi
+        done
+        popd > /dev/null
+    else
+        log error "--> mkdir -vp ${releasedir}/tmo/nosimlock failed !"
+    fi
+
+    Command "mkdir -vp ${releasedir}/tmo/simlock"
+    if [[ $? -eq 0 ]];then
+        pushd ${releasedir}/tmo/simlock > /dev/null
+        for image in ${image_name}
+        do
+            mbn_name=`cat ${naming_rule_path} | grep "\<${image}\>" | cut -d ' ' -f 1`
+            if [[ "${image}" == "simlock.img" ]]; then
+                ln -s ${originpath}/tmo_simlock.img $mbn_name
+            elif [[ "${image}" == "Checksum.ini" ]]; then
+                ln -s ${originpath}/tmo_simlock_Checksum.ini $mbn_name
+            else
+                ln -s ${originpath}/$image $mbn_name
+            fi
+        done
+        popd > /dev/null
+    else
+        log error "--> mkdir -vp ${releasedir}/tmo/simlock failed !"
+    fi
+
+}
+
+# 设置perso项目的目录名
+function tct::utils::perso_build_name() {
+
+    local perso_build_name=
+
+    case ${JOB_NAME} in
+
+        dohatmo-r)
+            perso_build_name=boost
+        ;;
+
+        irvinevzw)
+            perso_build_name=MPCS
+        ;;
+
+        *)
+            :
+        ;;
+    esac
+
+    echo ${perso_build_name}
+}
+
+# 设置teleweb的目录名
+function tct::utils::teleweb_img_name() {
+
+    local teleweb_img_name=
+
+    case ${JOB_NAME} in
+
+        dohatmo-r)
+            teleweb_img_name=flashtool
+        ;;
+
+        irvinevzw)
+            teleweb_img_name=originfiles
+        ;;
+
+        *)
+            :
+        ;;
+    esac
+
+    echo ${teleweb_img_name}
+}
+
+#算MTK平台的checksum
+function tct::utils::checksum(){
+    
+    local out_teleweb_path=out/target/product/${productname}/Teleweb/${teleweb_img_name}
+    local out_boost_path=out_${perso_build_name}/target/product/${productname}
+
+    if [[ "$1" == "tmo" ]]; then
+        if [[ "$2" == "simlock" ]]; then
+            Command "cp /local/tools_int/simlockimage/${PROJECTNAME}/tmo_simlock.img ${out_teleweb_path}/simlock.img"
+        else
+            Command "cp /local/tools_int/simlockimage/${PROJECTNAME}/tmo_no_simlock.img ${out_teleweb_path}/simlock.img"
+        fi
+        
+    else
+        if [[ "$2" == "simlock" ]]; then
+            Command "cp /local/tools_int/simlockimage/${PROJECTNAME}/${perso_build_name}_simlock.img ${out_teleweb_path}/simlock.img"
+        else
+            Command "cp /local/tools_int/simlockimage/${PROJECTNAME}/${perso_build_name}_no_simlock.img ${out_teleweb_path}/simlock.img"
+        fi
+
+        for img in ${img_arr[@]} ; do
+            if [[ -f ${out_boost_path}/${img} ]];then
+                Command "cp ${out_boost_path}/${img} ${out_teleweb_path}/${img}"
+            fi 
+        done
+
+        if ls ${out_boost_path}/MDDB_InfoCustomAppSrcP_MT6765_*.EDB 1> /dev/null 2>&1; then
+            Command "rm -rf ${out_teleweb_path}/MDDB_InfoCustomAppSrcP_MT6765_*.EDB"
+            Command "cp ${out_boost_path}/MDDB_InfoCustomAppSrcP_MT6765_*.EDB ${out_teleweb_path}"
+        fi
+        
+        
+    fi
+    Command "${gettop_p}/build/make/tools/TCLCheckSum_v5.1844.00_linux/CheckSumScriptFile.sh ${gettop_p}/out/target/product/${productname}/Teleweb/${teleweb_img_name} ${gettop_p}"
+    Command "cp ${gettop_p}/out/target/product/${productname}/Teleweb/${teleweb_img_name}/Checksum.ini ${releasedir}/${teleweb_img_name}/$1_$2_Checksum.ini"
+
 }
