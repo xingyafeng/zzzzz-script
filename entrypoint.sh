@@ -22,15 +22,17 @@ function init() {
     sudo chown -R ${USER}:${USER} /local/jobs /local/.tmpfs
 
     if [[ -d ${jobs_p}  ]]; then
-        sudo rm ${jobs_p}
+        sudo rm -rf ${jobs_p}
     fi
 
     if [[ -d ${tmpfs}  ]]; then
-        sudo rm ${tmpfs}
+        sudo rm -rf ${tmpfs}
     fi
 
-    sudo ln -s /local/jobs ~/jobs
-    sudo ln -s /local/.tmpfs ~/.tmpfs
+    sudo ln -s /local/jobs ${jobs_p}
+    sudo ln -s /local/.tmpfs ${tmpfs}
+
+    touch ${tmpfs}/yf.lock.bak
 }
 
 # config to ubunut in docker
