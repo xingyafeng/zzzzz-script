@@ -16,8 +16,8 @@ shellfs=$0
 # config to ubunut in docker
 function doconfig() {
 
-    sudo mkdir -p /local/jobs
-    sudo chown -R android-bld:android-bld /local/jobs
+    sudo mkdir -p /local/jobs /local/.tmpfs
+    sudo chown -R android-bld:android-bld /local/jobs /local/.tmpfs
 
     # config git
     setgitconfig Integration.tablet
