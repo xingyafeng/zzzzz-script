@@ -16,7 +16,6 @@ shellfs=$0
 function init() {
 
     local jobs_p=~/jobs
-    local tmpfs=~/.tmpfs
 
     sudo mkdir -p /local/jobs /local/.tmpfs
     sudo chown -R ${USER}:${USER} /local/jobs /local/.tmpfs
@@ -53,7 +52,7 @@ function main() {
 
     pushd ${script_p} > /dev/null
 
-#    init
+    init
 
     doconfig
 
