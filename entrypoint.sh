@@ -15,9 +15,20 @@ shellfs=$0
 
 function init() {
 
+    local jobs_p=~/jobs
+    local tmpfs=~/.tmpfs
+
     sudo mkdir -p /local/jobs /local/.tmpfs
-    echo 'USER :' ${USER}
     sudo chown -R ${USER}:${USER} /local/jobs /local/.tmpfs
+
+    if [[ -d ${jobs_p}  ]]; then
+        sudo rm ${jobs_p}
+    fi
+
+    if [[ -d ${tmpfs}  ]]; then
+        sudo rm ${tmpfs}
+    fi
+
     sudo ln -s /local/jobs ~/jobs
     sudo ln -s /local/.tmpfs ~/.tmpfs
 }
