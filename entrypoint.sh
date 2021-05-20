@@ -30,6 +30,9 @@ function init() {
     if [[ ! -d ${jobs_p} ]]; then
         sudo mkdir -p ${jobs_p}
         sudo chown -R android-bld:android-bld ${jobs_p}
+        touch ~/init_ok.ini
+    else
+        touch ~/init_fail.ini
     fi
 }
 
@@ -40,7 +43,9 @@ function main() {
 
     pushd ${script_p} > /dev/null
 
+    touch ~/init_START.ini
     init
+    touch ~/init_END.ini
     doconfig
 
     popd > /dev/null
