@@ -13,27 +13,6 @@ shellfs=$0
 # init function
 . "$(dirname $0)/tct/tct_init.sh"
 
-function init() {
-
-    local jobs_p=~/jobs
-
-    sudo mkdir -p /local/jobs /local/.tmpfs
-    sudo chown -R ${USER}:${USER} /local/jobs /local/.tmpfs
-
-    if [[ -d ${jobs_p}  ]]; then
-        sudo rm -rf ${jobs_p}
-    fi
-
-    if [[ -d ${tmpfs}  ]]; then
-        sudo rm -rf ${tmpfs}
-    fi
-
-    sudo ln -s /local/jobs ${jobs_p}
-    sudo ln -s /local/.tmpfs ${tmpfs}
-
-    touch ${tmpfs}/yf.lock.bak
-}
-
 # config to ubunut in docker
 function doconfig() {
 
@@ -51,8 +30,6 @@ function main() {
     log debug 'start ...'
 
     pushd ${script_p} > /dev/null
-
-#    init
 
     doconfig
 
