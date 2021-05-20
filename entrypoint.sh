@@ -16,7 +16,7 @@ shellfs=$0
 function init() {
 
     sudo mkdir -p /local/jobs /local/.tmpfs
-
+    echo 'USER :' ${USER}
     sudo chown -R ${USER}:${USER} /local/jobs /local/.tmpfs
     sudo ln -s /local/jobs ~/jobs
     sudo ln -s /local/.tmpfs ~/.tmpfs
@@ -40,7 +40,7 @@ function main() {
 
     pushd ${script_p} > /dev/null
 
-    init
+#    init
 
     doconfig
 
