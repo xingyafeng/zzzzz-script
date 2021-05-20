@@ -52,7 +52,7 @@ function main() {
 
     pushd ${script_p} > /dev/null
 
-    init
+#    init
 
     doconfig
 
