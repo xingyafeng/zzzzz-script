@@ -21,7 +21,16 @@ function doconfig() {
 
     # start sshd
     sudo /etc/init.d/ssh start
-    sudo tail -F /var/log/dmesg
+}
+
+function init() {
+
+    local jobs_p=/local/jobs
+
+    if [[ ! -d ${jobs_p} ]]; then
+        sudo mkdir -p ${jobs_p}
+        sudo chown -R android-bld:android-bld ${jobs_p}
+    fi
 }
 
 function main() {
@@ -31,15 +40,16 @@ function main() {
 
     pushd ${script_p} > /dev/null
 
+    init
     doconfig
-
-    sudo mkdir -p /local/jobs
-    sudo chown -R android-bld:android-bld /local/jobs
 
     popd > /dev/null
 
     log debug 'end ...'
     trap - ERR
+
+    # 阻塞进程退出.
+    sudo tail -F /var/log/dmesg
 }
 
 main "$@"
