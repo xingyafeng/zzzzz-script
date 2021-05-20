@@ -1,4 +1,4 @@
 #!/bin/bash
 
-mkdir -p /run/sshd
+sudo mkdir -p /run/sshd
 /usr/sbin/sshd -D
