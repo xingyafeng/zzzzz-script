@@ -1,5 +1,9 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
+mkdir -p /run/sshd
+/usr/sbin/sshd -D
+
+if false;then
 # Common utilities, variables and checks for all build scripts.
 set -o errexit
 set -o nounset
@@ -63,3 +67,4 @@ function main() {
 }
 
 main "$@"
+fi
