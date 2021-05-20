@@ -13,6 +13,15 @@ shellfs=$0
 # init function
 . "$(dirname $0)/tct/tct_init.sh"
 
+function init() {
+
+    sudo mkdir -p /local/jobs /local/.tmpfs
+
+    sudo chown -R ${USER}:${USER} /local/jobs /local/.tmpfs
+    sudo ln -s /local/jobs ~/jobs
+    sudo ln -s /local/.tmpfs ~/.tmpfs
+}
+
 # config to ubunut in docker
 function doconfig() {
 
@@ -30,6 +39,8 @@ function main() {
     log debug 'start ...'
 
     pushd ${script_p} > /dev/null
+
+    init
 
     doconfig
 
