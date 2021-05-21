@@ -73,13 +73,24 @@ EXPOSE 80
 # release Dockerfile Create image
 git cloen git@github.com:xingyafeng/ubuntu.git
 
+# create base image
+$ docker build --no-cache -t 'docker.tct.com/tct/ubuntu:16.04' -f tct/ubuntu/Dockerfile tct/ubuntu/
+$ docker push docker.tct.com/tct/ubuntu:16.04
+$ docker pull docker.tct.com/tct/ubuntu:16.04
+
+# create android image
+$ docker build --no-cache -t 'docker.tct.com/android/ubuntu16.04:v1.0.0' -f android/ubuntu16.04/Dockerfile android/ubuntu16.04/
+$ docker push docker.tct.com/android/ubuntu16.04:v1.0.0
+
+$ docker run -d -p 8089:22 --name=android --restart=always -h s25 -v /data/local:/local docker.tct.com/android/ubuntu16.04:v1.0.0
+
 # Create image
 $ docker build --no-cache -t 'docker.tct.com/tct/ubuntu16.04:v1.0.1' -f ubuntu16.04/Dockerfile ubuntu16.04/
 $ docker run -d -p 8089:22 --name=android --restart=always -h s25 -v /home/android/mirror:/home/android/mirror -v /mfs_tablet:/mfs_tablet -v /data/jobs:/local docker.tct.com/tct/ubuntu16.04:v1.0.1
 $ docker run -d -p 8089:22 --name=android --restart=always -h s26 -v /home/android/mirror:/home/android/mirror -v /mfs_tablet:/mfs_tablet -v /data/jobs:/local docker.tct.com/tct/ubuntu16.04:v1.0.1
 
 # test docker image
-$ docker run -d -p 8089:22 --name=android --restart=always -h tct -v /data/nishome/td/yafeng.xing/Android/mirror:/home/android/mirror -v /data/jobs:/local docker.tct.com/tct/ubuntu16.04:v1.0.1.02
+$ docker run -d -p 8089:22 --name=android --restart=always -h tct -v /data/nishome/td/yafeng.xing/Android/mirror:/home/android/mirror -v /data/jobs:/local docker.tct.com/android/ubuntu16.04:v1.0.0
 
 $ docker stop
 $ docker kill
