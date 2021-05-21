@@ -12,6 +12,7 @@
 ########################################################### commond var
 # 临时路径
 tmpfs=~/.tmpfs
+logfs=~/.logfs
 #个人工作空间
 workspace_p=~/workspace
 #脚本路径

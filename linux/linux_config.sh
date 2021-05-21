@@ -56,7 +56,9 @@ function init_script_path() {
     pathfs=()
 
     pathfs[${#pathfs[@]}]=${tmpfs}
+    pathfs[${#pathfs[@]}]=${logfs}
     pathfs[${#pathfs[@]}]=${version_p}
+    pathfs[${#pathfs[@]}]=${logfs}/log
     pathfs[${#pathfs[@]}]=${tmpfs}/log
     pathfs[${#pathfs[@]}]=${tmpfs}/ota
     pathfs[${#pathfs[@]}]=${tmpfs}/zip
