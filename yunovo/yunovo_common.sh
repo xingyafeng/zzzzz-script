@@ -30,8 +30,6 @@ build_builder=
 
 # ------------------------------------- Jenkins common variable
 
-## 临时文件
-logfs=${tmpfs}/logfs
 ## 项目信息和manifest差异表
 diff_table=${tmpfs}/diff.log
 ##版本存放路径
