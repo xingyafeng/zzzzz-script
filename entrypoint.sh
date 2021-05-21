@@ -16,11 +16,6 @@ shellfs=$0
 # config to ubunut in docker
 function doconfig() {
 
-    local jobs_p=/local/jobs
-
-    sudo mkdir -p ${jobs_p}
-    sudo chown -R android-bld:android-bld ${jobs_p}
-
     # config git
     setgitconfig Integration.tablet
 
@@ -31,13 +26,31 @@ function doconfig() {
 function init() {
 
     local jobs_p=/local/jobs
+    local tmp_p=/local/.tmpfs
 
+    # 1. /local/jobs
     if [[ ! -d ${jobs_p} ]]; then
         sudo mkdir -p ${jobs_p}
         sudo chown -R android-bld:android-bld ${jobs_p}
-        touch ~/init_ok.ini
+
+        log debug "mkdir new jobs ..."
     else
-        touch ~/init_fail.ini
+        __red__ "the jobs is exist ..."
+    fi
+
+    # 2. /local/.tmpfs
+    if [[ ! -d ${tmp_p} ]]; then
+        sudo mkdir -p ${tmp_p}
+        sudo chown -R android-bld:android-bld ${tmp_p}
+
+        log debug "mkdir new tmp ..."
+    else
+        __red__ "the tmp is exist ..."
+    fi
+
+    if [[ -d ${tmpfs} ]]; then
+        rm -rf ${tmpfs}
+        ln -s ${tmp_p} ${tmpfs}
     fi
 }
 
@@ -48,9 +61,7 @@ function main() {
 
     pushd ${script_p} > /dev/null
 
-    touch ~/init_START.ini
     init
-    touch ~/init_END.ini
     doconfig
 
     popd > /dev/null
