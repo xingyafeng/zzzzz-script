@@ -20,7 +20,7 @@ rename_sdupdate=
 
 # log输出等级
 loglevel=0 #verbose:0; debug:1; info:2; warn:3; error:4
-logfile=${logfs}/${shellfs##*/}".log"
+logfile=${logfs}/log/${shellfs##*/}".log"
 
 # ------------------------------------- Jenkins build args
 
