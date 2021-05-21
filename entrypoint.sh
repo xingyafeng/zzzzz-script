@@ -1,11 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-mkdir -p /run/sshd
-sudo touch /run/sshd/init_tct.ini
-touch /run/sshd/init_tctxxxxxxxxxxxxxxxxxxxxxxxx.ini
-/usr/sbin/sshd -D
-
-if false;then
 # Common utilities, variables and checks for all build scripts.
 set -o errexit
 set -o nounset
@@ -69,4 +63,3 @@ function main() {
 }
 
 main "$@"
-fi
