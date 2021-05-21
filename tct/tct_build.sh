@@ -4,7 +4,7 @@
 function is_full_build_project() {
 
     case ${project_path} in
-        device/qcom/*|device/sample/*|device/google/*|device/linaro/*)
+        device/qcom/*|device/mediatek/*|device/mediateksample/*|device/sample/*|device/google/*|device/linaro/*)
             echo true
         ;;
 
