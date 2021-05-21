@@ -128,6 +128,7 @@ function print_variable() {
     echo '-------------------------------------'
     echo 'gerrit_patchset_revision  = ' ${gerrit_patchset_revision}
     echo '-------------------------------------'
+    echo 'is_repo_sync              = ' ${is_repo_sync}
     echo '${invalid_module[@]}      = ' ${invalid_module[@]}
     echo "compile_para  = " ${compile_para[@]}
     echo '-------------------------------------'

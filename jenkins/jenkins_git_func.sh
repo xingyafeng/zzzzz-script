@@ -452,10 +452,20 @@ function repo_sync_repository() {
     time repo sync -c -d --no-tags -j$(nproc)
 }
 
+# 单独恢复某一个git仓库
+function repo_sync_single_repository() {
+
+    if [[ -d .repo && -f build/core/envsetup.mk && -f Makefile ]];then
+        if [[ ${is_repo_sync} == 'true' ]]; then
+            # 同步最新
+            Command "repo sync ${tDir} -c -d --no-tags -j$(nproc)"
+        fi
+    fi
+}
+
 function recover_standard_git_project()
 {
-	local tDir=$1
-	local OPWD=$(pwd)
+	local tDir=${1:-}
 
 	if [[ ! "$tDir" ]]; then
 		tDir=.
@@ -463,12 +473,14 @@ function recover_standard_git_project()
 
 	if [[ -d ${tDir}/.git ]]; then
 
-		cd ${tDir} > /dev/null
+		pushd ${tDir} > /dev/null
 
         if [[ -n "`git status -s`" ]];then
             echo "---- recover ${tDir}"
         else
-            cd ${OPWD} > /dev/null
+            popd > /dev/null
+            repo_sync_single_repository
+
             return 0
         fi
 
@@ -487,17 +499,10 @@ function recover_standard_git_project()
 			git checkout HEAD ${thisFiles}
 		fi
 
-		cd ${OPWD} > /dev/null
+		popd > /dev/null
 	fi
 
-    if [[ ${is_repo_sync} == 'false' ]]; then
-        return 0
-    fi
-
-    if [[ -d .repo && -f build/core/envsetup.mk && -f Makefile ]];then
-        # 同步最新
-        Command "repo sync ${tDir} -c -d --no-tags -j$(nproc)"
-    fi
+	repo_sync_single_repository
 }
 
 ### 恢复到干净工作区, android目录下所有的git仓库.
