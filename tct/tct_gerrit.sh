@@ -467,6 +467,7 @@ function gerrit_build() {
     local count=0
     local index=$(cat ${tmpfs}/${job_name}.env.ini | wc -l)
     local is_full_build=false # 默认不是增加构建
+    local is_full_qssi=false  # 默认不是qssi构建
     declare -a build_case
 
     log print "--> gerrit build start ..."
@@ -536,7 +537,7 @@ function gerrit_build() {
                     show_vig '[build]: The build path list count : ' ${#build_path[@]} '; build path : ' $(awk -vRS=' ' '!a[$1]++' <<< ${build_path[@]})
 
                     if [[ ${is_full_build} == "true" ]]; then
-                        export TARGET_PRODUCT=qssi
+                        is_full_qssi='true'
 
                         log print '[2] 本次构建设置为增量构建...'
 
@@ -561,7 +562,7 @@ function gerrit_build() {
     if [[ -n "${build_path}" ]]; then
         for build in ${build_path[@]} ; do
             if [[ "$(is_qssi_product ${build})" == "true" ]]; then
-                export TARGET_PRODUCT=qssi
+                is_full_qssi='true'
                 log debug "This module is qssi project."
                 break;
             fi
@@ -579,16 +580,18 @@ function gerrit_build() {
     make_android_for_case
 
     # 二、正常构建 1. mma/mmma 单编译　2. 增量编译,其实整编译
+    if [[ ${is_full_qssi} == 'true' ]]; then
+        export TARGET_PRODUCT=qssi
+    fi
+
     if [[ ${#build_path[@]} -ne 0 ]]; then
         __pruple__ '[tct]: --> mma modules start ...'
 
         make_android_for_single
     else
-        if [[ ${is_full_build} == "true" ]]; then
-            __pruple__ '[tct]: --> make android start ...'
+        __pruple__ '[tct]: --> make android start ...'
 
-            make_android_for_whole
-        fi
+        make_android_for_whole
     fi
 
 #    show_vip "INFO: Exit ${FUNCNAME[0]}()"
