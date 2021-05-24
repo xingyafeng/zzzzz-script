@@ -69,6 +69,26 @@ function print-config() {
     fi
 }
 
+# ninja单编译方式
+function make-app() {
+
+    local ninja='prebuilts/build-tools/linux-x86/bin/ninja'
+    local ninjafs=out/combined-${TARGET_PRODUCT}.ninja
+    local is_debug_app='false'
+
+    if [[ $(is_update_androidmk) == 'true' || $(is_rename_androidmk) == 'true' ]]; then
+        update_ninja
+    fi
+
+    Command time ${ninja} -v -d keepdepfile "$@" -j32 -f ${ninjafs} -w dupbuild=warn
+}
+
+function update_ninja() {
+
+    source build/envsetup.sh
+    _wrap_build build/soong/soong_ui.bash --make-mode nothing -j$(nproc)
+}
+
 function get-device-path() {
 
     croot

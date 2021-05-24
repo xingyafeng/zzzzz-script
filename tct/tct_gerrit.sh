@@ -457,6 +457,87 @@ function verify_patchset_submit() {
 #    show_vip "INFO: Exit ${FUNCNAME[0]}()"
 }
 
+# 探测android.mk or android.bp是否有重命名?
+function is_rename_androidmk() {
+
+    if [[ ${is_debug_app} == 'true' ]]; then
+        return 0
+    fi
+
+    while IFS="@" read -r GERRIT_CHANGE_URL GERRIT_PROJECT GERRIT_REFSPEC GERRIT_PATCHSET_NUMBER GERRIT_PATCHSET_REVISION GERRIT_CHANGE_NUMBER GERRIT_BRANCH _;do
+
+        project_path=$(get_project_path)
+        case "${project_path}" in
+
+            amss_4250_spf1.0|amss_4350_spf1.0|amss_nicobar_la2.0.1)
+            ;;
+
+            kernel/msm-4.19|kernel/msm-5.4|kernel-4.19)
+            ;;
+
+            *)
+                local mkfs=${tmpfs}/android.mk.ini
+
+                # create empty file
+                :> ${mkfs}
+
+                # 查询提交文件
+                git --git-dir=${project_path}/.git log --name-status --pretty=format: ${GERRIT_PATCHSET_REVISION} -1 | grep -v "^$" | grep ^R | sed "s/\t/:/g" >> ${mkfs}
+
+                while IFS=":" read -r status file throwaway; do
+                    case ${file} in
+                        Android.mk|Android.bp)
+                            echo 'true'
+                            break;
+                        ;;
+                    esac
+                done < ${mkfs}
+
+                echo 'false'
+            ;;
+        esac
+    done < ${tmpfs}/${job_name}.env.ini
+}
+
+# 探测android.mk or android.bp是否有更新?
+function is_update_androidmk() {
+
+    if [[ ${is_debug_app} == 'true' ]]; then
+        return 0
+    fi
+
+    while IFS="@" read -r GERRIT_CHANGE_URL GERRIT_PROJECT GERRIT_REFSPEC GERRIT_PATCHSET_NUMBER GERRIT_PATCHSET_REVISION GERRIT_CHANGE_NUMBER GERRIT_BRANCH _;do
+
+        project_path=$(get_project_path)
+        case "${project_path}" in
+
+            amss_4250_spf1.0|amss_4350_spf1.0|amss_nicobar_la2.0.1)
+            ;;
+
+            kernel/msm-4.19|kernel/msm-5.4|kernel-4.19)
+            ;;
+
+            *)
+                local tmpath
+
+                # 查询提交文件
+                listfs=(`git --git-dir=${project_path}/.git log --name-only --pretty=format: ${GERRIT_PATCHSET_REVISION} -1 | grep -v "^$" | sort -u`)
+
+                for fs in ${listfs[@]} ; do
+                    case $(basename ${fs}) in
+                        Android.mk|Android.bp)
+                            echo 'true'
+                            break;
+                        ;;
+                    esac
+                done
+
+                echo 'false'
+            ;;
+        esac
+    done < ${tmpfs}/${job_name}.env.ini
+}
+
 function gerrit_build() {
 
     trap 'ERRTRAP ${LINENO} ${FUNCNAME} ${BASH_LINENO}' ERR
