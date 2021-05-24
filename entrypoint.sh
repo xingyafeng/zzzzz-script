@@ -33,9 +33,7 @@ function init() {
         sudo mkdir -p ${jobs_p}
         sudo chown -R android-bld:android-bld ${jobs_p}
 
-        log debug "mkdir new jobs ..."
-    else
-        __red__ "the jobs is exist ..."
+        log debug "mkdir new ${jobs_p} ..."
     fi
 
     # 2. /local/.tmpfs
@@ -43,9 +41,7 @@ function init() {
         sudo mkdir -p ${tmp_p}
         sudo chown -R android-bld:android-bld ${tmp_p}
 
-        log debug "mkdir new tmp ..."
-    else
-        __red__ "the tmp is exist ..."
+        log debug "mkdir new ${tmp_p} ..."
     fi
 
     if [[ -d ${tmpfs} ]]; then
