@@ -513,6 +513,77 @@ function jenkins21() {
     ssh android@10.129.46.21
 }
 
+function jenkins22 {
+
+    build186
+}
+
+function jenkins23 {
+
+    build241
+}
+
+function jenkins24 {
+
+    show_vir 'Do not nothings ...'
+}
+
+function jenkins25 {
+
+    local username=
+    local hostname='s25'
+
+    if [[ -n ${1:-} ]]; then
+        username=ttk
+    else
+        username=android-bld
+    fi
+
+    case ${username} in
+
+        ttk)
+            ssh ${username}@${hostname}
+        ;;
+
+        android-bld)
+            ssh ${username}@${hostname} -p 8089
+        ;;
+    esac
+}
+
+function jenkins26 {
+
+    local username=
+    local hostname='s26'
+
+    if [[ -n ${1:-} ]]; then
+        username=ttk
+    else
+        username=android-bld
+    fi
+
+    case ${username} in
+
+        ttk)
+            ssh ${username}@${hostname}
+        ;;
+
+        android-bld)
+            ssh ${username}@${hostname} -p 8089
+        ;;
+    esac
+}
+
+function jenkins27 {
+
+    build227
+}
+
+function jenkins28 {
+
+    build228
+}
+
 function build186() {
     ssh -l android-bld 10.128.180.186
 }
