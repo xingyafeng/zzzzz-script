@@ -401,14 +401,14 @@ function tct::utils::backup_image_version() {
                 tct::utils::renameimage
                 show_vip "renameimage end ... "
 
-                Command "sudo cp -rfv ${releasedir}/* ${telewebdir}"
+                Command "sudo cp -rf ${releasedir}/* ${telewebdir}"
 
             fi
 
 
         else
-            Command "cp -rfv out/target/product/${productname}/Teleweb/* ${releasedir}"
-            Command "sudo cp -rfv out/target/product/${productname}/Teleweb/* ${telewebdir}"
+            Command "cp -rf out/target/product/${productname}/Teleweb/* ${releasedir}"
+            Command "sudo cp -rf out/target/product/${productname}/Teleweb/* ${telewebdir}"
 
         fi
         Command "chmod -R 0755 ${releasedir}"
@@ -712,16 +712,16 @@ function tct::utils::build_mpcs(){
             :
         ;;
     esac
-    
+
 }
 
 function tct::utils::renameimage(){
-    
+
     local image_name=
     local mbn_name=
-    local originpath="../../${teleweb_img_name}"   
-
-    local naming_rule_path=${root_p}/${job_name}Y/${build_manifest%.*}/out/target/product/${productname}/naming_rule.txt
+    local originpath="../../${teleweb_img_name}"
+    local pwd=`pwd`
+    local naming_rule_path=${pwd}/out/target/product/${productname}/naming_rule.txt
 
     Command "rm -rf ${naming_rule_path}"
     Command "ls -lh out/target/product/${productname}/Teleweb | grep -E '.mbn|.db|.sca|.EDB|.ini' | cut -d ':' -f 2 | cut -d ' ' -f 2,4 | sort >> ${naming_rule_path}"
