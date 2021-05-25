@@ -369,6 +369,9 @@ function tct::utils::backup_image_version() {
         if [[ $(is_compile_mpcs) == 'true' ]]; then
             Command "cp -rf out/target/product/${productname}/Teleweb/${teleweb_img_name} ${releasedir}/${teleweb_img_name}"
             Command "cp -rf /local/tools_int/simlockimage/${PROJECTNAME}/* ${releasedir}/${teleweb_img_name}/"
+            if [[ -f out/target/product/${productname}/merged/boot-debug.img ]];then
+                Command "cp out/target/product/${productname}/merged/boot-debug.img ${releasedir}/${teleweb_img_name}/"
+            fi
 
             if [[ "${PROJECTNAME}" == "Doha_TMO" ]];then
                 #arr_simlock=(tmo/simlock tmo/nosimlock ${perso_build_name}/simlock ${perso_build_name}/nosimlock)
@@ -634,12 +637,34 @@ function tct::utils::handle_debug_compile_para() {
 
 #查看磁盘空间
 function tct::utils::check_dist_space() {
-    local space=
-    space=`df -lh -B G /local | awk '{print $4}'| tail -1`
-    show_vip "free space:${space}----${space%?}"
-    if [[ ${space%?} -lt 500 ]]; then
-        log error "there is no enough space left on device.there is only ${space} left."
-    fi
+    local disk_unit=`get_disk_unit ${root_p}`
+    local space_left=`get_space_left ${root_p}`
+
+    case ${disk_unit} in
+
+        T)
+            show_vip "free space:${space_left}${disk_unit}"
+        ;;
+
+        G)
+            if [[ ${space_left} -lt 500 ]]; then
+                log error "there is no enough space left on device.there is only ${space_left}${disk_unit} left."
+            else
+                show_vip "free space:${space_left}${disk_unit}"
+            fi
+        ;;
+
+        *)
+            log error "there is no enough space left on device.there is only ${space_left}${disk_unit} left."
+        ;;
+    esac
+
+    #local space=
+    #space=`df -lh -B G /local | awk '{print $4}'| tail -1`
+    #show_vip "free space:${space}----${space%?}"
+    #if [[ ${space%?} -lt 500 ]]; then
+    #    log error "there is no enough space left on device.there is only ${space} left."
+    #fi
 
 }
 
