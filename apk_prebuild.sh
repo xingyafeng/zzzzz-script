@@ -163,7 +163,7 @@ function download_patchset() {
 function handle_common() {
 
     # 拿到JOBS
-    get_cpu_core
+#    get_cpu_core
 
     # 配置manifest.xml
     set_manifest_xml
