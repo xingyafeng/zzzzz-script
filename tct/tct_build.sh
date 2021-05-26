@@ -267,10 +267,6 @@ function make_android_for_single() {
         fix_incorrect_module
 
         case ${job_name} in
-            DohaTMO-R_Gerrit_Build)
-                show_vir "[tct]: make-app ${build_module_list[@]}"
-            ;;
-
             *)
                 show_vir "[tct]: mma -j${JOBS} ${build_module_list[@]}"
             ;;
@@ -279,10 +275,6 @@ function make_android_for_single() {
         if ${build_debug};then
             source_init
             case ${job_name} in
-                DohaTMO-R_Gerrit_Build)
-                    make-app ${build_module_list[@]}
-                ;;
-
                 *)
                     mma -j${JOBS} ${build_module_list[@]}
                 ;;
