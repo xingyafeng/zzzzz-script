@@ -255,6 +255,7 @@ function set_manifest_branch() {
         manifest_branch[${#manifest_branch[@]}]=r6350_dev_ottawa.xml
         manifest_branch[${#manifest_branch[@]}]=MTK8765-O1-E8-DINT
         manifest_branch[${#manifest_branch[@]}]=mt6762-r0-dohatmo-dint.xml
+        manifest_branch[${#manifest_branch[@]}]=mtk6833-r0-buffalotmo-dint.xml
     fi
 
     for branch in ${mirror_branch} ; do
