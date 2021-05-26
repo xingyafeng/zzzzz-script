@@ -85,6 +85,8 @@ function make-app() {
 
 function update_ninja() {
 
+    log print '[tct] the android.* file has update or renamed ...'
+
     source build/envsetup.sh
     _wrap_build build/soong/soong_ui.bash --make-mode nothing -j$(nproc)
 }
