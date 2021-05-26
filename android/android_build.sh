@@ -80,7 +80,7 @@ function make-app() {
         update_ninja
     fi
 
-    Command time ${ninja} -v -d keepdepfile "$@" -j32 -f ${ninjafs} -w dupbuild=warn
+    Command time ${ninja} -v -d keepdepfile "$@" -j$(nproc) -f ${ninjafs} -w dupbuild=warn
 }
 
 function update_ninja() {
