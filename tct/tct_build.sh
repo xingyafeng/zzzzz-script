@@ -265,10 +265,29 @@ function make_android_for_single() {
 
     if [[ ${#build_module_list[@]} -ne 0 ]];then
         fix_incorrect_module
-        show_vir "[tct]: mma -j${JOBS} ${build_module_list[@]}"
+
+        case ${job_name} in
+            DohaTMO-R_Gerrit_Build)
+                show_vir "[tct]: make-app ${build_module_list[@]}"
+            ;;
+
+            *)
+                show_vir "[tct]: mma -j${JOBS} ${build_module_list[@]}"
+            ;;
+        esac
+
         if ${build_debug};then
             source_init
-            mma -j${JOBS} ${build_module_list[@]}
+            case ${job_name} in
+                DohaTMO-R_Gerrit_Build)
+                    make-app ${build_module_list[@]}
+                ;;
+
+                *)
+                    mma -j${JOBS} ${build_module_list[@]}
+                ;;
+            esac
+
             if [[ ${PIPESTATUS[0]} -eq 0 ]] ; then
                 verify_patchset_submit 0
             else
