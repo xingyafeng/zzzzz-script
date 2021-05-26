@@ -43,13 +43,13 @@ function source_init()
             ;;
 
             TransformerVZW_Gerrit_Build)
-                Command choosecombo 1 transformervzw user transformervzw 1 false 0 0 false && show_vip "--> lunch end ..."
+                Command choosecombo 1 transformervzw userdebug transformervzw 1 false 0 0 false && show_vip "--> lunch end ..."
                 Command choosesecimagekey  transformervzw
                 Command choosesignapkkey   transformervzw
             ;;
 
             Thor84gVZW-R_Gerrit_Build)
-                Command choosecombo 1 thor84gvzw user thor84gvzw 1 false false && show_vip "--> lunch end ..."
+                Command choosecombo 1 thor84gvzw userdebug thor84gvzw 1 false false && show_vip "--> lunch end ..."
             ;;
 
             DohaTMO-R_Gerrit_Build)
