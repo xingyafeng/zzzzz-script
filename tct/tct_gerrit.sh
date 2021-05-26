@@ -662,7 +662,10 @@ function gerrit_build() {
 
     # 二、正常构建 1. mma/mmma 单编译　2. 增量编译,其实整编译
     if [[ ${is_full_qssi} == 'true' ]]; then
-        export TARGET_PRODUCT=qssi
+
+        if [[ $(is_mediatek_project) == 'false' ]]; then
+            export TARGET_PRODUCT=qssi
+        fi
     fi
 
     if [[ ${#build_path[@]} -ne 0 ]]; then
