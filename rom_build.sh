@@ -68,7 +68,7 @@ function get_cpu_core() {
             ;;
 
         *)
-            JOBS=$((JOBS/2))
+            JOBS=${JOBS}
             ;;
     esac
 }
