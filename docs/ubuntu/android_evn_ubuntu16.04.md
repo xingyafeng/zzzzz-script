@@ -168,3 +168,23 @@ apt-get install libxrender1
 
 解决方法：
 apt install bc
+
+4/
+
+# 1. transformervzw
+http://10.129.93.215:8080/view/RomBuild/job/transformervzw/322/execution/node/83/log/
+
+
+Can't locate XML/Parser.pm in @INC (you may need to install the XML::Parser module) (@INC contains: ../mcfg_gen/scripts /etc/perl /usr/local/lib/x86_64-linux-gnu/perl/5.22.1 /usr/local/share/perl/5.22.1 /usr/lib/x86_64-linux-gnu/perl5/5.22 /usr/share/perl5 /usr/lib/x86_64-linux-gnu/perl/5.22 /usr/share/perl/5.22 /usr/local/lib/site_perl /usr/lib/x86_64-linux-gnu/perl-base .) at ../mcfg_gen/scripts/mcfg_write.pm line 21.
+BEGIN failed--compilation aborted at ../mcfg_gen/scripts/mcfg_write.pm line 21.
+Compilation failed in require at /local/jobs/transformervzwY/qct-sm4350-r-tf-v1.0-dint/amss_4350_spf1.0/MPSS.HI.4.3.1/modem_proc/mcfg/build/build_mcfgs.pl line 67.
+=== Generating  mcfg_hw/qdsp6/mannar.gen.prod/mcfg_hw_gen_DSDS-LA-STANDALONE.xml
+=== Generating  mcfg_hw/qdsp6/mannar.gen.prod/mcfg_hw_gen_DSDS_CDMALess-LA-STANDALONE.xml
+=== Generating  mcfg_hw/qdsp6/mannar.gen.prod/mcfg_hw_gen_SS_CDMALess-LA-STANDALONE.xml
+scons: *** [bin/mannar.gen.prod/configs/mcfg_hw/generic/common/Mannar/STANDALONE/WD/DSSA/mcfg_hw.mbn] Explicit exit, status 2
+
+解决方法：
+https://bbs.archlinux.org/viewtopic.php?id=203936
+
+cpan XML::XPath
+
