@@ -48,6 +48,11 @@ function init() {
         rm -rf ${tmpfs}
         ln -s ${tmp_p} ${tmpfs}
     fi
+
+    # 3. create yf.lock
+    if [[ ! -f ${tmpfs}/yf.lock.bak ]]; then
+        touch ${tmpfs}/yf.lock.bak
+    fi
 }
 
 function main() {
