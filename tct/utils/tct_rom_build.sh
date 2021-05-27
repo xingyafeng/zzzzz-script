@@ -192,29 +192,25 @@ function tct::utils::create_version_info() {
 #    fi
 
     #下载version仓库
-
-
+    is_repo_sync='false'
     git_sync_repository ${versioninfo} ${build_manifest%.*}
 
     pushd ${tmpfs}/${version_path} > /dev/null
 
-    if [[ -f version.inc ]]; then
-        cp -vf ${tmpversion} version.inc
-    fi
-
-    show_vip "git push $(git remote) HEAD:${build_manifest%.*}"
+    # backup version.inc
+    cp -rvf ${tmpversion} version.inc
 
     if [[ -n "`git status -s`" ]];then
         git add version.inc
         git commit -m "Release ${build_version}"
-        git pull
-        git push `git remote` HEAD:${build_manifest%.*}
+        Command git push `git remote` HEAD:${build_manifest%.*}
     else
         log warn 'The version.inc do not update.'
     fi
 
     popd > /dev/null
 
+    # 清理动作
     if [[ -f ${tmpversion} ]]; then
         rm -f ${tmpversion}
     fi
