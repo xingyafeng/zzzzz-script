@@ -285,10 +285,9 @@ function tct::utils::backup_image_version() {
         local teleweb_img_name=$(tct::utils::teleweb_img_name)
         local img_arr=
         local perso_build_name=
-        
-        Command "sh copyimgs.sh"
-        releasedir=/local/release/${PROJECTNAME}-release/v${build_version}
 
+        Command "bash copyimgs.sh"
+        releasedir=/local/release/${PROJECTNAME}-release/v${build_version}
 
         if [[ -f `ls out/target/product/*/vendor.img` ]];then
             productname=$(ls out/target/product/*/vendor.img | awk -F '/' '{print $(NF-1)" "$NF}' | awk '{print $1}')
