@@ -98,6 +98,8 @@ function handle_vairable() {
         build_debug=true
     fi
 
+    buildlist=${buildlist_p}/buildlist.${job_name}.ini
+
     handle_common_vairable
     handle_compile_para
 }

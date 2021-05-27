@@ -60,9 +60,14 @@ function init_script_path() {
     pathfs[${#pathfs[@]}]=${version_p}
     pathfs[${#pathfs[@]}]=${logfs}/log
     pathfs[${#pathfs[@]}]=${tmpfs}/log
-    pathfs[${#pathfs[@]}]=${tmpfs}/ota
     pathfs[${#pathfs[@]}]=${tmpfs}/zip
+
+    pathfs[${#pathfs[@]}]=${tmpfs}/ota
+    pathfs[${#pathfs[@]}]=${tmpfs}/env
+    pathfs[${#pathfs[@]}]=${tmpfs}/buildlist
+    pathfs[${#pathfs[@]}]=${tmpfs}/manifest
     pathfs[${#pathfs[@]}]=${tmpfs}/gerrit
     pathfs[${#pathfs[@]}]=${tmpfs}/jenkins
+
     pathfs[${#pathfs[@]}]=${apk_release_p}
 }

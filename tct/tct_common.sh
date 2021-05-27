@@ -8,11 +8,27 @@ teleweb_p=/mfs_tablet/teleweb
 username='Integration.tablet'
 # build path
 BUILDDIR=${WORKSPACE:-}
+
+# ------------------------------------- path
+
 # gerrit path
 gerrit_p=${tmpfs}/gerrit
-# build list info
-buildlist=${tmpfs}/buildlist.ini
+# jenkins path
+jenkins_p=${tmpfs}/jenkins
 
+# ota path
+ota_p=${tmpfs}/ota
+# env path
+env_p=${tmpfs}/env
+# manifest path
+manifest_p=${tmpfs}/manifest
+# build list path
+buildlist_p=${tmpfs}/buildlist
+
+# ------------------------------------- key words
+
+# build list info
+buildlist=''
 # 源码更新
 build_update_code='false'
 # 是否需要repo同步
