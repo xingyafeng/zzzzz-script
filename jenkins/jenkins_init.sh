@@ -37,23 +37,23 @@ case ${shellfs##*/} in
         ;;
 
     apk_release.sh|rom_release.sh) #发布APK和ROM版本
-        :
         ;;
 
     check_app.sh|build_app.sh|apk_resign.sh) #APK重签名
         ;;
 
     notify.sh|demo.sh|mm.sh|rsync.sh|rdiff_backup.sh|updatemanifest.sh) #misc
-        :
         ;;
 
     gitrepositories.sh|pref.sh|updatebranch.sh|gerrit_cherry_pick.sh) #git
-        :
         ;;
 
     get_manifest_info.sh)
-        :
         ;;
+
+    update_script.sh)
+        ;;
+
     *)
         log error "执行脚本不匹配 ..."
         ;;
