@@ -247,14 +247,14 @@ function git_sync_repository()
 
                 git fetch -q
                 git checkout ${GITRES_BRANCH}
-                git pull
+                git pull --rebase
             else
-                git pull
+                git pull --rebase
             fi
         else
             git fetch -q
             git checkout ${GITRES_BRANCH}
-            git pull
+            git pull --rebase
         fi
 
         popd > /dev/null
