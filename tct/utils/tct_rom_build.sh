@@ -281,7 +281,18 @@ function tct::utils::backup_image_version() {
         local img_arr=
         local perso_build_name=
 
-        Command "bash copyimgs.sh"
+        local perso_build_default_name=
+
+        if [[ ${job_name} == "irvinevzw" ]]; then
+            if [[ $(is_build_debug) == 'true' || $(is_user_appli) == 'true' ]]; then
+                show_vip "don't copy imgs"
+            else
+                Command "bash copyimgs.sh"
+            fi
+        else
+            Command "bash copyimgs.sh"
+        fi
+
         releasedir=/local/release/${PROJECTNAME}-release/v${build_version}
 
         if [[ -f `ls out/target/product/*/vendor.img` ]];then
@@ -363,19 +374,18 @@ function tct::utils::backup_image_version() {
         if [[ $(is_compile_mpcs) == 'true' ]]; then
             Command "cp -rf out/target/product/${productname}/Teleweb/${teleweb_img_name} ${releasedir}/${teleweb_img_name}"
             Command "cp -rf /local/tools_int/simlockimage/${PROJECTNAME}/* ${releasedir}/${teleweb_img_name}/"
-            if [[ -f out/target/product/${productname}/merged/boot-debug.img ]];then
-                Command "cp out/target/product/${productname}/merged/boot-debug.img ${releasedir}/${teleweb_img_name}/"
-            fi
 
             if [[ "${PROJECTNAME}" == "Doha_TMO" ]];then
                 #arr_simlock=(tmo/simlock tmo/nosimlock ${perso_build_name}/simlock ${perso_build_name}/nosimlock)
                 img_arr=(super.img vbmeta_system.img vbmeta_vendor.img tct_fota_meta.zip md1img-verified.img dfile_v${build_version}.zip MDDB_InfoCustomAppSrcP_MT6765_*.EDB)
                 perso_build_name=boost
+                perso_build_default_name=tmo
+
                 pushd out_${perso_build_name}/target/product/${productname} > /dev/null
                 for img in ${img_arr[@]} ; do
                    if [[ -f ${img} ]];then
                         Command "cp ${img} ${releasedir}/${teleweb_img_name}/${perso_build_name}_${img}"
-                    fi 
+                    fi
                 done
 
                 popd > /dev/null
@@ -391,6 +401,35 @@ function tct::utils::backup_image_version() {
 
                 tct::utils::checksum ${perso_build_name} simlock
                 show_vip "checksum ${perso_build_name} simlock end ... "
+
+                tct::utils::renameimage
+                show_vip "renameimage end ... "
+
+                Command "sudo cp -rf ${releasedir}/* ${telewebdir}"
+
+            fi
+
+            if [[ "${PROJECTNAME}" == "irvinevzw" ]];then
+                img_arr=(vendor.img system.img product.img oem.img preload.img super_empty.img vbmeta_system.img vbmeta.img)
+                perso_build_name=prepaid
+                perso_build_default_name=vzw
+                tct::utils::rebuild_rawprogram
+                pushd out/target/product/${productname} > /dev/null
+                for img in ${img_arr[@]} ; do
+                   if [[ -f ${img} ]];then
+                        Command "cp ${img} ${releasedir}/${teleweb_img_name}/${perso_build_name}_${img}"
+                    fi
+                done
+
+                if [[ -f rawprogram_super.xml ]];then
+                    Command "cp rawprogram_super.xml ${releasedir}/${teleweb_img_name}/${perso_build_name}_rawprogram_super.xml"
+                fi
+
+                if [[ -f rawprogram0.xml ]];then
+                    Command "cp rawprogram0.xml ${releasedir}/${teleweb_img_name}/${perso_build_name}_rawprogram0.xml"
+                fi
+
+                popd > /dev/null
 
                 tct::utils::renameimage
                 show_vip "renameimage end ... "
@@ -685,7 +724,7 @@ function tct::utils::is_update_gapp() {
     echo ${is_update_gapp}
 }
 
-function tct::utils::build_mpcs(){
+function tct::utils::build_boost(){
     source_init
     case ${JOB_NAME} in
         dohatmo-r)
@@ -693,12 +732,12 @@ function tct::utils::build_mpcs(){
             Command "python build/make/makePerso.py -p Doha_TMO -a 'SIGNAPK_USE_RELEASEKEY=Doha_TMO SIGN_SECIMAGE_USEKEY=Doha_TMO MP_BRANCH_VALUE=1 ANTI_ROLLBACK=${build_anti_rollback}'"
             if [[ $? -eq 0 ]];then
                 echo
-                show_vip "--> make MPCS end ..."
+                show_vip "--> make boost end ..."
                 Command "mv out out_boost"
                 Command "mv out_tmo out"
 
             else
-                log error "--> make android MPCS failed !"
+                log error "--> make android boost failed !"
             fi
         ;;
 
@@ -727,12 +766,21 @@ function tct::utils::renameimage(){
         for image in ${image_name}
         do
             mbn_name=`cat ${naming_rule_path} | grep "\<${image}\>" | cut -d ' ' -f 1`
-            
+
             if [[ "${image}" == "simlock.img" ]]; then
-                ln -s ${originpath}/${perso_build_name}_no_simlock.img $mbn_name                       
+                ln -s ${originpath}/${perso_build_name}_no_simlock.img $mbn_name
             elif [[ "${image}" == "Checksum.ini" ]]; then
                 ln -s ${originpath}/${perso_build_name}_nosimlock_Checksum.ini $mbn_name
-            
+
+            elif [[ "${image}"  == "rawprogram0.xml" ]]; then
+                Command "ln -s ${originpath}/${perso_build_name}_rawprogram0.xml $mbn_name"
+
+            elif [[ "${image}"  == "tct_fota_meta.zip" ]]; then
+                Command "ln -s ${originpath}/${perso_build_name}_tct_fota_meta.zip ${mbn_name/${mbn_name:4:2}/BO}"
+
+            elif [[ "${image}"  == "rawprogram_super.xml" ]]; then
+                Command "ln -s ${originpath}/${perso_build_name}_rawprogram_super.xml $mbn_name"
+
             elif [[ "${img_arr[@]}"  =~ "${image}" ]]; then
                 Command "ln -s ${originpath}/${perso_build_name}_${image} $mbn_name"
 
@@ -740,15 +788,20 @@ function tct::utils::renameimage(){
                 ln -s ${originpath}/$image $mbn_name
             fi
         done
+
         if ls ${originpath}/${perso_build_name}_MDDB_InfoCustomAppSrcP_MT6765_*.EDB 1> /dev/null 2>&1; then
             Command "rm -rf `cat ${naming_rule_path} | grep -E '.EDB' | cut -d ' ' -f 1`"
             Command "ln -s ${originpath}/${perso_build_name}_MDDB_InfoCustomAppSrcP_MT6765_*.EDB `cat ${naming_rule_path} | grep -E '.EDB' | cut -d ' ' -f 1`"
+        fi
+
+        if [[ "${PROJECTNAME}" == "irvinevzw" ]];then
+            md5sum *.mbn > v${build_version}.MD5
         fi
         popd > /dev/null
     else
         log error "--> mkdir -vp ${releasedir}/${perso_build_name}/nosimlock failed !"
     fi
-    
+
     Command "mkdir -vp ${releasedir}/${perso_build_name}/simlock"
     if [[ $? -eq 0 ]];then
         pushd ${releasedir}/${perso_build_name}/simlock > /dev/null
@@ -761,6 +814,13 @@ function tct::utils::renameimage(){
             elif [[ "${image}" == "Checksum.ini" ]]; then
                 ln -s ${originpath}/${perso_build_name}_simlock_Checksum.ini $mbn_name
 
+            elif [[ "${image}"  == "rawprogram0.xml" ]]; then
+                Command "ln -s ${originpath}/${perso_build_name}_rawprogram0.xml $mbn_name"
+            elif [[ "${image}"  == "tct_fota_meta.zip" ]]; then
+                Command "ln -s ${originpath}/${perso_build_name}_tct_fota_meta.zip ${mbn_name/${mbn_name:4:2}/BO}"
+            elif [[ "${image}"  == "rawprogram_super.xml" ]]; then
+                Command "ln -s ${originpath}/${perso_build_name}_rawprogram_super.xml $mbn_name"
+
             elif [[ "${img_arr[@]}"  =~ "${image}" ]]; then
                 Command "ln -s ${originpath}/${perso_build_name}_${image} $mbn_name"
 
@@ -772,47 +832,63 @@ function tct::utils::renameimage(){
             Command "rm -rf `cat ${naming_rule_path} | grep -E '.EDB' | cut -d ' ' -f 1`"
             Command "ln -s ${originpath}/${perso_build_name}_MDDB_InfoCustomAppSrcP_MT6765_*.EDB `cat ${naming_rule_path} | grep -E '.EDB' | cut -d ' ' -f 1`"
         fi
+
+        if [[ "${PROJECTNAME}" == "irvinevzw" ]];then
+            md5sum *.mbn > v${build_version}.MD5
+        fi
         popd > /dev/null
     else
         log error "--> mkdir -vp ${releasedir}/${perso_build_name}/simlock failed !"
     fi
 
-    Command "mkdir -vp ${releasedir}/tmo/nosimlock"
+    Command "mkdir -vp ${releasedir}/${perso_build_default_name}/nosimlock"
     if [[ $? -eq 0 ]];then
-        pushd ${releasedir}/tmo/nosimlock > /dev/null
+        pushd ${releasedir}/${perso_build_default_name}/nosimlock > /dev/null
         for image in ${image_name}
         do
             mbn_name=`cat ${naming_rule_path} | grep "\<${image}\>" | cut -d ' ' -f 1`
             if [[ "${image}" == "simlock.img" ]]; then
-                ln -s ${originpath}/tmo_no_simlock.img $mbn_name
+                ln -s ${originpath}/${perso_build_default_name}_no_simlock.img $mbn_name
             elif [[ "${image}" == "Checksum.ini" ]]; then
-                ln -s ${originpath}/tmo_nosimlock_Checksum.ini $mbn_name
+                ln -s ${originpath}/${perso_build_default_name}_nosimlock_Checksum.ini $mbn_name
+            elif [[ "${image}"  == "tct_fota_meta.zip" ]]; then
+                Command "ln -s ${originpath}/tct_fota_meta.zip ${mbn_name/${mbn_name:4:2}/TO}"
             else
                 ln -s ${originpath}/$image $mbn_name
             fi
         done
+
+        if [[ "${PROJECTNAME}" == "irvinevzw" ]];then
+            md5sum *.mbn > v${build_version}.MD5
+        fi
         popd > /dev/null
     else
-        log error "--> mkdir -vp ${releasedir}/tmo/nosimlock failed !"
+        log error "--> mkdir -vp ${releasedir}/${perso_build_default_name}/nosimlock failed !"
     fi
 
-    Command "mkdir -vp ${releasedir}/tmo/simlock"
+    Command "mkdir -vp ${releasedir}/${perso_build_default_name}/simlock"
     if [[ $? -eq 0 ]];then
-        pushd ${releasedir}/tmo/simlock > /dev/null
+        pushd ${releasedir}/${perso_build_default_name}/simlock > /dev/null
         for image in ${image_name}
         do
             mbn_name=`cat ${naming_rule_path} | grep "\<${image}\>" | cut -d ' ' -f 1`
             if [[ "${image}" == "simlock.img" ]]; then
-                ln -s ${originpath}/tmo_simlock.img $mbn_name
+                ln -s ${originpath}/${perso_build_default_name}_simlock.img $mbn_name
             elif [[ "${image}" == "Checksum.ini" ]]; then
-                ln -s ${originpath}/tmo_simlock_Checksum.ini $mbn_name
+                ln -s ${originpath}/${perso_build_default_name}_simlock_Checksum.ini $mbn_name
+            elif [[ "${image}"  == "tct_fota_meta.zip" ]]; then
+                Command "ln -s ${originpath}/tct_fota_meta.zip ${mbn_name/${mbn_name:4:2}/TO}"
             else
                 ln -s ${originpath}/$image $mbn_name
             fi
         done
+
+        if [[ "${PROJECTNAME}" == "irvinevzw" ]];then
+            md5sum *.mbn > v${build_version}.MD5
+        fi
         popd > /dev/null
     else
-        log error "--> mkdir -vp ${releasedir}/tmo/simlock failed !"
+        log error "--> mkdir -vp ${releasedir}/${perso_build_default_name}/simlock failed !"
     fi
 
 }
@@ -893,10 +969,18 @@ function tct::utils::checksum(){
             Command "rm -rf ${out_teleweb_path}/MDDB_InfoCustomAppSrcP_MT6765_*.EDB"
             Command "cp ${out_boost_path}/MDDB_InfoCustomAppSrcP_MT6765_*.EDB ${out_teleweb_path}"
         fi
-        
-        
+
     fi
     Command "${gettop_p}/build/make/tools/TCLCheckSum_v5.1844.00_linux/CheckSumScriptFile.sh ${gettop_p}/out/target/product/${productname}/Teleweb/${teleweb_img_name} ${gettop_p}"
     Command "cp ${gettop_p}/out/target/product/${productname}/Teleweb/${teleweb_img_name}/Checksum.ini ${releasedir}/${teleweb_img_name}/$1_$2_Checksum.ini"
 
+}
+
+function tct::utils::rebuild_rawprogram(){
+    sed -i '/filename=\"vendor.img\"/d;/filename=\"system.img\"/d;/filename=\"product.img\"/d;/filename=\"oem.img\"/d;/filename=\"preload.img\"/d;/filename=\"vbmeta_system.img\"/d;/filename=\"vbmeta.img\"/d' out/target/product/$productname/rawprogram0.xml
+
+    #emmc
+    Command "python build/make/tools/releasetools/build_super_partition.py ${gettop_p}/out/target/product/$productname/super_empty.img ${gettop_p}/out/target/product/$productname/rawprogram0.xml"
+    #ufs
+    Command "python build/make/tools/releasetools/build_super_partition.py ${gettop_p}/out/target/product/$productname/super_empty.img ${gettop_p}/out/target/product/$productname/rawprogram1.xml ${gettop_p}/out/target/product/$productname/rawprogram_super.xml"
 }
