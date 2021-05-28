@@ -31,8 +31,6 @@ buildlist_p=${tmpfs}/buildlist
 buildlist=''
 # 源码更新
 build_update_code='false'
-# 是否需要repo同步
-is_repo_sync='true'
 
 # su enable
 is_su_enable='no'
@@ -137,7 +135,6 @@ function update_source_code()
     if [[ -f build/core/envsetup.mk && -f Makefile ]]; then
 
         if [[ "`is_android_project`" == "true" ]]; then
-            is_repo_sync='false'
             recover_standard_android_project
 
             echo

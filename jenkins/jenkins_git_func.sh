@@ -455,11 +455,9 @@ function repo_sync_repository() {
 # 单独恢复某一个git仓库
 function repo_sync_single_repository() {
 
-    if [[ -d .repo && -f build/core/envsetup.mk && -f Makefile ]];then
-        if [[ ${is_repo_sync} == 'true' ]]; then
-            # 同步最新
-            Command "repo sync ${tDir} -c -d --no-tags -j$(nproc)"
-        fi
+    if [[ $(is_rom_prebuild) == 'true' && $(is_gettop_dir) == 'true' ]]; then
+        # 同步最新
+        Command "repo sync ${tDir} -c -d --no-tags -j$(nproc)"
     fi
 }
 

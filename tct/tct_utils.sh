@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # 探测android根路径 croot
-function is_android_gettop() {
+function is_gettop_dir() {
 
     if [[ -d .repo && -f build/core/envsetup.mk && -f Makefile ]];then
         echo true

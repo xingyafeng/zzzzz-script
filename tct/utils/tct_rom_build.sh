@@ -192,7 +192,6 @@ function tct::utils::create_version_info() {
 #    fi
 
     #下载version仓库
-    is_repo_sync='false'
     git_sync_repository ${versioninfo} ${build_manifest%.*}
 
     pushd ${tmpfs}/${version_path} > /dev/null
