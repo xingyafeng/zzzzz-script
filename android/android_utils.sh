@@ -63,7 +63,7 @@ function source_init()
 
         case ${job_name} in
 
-            transformervzw)
+            transformervzw|irvinevzw)
                 Command choosecombo 1 ${PROJECTNAME} ${build_type} ${PROJECTNAME} 1 $(is_mini_version) 0 ${build_anti_rollback} $(is_cert_version) && show_vip "--> lunch end ..."
 
                 if [[ $(is_user_appli) == 'true' ]]; then
@@ -84,9 +84,6 @@ function source_init()
                 fi
             ;;
 
-            irvinevzw)
-                Command choosecombo 1 ${PROJECTNAME} ${build_type} ${PROJECTNAME} 1 $(is_mini_version) 0 ${build_anti_rollback} $(is_cert_version) && show_vip "--> lunch end ..."
-            ;;
 
             *)
                 log error "The ${job_name} no found ..."

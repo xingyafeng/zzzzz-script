@@ -72,6 +72,20 @@ pipeline {
         stage('Build Android Rom Part Three') {
             failFast true
             parallel {
+                stage('backup rom mpcs imgs') {
+
+                    steps {
+                        script {
+                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh mpcs")
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Build Android Rom Part four') {
+            failFast true
+            parallel {
                 stage('backup rom iamge files') {
 
                     steps {
