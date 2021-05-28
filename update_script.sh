@@ -17,9 +17,13 @@ function main() {
 
     trap 'ERRTRAP ${LINENO} ${FUNCNAME} ${BASH_LINENO}' ERR
 
-    #　更新zzzzz-script脚本仓库
-    if [[ $(is_connect_netwrok 'http://sz.gerrit.tclcom.com:8080') == "true" ]];then
-        update_script
+    if [[ -f ${tmpfs}/yf.lock ]];then
+        :
+    else
+        #　下载或更新zzzzz-script脚本仓库
+        if [[ $(is_connect_netwrok 'http://sz.gerrit.tclcom.com:8080') == "true" ]];then
+            update_script
+        fi
     fi
 
     trap - ERR
