@@ -35,28 +35,15 @@ function ssh-jenkins()
 ## 更新服务器的脚本仓库
 function ssh-update-script()
 {
-    local server_ip=`echo s1.y s2.y s3.y s4.y s5.y s6.y s7.y f1.y c1.y c2.y 10.0.0.250`
-    local portN=22
-    local server_name=jenkins
-    local init_script=/home/jenkins/workspace/script/zzzzz-script/init_script.sh
-
-    for ip in ${server_ip};do
-
-        ssh -t -p ${portN} ${server_name}@${ip} "
-            source $init_script && echo "server: ${ip}" && \
-            echo
-        "
-
-        if false;then
-            ssh -t -p ${portN} ${server_name}@${ip} '
-                cd ~/workspace && touch ssh_test && mkdir test && \
-                cd ~ && touch xxx
-            '
+    if [[ -f ${tmpfs}/yf.lock ]];then
+        :
+    else
+        #　下载或更新zzzzz-script脚本仓库
+        if [[ $(is_connect_netwrok 'http://sz.gerrit.tclcom.com:8080') == "true" ]];then
+            update_script
         fi
-    done
+    fi
 }
-
-
 
 ## 检查gerrit是否已新建仓库
 function check_gerrit_repositories() {
