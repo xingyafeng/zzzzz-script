@@ -13,7 +13,7 @@ for (x in labels) {
         node(label) {
             // build steps that should happen on all nodes go here
             stage(label) {
-                utils.command("~/workspace/script/zzzzz-script/extend/ssh_update_script.sh")
+                utils.command("~/workspace/script/zzzzz-script/update_script.sh")
             }
         }
     }
