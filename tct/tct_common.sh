@@ -528,7 +528,7 @@ function gitclean() {
         log error 'The git path is empty.'
     fi
 
-    if [[ $(is_android_gettop) == 'true' ]]; then
+    if [[ $(is_gettop_dir) == 'true' ]]; then
         git --git-dir=${gitpath}/.git --work-tree=${gitpath} clean -dxf
         git --git-dir=${gitpath}/.git --work-tree=${gitpath} checkout -- .
     else
