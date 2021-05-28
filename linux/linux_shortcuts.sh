@@ -525,7 +525,25 @@ function jenkins23 {
 
 function jenkins24 {
 
-    show_vir 'Do not nothings ...'
+    local username=
+    local hostname='s26'
+
+    if [[ -n ${1:-} ]]; then
+        username=ttk
+    else
+        username=android-bld
+    fi
+
+    case ${username} in
+
+        ttk)
+            ssh ${username}@${hostname}
+        ;;
+
+        android-bld)
+            ssh ${username}@${hostname} -p 8082
+        ;;
+    esac
 }
 
 function jenkins25 {
