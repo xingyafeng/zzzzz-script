@@ -220,6 +220,10 @@ function get_device_name() {
             device_name='9198S'
         ;;
 
+        irvinevzw)
+            device_name='T781S'
+        ;;
+
         *)
             log error "The tctproject has no found ..."
         ;;
