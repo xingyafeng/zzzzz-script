@@ -38,7 +38,7 @@ function ssh-update-script()
     done
 }
 
-function update_script() {
+function update-script() {
 
     local script_p=~/workspace/script/zzzzz-script/init_script.sh
 
@@ -49,7 +49,7 @@ function update_script() {
 
 function main()
 {
-    update_script
+    update-script
 }
 
 main "$@"
