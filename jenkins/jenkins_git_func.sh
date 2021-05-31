@@ -477,7 +477,10 @@ function recover_standard_git_project()
             echo "---- recover ${tDir}"
         else
             popd > /dev/null
-            repo_sync_single_repository
+
+            if [[ "$(is_gerrit_trigger)" == "true" ]];then
+                repo_sync_single_repository
+            fi
 
             return 0
         fi
@@ -500,7 +503,9 @@ function recover_standard_git_project()
 		popd > /dev/null
 	fi
 
-	repo_sync_single_repository
+    if [[ "$(is_gerrit_trigger)" == "true" ]];then
+        repo_sync_single_repository
+    fi
 }
 
 ### 恢复到干净工作区, android目录下所有的git仓库.
