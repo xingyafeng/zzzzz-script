@@ -93,7 +93,7 @@ function handle_compile_para() {
     # compile_para 编译参数
     case ${JOB_NAME} in
 
-        transformervzw)
+        transformervzw|irvinevzw)
             if [[ -n "${build_efuse}" ]]; then
                 compile_para[${#compile_para[@]}]="TCT_EFUSE=${build_efuse}"
             fi
@@ -393,7 +393,7 @@ function main() {
                     popd > /dev/null
                     ;;
 
-                target|merge|modem|ap|cp|mtk|backup)
+                target|merge|modem|ap|cp|mtk|mpcs|backup)
                     local build_p=${root_p}/${job_name}Y/${build_manifest}
 
                     if [[ ! -d ${build_p} ]]; then

@@ -297,15 +297,29 @@ function make_droid() {
 
             ap|qssi|target|merge)
                 tct::build_ap
+                echo ${object}
             ;;
 
             cp|modem)
                 tct::build_cp
+                echo ${object}
             ;;
 
             mtk)
                 tct::build_mtk
                echo "build_mtk"
+            ;;
+
+            mpcs)
+                if [[ $(is_compile_mpcs) == 'true' ]]; then
+                    #编译MPCS版本
+                    Command "bash copyimgs.sh"
+                    show_vip "build mpcs"
+                    tct::build_mpcs
+                else
+                    show_vip "don't build mpcs"
+                fi
+
             ;;
 
             backup)
@@ -617,8 +631,8 @@ function tct::build_mtk(){
         if [[ $(is_compile_mpcs) == 'true' ]]; then
             #编译MPCS版本
             Command "mv out out_tmo"
-            show_vip "build MPCS"
-            tct::utils::build_mpcs
+            show_vip "build boost"
+            tct::utils::build_boost
         fi
     else
         log error "--> make android mtk failed !"
@@ -694,9 +708,9 @@ function update_gapp() {
 function is_compile_mpcs() {
 
     case ${JOB_NAME} in
-        dohatmo-r)
+        dohatmo-r|irvinevzw)
 
-            if [[ $(is_build_debug) == 'true' || $(is_user_appli) == 'true' ]]; then        
+            if [[ $(is_build_debug) == 'true' || $(is_user_appli) == 'true' ]]; then
                 #Command "mv out out_tmo"
                 #if [[ $? -eq 0 ]];then
                 echo true
@@ -713,4 +727,24 @@ function is_compile_mpcs() {
         ;;
     esac
 
+}
+
+#编译irvinevzw项目的mpcs
+function tct::build_mpcs() {
+    source_init
+    case ${JOB_NAME} in
+        irvinevzw)
+            Command "python build/make/tclmake/makePerso.py -p irvinevzw -a 'ANTI_ROLLBACK=${build_anti_rollback} TARGET_BUILD_VARIANT=${build_type}'"
+            if [[ $? -eq 0 ]];then
+                show_vip "--> make mpcs end ..."
+
+            else
+                log error "--> make android mpcs failed !"
+            fi
+        ;;
+
+        *)
+            :
+        ;;
+    esac
 }
