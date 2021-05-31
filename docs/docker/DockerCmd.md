@@ -144,3 +144,6 @@
 
 
 # 本地构建镜像Create DockerCreate.md
+
+
+docker tag nginx:latest docker.tct.com/tct/nginx:v1.0.0
