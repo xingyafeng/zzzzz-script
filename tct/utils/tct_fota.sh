@@ -177,19 +177,19 @@ function get_tools_branch() {
     case ${tctproject} in
 
         thor84gvzw|thor84gvzw_r)
-            tools_branch_name='thor84g_vzw_1.0'
+            echo 'thor84g_vzw_1.0'
             ;;
 
         transformervzw)
-            tools_branch_name='TransformerVZW'
+            echo 'TransformerVZW'
         ;;
 
         irvinevzw)
-            tools_branch_name='irvinevzw'
+            echo 'irvinevzw'
         ;;
 
         *)
-            tools_branch_name=''
+            echo ''
         ;;
     esac
 }

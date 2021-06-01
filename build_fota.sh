@@ -27,11 +27,6 @@ build_fullpkg_update=
 # add big file update
 build_big_update=
 
-
-# ---------------
-# 工具仓库分支名
-tools_branch_name=
-
 # exec shell
 shellfs=$0
 
@@ -418,14 +413,8 @@ function make_inc() {
 
 function handle_common_variable() {
 
-    # 拿到项目对应工具仓库
-    get_tools_branch
-    if [[ -z ${tools_branch_name} ]]; then
-        log error "The tools branch name is null ..."
-    fi
-
     # 下载仓库
-    git_sync_repository tools/JrdDiffTool ${tools_branch_name} ${fota_tools_p}
+    git_sync_repository tools/JrdDiffTool $(get_tools_branch) ${fota_tools_p}
 
     # 获取设备名
     get_device_name
@@ -562,7 +551,7 @@ function print_variable() {
     echo "build_fullpkg_update = " ${build_fullpkg_update}
     echo "build_big_update     = " ${build_big_update}
     echo '-----------------------------------------'
-    echo "tools_branch_name    = " ${tools_branch_name}
+    echo "tools_branch_name    = " $(get_tools_branch)
 
     if [[ -n ${from_more} ]]; then
         echo "from_more            = " ${from_more}
