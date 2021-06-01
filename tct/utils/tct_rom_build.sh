@@ -551,8 +551,10 @@ function tct::utils::releasemail()
             basever=${build_version}
         fi
 
-        echo "curl -X POST -v 'http://10.129.93.215:8080/job/Auto-delivery-new/buildWithParameters?token=Auto-delivery-new&version=${build_version}&baseversion=${basever}&project=${PROJECTNAME}&build_server=${build_server_y}&delivery_bug=${build_delivery_bug}&band=EU&BUILD_DUALSIM=false'"
-        curl -X POST -v "http://10.129.93.215:8080/job/Auto-delivery-new/buildWithParameters?token=Auto-delivery-new&version=${build_version}&baseversion=${basever}&project=${PROJECTNAME}&build_server=${build_server_y}&delivery_bug=${build_delivery_bug}&band=EU&BUILD_DUALSIM=false"
+#        echo "curl -X POST -v 'http://10.129.93.215:8080/job/Auto-delivery-new/buildWithParameters?token=Auto-delivery-new&version=${build_version}&baseversion=${basever}&project=${PROJECTNAME}&build_server=${build_server_y}&delivery_bug=${build_delivery_bug}&band=EU&BUILD_DUALSIM=false'"
+#        curl -X POST -v "http://10.129.93.215:8080/job/Auto-delivery-new/buildWithParameters?token=Auto-delivery-new&version=${build_version}&baseversion=${basever}&project=${PROJECTNAME}&build_server=${build_server_y}&delivery_bug=${build_delivery_bug}&band=EU&BUILD_DUALSIM=false"
+        echo "python /local/tools_int/autoDelivery_new/main.py -project ${PROJECTNAME} -version ${build_version} -baseversion ${basever} -BAND EU -deliverybug ${build_delivery_bug} -builddualsim false"
+        python /local/tools_int/autoDelivery_new/main.py -project ${PROJECTNAME} -version ${build_version} -baseversion ${basever} -BAND EU -deliverybug ${build_delivery_bug} -builddualsim false
     fi
 
     if [[ ${VER_VARIANT} == "daily" ]]; then
