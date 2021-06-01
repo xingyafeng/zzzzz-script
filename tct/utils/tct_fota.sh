@@ -184,6 +184,10 @@ function get_tools_branch() {
             tools_branch_name='TransformerVZW'
         ;;
 
+        irvinevzw)
+            tools_branch_name='irvinevzw'
+        ;;
+
         *)
             tools_branch_name=''
         ;;
