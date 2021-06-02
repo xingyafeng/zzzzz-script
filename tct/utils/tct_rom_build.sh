@@ -362,6 +362,9 @@ function tct::utils::backup_image_version() {
             if [[ ${JOB_NAME} == "transformervzw" ]]; then
                 cp amss_4350_spf1.0/vendor/tct/transformer/build/partition_load_pt/ufs/provision/provision_ufs22.xml out/target/product/${productname}/Teleweb/provision_ufs22.xml
             fi
+            if [[ ${JOB_NAME} == "irvinevzw" ]]; then
+                cp amss_4350_spf1.0/vendor/tct/irvine/build/partition_load_pt/ufs/provision/provision_ufs22.xml out/target/product/${productname}/Teleweb/provision_default.xml
+            fi
             pushd out/target/product/${productname}/Teleweb/ > /dev/null
                 zip -v _v${build_version}-Teleweb.zip *.*
             pushd > /dev/null
@@ -390,11 +393,11 @@ function tct::utils::backup_image_version() {
 
                 popd > /dev/null
 
-                tct::utils::checksum tmo nosimlock
-                show_vip "checksum tmo nosimlock end ... "
+                tct::utils::checksum ${perso_build_default_name} nosimlock
+                show_vip "checksum ${perso_build_default_name} nosimlock end ... "
 
-                tct::utils::checksum tmo simlock
-                show_vip "checksum tmo simlock end ... "
+                tct::utils::checksum ${perso_build_default_name} simlock
+                show_vip "checksum ${perso_build_default_name} simlock end ... "
 
                 tct::utils::checksum ${perso_build_name} nosimlock
                 show_vip "checksum ${perso_build_name} nosimlock end ... "
@@ -762,7 +765,12 @@ function tct::utils::renameimage(){
     Command "ls -lh out/target/product/${productname}/Teleweb | grep -E '.mbn|.db|.sca|.EDB|.ini' | cut -d ':' -f 2 | cut -d ' ' -f 2,4 | sort >> ${naming_rule_path}"
     image_name=`cat ${naming_rule_path} | cut -d ' ' -f 2 | cut -d '/' -f 2 | sort | uniq `
 
-    Command "mkdir -vp ${releasedir}/${perso_build_name}/nosimlock"
+    if [[ "${PROJECTNAME}" == "Doha_TMO" && ${build_type} == "user" ]];then
+        Command "mkdir -vp ${releasedir}/${perso_build_name}/nosimlock/userdebug"
+    else
+        Command "mkdir -vp ${releasedir}/${perso_build_name}/nosimlock"
+    fi
+
     if [[ $? -eq 0 ]];then
         pushd ${releasedir}/${perso_build_name}/nosimlock > /dev/null
         for image in ${image_name}
@@ -771,29 +779,59 @@ function tct::utils::renameimage(){
 
             if [[ "${image}" == "simlock.img" ]]; then
                 ln -s ${originpath}/${perso_build_name}_no_simlock.img $mbn_name
+                if [[ -d userdebug ]]; then
+                    ln -s ../${originpath}/${perso_build_name}_no_simlock.img userdebug/$mbn_name
+                fi
             elif [[ "${image}" == "Checksum.ini" ]]; then
                 ln -s ${originpath}/${perso_build_name}_nosimlock_Checksum.ini $mbn_name
-
-            elif [[ "${image}"  == "rawprogram0.xml" ]]; then
-                Command "ln -s ${originpath}/${perso_build_name}_rawprogram0.xml $mbn_name"
+                if [[ -d userdebug ]]; then
+                    ln -s ../${originpath}/${perso_build_name}_nosimlock_Checksum.ini userdebug/$mbn_name
+                fi
 
             elif [[ "${image}"  == "tct_fota_meta.zip" ]]; then
                 Command "ln -s ${originpath}/${perso_build_name}_tct_fota_meta.zip ${mbn_name/${mbn_name:4:2}/BO}"
+                if [[ -d userdebug ]]; then
+                    ln -s ../${originpath}/${perso_build_name}_tct_fota_meta.zip userdebug/${mbn_name/${mbn_name:4:2}/BO}
+                fi
 
+            elif [[ "${image}"  == "rawprogram0.xml" ]]; then
+                Command "ln -s ${originpath}/${perso_build_name}_rawprogram0.xml $mbn_name"
             elif [[ "${image}"  == "rawprogram_super.xml" ]]; then
                 Command "ln -s ${originpath}/${perso_build_name}_rawprogram_super.xml $mbn_name"
 
             elif [[ "${img_arr[@]}"  =~ "${image}" ]]; then
                 Command "ln -s ${originpath}/${perso_build_name}_${image} $mbn_name"
-
+                if [[ -d userdebug ]]; then
+                    ln -s ../${originpath}/${perso_build_name}_${image} userdebug/$mbn_name
+                fi
             else
                 ln -s ${originpath}/$image $mbn_name
+                if [[ -d userdebug ]]; then
+                    ln -s ../${originpath}/${image} userdebug/$mbn_name
+                fi
             fi
         done
 
         if ls ${originpath}/${perso_build_name}_MDDB_InfoCustomAppSrcP_MT6765_*.EDB 1> /dev/null 2>&1; then
             Command "rm -rf `cat ${naming_rule_path} | grep -E '.EDB' | cut -d ' ' -f 1`"
             Command "ln -s ${originpath}/${perso_build_name}_MDDB_InfoCustomAppSrcP_MT6765_*.EDB `cat ${naming_rule_path} | grep -E '.EDB' | cut -d ' ' -f 1`"
+            if [[ -d userdebug ]]; then
+                pushd userdebug > /dev/null
+                Command "rm -rf `cat ${naming_rule_path} | grep -E '.EDB' | cut -d ' ' -f 1`"
+                Command "ln -s ../${originpath}/${perso_build_name}_MDDB_InfoCustomAppSrcP_MT6765_*.EDB `cat ${naming_rule_path} | grep -E '.EDB' | cut -d ' ' -f 1`"
+                popd > /dev/null
+            fi
+        fi
+
+        if [[ "${PROJECTNAME}" == "Doha_TMO" ]];then
+            if ls ${originpath}/boot.img 1> /dev/null 2>&1; then
+                Command "rm -rf userdebug/`cat ${naming_rule_path} | grep -E 'boot.img' | cut -d ' ' -f 1`"
+                Command "ln -s ../${originpath}/boot-debug.img userdebug/`cat ${naming_rule_path} | grep -E 'boot.img' | cut -d ' ' -f 1`"
+            fi
+            if ls ${originpath}/lk-verified.img 1> /dev/null 2>&1; then
+                Command "rm -rf userdebug/`cat ${naming_rule_path} | grep -E 'lk-verified.img' | cut -d ' ' -f 1`"
+                Command "ln -s ../${originpath}/lk_fastboot-verified.img userdebug/`cat ${naming_rule_path} | grep -E 'lk-verified.img' | cut -d ' ' -f 1`"
+            fi
         fi
 
         if [[ "${PROJECTNAME}" == "irvinevzw" ]];then
@@ -843,7 +881,11 @@ function tct::utils::renameimage(){
         log error "--> mkdir -vp ${releasedir}/${perso_build_name}/simlock failed !"
     fi
 
-    Command "mkdir -vp ${releasedir}/${perso_build_default_name}/nosimlock"
+    if [[ "${PROJECTNAME}" == "Doha_TMO" && ${build_type} == "user" ]];then
+        Command "mkdir -vp ${releasedir}/${perso_build_default_name}/nosimlock/userdebug"
+    else
+        Command "mkdir -vp ${releasedir}/${perso_build_default_name}/nosimlock"
+    fi
     if [[ $? -eq 0 ]];then
         pushd ${releasedir}/${perso_build_default_name}/nosimlock > /dev/null
         for image in ${image_name}
@@ -851,14 +893,37 @@ function tct::utils::renameimage(){
             mbn_name=`cat ${naming_rule_path} | grep "\<${image}\>" | cut -d ' ' -f 1`
             if [[ "${image}" == "simlock.img" ]]; then
                 ln -s ${originpath}/${perso_build_default_name}_no_simlock.img $mbn_name
+                if [[ -d userdebug ]]; then
+                    ln -s ../${originpath}/${perso_build_default_name}_no_simlock.img userdebug/$mbn_name
+                fi
             elif [[ "${image}" == "Checksum.ini" ]]; then
                 ln -s ${originpath}/${perso_build_default_name}_nosimlock_Checksum.ini $mbn_name
+                if [[ -d userdebug ]]; then
+                    ln -s ../${originpath}/${perso_build_default_name}_nosimlock_Checksum.ini userdebug/$mbn_name
+                fi
             elif [[ "${image}"  == "tct_fota_meta.zip" ]]; then
                 Command "ln -s ${originpath}/tct_fota_meta.zip ${mbn_name/${mbn_name:4:2}/TO}"
+                if [[ -d userdebug ]]; then
+                    ln -s ../${originpath}/tct_fota_meta.zip userdebug/${mbn_name/${mbn_name:4:2}/TO}
+                fi
             else
                 ln -s ${originpath}/$image $mbn_name
+                if [[ -d userdebug ]]; then
+                    ln -s ../${originpath}/$image userdebug/${mbn_name}
+                fi
             fi
         done
+
+        if [[ "${PROJECTNAME}" == "Doha_TMO" ]];then
+            if ls ${originpath}/boot.img 1> /dev/null 2>&1; then
+                Command "rm -rf userdebug/`cat ${naming_rule_path} | grep -E 'boot.img' | cut -d ' ' -f 1`"
+                Command "ln -s ../${originpath}/boot-debug.img userdebug/`cat ${naming_rule_path} | grep -E 'boot.img' | cut -d ' ' -f 1`"
+            fi
+            if ls ${originpath}/lk-verified.img 1> /dev/null 2>&1; then
+                Command "rm -rf userdebug/`cat ${naming_rule_path} | grep -E 'lk-verified.img' | cut -d ' ' -f 1`"
+                Command "ln -s ../${originpath}/lk_fastboot-verified.img userdebug/`cat ${naming_rule_path} | grep -E 'lk-verified.img' | cut -d ' ' -f 1`"
+            fi
+        fi
 
         if [[ "${PROJECTNAME}" == "irvinevzw" ]];then
             md5sum *.mbn > v${build_version}.MD5
