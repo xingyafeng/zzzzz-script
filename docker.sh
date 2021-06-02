@@ -20,8 +20,7 @@ function main() {
 
     pushd ${script_p} > /dev/null
 
-    docker pull happysongs/ubuntu16.04:v1.0.1
-    docker run --name=android --rm -d happysongs/ubuntu16.04:v1.0.1 /bin/bash /home/jenkins/workspace/script/zzzzz-script/demo.sh
+    docker exec android id
 
     popd > /dev/null
 
