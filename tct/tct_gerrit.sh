@@ -109,22 +109,22 @@ function verified+1() {
         ssh-gerrit review -m '"This patchset gerrit trigger build successful ..."' --verified 1 ${GERRIT_CHANGE_NUMBER},${GERRIT_PATCHSET_NUMBER}
         if [[ $? -eq 0 ]];then
             show_vip "This patchset build successfully, --verified +1"
-
-            if [[ "$(check-gerrit 'code-review+2' ${GERRIT_CHANGE_NUMBER})" == "true" ]]; then
-                ssh-gerrit review -m '"This patchset gerrit trigger build successful; --submit"' --submit ${GERRIT_CHANGE_NUMBER},${GERRIT_PATCHSET_NUMBER} 2>&1 | tee ${tmpfs}/submit.log
-                if [[ $? -eq 0 ]]; then
-                    show_vip "This patchset build successfully, --submit"
-                fi
-            else
-                ssh-gerrit review -m '"Unable to submit, can only Verified+1 now, need some people to Code-Revire+2 ..."' ${GERRIT_CHANGE_NUMBER},${GERRIT_PATCHSET_NUMBER}
-                show_vir "Unable to submit, can only Verified+1 now, need some people to Code-Revire+2 ..."
-            fi
         else
             ssh-gerrit review -m '"jenkins --verified +1 failed ..."' ${GERRIT_CHANGE_NUMBER},${GERRIT_PATCHSET_NUMBER}
             log error "Jenkins --verified +1 failed ..."
         fi
     else
         show_vir "Unable to Verified+1, because of it hava been Verified+1 ..."
+    fi
+
+    if [[ "$(check-gerrit 'code-review+2' ${GERRIT_CHANGE_NUMBER})" == "true" && "$(check-gerrit 'verified+1' ${GERRIT_CHANGE_NUMBER})" == "true" ]]; then
+        ssh-gerrit review -m '"This patchset gerrit trigger build successful; --submit"' --submit ${GERRIT_CHANGE_NUMBER},${GERRIT_PATCHSET_NUMBER} 2>&1 | tee ${tmpfs}/submit.log
+        if [[ $? -eq 0 ]]; then
+            show_vip "This patchset build successfully, --submit"
+        fi
+    else
+        ssh-gerrit review -m '"Unable to submit, can only Verified+1 now, need some people to Code-Revire+2 ..."' ${GERRIT_CHANGE_NUMBER},${GERRIT_PATCHSET_NUMBER}
+        show_vir "Unable to submit, can only Verified+1 now, need some people to Code-Revire+2 ..."
     fi
 }
 
