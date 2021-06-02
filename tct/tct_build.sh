@@ -48,6 +48,7 @@ function set_invalid_module() {
     invalid_module[${#invalid_module[@]}]=libandroid_runtime
     invalid_module[${#invalid_module[@]}]=vendor_common_inc.cfi
     invalid_module[${#invalid_module[@]}]=vendor_common_inc.cfi.vendor
+    invalid_module[${#invalid_module[@]}]=libbatterymonitor.cfi
 }
 
 # 过滤无效目标
@@ -257,6 +258,10 @@ function make_android_for_single() {
                 ;;
 
                 vendor/qcom/proprietary/sensors-see/registry|frameworks/base/core/jni|vendor/qcom/proprietary/common)
+                    module_filter
+                ;;
+
+                system/core/healthd)
                     module_filter
                 ;;
             esac
