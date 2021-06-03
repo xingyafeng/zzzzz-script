@@ -363,7 +363,7 @@ function tct::utils::backup_image_version() {
                 cp amss_4350_spf1.0/vendor/tct/transformer/build/partition_load_pt/ufs/provision/provision_ufs22.xml out/target/product/${productname}/Teleweb/provision_ufs22.xml
             fi
             if [[ ${JOB_NAME} == "irvinevzw" ]]; then
-                cp amss_4350_spf1.0/vendor/tct/irvine/build/partition_load_pt/ufs/provision/provision_ufs22.xml out/target/product/${productname}/Teleweb/provision_default.xml
+                cp amss_4350_spf1.0/vendor/tct/irvine/build/partition_load_pt/ufs/provision/provision_ufs22.xml out/target/product/${productname}/Teleweb/provision_samsung.xml
             fi
             pushd out/target/product/${productname}/Teleweb/ > /dev/null
                 zip -v _v${build_version}-Teleweb.zip *.*
