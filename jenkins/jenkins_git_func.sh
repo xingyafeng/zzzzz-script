@@ -6,6 +6,7 @@ function get_repo_git_path_from_xml()
     declare -a git_path
 
     pushd .repo/manifests > /dev/null
+    git pull
 
     for xml in "${build_manifest}"
     do
