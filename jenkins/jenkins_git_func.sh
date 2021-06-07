@@ -238,6 +238,13 @@ function git_sync_repository()
 
         pushd ${GITRES_PATH}/${GITRES##*/} > /dev/null
 
+        # update url
+        if [[ "`is_valid_user`" == "true" ]]; then
+            git remote set-url origin ssh://${git_username}@${gerrit_server}:${gerrit_port}/${GITRES}
+        else
+            git remote set-url origin ${default_gerrit}:${GITRES}
+        fi
+
         if [[ "${GITRES_BRANCH}" == "`git branch | grep \* | cut -d ' ' -f2`" ]]; then
             # 异常删除远程分支后存在问题. 当远程分支存在变化的时候,需要特殊处理
             if [[ "`check_remote_branch`" == "true" ]]; then
