@@ -188,6 +188,9 @@ sudo curl -L https://github.com/docker/compose/releases/download/1.20.1/docker-c
 sudo chmod +x /usr/bin/docker-compose
 docker-compose version
 
+sudo scp -r yafeng.xing@happysongs:/usr/bin/docker-compose /usr/bin/docker-compose
+sudo scp -r yafeng.xing@happysongs:/etc/bash_completion.d/docker-compose.sh /etc/bash_completion.d/docker-compose.sh
+
 docker-compose down -v  停止并移除网络
 docker-compose up -d    启动容器
 docker-compose ps       查看运行的容器
