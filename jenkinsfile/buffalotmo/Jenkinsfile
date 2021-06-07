@@ -1,0 +1,121 @@
+@Library('share-library@master') _
+
+currentBuild.description="${tct_version} on ${tct_server_y}"
+
+pipeline {
+    agent {
+        node {
+            label "${tct_server_y}"
+        }
+    }
+
+    environment {
+        TCT_CC = 'clang'
+    }
+
+    stages {
+
+        stage('Build Android Rom Part Zero') {
+
+            failFast true
+            parallel {
+                stage('download') {
+
+                    steps {
+                        script {
+                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh download")
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Build Android Rom Part One') {
+
+            failFast true
+            parallel {
+                stage('clean') {
+
+                    steps {
+                        script {
+                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh clean")
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Build Android Rom Part Two') {
+
+            failFast true
+            parallel {
+                stage('build mtk') {
+
+                    steps {
+                        script {
+                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh mtk")
+                        }
+                    }
+                }
+
+            }
+        }
+
+        stage('Build Android Rom Part Three') {
+            failFast true
+            parallel {
+                stage('backup rom iamge files') {
+
+                    steps {
+                        script {
+                            utils.command("~/workspace/script/zzzzz-script/rom_build.sh backup")
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // 编译结束后问题的处理
+    post {
+        always {
+            script {
+                log.d 'This will <always> run ...'
+            }
+        }
+
+        success {
+            script {
+                utils.command("curl -X POST -F proj=${JOB_NAME} -F number=${BUILD_NUMBER} -F server=${tct_server_y} -F success=True -F build_type=1 http://10.129.93.247:9091/order/jenkinsUpdateOrder")
+                log.d 'This will <success> run ...'
+            }
+        }
+
+        failure {
+            script {
+                utils.command("curl -X POST -F proj=${JOB_NAME} -F number=${BUILD_NUMBER} -F server=${tct_server_y} -F success=False -F build_type=1 http://10.129.93.247:9091/order/jenkinsUpdateOrder")
+                log.e 'This will <failure> run ...'
+            }
+        }
+
+        aborted {
+            script {
+                utils.command("curl -X POST -F proj=${JOB_NAME} -F number=${BUILD_NUMBER} -F server=${tct_server_y} -F success=False -F build_type=1 http://10.129.93.247:9091/order/jenkinsUpdateOrder")
+                log.e 'This will <aborted> run ...'
+            }
+        }
+
+        unstable {
+            script {
+                log.w 'This will run only if the run was marked as <unstable>'
+            }
+        }
+
+        changed {
+            script {
+                log.d 'This will run only if the state of the Pipeline has <changed>'
+                log.d 'For example, if the Pipeline was previously failing but is now successful'
+            }
+        }
+    }
+}

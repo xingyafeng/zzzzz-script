@@ -636,6 +636,10 @@ function tct::utils::custo_name_platform() {
             custo_name_platform=CX
         ;;
 
+        buffalotmo)
+            custo_name_platform=DT
+        ;;
+
         *)
             custo_name_platform=DH
         ;;

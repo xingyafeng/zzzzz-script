@@ -103,7 +103,7 @@ function handle_compile_para() {
             fi
         ;;
 
-        dohatmo-r)
+        dohatmo-r|buffalotmo)
             compile_para[${#compile_para[@]}]="TARGET_BUILD_VARIANT=${build_type},"
             compile_para[${#compile_para[@]}]="TARGET_BUILD_MODEM=true,"
 
