@@ -84,6 +84,11 @@ function source_init()
                 fi
             ;;
 
+            buffalotmo)
+                show_vip "--> this is user build -->${VER_VARIANT} -- ${build_type}"
+
+            ;;
+
 
             *)
                 log error "The ${job_name} no found ..."

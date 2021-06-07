@@ -80,7 +80,7 @@ function tct::utils::get_moden_type() {
 
     case ${JOB_NAME} in
 
-        transformervzw|dohatmo-r|irvinevzw)
+        transformervzw|dohatmo-r|irvinevzw|buffalotmo)
             case ${VER_VARIANT} in
 
                 appli)
@@ -489,6 +489,10 @@ function tct::utils::get_platform_info() {
             PLATFORM=MT6762
         ;;
 
+        buffalotmo)
+            PLATFORM=MT6833
+        ;;
+
         *)
             PLATFORM=''
         ;;
@@ -535,6 +539,10 @@ function tct::utils::get_version_info() {
 
         dohatmo-r)
             version_inc=mtk/version_cd
+        ;;
+
+        buffalotmo)
+            version_inc=mtk/version
         ;;
 
         *)
@@ -587,7 +595,7 @@ function tct::utils::get_project_info() {
             getprojectinfo=Qcom_C_GetVerInfo
         ;;
 
-        dohatmo-r)
+        dohatmo-r|buffalotmo)
             getprojectinfo=GetVerInfo
         ;;
 
@@ -601,7 +609,7 @@ function tct::utils::build_userdebug() {
 
     case ${JOB_NAME} in
 
-        transformervzw|dohatmo-r|irvinevzw)
+        transformervzw|dohatmo-r|irvinevzw|buffalotmo)
             echo "curl -X POST -v http://10.129.93.215:8080/job/${JOB_NAME}/buildWithParameters?token=${JOB_NAME}&${debug_variable}"
             curl -X POST -v "http://10.129.93.215:8080/job/${JOB_NAME}/buildWithParameters?token=${JOB_NAME}&${debug_variable}"
         ;;
@@ -994,7 +1002,7 @@ function tct::utils::teleweb_img_name() {
 
     case ${JOB_NAME} in
 
-        dohatmo-r)
+        dohatmo-r|buffalotmo)
             teleweb_img_name=flashtool
         ;;
 
