@@ -134,6 +134,15 @@ function update_source_code()
 
     if [[ -f build/core/envsetup.mk && -f Makefile ]]; then
 
+                ## 重新初始化，防止本地提交代码影响版本
+        if [[ -n "${build_manifest}" ]];then
+            if [[ "$(is_check_mirror)" == "true" ]]; then
+                Command "repo init -m ${build_manifest} --reference=${reference_p}"
+            else
+                Command "repo init -m ${build_manifest}"
+            fi
+        fi
+
         if [[ "`is_android_project`" == "true" ]]; then
             recover_standard_android_project
 
@@ -141,15 +150,6 @@ function update_source_code()
             show_vip "--> 已恢复源代码至原始状态."
         else
             log error "未恢复源代码至原始状态 ..."
-        fi
-
-        ## 重新初始化，防止本地提交代码影响版本
-        if [[ -n "${build_manifest}" ]];then
-            if [[ "$(is_check_mirror)" == "true" ]]; then
-                Command "repo init -m ${build_manifest} --reference=${reference_p}"
-            else
-                Command "repo init -m ${build_manifest}"
-            fi
         fi
 
         ## 更新源代码

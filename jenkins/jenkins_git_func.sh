@@ -6,7 +6,6 @@ function get_repo_git_path_from_xml()
     declare -a git_path
 
     pushd .repo/manifests > /dev/null
-    git pull
 
     for xml in "${build_manifest}"
     do
@@ -469,7 +468,7 @@ function recover_standard_git_project()
 	if [[ ! "$tDir" ]]; then
 		tDir=.
 	fi
-    echo "+++++++++++++ tDir ${tDir}"
+
 	if [[ -d ${tDir}/.git ]]; then
 
 		pushd ${tDir} > /dev/null
@@ -517,7 +516,7 @@ function recover_standard_android_project()
 	if [[ -n "${project}" ]]; then
 		for p in ${project}
 		do
-		    echo '---- p ' = ${p}
+		    #echo '---- p ' = ${p}
             if [[ -d $(gettop)/${p} ]];then
                 recover_standard_git_project ${p}
             fi
