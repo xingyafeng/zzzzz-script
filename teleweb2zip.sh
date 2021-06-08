@@ -56,12 +56,17 @@ function handle_common_variable() {
     fi
 
     case ${build_zip_project} in
+
         portotmo)
             build_zip_project=$(echo ${build_zip_project} | tr 'a-z' 'A-Z')
             ;;
 
         portotmo_r)
             build_zip_project=$(echo ${build_zip_project} | sed 's/_r//' | tr 'a-z' 'A-Z')
+            ;;
+
+        thor84gvzw)
+            build_zip_project=$(echo ${build_zip_project} | sed 's/4g//' | tr 'a-z' 'A-Z')
             ;;
 
         *)
